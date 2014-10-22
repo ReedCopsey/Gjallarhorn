@@ -34,7 +34,7 @@ type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self
         member __.Value with get() = mapping(valueProvider.Value)
 
     interface IDependent with
-        member this.RequestRefresh() =
+        member this.RequestRefresh _ =
             SignalManager.Signal(this)
 
 
@@ -53,7 +53,7 @@ type internal WeakView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as 
         member __.Value with get() = v
 
     interface IDependent with
-        member this.RequestRefresh() =
+        member this.RequestRefresh _ =
             let provider = handle.Target
             match provider with
             | null -> ()

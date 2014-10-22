@@ -19,4 +19,4 @@ type IMutatable<'a> =
 type IDependent =
     /// Signals the type that it should refresh its current value
     /// as one of it's dependencies has been updated
-    abstract member RequestRefresh : unit -> unit
+    abstract member RequestRefresh : IView<'a> -> unit
