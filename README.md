@@ -1,20 +1,14 @@
-# ProjectScaffold
+# Gjallarhorn
 
-This project can be used to scaffold a prototypical .NET solution including file system layout and tooling. This includes a build process which: 
+Gjallarhorn is a small, lightweight framework for managing mutable state when notifications are required.
 
-* updates all AssemblyInfo files
-* compiles the application and runs all test projects
-* generates [SourceLinks](https://github.com/ctaggart/SourceLink)
-* generates API docs based on XML document tags
-* generates [documentation based on Markdown files](writing-docs.html)
-* denerates [NuGet](http://www.nuget.org) packages
-* and allows a simple [one step release process](release-process.html). 
+It is designed and written in F#, and has the following goals:
 
-In order to start the scaffolding process run 
+* Wrap mutable data in the lightest weight manner possible
+* Allow tracking of changes to the data
+* Provide a functional API for working with the resulting data
+* Integrating with other reactive systems, such as FSharp.Control.Reactive
+* Adapt easily to INotifyPropertyChanged and similar mechanisms for notification of changes
 
-    $ build.cmd // on windows    
-    $ build.sh  // on mono
-    
-Read the [Getting started tutorial](tutorial.html) to learn more.
+Documentation: http://ReedCopsey.github.io/Gjallarhorn
 
-Documentation: http://fsprojects.github.io/ProjectScaffold
