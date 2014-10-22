@@ -3,13 +3,11 @@
 open System
 open System.Collections.Generic
 
-/// A lightweight wrapper for a mutable value which provides a mechanism
-/// for change notification as needed
+// A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
 type internal Mutable<'a>(value : 'a) =
 
     let mutable v = value
             
-    /// Gets or sets the mutable value
     member this.Value 
         with get() = v
         and set(value) =
@@ -17,7 +15,6 @@ type internal Mutable<'a>(value : 'a) =
                 v <- value
                 SignalManager.Signal(this)
 
-    /// Provide a value for dependent views
     interface IView<'a> with
         member __.Value with get() = v
 

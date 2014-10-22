@@ -10,6 +10,7 @@ type internal Observer<'a>(provider: IView<'a>) as self =
         SignalManager.AddDependency provider self
 
     interface IDependent with
+        /// Request a refresh
         member __.RequestRefresh _ =
             let v = provider.Value
             lock subscribers (fun _ ->

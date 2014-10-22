@@ -3,7 +3,7 @@
 open System
 open System.Runtime.CompilerServices
 
-/// Used to track dependency information
+// Used to track dependency information
 type internal DependencyInformation() =
     let mutable dependencies = ResizeArray<_>()
 
@@ -22,17 +22,17 @@ type internal DependencyInformation() =
         dependencies |> Seq.iter (signalIfAlive source)
         dependencies.RemoveAll((fun wr -> not wr.IsAlive)) |> ignore
 
-    /// Add a dependent object to be signaled
+    // Add a dependent object to be signaled
     member this.AddDependency (dependency : IDependent) =
         lock this (fun _ -> dependencies.Add(WeakReference(dependency)))
     
-    /// Signal all dependencies that they should refresh themselves
+    // Signal all dependencies that they should refresh themselves
     member this.Signal (source : IView<'a>) =
         // Only keep "living" dependencies
         lock this (fun _ -> signalAndFilter source)
 
-/// Manager of all dependency tracking.  Handles signaling of IDependent instances from any given source
-/// Note: This class is fully thread safe, and will not hold references to either source or dependent targets
+/// <summary>Manager of all dependency tracking.  Handles signaling of IDependent instances from any given source</summary>
+/// <remarks>This class is fully thread safe, and will not hold references to either source or dependent targets</remarks>
 [<AbstractClass; Sealed>]
 type internal SignalManager() =
     static let dependencies = ConditionalWeakTable<obj, DependencyInformation>()

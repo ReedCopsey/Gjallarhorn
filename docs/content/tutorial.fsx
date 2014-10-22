@@ -10,10 +10,13 @@ Introducing your project
 Say more
 
 *)
-#r "FSharp.ProjectTemplate.dll"
-open FSharp.ProjectTemplate
+#r "Gjallarhorn.dll"
+open Gjallarhorn
 
-Library.hello 0
+// Create a mutable variable
+let variable = Mutable.create "Foo"
+printfn "hello = %s" variable.Value
+
 (**
-Some more info
+TODO
 *)

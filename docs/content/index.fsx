@@ -4,21 +4,8 @@
 #I "../../bin"
 
 (**
-F# Project Scaffold
+Gjallarhorn
 ===================
-
-Documentation
-
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      The F# ProjectTemplate library can be <a href="https://nuget.org/packages/FSharp.ProjectTemplate">installed from NuGet</a>:
-      <pre>PM> Install-Package FSharp.ProjectTemplate</pre>
-    </div>
-  </div>
-  <div class="span1"></div>
-</div>
 
 Example
 -------
