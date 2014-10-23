@@ -49,7 +49,10 @@ let ``Cached View updates with View`` start initialView finish finalView =
     let view = View.create result (fun i -> i.ToString())
     
     // Create a view to turn the first view back from string -> int
-    let backView = View.createCached view (fun s -> Convert.ChangeType(s, start.GetType()))
+    let bv = View.create view (fun s -> Convert.ChangeType(s, start.GetType()))
+
+    // Cache the view
+    let backView = View.createCached bv
     
     Assert.AreEqual(view.Value, initialView)
     Assert.AreEqual(backView.Value, start)

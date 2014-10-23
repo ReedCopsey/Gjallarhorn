@@ -35,8 +35,8 @@ type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self
             SignalManager.Signal(this)
 
 
-type internal WeakView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self =
-    let mutable v = mapping(valueProvider.Value)
+type internal ViewCache<'a>(valueProvider : IView<'a>) as self =
+    let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
     let handle = WeakReference(valueProvider)
@@ -46,7 +46,7 @@ type internal WeakView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as 
 
     member __.Value with get() = v
 
-    interface IView<'b> with
+    interface IView<'a> with
         member __.Value with get() = v
 
     interface IDependent with
@@ -56,5 +56,5 @@ type internal WeakView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as 
             | null -> ()
             | some -> 
                 let valueProvider = some :?> IView<'a>
-                v <- mapping(valueProvider.Value)
+                v <- valueProvider.Value
                 SignalManager.Signal(this)
