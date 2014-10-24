@@ -23,7 +23,7 @@ module View =
     /// As such, it caches the "last valid" state of the view locally.
     /// </remarks>
     [<CompiledName("Cache")>]
-    let cache (provider : IView<'a>) = new ViewCache<'a>(provider) :> IDisposableView<_>
+    let cache (provider : IView<'a>) = new ViewCache<'a>(provider) :> IDisposableView<'a>
 
     /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required     
     [<CompiledName("FromObservable")>]
@@ -78,7 +78,7 @@ module View =
     ***************************************************)
     [<CompiledName("Get")>]
     /// Gets the current value associated with the view
-    let get (view : IView<_>) = 
+    let get (view : IView<'a>) = 
         view.Value
 
     /// Executes a function for a view value.
@@ -90,4 +90,4 @@ module View =
     [<CompiledName("Map")>]
     let map (provider : IView<'a>) (mapping : 'a -> 'b) = 
         let view = new View<'a, 'b>(provider, mapping)
-        view :> IDisposableView<_>
+        view :> IDisposableView<'a>
