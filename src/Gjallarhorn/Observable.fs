@@ -8,24 +8,32 @@ type internal Observer<'a>(provider: IView<'a>) as self =
     let subscribers = ResizeArray<IObserver<'a>>()
     do
         SignalManager.AddDependency provider self
+    let mutable provider = Some(provider)
+
+    let value () = DisposeHelpers.getValue provider (fun _ -> self.GetType().FullName)
 
     interface IDependent with
         /// Request a refresh
         member __.RequestRefresh _ =
-            let v = provider.Value
+            let v = value()
             lock subscribers (fun _ ->
                 subscribers
                 |> Seq.iter (fun s -> s.OnNext(v)))
-    interface IObservable<'a> with
+    
+    interface IDisposableObservable<'a> with
+        
         member __.Subscribe(observer) =
             lock subscribers (fun _ -> subscribers.Add(observer))
             { new IDisposable with
                 member __.Dispose() = lock subscribers (fun _ -> subscribers.Remove(observer) |> ignore) }
 
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose provider this
+            provider <- None
 
 [<Extension>] 
 type ViewExtensions () =        
     [<Extension>]
-    static member AsObservable(this: IView<'a>) =
-        Observer(this) :> IObservable<'a>
+    static member AsObservable(this: IView<'a>) = new Observer<'a>(this) :> IDisposableObservable<'a>
 

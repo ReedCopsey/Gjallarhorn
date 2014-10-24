@@ -24,7 +24,7 @@ let ``Mutation triggers IObservable`` (start : int) finish =
 [<TestCase(Int32.MinValue, Int32.MaxValue, "2147483647")>]
 let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string) =
     let result = Mutable.create start
-    let view = View.create result (fun i -> i.ToString())
+    let view = View.map result (fun i -> i.ToString())
     let obs = view.AsObservable()
     
     let changedValue = ref view.Value

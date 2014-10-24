@@ -61,6 +61,7 @@
     <Compile Include="Mutable.fs" />
     <Compile Include="View.fs" />
     <Compile Include="Observable.fs" />
+    <Compile Include="Memory.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
