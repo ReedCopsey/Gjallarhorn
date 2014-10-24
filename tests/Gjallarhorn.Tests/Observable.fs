@@ -53,4 +53,22 @@ let ``Observable Dispose stops tracking`` (start:int) finish =
     // Should not track/change anymore
     result.Value <- start
     Assert.AreEqual(finish, !changedValue)
-  
+ 
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
+let ``View.fromObservable initializes properly`` start =
+    let evt = Event<_>()
+    let obs = evt.Publish
+
+    let view = View.fromObservable obs start
+    Assert.AreEqual(box start, view.Value)
+
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``View.fromObservable tracks changes in values`` start finish =
+    let evt = Event<_>()
+    let obs = evt.Publish
+
+    let view = View.fromObservable obs start
+    Assert.AreEqual(box start, view.Value)
+
+    evt.Trigger finish
+    Assert.AreEqual(box finish, view.Value)

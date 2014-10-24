@@ -1,5 +1,7 @@
 ﻿namespace Gjallarhorn
 
+open System
+
 /// Provides mechanisms for working with IView<'a> views
 module View =
     
@@ -12,6 +14,7 @@ module View =
         }
 
     /// Create a view over a provider given a specific mapping function
+    [<CompiledName("Map")>]
     let map (provider : IView<'a>) (mapping : 'a -> 'b) = 
         let view = new View<'a, 'b>(provider, mapping)
         view :> IDisposableView<_>
@@ -21,6 +24,7 @@ module View =
     /// This will not hold a reference to the provider, and will allow it to be garbage collected.
     /// As such, it caches the "last valid" state of the view locally.
     /// </remarks>
+    [<CompiledName("Cache")>]
     let cache (provider : IView<'a>) = new ViewCache<'a>(provider) :> IDisposableView<_>
 
     /// Add a permanent subscription to the changes of a view which calls the provided function upon each change
@@ -31,7 +35,7 @@ module View =
                 new IDependent with
                     member __.RequestRefresh _ =
                         f(provider.Value)
-                interface System.IDisposable with
+                interface IDisposable with
                     member __.Dispose() = ()
             }
         SignalManager.AddDependency provider dependent        
@@ -44,9 +48,26 @@ module View =
                 new IDependent with
                     member __.RequestRefresh _ =
                         f(provider.Value)
-                interface System.IDisposable with
+                interface IDisposable with
                     member __.Dispose() = 
                         SignalManager.RemoveDependency provider dependent
             }
         SignalManager.AddDependency provider dependent
-        dependent :> System.IDisposable
+        dependent :> IDisposable
+
+    /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required     
+    [<CompiledName("FromObservable")>]
+    let fromObservable (observable : IObservable<'a>) initialValue =
+        let value = Mutable.create initialValue
+        let callback v =
+            value.Value <- v
+        let disposable = observable.Subscribe(callback)
+        
+        // Return a wrapper around a mutable that changes when the observable changes
+        {
+            new IDisposableView<'a> with
+                member __.Value = value.Value
+            interface IDisposable with
+                member __.Dispose() =
+                    disposable.Dispose()
+        }
