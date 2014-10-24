@@ -58,6 +58,35 @@ type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self
             DisposeHelpers.dispose valueProvider this
             valueProvider <- None
 
+type internal View2<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
+    do
+        SignalManager.AddDependency valueProvider1 self
+        SignalManager.AddDependency valueProvider2 self
+
+    let mutable valueProvider1 = Some(valueProvider1)
+    let mutable valueProvider2 = Some(valueProvider2)
+
+    let value () = 
+        let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> self.GetType().FullName)
+        let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> self.GetType().FullName)
+        mapping v1 v2
+
+    member __.Value with get() = value()
+
+    interface IDisposableView<'c> with
+        member __.Value with get() = value()
+
+    interface IDependent with
+        member this.RequestRefresh _ =
+            SignalManager.Signal(this)
+
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose valueProvider1 this
+            DisposeHelpers.dispose valueProvider2 this
+            valueProvider1 <- None
+            valueProvider2 <- None
+
 type internal ViewCache<'a>(valueProvider : IView<'a>) as self =
     let mutable v = valueProvider.Value
 

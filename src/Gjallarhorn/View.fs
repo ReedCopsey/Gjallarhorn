@@ -91,3 +91,9 @@ module View =
     let map (provider : IView<'a>) (mapping : 'a -> 'b) = 
         let view = new View<'a, 'b>(provider, mapping)
         view :> IDisposableView<'b>
+
+    /// Transforms two view values by using a specified mapping function.
+    [<CompiledName("Map2")>]
+    let map2 (provider1 : IView<'a>) (provider2 : IView<'b>) (mapping : 'a -> 'b -> 'c) = 
+        let view = new View2<'a, 'b, 'c>(provider1, provider2, mapping)
+        view :> IDisposableView<'c>

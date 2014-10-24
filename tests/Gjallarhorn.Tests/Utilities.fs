@@ -26,9 +26,23 @@ type Utilities() =
             [|"Foo" ; "Foo"|]
         |] 
 
+    static member CasesPairToString : obj [] [] =
+        [|
+            [|1 ; 2; "1,2"|] ;
+            [|42.23 ; -1298.2; "42.23,-1298.2"|] ;
+            [|"Foo" ; "Bar" ; "Foo,Bar"|]
+        |] 
+
     static member CasesStartEndToStringPairs : obj [] [] =
         [|
             [|1 ; "1" ; 2 ; "2"|] ;
             [|42.23 ; "42.23" ; 23.398 ; "23.398" |] ;
             [|"Foo" ; "Foo" ; "Bar" ; "Bar" |]
+        |] 
+
+    static member CasesPairStartEndToStringPairs : obj [] [] =
+        [|
+            [|1 ; 2; "1,2" ; 3 ; 4 ; "3,4" |] ;
+            [|42.23 ; -1298.2; "42.23,-1298.2" ; -2.01 ; 3948.12 ; "-2.01,3948.12" |] ;
+            [|"Foo" ; "Bar" ; "Foo,Bar" ; "Bar" ; "Baz" ; "Bar,Baz" |]
         |] 
