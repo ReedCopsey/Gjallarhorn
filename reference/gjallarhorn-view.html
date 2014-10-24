@@ -52,10 +52,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            add provider f
+            add f provider
           </code>
           <div class="tip" id="4">
-            <strong>Signature:</strong> provider:IView&lt;&#39;a&gt; -&gt; f:(&#39;a -&gt; unit) -&gt; unit<br />
+            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:IView&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
@@ -109,10 +109,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            fromObservable observable initialValue
+            fromObservable initialValue observable
           </code>
           <div class="tip" id="7">
-            <strong>Signature:</strong> observable:(type) -&gt; initialValue:&#39;a -&gt; IDisposableView&lt;&#39;a&gt;<br />
+            <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:(type) -&gt; IDisposableView&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
@@ -147,10 +147,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            iter view f
+            iter f view
           </code>
           <div class="tip" id="9">
-            <strong>Signature:</strong> view:IView&lt;&#39;a&gt; -&gt; f:(&#39;a -&gt; unit) -&gt; unit<br />
+            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; view:IView&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
@@ -166,10 +166,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
-            map provider mapping
+            map mapping provider
           </code>
           <div class="tip" id="10">
-            <strong>Signature:</strong> provider:IView&lt;&#39;a&gt; -&gt; mapping:(&#39;a -&gt; &#39;b) -&gt; IDisposableView&lt;&#39;b&gt;<br />
+            <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b) -&gt; provider:IView&lt;&#39;a&gt; -&gt; IDisposableView&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
@@ -185,10 +185,29 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
-            subscribe provider f
+            map2 mapping provider1 provider2
           </code>
           <div class="tip" id="11">
-            <strong>Signature:</strong> provider:IView&lt;&#39;a&gt; -&gt; f:(&#39;a -&gt; unit) -&gt; (type)<br />
+            <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:IView&lt;&#39;a&gt; -&gt; provider2:IView&lt;&#39;b&gt; -&gt; IDisposableView&lt;&#39;c&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/View.fs#L97-97" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Transforms two view values by using a specified mapping function.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            subscribe f provider
+          </code>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:IView&lt;&#39;a&gt; -&gt; (type)<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
