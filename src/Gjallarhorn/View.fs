@@ -90,4 +90,4 @@ module View =
     [<CompiledName("Map")>]
     let map (provider : IView<'a>) (mapping : 'a -> 'b) = 
         let view = new View<'a, 'b>(provider, mapping)
-        view :> IDisposableView<'a>
+        view :> IDisposableView<'b>
