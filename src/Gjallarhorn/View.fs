@@ -58,10 +58,8 @@ module View =
     /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required     
     [<CompiledName("FromObservable")>]
     let fromObservable (observable : IObservable<'a>) initialValue =
-        let value = Mutable.create initialValue
-        let callback v =
-            value.Value <- v
-        let disposable = observable.Subscribe(callback)
+        let value = Mutable.create initialValue        
+        let disposable = observable.Subscribe (fun v -> value.Value <- v)
         
         // Return a wrapper around a mutable that changes when the observable changes
         {
