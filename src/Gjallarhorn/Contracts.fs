@@ -29,7 +29,7 @@ type IDisposableView<'a> =
     inherit IView<'a>
     inherit System.IDisposable
 
-/// <summary>A contract for an IObservable<'a> which is also IDisposable</summary>
+/// <summary>A contract for an IObservable which is also IDisposable</summary>
 /// <remarks>Disposing is optional, but will cause the IObservable to stop tracking changes</remarks>
 type IDisposableObservable<'a> =
     inherit System.IObservable<'a>
