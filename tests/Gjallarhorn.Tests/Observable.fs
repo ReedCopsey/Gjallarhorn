@@ -24,7 +24,7 @@ let ``Mutation triggers IObservable`` (start : int) finish =
 [<TestCase(Int32.MinValue, Int32.MaxValue, "2147483647")>]
 let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string) =
     let result = Mutable.create start
-    let view = View.map result (fun i -> i.ToString())
+    let view = View.map (fun i -> i.ToString()) result
     let obs = view.AsObservable()
     
     let changedValue = ref view.Value
@@ -56,10 +56,10 @@ let ``Observable Dispose stops tracking`` (start:int) finish =
  
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
 let ``View.fromObservable initializes properly`` start =
-    let evt = Event<_>()
+    let evt = Event<'a>()
     let obs = evt.Publish
 
-    let view = View.fromObservable obs start
+    let view = View.fromObservable start obs
     Assert.AreEqual(box start, view.Value)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
@@ -67,7 +67,7 @@ let ``View.fromObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish
 
-    let view = View.fromObservable obs start
+    let view = View.fromObservable start obs 
     Assert.AreEqual(box start, view.Value)
 
     evt.Trigger finish

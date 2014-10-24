@@ -27,7 +27,7 @@ module View =
 
     /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required     
     [<CompiledName("FromObservable")>]
-    let fromObservable (observable : IObservable<'a>) initialValue =
+    let fromObservable initialValue (observable : IObservable<'a>) =
         let value = Mutable.create initialValue        
         let disposable = observable.Subscribe (fun v -> value.Value <- v)
         
@@ -47,7 +47,7 @@ module View =
 
     /// Add a permanent subscription to the changes of a view which calls the provided function upon each change
     [<CompiledName("AddToView")>]
-    let add (provider : IView<'a>) (f : 'a -> unit) = 
+    let add (f : 'a -> unit) (provider : IView<'a>) = 
         let dependent =
             {
                 new IDependent with
@@ -60,7 +60,7 @@ module View =
 
     /// Create a subscription to the changes of a view which calls the provided function upon each change
     [<CompiledName("SubscribeToView")>]
-    let subscribe (provider : IView<'a>) (f : 'a -> unit) = 
+    let subscribe (f : 'a -> unit) (provider : IView<'a>) = 
         let rec dependent =
             {
                 new IDependent with
@@ -83,17 +83,17 @@ module View =
 
     /// Executes a function for a view value.
     [<CompiledName("Iterate")>]
-    let iter (view : IView<'a>) (f : 'a -> unit) =
+    let iter (f : 'a -> unit)  (view : IView<'a>)=
         f(view.Value)
 
     /// Transforms a view value by using a specified mapping function.
     [<CompiledName("Map")>]
-    let map (provider : IView<'a>) (mapping : 'a -> 'b) = 
+    let map (mapping : 'a -> 'b)  (provider : IView<'a>) = 
         let view = new View<'a, 'b>(provider, mapping)
         view :> IDisposableView<'b>
 
     /// Transforms two view values by using a specified mapping function.
     [<CompiledName("Map2")>]
-    let map2 (provider1 : IView<'a>) (provider2 : IView<'b>) (mapping : 'a -> 'b -> 'c) = 
+    let map2 (mapping : 'a -> 'b -> 'c) (provider1 : IView<'a>) (provider2 : IView<'b>) = 
         let view = new View2<'a, 'b, 'c>(provider1, provider2, mapping)
         view :> IDisposableView<'c>

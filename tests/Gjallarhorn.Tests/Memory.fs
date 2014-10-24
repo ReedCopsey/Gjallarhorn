@@ -14,7 +14,7 @@ let ``Mutable.create doesn't cause tracking`` () =
 [<Test>]
 let ``View.map causes tracking`` () =
     let value = Mutable.create 42
-    let view = View.map value (fun v -> v.ToString())
+    let view = View.map (fun v -> v.ToString()) value
 
     Assert.AreEqual(true, SignalManager.IsTracked value)
     Assert.AreEqual(false, SignalManager.IsTracked view)
@@ -22,7 +22,7 @@ let ``View.map causes tracking`` () =
 [<Test>]
 let ``View disposal stops tracking`` () =
     let value = Mutable.create 42
-    let view = View.map value (fun v -> v.ToString())
+    let view = View.map (fun v -> v.ToString()) value 
 
     Assert.AreEqual(true, SignalManager.IsTracked value)
     Assert.AreEqual(false, SignalManager.IsTracked view)
@@ -33,7 +33,7 @@ let ``View disposal stops tracking`` () =
 [<Test>]
 let ``Source doesn't prevent view from being garbage collected`` () =
     let value = Mutable.create 42
-    let mutable view = Some(View.map value (fun v -> v.ToString()))
+    let mutable view = Some(View.map (fun v -> v.ToString()) value)
 
     Assert.AreEqual("42", view.Value.Value)
     let wr = WeakReference(view.Value)
@@ -64,7 +64,7 @@ let ``View.cache allows source to be garbage collected`` start finish =
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
 let ``View.cache allows source and view to be garbage collected`` start _ finish finalView =
     let mutable value = Some(Mutable.create start)
-    let mutable view = Some(View.map value.Value (fun v -> v.ToString()))
+    let mutable view = Some(View.map (fun v -> v.ToString()) value.Value)
 
     let cached = View.cache view.Value
 
