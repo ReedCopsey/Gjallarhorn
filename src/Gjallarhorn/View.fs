@@ -74,7 +74,7 @@ module View =
         dependent :> IDisposable
     
     (**************************************************
-     "Core" functions for operating with IView
+     "Composition" functions for operating with IView
     ***************************************************)
     [<CompiledName("Get")>]
     /// Gets the current value associated with the view
@@ -97,3 +97,11 @@ module View =
     let map2 (mapping : 'a -> 'b -> 'c) (provider1 : IView<'a>) (provider2 : IView<'b>) = 
         let view = new View2<'a, 'b, 'c>(provider1, provider2, mapping)
         view :> IDisposableView<'c>
+
+    let apply (mappingView : IView<'a -> 'b>) provider =        
+        let view = new View2<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
+        view :> IDisposableView<'b>
+
+[<AutoOpen>]
+module ViewOperators =
+    let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>

@@ -14,7 +14,9 @@ let ``View.constant constructs with proper value`` start =
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartToString")>]
 let ``View.map constructs from mutable`` start finish =
     let value = Mutable.create start
-    let view = View.map (fun i -> i.ToString()) value
+    let view = 
+        value 
+        |> View.map (fun i -> i.ToString()) 
 
     Assert.AreEqual(box view.Value, finish)
 
@@ -22,7 +24,9 @@ let ``View.map constructs from mutable`` start finish =
 let ``View.map2 constructs from mutables`` start1 start2 finish =
     let v1 = Mutable.create start1
     let v2 = Mutable.create start2
-    let view = View.map2 (fun i j -> i.ToString() + "," + j.ToString()) v1 v2
+    let map i j = i.ToString() + "," + j.ToString()
+    let view = 
+        View.map2 map v1 v2
 
     Assert.AreEqual(box view.Value, finish)
 
@@ -89,3 +93,31 @@ let ``Cached View updates with View`` start initialView finish finalView =
     result.Value <- finish
     Assert.AreEqual(view.Value, finalView)
     Assert.AreEqual(backView.Value, finish)
+
+[<Test>]
+let ``Operator <*> allows arbitrary arity`` () =
+    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3
+    let v4 = Mutable.create 4
+    
+    let view = View.constant f <*> v1 <*> v2 <*> v3 <*> v4
+
+    Assert.AreEqual(view.Value, "1,2,3,4")
+
+[<Test>]
+let ``Operator <*> preserves tracking`` () =
+    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3
+    let v4 = Mutable.create 4
+    
+    let view = View.constant f <*> v1 <*> v2 <*> v3 <*> v4
+    let view = View.apply( View.apply( View.apply( View.apply (View.constant f) v1) v2) v3) v4
+    
+    // Mutate
+    v1.Value <- 5
+    v3.Value <- 7
+    Assert.AreEqual(view.Value, "5,2,7,4")
