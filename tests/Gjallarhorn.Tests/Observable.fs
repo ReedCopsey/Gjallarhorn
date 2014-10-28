@@ -1,6 +1,6 @@
 ﻿module Gjallarhorn.Tests.Observable
 
-open Gjallarhorn
+open Gjallarhorn.Control
 
 open System
 open NUnit.Framework
@@ -10,7 +10,7 @@ open NUnit.Framework
 [<TestCase(Int32.MinValue, Int32.MaxValue)>]
 let ``Mutation triggers IObservable`` (start : int) finish =
     let result = Mutable.create start
-    let obs = result.AsObservable()
+    let obs = result |> View.asObservable
     
     let changedValue = ref result.Value
     use subscription = 
@@ -25,7 +25,7 @@ let ``Mutation triggers IObservable`` (start : int) finish =
 let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string) =
     let result = Mutable.create start
     let view = View.map (fun i -> i.ToString()) result
-    let obs = view.AsObservable()
+    let obs = view |> View.asObservable
     
     let changedValue = ref view.Value
     use subscription = 
@@ -39,7 +39,7 @@ let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string
 [<TestCase(Int32.MinValue, Int32.MaxValue)>]
 let ``Observable Dispose stops tracking`` (start:int) finish =
     let result = Mutable.create start    
-    let obs = result.AsObservable()
+    let obs = result |> View.asObservable
     
     let changedValue = ref result.Value
     let subscription = 

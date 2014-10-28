@@ -1,6 +1,6 @@
 ﻿module Gjallarhorn.Tests.Mutable
 
-open Gjallarhorn
+open Gjallarhorn.Control
 
 open Gjallarhorn.Tests
 

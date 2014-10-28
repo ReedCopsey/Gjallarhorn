@@ -1,4 +1,7 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.Control
+
+open Gjallarhorn
+open Gjallarhorn.Internal
 
 open System
 open System.Runtime.CompilerServices
@@ -31,12 +34,4 @@ type internal Observer<'a>(provider: IView<'a>) as self =
         member this.Dispose() =
             DisposeHelpers.dispose provider this
             provider <- None
-
-[<Extension;AbstractClass;Sealed>] 
-/// Provides extension methods for working on all IView instances
-type ViewExtensions () =        
-    [<Extension>]
-    /// <summary>Converts any IView into an IObservable</summary>
-    /// <remarks>The result can be Disposed to stop tracking</remarks>
-    static member AsObservable(this: IView<'a>) = new Observer<'a>(this) :> IDisposableObservable<'a>
 

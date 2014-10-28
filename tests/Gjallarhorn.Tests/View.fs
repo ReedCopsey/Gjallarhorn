@@ -1,6 +1,6 @@
 module Gjallarhorn.Tests.View
 
-open Gjallarhorn
+open Gjallarhorn.Control
 
 open System
 open NUnit.Framework

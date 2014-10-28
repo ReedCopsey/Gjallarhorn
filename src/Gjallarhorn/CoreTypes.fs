@@ -1,5 +1,7 @@
 ﻿namespace Gjallarhorn
 
+open Gjallarhorn.Internal
+
 open System
 open System.Collections.Generic
 

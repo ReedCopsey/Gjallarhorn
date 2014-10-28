@@ -1,4 +1,6 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.Internal
+
+open Gjallarhorn
 
 open System
 open System.Runtime.CompilerServices

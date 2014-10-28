@@ -1,4 +1,6 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.Control
+
+open Gjallarhorn
 
 /// Manages creation of mutable variables
 module Mutable =

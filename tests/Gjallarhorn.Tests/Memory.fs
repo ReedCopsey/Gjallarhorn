@@ -1,6 +1,7 @@
 ﻿module Gjallarhorn.Tests.Memory
 
-open Gjallarhorn
+open Gjallarhorn.Internal
+open Gjallarhorn.Control
 
 open System
 open NUnit.Framework
