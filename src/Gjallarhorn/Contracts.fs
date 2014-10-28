@@ -25,6 +25,7 @@ type IDependent =
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
     abstract member RequestRefresh : IView<'a> -> unit
 
+/// A view which implements IDisposable in order to stop tracking its source
 type IDisposableView<'a> =
     inherit IView<'a>
     inherit System.IDisposable

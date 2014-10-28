@@ -7,10 +7,6 @@ open System
 
 /// Provides mechanisms for working with IView views
 module View =
-
-    (**************************************************
-     "Creation" functions for building IView
-    ***************************************************)
     
     /// Create a view over a constant, immutable value
     let constant (value : 'a) = 
@@ -40,11 +36,6 @@ module View =
                     disposable.Dispose()
         }
 
-    (**************************************************
-     "Subscription" functions for tracking IView changes
-     without using a new IView
-    ***************************************************)
-
     /// Add a permanent subscription to the changes of a view which calls the provided function upon each change
     let add (f : 'a -> unit) (provider : IView<'a>) = 
         let dependent =
@@ -71,9 +62,6 @@ module View =
         SignalManager.AddDependency provider dependent
         dependent :> IDisposable
     
-    (**************************************************
-     "Composition" functions for operating with IView
-    ***************************************************)
     /// Gets the current value associated with the view
     let get (view : IView<'a>) = 
         view.Value
@@ -92,6 +80,7 @@ module View =
         let view = new View2<'a, 'b, 'c>(provider1, provider2, mapping)
         view :> IDisposableView<'c>
 
+    /// Applies a View of a function in order to provide mapping of arbitrary arity
     let apply (mappingView : IView<'a -> 'b>) provider =        
         let view = new View2<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
         view :> IDisposableView<'b>
@@ -103,5 +92,7 @@ module View =
 
 
 [<AutoOpen>]
+/// Custom operators for composing IView instances
 module ViewOperators =
+    /// Performs the application, allowing for View.constant someFunUsingABC <*> a <*> b <*> c
     let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>
