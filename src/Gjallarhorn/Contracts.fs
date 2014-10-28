@@ -17,7 +17,6 @@ type IMutatable<'a> =
     /// The current value of the type
     abstract member Value : 'a with get, set
 
-
 /// A type which depends on some IValueProvider
 [<AllowNullLiteral>]
 type IDependent =
