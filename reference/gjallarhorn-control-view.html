@@ -41,6 +41,24 @@
 </div>
 
 <!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-control-view-viewbuilder.html">ViewBuilder</a>
+          </td>
+          <td class="xmldoc"><p>Custom computation expression builder for composing IView instances dynamically</p>
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
 
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
@@ -128,9 +146,28 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            constant value
+            compose 
           </code>
           <div class="tip" id="8">
+            <strong>Signature:</strong> ViewBuilder<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/View.fs#L105-105" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a computation expression you can use to compose multiple views</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+            constant value
+          </code>
+          <div class="tip" id="9">
             <strong>Signature:</strong> value:&#39;a -&gt; IView&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -146,10 +183,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
             fromObservable initialValue observable
           </code>
-          <div class="tip" id="9">
+          <div class="tip" id="10">
             <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:(type) -&gt; IDisposableView&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -165,10 +202,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
             get view
           </code>
-          <div class="tip" id="10">
+          <div class="tip" id="11">
             <strong>Signature:</strong> view:IView&lt;&#39;a&gt; -&gt; &#39;a<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -184,10 +221,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
             iter f view
           </code>
-          <div class="tip" id="11">
+          <div class="tip" id="12">
             <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; view:IView&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -203,10 +240,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
             map mapping provider
           </code>
-          <div class="tip" id="12">
+          <div class="tip" id="13">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b) -&gt; provider:IView&lt;&#39;a&gt; -&gt; IDisposableView&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -222,10 +259,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
             map2 mapping provider1 provider2
           </code>
-          <div class="tip" id="13">
+          <div class="tip" id="14">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:IView&lt;&#39;a&gt; -&gt; provider2:IView&lt;&#39;b&gt; -&gt; IDisposableView&lt;&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
         </td>
@@ -241,10 +278,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
             subscribe f provider
           </code>
-          <div class="tip" id="14">
+          <div class="tip" id="15">
             <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:IView&lt;&#39;a&gt; -&gt; (type)<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
