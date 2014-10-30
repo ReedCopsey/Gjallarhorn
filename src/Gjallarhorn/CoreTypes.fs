@@ -89,16 +89,19 @@ type internal View2<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView
             valueProvider1 <- None
             valueProvider2 <- None
 
-type internal ViewCache<'a>(valueProvider : IView<'a>) as self =
+type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool) as self =
     let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
     let mutable handle = WeakReference(valueProvider)
 
-    do
-        SignalManager.AddDependency valueProvider self
+    let shouldSignal value = 
+        match filter with
+        | Some(f) -> f(value)
+        | None -> true
 
-    member __.Value with get() = v
+    do
+        SignalManager.AddDependency valueProvider self    
 
     interface IDisposableView<'a> with
         member __.Value with get() = v
@@ -108,8 +111,10 @@ type internal ViewCache<'a>(valueProvider : IView<'a>) as self =
             if handle <> null then
                 match handle.Target with
                 | :? IView<'a> as provider -> 
-                    v <- provider.Value
-                    SignalManager.Signal(this)
+                    let value = provider.Value
+                    if shouldSignal(value) then
+                        v <- value
+                        SignalManager.Signal(this)
                 | _ -> ()
 
     interface IDisposable with

@@ -95,6 +95,21 @@ let ``Cached View updates with View`` start initialView finish finalView =
     Assert.AreEqual(backView.Value, finish)
 
 [<Test>]
+let ``View.filter doesn't propogate inappropriate changes`` () =
+    let v = Mutable.create 1
+    let view = View.map (fun i -> 10*i) v
+
+    let filter = View.filter (fun i -> i < 100) view
+
+    Assert.AreEqual(10, filter.Value)
+
+    v.Value <- 5
+    Assert.AreEqual(50, filter.Value)
+
+    v.Value <- 25
+    Assert.AreEqual(50, filter.Value)
+
+[<Test>]
 let ``Operator <*> allows arbitrary arity`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1

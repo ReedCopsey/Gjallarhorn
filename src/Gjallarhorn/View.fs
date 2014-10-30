@@ -80,6 +80,11 @@ module View =
         let view = new View2<'a, 'b, 'c>(provider1, provider2, mapping)
         view :> IDisposableView<'c>
 
+    /// Filters the view, so only values matching the predicate are cached and propogated onwards
+    let filter (predicate : 'a -> bool) (provider : IView<'a>) =
+        let view = new ViewCache<'a>(provider, predicate)
+        view :> IDisposableView<'a>
+
     /// Applies a View of a function in order to provide mapping of arbitrary arity
     let apply (mappingView : IView<'a -> 'b>) provider =        
         let view = new View2<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
