@@ -135,16 +135,16 @@ let ``Compose a view using a computation expression``() =
         let! finish = v2
         let! mut = m1
         if finish > 500 then
-            return start
+            return sprintf "%i" start
         else
-            return start + finish + mut
+            return sprintf "%i" (start + finish + mut)
     }
     
-    Assert.AreEqual(view.Value, 212)
+    Assert.AreEqual("212", view.Value)
 
     // Mutate
     m1.Value <- 5
-    Assert.AreEqual(view.Value, 220)
+    Assert.AreEqual("220", view.Value)
 
     m2.Value <- 7
-    Assert.AreEqual(view.Value, 15)
+    Assert.AreEqual("15", view.Value)
