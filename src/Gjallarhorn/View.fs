@@ -90,7 +90,20 @@ module View =
     let asObservable (view : IView<'a>) =
         new Observer<'a>(view) :> IDisposableObservable<'a>
 
+    /// Custom computation expression builder for composing IView instances dynamically
+    type ViewBuilder() =        
+        /// Called for let! in computation expression to extract the value from a view
+        member __.Bind(view : IView<'a>, f : 'a -> IView<'b>) = 
+            let unwrap value = f(value).Value
+            map unwrap view :> IView<'b>
+    
+        /// Called for return in computation expressions to recompose the view.
+        member __.Return (v : 'a) =
+            constant v
 
+    /// Create a computation expression you can use to compose multiple views
+    let compose = ViewBuilder()
+    
 [<AutoOpen>]
 /// Custom operators for composing IView instances
 module ViewOperators =

@@ -115,9 +115,36 @@ let ``Operator <*> preserves tracking`` () =
     let v4 = Mutable.create 4
     
     let view = View.constant f <*> v1 <*> v2 <*> v3 <*> v4
-    let view = View.apply( View.apply( View.apply( View.apply (View.constant f) v1) v2) v3) v4
+    // let view = View.apply( View.apply( View.apply( View.apply (View.constant f) v1) v2) v3) v4
     
     // Mutate
     v1.Value <- 5
     v3.Value <- 7
     Assert.AreEqual(view.Value, "5,2,7,4")
+
+[<Test>]
+let ``Compose a view using a computation expression``() =
+    let m1 = Mutable.create 1
+    let m2 = Mutable.create 2
+
+    let v1 = View.map (fun i -> i+10) m1
+    let v2 = View.map (fun i -> i*100) m2
+
+    let view = View.compose {
+        let! start = v1
+        let! finish = v2
+        let! mut = m1
+        if finish > 500 then
+            return start
+        else
+            return start + finish + mut
+    }
+    
+    Assert.AreEqual(view.Value, 212)
+
+    // Mutate
+    m1.Value <- 5
+    Assert.AreEqual(view.Value, 220)
+
+    m2.Value <- 7
+    Assert.AreEqual(view.Value, 15)
