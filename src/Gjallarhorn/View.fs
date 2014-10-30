@@ -101,7 +101,9 @@ module View =
         member __.Return (v : 'a) =
             constant v
 
-    /// Create a computation expression you can use to compose multiple views
+    /// <summary>Create a computation expression you can use to compose multiple views</summary>
+    /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
+    /// and rely on the GC to clean up the subscriptions.</remarks>
     let compose = ViewBuilder()
     
 [<AutoOpen>]
