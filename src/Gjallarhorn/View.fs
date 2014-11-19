@@ -85,6 +85,14 @@ module View =
         let view = new ViewCache<'a>(provider, predicate)
         view :> IDisposableView<'a>
 
+    /// Need a description
+    let choose (predicate : 'a -> 'b option) (provider : IView<'a>) =
+        // TODO: How do we "push" dispose changes through here?
+        let map = new View<'a,'b option>(provider, predicate)
+        let filter = new ViewCache<'b option>(map, (fun v -> v <> None))
+        let view = new View<'b option, 'b>(filter, (fun opt -> opt.Value))
+        view :> IDisposableView<'b>
+
     /// Applies a View of a function in order to provide mapping of arbitrary arity
     let apply (mappingView : IView<'a -> 'b>) provider =        
         let view = new View2<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
