@@ -10,19 +10,27 @@ type IView<'a> =
     /// The current value of the type
     abstract member Value : 'a with get
 
+    /// Add a dependent to this view explicitly
+    abstract member AddDependency : IDependent -> unit
+    
+    /// Remove a dependent from this view explicitly
+    abstract member RemoveDependency : IDependent -> unit
+
+    /// Signal to all dependents to refresh themselves
+    abstract member Signal : unit -> unit
+and 
+    /// A type which depends on some IValueProvider
+    [<AllowNullLiteral>] IDependent =
+    inherit System.IDisposable
+    /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
+    abstract member RequestRefresh : IView<'a> -> unit
+
 /// Core interface for all mutatable types
 type IMutatable<'a> =
     inherit IView<'a>
     
     /// The current value of the type
     abstract member Value : 'a with get, set
-
-/// A type which depends on some IValueProvider
-[<AllowNullLiteral>]
-type IDependent =
-    inherit System.IDisposable
-    /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
-    abstract member RequestRefresh : IView<'a> -> unit
 
 /// A view which implements IDisposable in order to stop tracking its source
 type IDisposableView<'a> =

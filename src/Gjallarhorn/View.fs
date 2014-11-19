@@ -13,6 +13,13 @@ module View =
         {
             new IView<'a> with
                 member __.Value = value
+
+                member this.AddDependency dep =
+                    SignalManager.AddDependency this dep                
+                member this.RemoveDependency dep =
+                    SignalManager.RemoveDependency this dep
+                member this.Signal () =
+                    SignalManager.Signal(this)
         }
 
     /// <summary>Create a cached view over a provider</summary>
@@ -31,6 +38,12 @@ module View =
         {
             new IDisposableView<'a> with
                 member __.Value = value.Value
+                member this.AddDependency dep =
+                    SignalManager.AddDependency this dep                
+                member this.RemoveDependency dep =
+                    SignalManager.RemoveDependency this dep
+                member this.Signal () =
+                    SignalManager.Signal(this)
             interface IDisposable with
                 member __.Dispose() =
                     disposable.Dispose()
