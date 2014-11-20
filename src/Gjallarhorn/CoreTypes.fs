@@ -44,11 +44,16 @@ type internal Mutable<'a>(value : 'a) =
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
 
-type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self =
+type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, useSignalManager : bool) as self =
     do
         valueProvider.AddDependency self
 
     let mutable valueProvider = Some(valueProvider)
+    let dependencies = if useSignalManager then null else System.Collections.Generic.HashSet<_>()
+
+    let signalDependencies () =
+        let signal (dep : IDependent) = dep.RequestRefresh(self)        
+        Seq.iter signal dependencies
 
     let value () = 
         DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
@@ -56,14 +61,24 @@ type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b) as self
 
     member __.Value with get() = value()
 
-    member this.Signal () = SignalManager.Signal(this)
+    member this.Signal () = 
+        if useSignalManager then
+            SignalManager.Signal(this)
+        else
+            signalDependencies()
 
     interface IDisposableView<'b> with
         member __.Value with get() = value()
         member this.AddDependency dep =
-            SignalManager.AddDependency this dep                
+            if useSignalManager then
+                SignalManager.AddDependency this dep                
+            else
+                dependencies.Add dep |> ignore
         member this.RemoveDependency dep =
-            SignalManager.RemoveDependency this dep
+            if useSignalManager then
+                SignalManager.RemoveDependency this dep
+            else
+                dependencies.Remove dep |> ignore
         member this.Signal () =
             this.Signal()
 
@@ -113,11 +128,17 @@ type internal View2<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView
             valueProvider1 <- None
             valueProvider2 <- None
 
-type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool) as self =
+type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool, ?useSignalManager : bool) as self =
+    let useSignalManager = defaultArg useSignalManager true
     let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
     let mutable handle = WeakReference(valueProvider)
+
+    let dependencies = if useSignalManager then null else System.Collections.Generic.HashSet<_>()
+    let signalDependencies () =
+        let signal (dep : IDependent) = dep.RequestRefresh(self)        
+        Seq.iter signal dependencies
 
     let shouldSignal value = 
         match filter with
@@ -125,17 +146,29 @@ type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool) as
         | None -> true
 
     do
-        // Use SignalManager explicitly here since we're a "cached" view
-        SignalManager.AddDependency valueProvider self    
+        if useSignalManager then
+            SignalManager.AddDependency valueProvider self    
+        else
+            valueProvider.AddDependency self
 
-    member this.Signal() = SignalManager.Signal(this)
+    member this.Signal() = 
+        if useSignalManager then
+            SignalManager.Signal(this)
+        else
+            signalDependencies()            
 
     interface IDisposableView<'a> with
         member __.Value with get() = v
         member this.AddDependency dep =
-            SignalManager.AddDependency this dep                
+            if useSignalManager then
+                SignalManager.AddDependency this dep                
+            else
+                dependencies.Add dep |> ignore
         member this.RemoveDependency dep =
-            SignalManager.RemoveDependency this dep
+            if useSignalManager then
+                SignalManager.RemoveDependency this dep
+            else
+                dependencies.Remove dep |> ignore
         member this.Signal () =
             this.Signal()
 

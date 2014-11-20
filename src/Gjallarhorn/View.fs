@@ -85,7 +85,7 @@ module View =
 
     /// Transforms a view value by using a specified mapping function.
     let map (mapping : 'a -> 'b)  (provider : IView<'a>) = 
-        let view = new View<'a, 'b>(provider, mapping)
+        let view = new View<'a, 'b>(provider, mapping, true)
         view :> IDisposableView<'b>
 
     /// Transforms two view values by using a specified mapping function.
@@ -101,9 +101,9 @@ module View =
     /// Need a description
     let choose (predicate : 'a -> 'b option) (provider : IView<'a>) =
         // TODO: How do we "push" dispose changes through here?
-        let map = new View<'a,'b option>(provider, predicate)
-        let filter = new ViewCache<'b option>(map, (fun v -> v <> None))
-        let view = new View<'b option, 'b>(filter, (fun opt -> opt.Value))
+        let map = new View<'a,'b option>(provider, predicate, false)
+        let filter = new ViewCache<'b option>(map, (fun v -> v <> None), false)
+        let view = new View<'b option, 'b>(filter, (fun opt -> opt.Value), true)
         view :> IDisposableView<'b>
 
     /// Applies a View of a function in order to provide mapping of arbitrary arity

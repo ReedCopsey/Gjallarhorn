@@ -57,9 +57,10 @@ type internal SignalManager() =
 
     static member Signal (source : IView<'a>) =
         let exists, dep = dependencies.TryGetValue(source)
-        if exists then 
-            if not(dep.Signal(source)) then
-                remove source
+        lock dependencies (fun _ ->
+            if exists then             
+                if not(dep.Signal(source)) then
+                    remove source)
 
     static member AddDependency (source : IView<'a>) target =
         lock dependencies (fun _ -> 
@@ -68,8 +69,9 @@ type internal SignalManager() =
 
     static member RemoveDependency (source : IView<'a>) target =
         let dep = dependencies.GetValue(source, createValueCallback)
-        if not(dep.RemoveDependency target) then
-            remove source
+        lock dependencies (fun _ -> 
+            if not(dep.RemoveDependency target) then
+                remove source)
 
     static member IsTracked (source : IView<'a>) =
         let exists, dep = dependencies.TryGetValue(source)
