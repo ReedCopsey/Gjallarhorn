@@ -32,6 +32,6 @@ type internal Observer<'a>(provider: IView<'a>) as self =
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose provider this
+            DisposeHelpers.dispose provider false this
             provider <- None
 

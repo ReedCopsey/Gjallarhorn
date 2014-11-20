@@ -59,7 +59,7 @@ module View =
                 interface IDisposable with
                     member __.Dispose() = ()
             }
-        SignalManager.AddDependency provider dependent        
+        provider.AddDependency dependent
 
     /// Create a subscription to the changes of a view which calls the provided function upon each change
     let subscribe (f : 'a -> unit) (provider : IView<'a>) = 
@@ -70,9 +70,9 @@ module View =
                         f(provider.Value)
                 interface IDisposable with
                     member __.Dispose() = 
-                        SignalManager.RemoveDependency provider dependent
+                        provider.RemoveDependency dependent
             }
-        SignalManager.AddDependency provider dependent
+        provider.AddDependency dependent
         dependent :> IDisposable
     
     /// Gets the current value associated with the view
@@ -85,7 +85,7 @@ module View =
 
     /// Transforms a view value by using a specified mapping function.
     let map (mapping : 'a -> 'b)  (provider : IView<'a>) = 
-        let view = new View<'a, 'b>(provider, mapping, true)
+        let view = new View<'a, 'b>(provider, mapping, true, false)
         view :> IDisposableView<'b>
 
     /// Transforms two view values by using a specified mapping function.
@@ -101,9 +101,9 @@ module View =
     /// Need a description
     let choose (predicate : 'a -> 'b option) (provider : IView<'a>) =
         // TODO: How do we "push" dispose changes through here?
-        let map = new View<'a,'b option>(provider, predicate, false)
-        let filter = new ViewCache<'b option>(map, (fun v -> v <> None), false)
-        let view = new View<'b option, 'b>(filter, (fun opt -> opt.Value), true)
+        let map = new View<'a,'b option>(provider, predicate, false, false)
+        let filter = new ViewCache<'b option>(map, (fun v -> v <> None), false, true)
+        let view = new View<'b option, 'b>(filter, (fun opt -> opt.Value), true, true)
         view :> IDisposableView<'b>
 
     /// Applies a View of a function in order to provide mapping of arbitrary arity
@@ -120,11 +120,15 @@ module View =
     type ViewBuilder() =        
         /// Called for let! in computation expression to extract the value from a view
         member __.Bind(view : IView<'a>, f : 'a -> IView<'b>) = 
+            System.Diagnostics.Debug.WriteLine "Bind"
             let unwrap value = f(value).Value
+            // TODO: Should this "dispose" the calling view somehow?
             map unwrap view :> IView<'b>
     
         /// Called for return in computation expressions to recompose the view.
         member __.Return (v : 'a) =
+            System.Diagnostics.Debug.WriteLine "Return"
+            // TODO: Should this "dispose" the calling view somehow?
             constant v
 
     /// <summary>Create a computation expression you can use to compose multiple views</summary>

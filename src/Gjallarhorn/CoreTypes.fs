@@ -12,11 +12,20 @@ module internal DisposeHelpers =
         | Some(v) -> v.Value
         | None -> raise <| ObjectDisposedException(typeNameFun())        
 
-    let dispose (provider : IView<'a> option) self =
+    let disposeIfDisposable (v : obj) =
+        match v with
+        | :? IDisposable as d -> 
+            d.Dispose()
+        | _ -> ()
+        
+    let dispose (provider : IView<'a> option) disposeProviderOnDispose self =
             match provider with
             | None -> ()
             | Some(v) ->
                 v.RemoveDependency self
+                
+                if disposeProviderOnDispose then
+                    disposeIfDisposable v
 
 // A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
 type internal Mutable<'a>(value : 'a) =
@@ -44,7 +53,7 @@ type internal Mutable<'a>(value : 'a) =
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
 
-type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, useSignalManager : bool) as self =
+type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, useSignalManager : bool, disposeProviderOnDispose : bool) as self =
     do
         valueProvider.AddDependency self
 
@@ -88,7 +97,7 @@ type internal View<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, useSign
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose valueProvider this
+            DisposeHelpers.dispose valueProvider disposeProviderOnDispose this
             valueProvider <- None
 
 type internal View2<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
@@ -123,13 +132,14 @@ type internal View2<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose valueProvider1 this
-            DisposeHelpers.dispose valueProvider2 this
+            DisposeHelpers.dispose valueProvider1 false this
+            DisposeHelpers.dispose valueProvider2 false this
             valueProvider1 <- None
             valueProvider2 <- None
 
-type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool, ?useSignalManager : bool) as self =
+type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool, ?useSignalManager : bool, ?disposeProviderOnDispose : bool) as self =
     let useSignalManager = defaultArg useSignalManager true
+    let disposeProviderOnDispose = defaultArg disposeProviderOnDispose false
     let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
@@ -189,5 +199,7 @@ type internal ViewCache<'a> (valueProvider : IView<'a>, ?filter : 'a -> bool, ?u
                 match handle.Target with
                 | :? IView<'a> as v ->
                     v.RemoveDependency this
+                    if disposeProviderOnDispose then
+                        DisposeHelpers.disposeIfDisposable v
                     handle <- null
                 | _ -> ()

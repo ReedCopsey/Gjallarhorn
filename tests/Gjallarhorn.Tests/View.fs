@@ -123,7 +123,7 @@ let ``View.choose doesn't propogate inappropriate changes`` () =
 
     v.Value <- 25
     Assert.AreEqual(50, filter.Value)
-
+    
 [<Test>]
 let ``Operator <*> allows arbitrary arity`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
