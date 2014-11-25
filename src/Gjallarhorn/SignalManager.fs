@@ -10,12 +10,12 @@ type internal DependencyInformation() =
     let mutable dependencies = ResizeArray<_>()
 
     // This is ugly, as it purposefully creates side effects
-    // It returns true if we signaled and the object is alive,
-    // otherwise false
-    let signalIfAlive source (wr: WeakReference) =
-        let dep = wr.Target :?> IDependent
-        if dep <> null then dep.RequestRefresh(source)
-        dep = null
+    // It returns false if we signaled and the object is alive,
+    // otherwise true
+    let signalIfAlive source (wr: WeakReference<IDependent>) =
+        let success, dep = wr.TryGetTarget() 
+        if success then dep.RequestRefresh(source)        
+        not success
             
     // This signals using the above function, and removes any garbage collected dependencies
     let signalAndFilter (source : IView<'a>) =
@@ -26,15 +26,15 @@ type internal DependencyInformation() =
     let removeAndFilter dependency =
         dependencies.RemoveAll(
             (fun wr -> 
-                match wr.Target with
-                | null -> true
-                | v when obj.ReferenceEquals(v, dependency) -> true
+                match wr.TryGetTarget() with
+                | false, _ -> true
+                | true, v when obj.ReferenceEquals(v, dependency) -> true
                 | _ -> false)) |> ignore
         dependencies.Count > 0
 
     // Add a dependent object to be signaled
     member this.AddDependency (dependency : IDependent) =
-        lock this (fun _ -> dependencies.Add(WeakReference(dependency)))
+        lock this (fun _ -> dependencies.Add(WeakReference<IDependent>(dependency)))
 
     // Add a dependent object to be signaled
     member this.RemoveDependency (dependency : IDependent) =
