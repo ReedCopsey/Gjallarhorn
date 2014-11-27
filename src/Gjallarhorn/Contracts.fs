@@ -3,6 +3,13 @@ namespace Gjallarhorn
 [<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Tests")>]
 do ()
 
+/// Used to define the type of tracking used.  This allows weak referencing to be supported as needed
+type DependencyTrackingMechanism =
+    /// Use the default mechanism preferred from the source view type
+    | Default
+    /// Force weak referencing to prevent the source from keeping a strong reference to the target
+    | WeakReferenced
+
 /// <summary>Core interface for all members which provide a current value
 /// Dependent views can use this to query the current state
 /// of the mutable value</summary>
@@ -11,10 +18,10 @@ type IView<'a> =
     abstract member Value : 'a with get
 
     /// Add a dependent to this view explicitly
-    abstract member AddDependency : IDependent -> unit
+    abstract member AddDependency : DependencyTrackingMechanism -> IDependent -> unit
     
     /// Remove a dependent from this view explicitly
-    abstract member RemoveDependency : IDependent -> unit
+    abstract member RemoveDependency : DependencyTrackingMechanism -> IDependent -> unit
 
     /// Signal to all dependents to refresh themselves
     abstract member Signal : unit -> unit

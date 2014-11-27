@@ -154,6 +154,23 @@ let ``Operator <*> preserves tracking`` () =
 
 [<Test>]
 let ``Compose a view using a computation expression``() =
+    let m1 = Mutable.create "Foo"
+    let m2 = Mutable.create "Bar"
+
+    let view = View.compose {
+        let! first = m1
+        let! last = m2
+        return sprintf "%s %s" first last
+    }
+    
+    Assert.AreEqual("Foo Bar", view.Value)
+
+    // Mutate
+    m2.Value <- "Baz"
+    Assert.AreEqual("Foo Baz", view.Value)
+
+[<Test>]
+let ``Compose a filtered view using a computation expression``() =
     let m1 = Mutable.create 1
     let m2 = Mutable.create 2
 
@@ -169,12 +186,14 @@ let ``Compose a view using a computation expression``() =
         else
             return sprintf "%i" (start + finish + mut)
     }
+
+    let toNum = View.map Int32.Parse view
     
-    Assert.AreEqual("212", view.Value)
+    Assert.AreEqual(212, toNum.Value)
 
     // Mutate
     m1.Value <- 5
-    Assert.AreEqual("220", view.Value)
+    Assert.AreEqual(220, toNum.Value)
 
     m2.Value <- 7
-    Assert.AreEqual("15", view.Value)
+    Assert.AreEqual(15, toNum.Value)

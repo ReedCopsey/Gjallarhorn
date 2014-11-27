@@ -10,7 +10,7 @@ open System.Runtime.CompilerServices
 type internal Observer<'a>(provider: IView<'a>) as self =    
     let subscribers = ResizeArray<IObserver<'a>>()
     do
-        SignalManager.AddDependency provider self
+        provider.AddDependency DependencyTrackingMechanism.Default self
     let mutable provider = Some(provider)
 
     let value () = DisposeHelpers.getValue provider (fun _ -> self.GetType().FullName)
@@ -32,6 +32,6 @@ type internal Observer<'a>(provider: IView<'a>) as self =
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose provider false this
+            DisposeHelpers.dispose provider false DependencyTrackingMechanism.Default this
             provider <- None
 

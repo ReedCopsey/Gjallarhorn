@@ -73,6 +73,9 @@ type internal SignalManager() =
             if not(dep.RemoveDependency target) then
                 remove source)
 
+    static member RemoveAllDependencies (source : IView<'a>) =
+        remove source
+
     static member IsTracked (source : IView<'a>) =
         let exists, dep = dependencies.TryGetValue(source)
         exists
