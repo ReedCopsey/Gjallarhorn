@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Namespaces - Gjallarhorn</title>
+    <title>DependencyTrackingMechanism - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Gjallarhorn Team"/>
@@ -33,95 +33,58 @@
         <div class="span9" id="main">
           
 
-<h1>Gjallarhorn</h1>
 
-    <h2>Gjallarhorn Namespace</h2>
-    <div>
-        <table class="table table-bordered type-list">
+
+<h1>DependencyTrackingMechanism</h1>
+<div class="xmldoc">
+<p>Used to define the type of tracking used.  This allows weak referencing to be supported as needed</p>
+</div>
+  <h3>Union Cases</h3>
+  <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Type</td><td>Description</td></tr>
+      <tr><td>Union Case</td><td>Description</td></tr>
     </thead>
     <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-dependencytrackingmechanism.html">DependencyTrackingMechanism</a>
-          </td>
-          <td class="xmldoc"><p>Used to define the type of tracking used.  This allows weak referencing to be supported as needed</p>
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idependent.html">IDependent</a>
-          </td>
-          <td class="xmldoc"><p>A type which depends on some IValueProvider</p>
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idisposableobservable-1.html">IDisposableObservable<'a></a>
-          </td>
-          <td class="xmldoc"><p>A contract for an IObservable which is also IDisposable</p>
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idisposableview-1.html">IDisposableView<'a></a>
-          </td>
-          <td class="xmldoc"><p>A view which implements IDisposable in order to stop tracking its source</p>
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-imutatable-1.html">IMutatable<'a></a>
-          </td>
-          <td class="xmldoc"><p>Core interface for all mutatable types</p>
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-iview-1.html">IView<'a></a>
-          </td>
-          <td class="xmldoc"><p>Core interface for all members which provide a current value
- Dependent views can use this to query the current state
- of the mutable value</p>
-</td>
-        </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            Default
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> <br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L9-9" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Use the default mechanism preferred from the source view type</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            WeakReferenced
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> <br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L11-11" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Force weak referencing to prevent the source from keeping a strong reference to the target</p>
+
+        </td>
+      </tr>
     </tbody>
   </table>
-
-    </div>
-    <h2>Gjallarhorn.Control Namespace</h2>
-    <div>
-        <table class="table table-bordered module-list">
-    <thead>
-      <tr><td>Module</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-control-mutable.html">Mutable</a>
-          </td>
-          <td class="xmldoc"><p>Manages creation of mutable variables</p>
-</td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-control-view.html">View</a>
-          </td>
-          <td class="xmldoc"><p>Provides mechanisms for working with IView views</p>
-</td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-control-viewoperators.html">ViewOperators</a>
-          </td>
-          <td class="xmldoc"><p>Custom operators for composing IView instances</p>
-</td>
-        </tr>
-    </tbody>
-  </table>
-
-    </div>
 
         </div>
         <div class="span3">
