@@ -60,18 +60,6 @@ module View =
         value.AddDependency DependencyTrackingMechanism.Default (dependent :?> IDependent)
         dependent
 
-    /// Add a permanent subscription to the changes of a view which calls the provided function upon each change
-    let add (f : 'a -> unit) (provider : IView<'a>) = 
-        let dependent =
-            {
-                new IDependent with
-                    member __.RequestRefresh _ =
-                        f(provider.Value)
-                interface IDisposable with
-                    member __.Dispose() = ()
-            }
-        provider.AddDependency DependencyTrackingMechanism.Default dependent
-
     /// Create a subscription to the changes of a view which calls the provided function upon each change
     let subscribe (f : 'a -> unit) (provider : IView<'a>) = 
         let rec dependent =
