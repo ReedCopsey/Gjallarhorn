@@ -174,8 +174,8 @@ let ``Compose a filtered view using a computation expression``() =
     let m1 = Mutable.create 1
     let m2 = Mutable.create 2
 
-    let v1 = View.map (fun i -> i+10) m1
-    let v2 = View.map (fun i -> i*100) m2
+    let v1 = m1 |> View.map (fun i -> i+10) 
+    let v2 = m2 |> View.map (fun i -> i*100) 
 
     let view = View.compose {
         let! start = v1

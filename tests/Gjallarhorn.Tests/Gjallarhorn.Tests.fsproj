@@ -68,6 +68,7 @@
     <Compile Include="Utilities.fs" />
     <Compile Include="Mutable.fs" />
     <Compile Include="View.fs" />
+    <Compile Include="Edit.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="Memory.fs" />
     <None Include="paket.references" />

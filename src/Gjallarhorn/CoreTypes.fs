@@ -11,6 +11,11 @@ module internal DisposeHelpers =
         | Some(v) -> v.Value
         | None -> raise <| ObjectDisposedException(typeNameFun())        
 
+    let setValue (provider : IMutatable<_> option) mapping value typeNameFun =
+        match provider with 
+        | Some(v) -> v.Value <- mapping(value)
+        | None -> raise <| ObjectDisposedException(typeNameFun())        
+
     let disposeIfDisposable (v : obj) =
         match v with
         | :? IDisposable as d -> 
@@ -106,6 +111,49 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
     interface IDisposable with
         member this.Dispose() =
             DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            valueProvider <- None
+            SignalManager.RemoveAllDependencies this
+
+type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping : 'a -> 'b, editMapping : 'b -> 'a, disposeProviderOnDispose : bool) as self =
+    do
+        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+
+    let mutable valueProvider = Some(valueProvider)
+    let dependencies = DependencyTracker(self)
+
+    let vpToView vp = 
+        Option.map (fun m -> m :> IView<_>) vp
+
+    let value () = 
+        DisposeHelpers.getValue (vpToView valueProvider) (fun _ -> self.GetType().FullName)
+        |> viewMapping
+
+    let set value =
+        DisposeHelpers.setValue valueProvider editMapping value (fun _ -> self.GetType().FullName)
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()
+        GC.SuppressFinalize this
+
+    interface IDisposableView<'b> 
+    interface IMutatable<'b> with
+        member __.Value with get() = value() and set(v) = set v
+    interface IView<'b> with
+        member __.Value with get() = value()
+        member __.AddDependency mechanism dep =
+            dependencies.Add mechanism dep 
+        member __.RemoveDependency mechanism dep =
+            dependencies.Remove mechanism dep 
+        member this.Signal () =
+            dependencies.Signal this
+
+    interface IDependent with
+        member this.RequestRefresh _ = 
+            dependencies.Signal this
+
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose DependencyTrackingMechanism.Default this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
