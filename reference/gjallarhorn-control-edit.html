@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>DependencyTrackingMechanism - Gjallarhorn</title>
+    <title>Edit - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Gjallarhorn Team"/>
@@ -35,51 +35,54 @@
 
 
 
-<h1>DependencyTrackingMechanism</h1>
+<h1>Edit</h1>
 <div class="xmldoc">
-<p>Used to define the type of tracking used.  This allows weak referencing to be supported as needed</p>
+<p>Provides mechanisms for editing IMutatable instances</p>
 </div>
-  <h3>Union Cases</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Union Case</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            Default
+          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+            map viewMapping setMapping provider
           </code>
-          <div class="tip" id="20">
-            <strong>Signature:</strong> <br />
-                      </div>
+          <div class="tip" id="1">
+            <strong>Signature:</strong> viewMapping:(&#39;a -&gt; &#39;b) -&gt; setMapping:(&#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L9-9" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Edit.fs#L11-11" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Use the default mechanism preferred from the source view type</p>
+          <p>Transforms a mutatable value for editing by using a specified mapping function for view and edit.</p>
 
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            WeakReferenced
+          <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
+            mapConvertible provider
           </code>
-          <div class="tip" id="21">
-            <strong>Signature:</strong> <br />
-                      </div>
+          <div class="tip" id="2">
+            <strong>Signature:</strong> provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L11-11" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Edit.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Force weak referencing to prevent the source from keeping a strong reference to the target</p>
+          <p>Transforms a mutatable value from one IConvertible type to another.</p>
 
         </td>
       </tr>
