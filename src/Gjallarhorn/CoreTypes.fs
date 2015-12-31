@@ -157,6 +157,49 @@ type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping :
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
+type internal SteppingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping : 'a -> 'b, stepFunction : 'a -> 'b -> 'a, disposeProviderOnDispose : bool) as self =
+    do
+        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+
+    let mutable valueProvider = Some(valueProvider)
+    let dependencies = DependencyTracker(self)
+
+    let vpToView vp = 
+        Option.map (fun m -> m :> IView<_>) vp
+
+    let currentValue () = DisposeHelpers.getValue (vpToView valueProvider) (fun _ -> self.GetType().FullName)
+    let value () : 'b = currentValue() |> viewMapping
+
+    let set (newValue : 'b) =
+        let set v = stepFunction (currentValue()) newValue
+        DisposeHelpers.setValue valueProvider set newValue (fun _ -> self.GetType().FullName)
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()
+        GC.SuppressFinalize this
+
+    interface IDisposableView<'b> 
+    interface IMutatable<'b> with
+        member __.Value with get() = value() and set(v) = set v
+    interface IView<'b> with
+        member __.Value with get() = value()
+        member __.AddDependency mechanism dep =
+            dependencies.Add mechanism dep 
+        member __.RemoveDependency mechanism dep =
+            dependencies.Remove mechanism dep 
+        member this.Signal () =
+            dependencies.Signal this
+
+    interface IDependent with
+        member this.RequestRefresh _ = 
+            dependencies.Signal this
+
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            valueProvider <- None
+            SignalManager.RemoveAllDependencies this
+
 type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
     do
         valueProvider1.AddDependency DependencyTrackingMechanism.Default self
