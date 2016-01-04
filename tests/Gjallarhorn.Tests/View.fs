@@ -6,13 +6,13 @@ open System
 open NUnit.Framework
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
-let ``View.constant constructs with proper value`` start =
+let ``View\constant constructs with proper value`` start =
     let value = View.constant start
 
     Assert.AreEqual(box start, value.Value)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartToString")>]
-let ``View.map constructs from mutable`` start finish =
+let ``View\map constructs from mutable`` start finish =
     let value = Mutable.create start
     let view = 
         value 
@@ -21,7 +21,7 @@ let ``View.map constructs from mutable`` start finish =
     Assert.AreEqual(box view.Value, finish)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesPairToString")>]
-let ``View.map2 constructs from mutables`` start1 start2 finish =
+let ``View\map2 constructs from mutables`` start1 start2 finish =
     let v1 = Mutable.create start1
     let v2 = Mutable.create start2
     let map i j = i.ToString() + "," + j.ToString()
@@ -95,7 +95,7 @@ let ``Cached View updates with View`` start initialView finish finalView =
     Assert.AreEqual(backView.Value, finish)
 
 [<Test>]
-let ``View.filter doesn't propogate inappropriate changes`` () =
+let ``View\filter doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
     let view = View.map (fun i -> 10*i) v
 
@@ -110,7 +110,7 @@ let ``View.filter doesn't propogate inappropriate changes`` () =
     Assert.AreEqual(50, filter.Value)
 
 [<Test>]
-let ``View.choose doesn't propogate inappropriate changes`` () =
+let ``View\choose doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
     let view = View.map (fun i -> 10*i) v
 
