@@ -64,5 +64,14 @@ type BindingTargetBase() as self =
             |> Seq.iter (fun d -> d.Dispose())            
             disposables.Clear()
 
-        
+[<AutoOpen>]        
+module BindingTarget =
+    // let createTarget () : To implement by each framework library
 
+    let edit name mut (target : IBindingTarget) =
+        target.BindMutable name mut
+        target
+        
+    let watch name view (target : IBindingTarget) =
+        target.BindView name view
+        target

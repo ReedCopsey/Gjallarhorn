@@ -76,14 +76,14 @@ let ``BindingTarget\TrackView ignores view changes with same value`` () =
 [<Test>]
 let ``BindingTarget\BindMutable does not throw`` () =
     Assert.DoesNotThrow(fun _ -> 
-        use dvm = new BindingTarget()
+        use dvm = new DesktopBindingTarget()
         let v = Mutable.create 42
         dvm.BindMutable "Test" v
     )
 
 [<Test>]
 let ``BindingTarget\BindMutable add then read property works`` () =
-    use dvm = new BindingTarget()
+    use dvm = new DesktopBindingTarget()
     let v = Mutable.create 42
     dvm.BindMutable "Test" v
     
@@ -94,7 +94,7 @@ let ``BindingTarget\BindMutable add then read property works`` () =
 
 [<Test>]
 let ``BindingTarget\BindMutable add then read property value`` () =
-    use dvm = new BindingTarget()
+    use dvm = new DesktopBindingTarget()
     let v = Mutable.create 42
     dvm.BindMutable "Test" v
     
@@ -108,7 +108,7 @@ let ``BindingTarget\BindMutable add then read property value`` () =
 let ``BindingTarget\BindMutable add then modify property value`` () =
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
-    use dynamicVm = new BindingTarget()
+    use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindMutable "Test" v1
     dynamicVm.BindMutable "Test2" v2
     
@@ -134,7 +134,7 @@ let ``BindingTarget\BindMutable add then modify property value`` () =
 [<Test>]
 let ``BindingTarget\BindMutable add then modify property value raises property changed`` () =
     let v1 = Mutable.create 1
-    use dynamicVm = new BindingTarget()
+    use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindMutable "Test" v1
 
     let obs = PropertyChangedObserver("Test")
@@ -159,7 +159,7 @@ let ``BindingTarget\BindMutable add then modify property value raises property c
 let ``BindingTarget\BindView raises property changed`` () =
     let v1 = Mutable.create 1
     let v2 = View.map (fun i -> i+1) v1
-    use dynamicVm = new BindingTarget()
+    use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindView "Test" v2
 
     let obs = PropertyChangedObserver("Test")
@@ -179,3 +179,52 @@ let ``BindingTarget\BindView raises property changed`` () =
     v1.Value <- 66 // No Change  - Value the same
     v1.Value <- 77 // Change 3
     Assert.AreEqual(3, obs.Changes)
+
+[<Test>]
+let ``BindingTarget\BindView tracks values properly`` () =
+    let first = Mutable.create ""
+    let last = Mutable.create ""
+    let full = View.map2 (fun f l -> f + " " + l) first last
+
+    use dynamicVm = 
+        createTarget()
+        |> edit "First" first
+        |> edit "Last" last
+        |> watch "Full" full
+
+    let props = TypeDescriptor.GetProperties(dynamicVm)
+    let prop = props.Find("Full", false)
+
+    let cur = unbox <| prop.GetValue(dynamicVm)
+    Assert.AreEqual(" ", cur)
+
+    first.Value <- "Foo"
+    let cur = unbox <| prop.GetValue(dynamicVm)
+    Assert.AreEqual("Foo ", cur)
+
+    last.Value <- "Bar"
+    let cur = unbox <| prop.GetValue(dynamicVm)
+    Assert.AreEqual("Foo Bar", cur)
+
+[<Test>]
+let ``BindingTarget\BindView raises property changed appropriately`` () =
+    let first = Mutable.create ""
+    let last = Mutable.create ""
+    let full = View.map2 (fun f l -> f + " " + l) first last
+
+    use dynamicVm = 
+        createTarget()
+        |> edit "First" first
+        |> edit "Last" last
+        |> watch "Full" full
+
+    let obs = PropertyChangedObserver("Full")
+    obs.Subscribe dynamicVm
+
+    Assert.AreEqual(0, obs.Changes)        
+
+    first.Value <- "Foo"
+    Assert.AreEqual(1, obs.Changes)        
+
+    last.Value <- "Bar"
+    Assert.AreEqual(2, obs.Changes)

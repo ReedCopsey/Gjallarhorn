@@ -7,6 +7,9 @@ open System.ComponentModel
 open System.Reflection
 open System.Windows.Input
 
+[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Bindable.Tests")>]
+do ()
+
 type internal IValueHolder =
     abstract member GetValue : unit -> obj
     abstract member SetValue : obj -> unit
@@ -22,7 +25,7 @@ type internal ViewHolder<'a>(value : IView<'a>) =
         member __.SetValue(v) = ()
 
 
-type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] BindingTarget() as self =
+type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget() as self =
     inherit BindingTargetBase()
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
@@ -53,7 +56,7 @@ and BindingTargetTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
 
     let mutable td = null, null
-    new() = BindingTargetTypeDescriptorProvider(TypeDescriptor.GetProvider(typeof<BindingTarget>))
+    new() = BindingTargetTypeDescriptorProvider(TypeDescriptor.GetProvider(typeof<DesktopBindingTarget>))
 
     override __.GetTypeDescriptor(objType, inst) =
         match td with
@@ -61,11 +64,11 @@ and BindingTargetTypeDescriptorProvider(parent) =
             desc
         | _ ->
             let parent = base.GetTypeDescriptor(objType, inst)
-            let desc = BindingTargetTypeDescriptor(parent, inst :?> BindingTarget) :> ICustomTypeDescriptor
+            let desc = BindingTargetTypeDescriptor(parent, inst :?> DesktopBindingTarget) :> ICustomTypeDescriptor
             td <- desc, inst
             desc
 
-and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : BindingTarget) =
+and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : DesktopBindingTarget) =
     inherit CustomTypeDescriptor(parent)
 
     override __.GetProperties() =
@@ -82,7 +85,7 @@ and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : Bin
 and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     inherit PropertyDescriptor(name, [| |])
 
-    override __.ComponentType = typeof<BindingTarget>
+    override __.ComponentType = typeof<DesktopBindingTarget>
     override __.PropertyType = typeof<'a>
     override __.Description = String.Empty
     override __.IsBrowsable = true
@@ -90,7 +93,7 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     override __.CanResetValue(o) = false
     override __.GetValue(comp) =
         match comp with
-        | :? BindingTarget as dvm ->
+        | :? DesktopBindingTarget as dvm ->
             let prop = dvm.CustomProperties.[name]
             let vh = snd prop
             vh.GetValue()
@@ -98,9 +101,13 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     override __.ResetValue(comp) = ()
     override __.SetValue(comp, v) =
         match comp with
-        | :? BindingTarget as dvm ->
+        | :? DesktopBindingTarget as dvm ->
             let prop = dvm.CustomProperties.[name]
             let vh = snd prop
             vh.SetValue(v)
         | _ -> ()
     override __.ShouldSerializeValue(c) = false
+
+[<AutoOpen>]
+module BindingTarget =
+    let createTarget () = new DesktopBindingTarget() :> IBindingTarget
