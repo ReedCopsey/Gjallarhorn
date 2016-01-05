@@ -1,6 +1,6 @@
 ﻿module Gjallarhorn.Tests.Observable
 
-open Gjallarhorn.Control
+open Gjallarhorn
 
 open System
 open NUnit.Framework

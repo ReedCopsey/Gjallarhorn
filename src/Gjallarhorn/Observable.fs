@@ -1,6 +1,5 @@
-﻿namespace Gjallarhorn.Control
+﻿namespace Gjallarhorn
 
-open Gjallarhorn
 open Gjallarhorn.Internal
 
 open System

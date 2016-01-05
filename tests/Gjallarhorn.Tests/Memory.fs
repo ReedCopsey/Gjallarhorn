@@ -1,7 +1,7 @@
 ﻿namespace Gjallarhorn.Tests
 
+open Gjallarhorn
 open Gjallarhorn.Internal
-open Gjallarhorn.Control
 
 open System
 open NUnit.Framework
