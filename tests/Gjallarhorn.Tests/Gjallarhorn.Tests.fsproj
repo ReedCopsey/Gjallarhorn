@@ -63,14 +63,12 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
     <Compile Include="Utilities.fs" />
     <Compile Include="Mutable.fs" />
     <Compile Include="View.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="Memory.fs" />
-    <None Include="paket.references" />
     <Content Include="App.config" />
     <Content Include="packages.config" />
   </ItemGroup>

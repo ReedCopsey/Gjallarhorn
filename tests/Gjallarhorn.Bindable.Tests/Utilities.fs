@@ -31,7 +31,9 @@ let ``Utilities\castAs returns Some with boxed object`` () =
 
 [<AllowNullLiteral>] 
 type Test1() =
-    do ()
+    member __.Test with get() = ""
+
+    member __.TestMethod() = ()
 
 [<AllowNullLiteral>] 
 type Test2() =
@@ -72,3 +74,15 @@ let ``Utilities\downcastAndCreateOption returns None with null`` () =
     let v : Test1 = null
     let test = downcastAndCreateOption<Test1>(v)
     Assert.AreEqual(true, test.IsNone)
+
+[<Test>]
+let ``Utilities\getPropertyNameFromExpression returns proper name`` () =
+    let v = Test1()
+    let name = getPropertyNameFromExpression <@ v.Test @>
+    Assert.AreEqual("Test", name)
+
+[<Test>]
+let ``Utilities\getPropertyNameFromExpression returns empty string on non-property`` () =
+    let v = Test1()
+    let name = getPropertyNameFromExpression <@ v.TestMethod() @>
+    Assert.AreEqual("", name)

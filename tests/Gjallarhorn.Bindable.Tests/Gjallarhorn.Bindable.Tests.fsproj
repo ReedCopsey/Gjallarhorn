@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utilities.fs" />
-    <None Include="Script.fsx" />
+    <Compile Include="BindingTarget.fs" />
     <Content Include="packages.config" />
     <Content Include="App.config" />
   </ItemGroup>
@@ -67,6 +67,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\..\src\Gjallarhorn.Bindable.Wpf\Gjallarhorn.Bindable.Wpf.fsproj">
+      <Name>Gjallarhorn.Bindable.Wpf</Name>
+      <Project>{79269e6a-2c7e-442d-8b23-55b6d940a5d2}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Gjallarhorn.Bindable\Gjallarhorn.Bindable.fsproj">
       <Name>Gjallarhorn.Bindable</Name>
       <Project>{dc46e916-06fc-4256-acfc-ebc7c9dc95ea}</Project>

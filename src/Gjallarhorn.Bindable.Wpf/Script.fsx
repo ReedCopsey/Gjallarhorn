@@ -2,7 +2,7 @@
 // for more guidance on F# programming.
 
 #load "Library1.fs"
-open Gjallarhorn.Bindable.Tests
+open Gjallarhorn.Bindable.Wpf
 
 // Define your library scripting code here
 

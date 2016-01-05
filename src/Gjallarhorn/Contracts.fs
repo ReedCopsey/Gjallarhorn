@@ -1,6 +1,7 @@
 namespace Gjallarhorn
 
 [<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Tests")>]
+[<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Bindable")>]
 do ()
 
 /// Used to define the type of tracking used.  This allows weak referencing to be supported as needed
