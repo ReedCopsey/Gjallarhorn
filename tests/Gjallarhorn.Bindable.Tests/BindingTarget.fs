@@ -15,9 +15,10 @@ type TestBindingTarget() =
     override __.BindCommand name comm =
         ()
 
-type PropertyChangedObserver() =
+type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()
-    member __.Subscribe (o : INotifyPropertyChanged) =
+
+    do
         o.PropertyChanged.Add(fun args ->            
             let current = 
                 match changes.ContainsKey args.PropertyName with
@@ -36,8 +37,7 @@ type PropertyChangedObserver() =
 let ``BindingTarget raises property changed`` () =
     use bt = new TestBindingTarget()
 
-    let obs = PropertyChangedObserver()
-    obs.Subscribe bt
+    let obs = PropertyChangedObserver(bt)    
 
     let ibt = bt :> IBindingTarget
 
@@ -51,8 +51,7 @@ let ``BindingTarget\TrackView tracks a view change`` () =
     use bt = new TestBindingTarget()
 
     let value = Mutable.create 0
-    let obs = PropertyChangedObserver()
-    obs.Subscribe bt
+    let obs = PropertyChangedObserver(bt)    
 
     let ibt = bt :> IBindingTarget
 
@@ -67,8 +66,7 @@ let ``BindingTarget\TrackView ignores view changes with same value`` () =
     use bt = new TestBindingTarget()
 
     let value = Mutable.create 0
-    let obs = PropertyChangedObserver()
-    obs.Subscribe bt
+    let obs = PropertyChangedObserver(bt)    
 
     let ibt = bt :> IBindingTarget
 
@@ -143,8 +141,7 @@ let ``BindingTarget\BindMutable add then modify property value raises property c
     use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindMutable "Test" v1
 
-    let obs = PropertyChangedObserver()
-    obs.Subscribe dynamicVm
+    let obs = PropertyChangedObserver(dynamicVm)    
     
     let props = TypeDescriptor.GetProperties(dynamicVm)
     let prop = props.Find("Test", false)
@@ -168,8 +165,7 @@ let ``BindingTarget\BindView raises property changed`` () =
     use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindView "Test" v2
 
-    let obs = PropertyChangedObserver()
-    obs.Subscribe dynamicVm
+    let obs = PropertyChangedObserver(dynamicVm)    
     
     let props = TypeDescriptor.GetProperties(dynamicVm)
     let prop = props.Find("Test", false)
@@ -224,8 +220,7 @@ let ``BindingTarget\BindView raises property changed appropriately`` () =
         |> Bind.edit "Last" last
         |> Bind.watch "Full" full
 
-    let obs = PropertyChangedObserver()
-    obs.Subscribe dynamicVm
+    let obs = PropertyChangedObserver(dynamicVm)    
 
     Assert.AreEqual(0, obs.["Full"])        
 
