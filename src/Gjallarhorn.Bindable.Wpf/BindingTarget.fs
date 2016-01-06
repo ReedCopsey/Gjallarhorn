@@ -14,17 +14,6 @@ type internal IValueHolder =
     abstract member GetValue : unit -> obj
     abstract member SetValue : obj -> unit
 
-type internal ValueHolder<'a>(value : IMutatable<'a>) =
-    interface IValueHolder with
-        member __.GetValue() = box value.Value
-        member __.SetValue(v) = value.Value <- unbox v         
-
-type internal ViewHolder<'a>(value : IView<'a>) =
-    interface IValueHolder with
-        member __.GetValue() = box value.Value
-        member __.SetValue(v) = ()
-
-
 type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget() as self =
     inherit BindingTargetBase()
 
@@ -35,8 +24,24 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     let makePD name = BindingTargetPropertyDescriptor(name) :> PropertyDescriptor
 
-    let makeEditIV prop = ValueHolder(prop) :> IValueHolder
-    let makeViewIV prop = ViewHolder(prop) :> IValueHolder
+    let makeEditIV (prop : IMutatable<'a>) = 
+        { 
+            new IValueHolder with 
+                member __.GetValue() = box prop.Value
+                member __.SetValue(v) = prop.Value <- unbox v         
+        }
+    let makeViewIV (prop : IView<'a>) = 
+        { 
+            new IValueHolder with 
+                member __.GetValue() = box prop.Value
+                member __.SetValue(v) = ()
+        }
+    let makeComamndIV (prop : ICommand) = 
+        { 
+            new IValueHolder with 
+                member __.GetValue() = box prop
+                member __.SetValue(v) = ()
+        }
 
     member internal __.CustomProperties = customProps
     
@@ -48,9 +53,8 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         (bt()).TrackView name view
         customProps.Add(name, (makePD name, makeViewIV view))   
 
-    override this.BindCommand name command =
-        let view = View.constant command
-        customProps.Add(name, (makePD name, makeViewIV view))
+    override this.BindCommand name command =        
+        customProps.Add(name, (makePD name, makeComamndIV command))
         
 and BindingTargetTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
