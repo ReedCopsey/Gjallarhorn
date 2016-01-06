@@ -36,7 +36,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
                 member __.GetValue() = box prop.Value
                 member __.SetValue(v) = ()
         }
-    let makeComamndIV (prop : ICommand) = 
+    let makeCommandIV (prop : ICommand) = 
         { 
             new IValueHolder with 
                 member __.GetValue() = box prop
@@ -54,7 +54,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         customProps.Add(name, (makePD name, makeViewIV view))   
 
     override this.BindCommand name command =        
-        customProps.Add(name, (makePD name, makeComamndIV command))
+        customProps.Add(name, (makePD name, makeCommandIV command))
         
 and BindingTargetTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
