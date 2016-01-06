@@ -42,6 +42,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gjallarhorn.Bindable.Tests"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gjallarhorn.Bindable.Wpf", "src\Gjallarhorn.Bindable.Wpf\Gjallarhorn.Bindable.Wpf.fsproj", "{79269E6A-2C7E-442D-8B23-55B6D940A5D2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{C844E206-BE5F-4335-B8F5-0472CF0A7369}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

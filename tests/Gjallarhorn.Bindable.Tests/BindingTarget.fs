@@ -15,22 +15,28 @@ type TestBindingTarget() =
     override __.BindCommand name comm =
         ()
 
-type PropertyChangedObserver(name) =
-    let changes = ref 0
+type PropertyChangedObserver() =
+    let changes = System.Collections.Generic.Dictionary<string,int>()
     member __.Subscribe (o : INotifyPropertyChanged) =
-        o.PropertyChanged.Add(fun args ->
-            match args.PropertyName with
-            | n when n = name ->
-                incr changes
-            | _ -> ())
+        o.PropertyChanged.Add(fun args ->            
+            let current = 
+                match changes.ContainsKey args.PropertyName with
+                | true -> changes.[args.PropertyName]
+                | false -> 0
+            changes.[args.PropertyName] <- current + 1)
 
-    member __.Changes = !changes
+    member __.Item 
+        with get(name) = 
+            let success, count = changes.TryGetValue name
+            match success with
+            | true -> count
+            | false -> 0
 
 [<Test>]
 let ``BindingTarget raises property changed`` () =
     use bt = new TestBindingTarget()
 
-    let obs = PropertyChangedObserver("Test")
+    let obs = PropertyChangedObserver()
     obs.Subscribe bt
 
     let ibt = bt :> IBindingTarget
@@ -38,14 +44,14 @@ let ``BindingTarget raises property changed`` () =
     ibt.RaisePropertyChanged("Test")
     ibt.RaisePropertyChanged("Test")
     
-    Assert.AreEqual(2, obs.Changes)
+    Assert.AreEqual(2, obs.["Test"])
 
 [<Test>]
 let ``BindingTarget\TrackView tracks a view change`` () =
     use bt = new TestBindingTarget()
 
     let value = Mutable.create 0
-    let obs = PropertyChangedObserver("Test")
+    let obs = PropertyChangedObserver()
     obs.Subscribe bt
 
     let ibt = bt :> IBindingTarget
@@ -54,14 +60,14 @@ let ``BindingTarget\TrackView tracks a view change`` () =
     value.Value <- 1
     value.Value <- 2
     
-    Assert.AreEqual(2, obs.Changes)
+    Assert.AreEqual(2, obs.["Test"])
 
 [<Test>]
 let ``BindingTarget\TrackView ignores view changes with same value`` () =
     use bt = new TestBindingTarget()
 
     let value = Mutable.create 0
-    let obs = PropertyChangedObserver("Test")
+    let obs = PropertyChangedObserver()
     obs.Subscribe bt
 
     let ibt = bt :> IBindingTarget
@@ -71,7 +77,7 @@ let ``BindingTarget\TrackView ignores view changes with same value`` () =
     value.Value <- 2
     value.Value <- 2
     
-    Assert.AreEqual(2, obs.Changes)
+    Assert.AreEqual(2, obs.["Test"])
 
 [<Test>]
 let ``BindingTarget\BindMutable does not throw`` () =
@@ -137,7 +143,7 @@ let ``BindingTarget\BindMutable add then modify property value raises property c
     use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindMutable "Test" v1
 
-    let obs = PropertyChangedObserver("Test")
+    let obs = PropertyChangedObserver()
     obs.Subscribe dynamicVm
     
     let props = TypeDescriptor.GetProperties(dynamicVm)
@@ -153,7 +159,7 @@ let ``BindingTarget\BindMutable add then modify property value raises property c
     v1.Value <- 66 // Change 2
     v1.Value <- 66 // No Change  - Value the same
     v1.Value <- 77 // Change 3
-    Assert.AreEqual(3, obs.Changes)
+    Assert.AreEqual(3, obs.["Test"])
 
 [<Test>]
 let ``BindingTarget\BindView raises property changed`` () =
@@ -162,7 +168,7 @@ let ``BindingTarget\BindView raises property changed`` () =
     use dynamicVm = new DesktopBindingTarget()
     dynamicVm.BindView "Test" v2
 
-    let obs = PropertyChangedObserver("Test")
+    let obs = PropertyChangedObserver()
     obs.Subscribe dynamicVm
     
     let props = TypeDescriptor.GetProperties(dynamicVm)
@@ -178,7 +184,7 @@ let ``BindingTarget\BindView raises property changed`` () =
     v1.Value <- 66 // Change 2
     v1.Value <- 66 // No Change  - Value the same
     v1.Value <- 77 // Change 3
-    Assert.AreEqual(3, obs.Changes)
+    Assert.AreEqual(3, obs.["Test"])
 
 [<Test>]
 let ``BindingTarget\BindView tracks values properly`` () =
@@ -218,13 +224,15 @@ let ``BindingTarget\BindView raises property changed appropriately`` () =
         |> Bind.edit "Last" last
         |> Bind.watch "Full" full
 
-    let obs = PropertyChangedObserver("Full")
+    let obs = PropertyChangedObserver()
     obs.Subscribe dynamicVm
 
-    Assert.AreEqual(0, obs.Changes)        
+    Assert.AreEqual(0, obs.["Full"])        
 
     first.Value <- "Foo"
-    Assert.AreEqual(1, obs.Changes)        
+    Assert.AreEqual(1, obs.["Full"])        
+    Assert.AreEqual(1, obs.["First"])        
 
     last.Value <- "Bar"
-    Assert.AreEqual(2, obs.Changes)
+    Assert.AreEqual(1, obs.["Last"])        
+    Assert.AreEqual(2, obs.["Full"])
