@@ -112,6 +112,6 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
         | _ -> ()
     override __.ShouldSerializeValue(c) = false
 
-[<AutoOpen>]
-module BindingTarget =
-    let createTarget () = new DesktopBindingTarget() :> IBindingTarget
+
+module Bind =
+    let create () = new DesktopBindingTarget() :> IBindingTarget

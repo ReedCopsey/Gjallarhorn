@@ -187,10 +187,10 @@ let ``BindingTarget\BindView tracks values properly`` () =
     let full = View.map2 (fun f l -> f + " " + l) first last
 
     use dynamicVm = 
-        createTarget()
-        |> edit "First" first
-        |> edit "Last" last
-        |> watch "Full" full
+        Bind.create()
+        |> Bind.edit "First" first
+        |> Bind.edit "Last" last
+        |> Bind.watch "Full" full
 
     let props = TypeDescriptor.GetProperties(dynamicVm)
     let prop = props.Find("Full", false)
@@ -213,10 +213,10 @@ let ``BindingTarget\BindView raises property changed appropriately`` () =
     let full = View.map2 (fun f l -> f + " " + l) first last
 
     use dynamicVm = 
-        createTarget()
-        |> edit "First" first
-        |> edit "Last" last
-        |> watch "Full" full
+        Bind.create()
+        |> Bind.edit "First" first
+        |> Bind.edit "Last" last
+        |> Bind.watch "Full" full
 
     let obs = PropertyChangedObserver("Full")
     obs.Subscribe dynamicVm
