@@ -279,6 +279,7 @@ let ``BindingTarget\Bind\watch with validator sets error state`` () =
     Assert.IsTrue(dynamicVm.IsValid)
     Assert.AreEqual(1, obs.["IsValid"])        
 
+open Bind
 [<Test>]
 let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` () =
     let first = Mutable.create ""
@@ -288,14 +289,8 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
         View.map2 (fun f l -> f + " " + l) first last
         |> View.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
 
-//    use dynamicVm = 
-//        Bind.create()
-//        |> Bind.edit "First" first
-//        |> Bind.edit "Last" last
-//        |> Bind.watch "Full" full
-
     use dynamicVm =
-        Binding.create {            
+        binding {            
             edit "First" first
             edit "Last" last
             watch "Full" full

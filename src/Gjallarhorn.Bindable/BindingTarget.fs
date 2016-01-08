@@ -111,11 +111,10 @@ module Bind =
         target.BindView name view
         target
 
-module Binding =    
-    type BindingBuilder(creator : unit -> IBindingTarget) =        
+    type Binding(creator : unit -> IBindingTarget) =        
         member __.Zero() = creator()
         member __.Yield(()) = creator()
         [<CustomOperation("edit", MaintainsVariableSpace = true)>]
-        member __.Edit (source : IBindingTarget, name, value) = Bind.edit name value source
+        member __.Edit (source : IBindingTarget, name, value) = edit name value source
         [<CustomOperation("watch", MaintainsVariableSpace = true)>]
-        member __.Watch (source : IBindingTarget, name, view) = Bind.watch name view source        
+        member __.Watch (source : IBindingTarget, name, view) = watch name view source        

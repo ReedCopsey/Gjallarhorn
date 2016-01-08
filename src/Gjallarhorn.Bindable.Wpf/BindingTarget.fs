@@ -126,5 +126,4 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
 module Bind =
     let create () = new DesktopBindingTarget() :> IBindingTarget
 
-module Binding =        
-    let create = Binding.BindingBuilder(Bind.create)
+    let binding = Bind.Binding(create)
