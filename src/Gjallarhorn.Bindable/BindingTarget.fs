@@ -112,7 +112,6 @@ module Bind =
         target
 
 module Binding =    
-    /// Custom computation expression builder for composing IView instances dynamically    
     type BindingBuilder(creator : unit -> IBindingTarget) =        
         member __.Zero() = creator()
         member __.Yield(_) = creator()
