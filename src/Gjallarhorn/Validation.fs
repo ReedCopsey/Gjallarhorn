@@ -155,12 +155,24 @@ module Validation =
         | ValidationCollector.Valid(_) -> ValidationResult.Valid
         | ValidationCollector.Invalid(_, _, _) -> ValidationResult.Invalid([customErrorMessage])
 
-    /// Core interface for all validation types
+    /// Core interface for all validated edit types
     type IValidatedMutatable<'a> =
         inherit IMutatable<'a>
     
         /// The current validation status
         abstract member ValidationResult : IView<ValidationResult> with get
 
+        /// Check to see if type is currently in a valid state
+        abstract member IsValid : bool with get
+
+
+    /// Core interface for all validated view types
+    type IValidatedView<'a> =
+        inherit IDisposableView<'a>
+    
+        /// The current validation status
+        abstract member ValidationResult : IView<ValidationResult> with get
+
+        /// Check to see if type is currently in a valid state
         abstract member IsValid : bool with get
 

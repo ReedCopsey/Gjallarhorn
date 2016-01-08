@@ -117,3 +117,27 @@ let ``Mutable\validate signals properly when value changes`` () =
     | Invalid(errors) ->
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
+
+[<Test>]
+let ``View\validate provides proper error messages when fixed`` () =
+    let value = Mutable.create ""
+    let validate = View.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
+        
+    match validate.ValidationResult.Value with
+    | Valid -> Assert.Fail()
+    | Invalid(errors) ->
+        Assert.AreEqual(2, errors.Length)
+        Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
+
+    value.Value <- "Re"
+    match validate.ValidationResult.Value with
+    | Valid -> ()
+    | Invalid(errors) -> Assert.Fail()
+
+    value.Value <- " "
+    match validate.ValidationResult.Value with
+    | Valid -> Assert.Fail()
+    | Invalid(errors) ->
+        Assert.AreEqual(3, errors.Length)
+        Assert.Contains(box "Value must be at least 2 characters long.", Seq.toArray(errors))
+        Assert.Contains(box "Value cannot contain a space.", Seq.toArray(errors))

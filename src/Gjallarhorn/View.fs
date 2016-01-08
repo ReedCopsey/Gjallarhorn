@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn
 
 open Gjallarhorn.Internal
+open Gjallarhorn.Validation
 
 open System
 
@@ -130,6 +131,47 @@ module View =
     /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
     /// and rely on the GC to clean up the subscriptions.</remarks>
     let compose = ViewBuilder()
+
+    type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) =
+        inherit MappingView<'a,'a>(valueProvider, id, true)
+
+        let validateCurrent () =
+            validate valueProvider.Value
+            |> validator
+            |> Validation.result
+        let validationResult = 
+            validateCurrent()
+            |> Mutable.create
+
+        let subscriptionHandle =
+            let rec dependent =
+                {
+                    new IDependent with
+                        member __.RequestRefresh _ =
+                            validationResult.Value <- validateCurrent()
+                    interface System.IDisposable with
+                        member __.Dispose() = 
+                            valueProvider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                }
+            valueProvider.AddDependency DependencyTrackingMechanism.Default dependent
+            dependent :> System.IDisposable
+
+        member private __.EditAndValidate value =  
+            validationResult.Value <- validateCurrent()
+            value
+
+        override __.Disposing() =
+            subscriptionHandle.Dispose()
+            SignalManager.RemoveAllDependencies validationResult
+
+        interface IValidatedView<'a> with
+            member __.ValidationResult with get() = validationResult :> IView<ValidationResult>
+
+            member __.IsValid = isValid validationResult.Value
+
+    /// Validates a view with a validation chain
+    let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (view : IView<'a>) =
+        new ValidatorMappingView<'a>(validator, view) :> IValidatedView<'a>
     
 [<AutoOpen>]
 /// Custom operators for composing IView instances

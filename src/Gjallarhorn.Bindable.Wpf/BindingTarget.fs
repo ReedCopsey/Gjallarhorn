@@ -58,6 +58,11 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         (bt()).TrackView name view
         customProps.Add(name, (makePD name, makeViewIV view))   
 
+        match view with
+        | :? Validation.IValidatedView<'a> as validator ->
+            (bt()).TrackValidator name validator.ValidationResult
+        | _ -> ()
+
     override __.BindCommand name command =        
         customProps.Add(name, (makePD name, makeCommandIV command))
         

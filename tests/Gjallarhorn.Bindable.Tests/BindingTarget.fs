@@ -241,3 +241,40 @@ let ``BindingTarget\Bind\edit with validator sets error state`` () =
     last.Value <- "Bar"
     Assert.IsTrue(dynamicVm.IsValid)
     Assert.AreEqual(1, obs.["IsValid"])        
+
+[<Test>]
+let ``BindingTarget\Bind\watch with validator sets error state`` () =
+    let first = Mutable.create ""
+    let last = Mutable.create ""
+
+    let fullNameValidation (value : string) = 
+        match System.String.IsNullOrWhiteSpace(value) with
+        | true -> Some "Value must contain at least a first and last name"
+        | false ->
+            let words = value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+            if words.Length >= 2 then
+                None
+            else
+                Some "Value must contain at least a first and last name"
+
+    let full = 
+        View.map2 (fun f l -> f + " " + l) first last
+        |> View.validate (notNullOrWhitespace >> (custom fullNameValidation))
+
+    use dynamicVm = 
+        Bind.create()
+        |> Bind.edit "First" first
+        |> Bind.edit "Last" last
+        |> Bind.watch "Full" full
+
+    let obs = PropertyChangedObserver(dynamicVm)    
+
+    Assert.IsFalse(dynamicVm.IsValid)
+    Assert.AreEqual(0, obs.["IsValid"])        
+
+    first.Value <- "Foo"
+    Assert.IsFalse(dynamicVm.IsValid)
+    Assert.AreEqual(0, obs.["IsValid"])        
+    last.Value <- "Bar"
+    Assert.IsTrue(dynamicVm.IsValid)
+    Assert.AreEqual(1, obs.["IsValid"])        

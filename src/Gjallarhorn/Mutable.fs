@@ -34,7 +34,7 @@ module Mutable =
         let mut : IMutatable<'b> = map conv conv provider
         mut
 
-    type internal ValidatorMapping<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IMutatable<'a>) =
+    type internal ValidatorMappingEditor<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IMutatable<'a>) =
         inherit MappingEditor<'a,'a>(valueProvider, id, id, true)
 
         let validateCurrent () =
@@ -73,7 +73,7 @@ module Mutable =
             
 
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (value : IMutatable<'a>) =
-        new ValidatorMapping<'a>(validator, value) :> IValidatedMutatable<'a>
+        new ValidatorMappingEditor<'a>(validator, value) :> IValidatedMutatable<'a>
 
     let createValidated<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (initialValue : 'a) =
         create initialValue
