@@ -95,6 +95,10 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
 
+    abstract member Disposing : unit -> unit
+    default __.Disposing() =
+        ()
+
     interface IDisposableView<'b> with
         member __.Value with get() = value()
         member __.AddDependency mechanism dep =
@@ -110,6 +114,7 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
 
     interface IDisposable with
         member this.Dispose() =
+            this.Disposing()
             DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
@@ -130,6 +135,10 @@ type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping :
 
     let set value =
         DisposeHelpers.setValue valueProvider editMapping value (fun _ -> self.GetType().FullName)
+
+    abstract member Disposing : unit -> unit
+    default __.Disposing() =
+        ()
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -153,6 +162,7 @@ type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping :
 
     interface IDisposable with
         member this.Dispose() =
+            this.Disposing()
             DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose DependencyTrackingMechanism.Default this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this

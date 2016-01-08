@@ -1,5 +1,8 @@
 ﻿namespace Gjallarhorn
 
+open Gjallarhorn.Internal
+open Validation
+
 /// Manages creation of mutable variables
 module Mutable =
     
@@ -30,3 +33,48 @@ module Mutable =
         let conv a : 'T = System.Convert.ChangeType(a, typeof<'T>) :?> 'T
         let mut : IMutatable<'b> = map conv conv provider
         mut
+
+    type internal ValidatorMapping<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IMutatable<'a>) =
+        inherit MappingEditor<'a,'a>(valueProvider, id, id, true)
+
+        let validateCurrent () =
+            validate valueProvider.Value
+            |> validator
+            |> Validation.result
+        let validationResult = 
+            validateCurrent()
+            |> create
+
+        let subscriptionHandle =
+            let rec dependent =
+                {
+                    new IDependent with
+                        member __.RequestRefresh _ =
+                            validationResult.Value <- validateCurrent()
+                    interface System.IDisposable with
+                        member __.Dispose() = 
+                            valueProvider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                }
+            valueProvider.AddDependency DependencyTrackingMechanism.Default dependent
+            dependent :> System.IDisposable
+
+        member private __.EditAndValidate value =  
+            validationResult.Value <- validateCurrent()
+            value
+
+        override __.Disposing() =
+            subscriptionHandle.Dispose()
+            SignalManager.RemoveAllDependencies validationResult
+
+        interface IValidatedMutatable<'a> with
+            member __.ValidationResult with get() = validationResult :> IView<ValidationResult<'a>>
+
+            member __.IsValid = isValid validationResult.Value
+            
+
+    let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (value : IMutatable<'a>) =
+        new ValidatorMapping<'a>(validator, value) :> IValidatedMutatable<'a>
+
+    let createValidated<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (initialValue : 'a) =
+        create initialValue
+        |> validate validator

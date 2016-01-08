@@ -50,3 +50,4 @@ type IDisposableView<'a> =
 type IDisposableObservable<'a> =
     inherit System.IObservable<'a>
     inherit System.IDisposable
+
