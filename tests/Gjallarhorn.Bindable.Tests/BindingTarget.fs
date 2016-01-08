@@ -284,7 +284,6 @@ open Bind
 let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` () =
     let first = Mutable.create ""
     let last = Mutable.create ""
-
     let full = 
         View.map2 (fun f l -> f + " " + l) first last
         |> View.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
@@ -292,8 +291,8 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
     use dynamicVm =
         binding {            
             edit "First" first
-            edit "Last" last
-            watch "Full" full
+            edit "Last" last            
+            watch "Full" full            
         }
 
     let obs = PropertyChangedObserver(dynamicVm)    

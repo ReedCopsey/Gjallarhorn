@@ -127,11 +127,6 @@ module View =
             // TODO: Should this "dispose" the calling view somehow?
             constant v
 
-    /// <summary>Create a computation expression you can use to compose multiple views</summary>
-    /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
-    /// and rely on the GC to clean up the subscriptions.</remarks>
-    let view = ViewBuilder()
-
     type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) =
         inherit MappingView<'a,'a>(valueProvider, id, true)
 
@@ -178,3 +173,8 @@ module View =
 module ViewOperators =
     /// Performs the application, allowing for View.constant someFunUsingABC <*> a <*> b <*> c
     let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>
+
+    /// <summary>Create a computation expression you can use to compose multiple views</summary>
+    /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
+    /// and rely on the GC to clean up the subscriptions.</remarks>
+    let view = View.ViewBuilder()

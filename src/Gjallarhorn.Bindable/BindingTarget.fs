@@ -117,4 +117,4 @@ module Bind =
         [<CustomOperation("edit", MaintainsVariableSpace = true)>]
         member __.Edit (source : IBindingTarget, name, value) = edit name value source
         [<CustomOperation("watch", MaintainsVariableSpace = true)>]
-        member __.Watch (source : IBindingTarget, name, view) = watch name view source        
+        member __.Watch (source : IBindingTarget, name, view) = watch name view source                

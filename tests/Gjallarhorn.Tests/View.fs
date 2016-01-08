@@ -157,7 +157,7 @@ let ``Compose a view using a computation expression``() =
     let m1 = Mutable.create "Foo"
     let m2 = Mutable.create "Bar"
 
-    let view' = View.view {
+    let view' = view {
         let! first = m1
         let! last = m2
         return sprintf "%s %s" first last
@@ -177,7 +177,7 @@ let ``Compose a filtered view using a computation expression``() =
     let v1 = m1 |> View.map (fun i -> i+10) 
     let v2 = m2 |> View.map (fun i -> i*100) 
 
-    let view' = View.view {
+    let view' = view {
         let! start = v1
         let! finish = v2
         let! mut = m1
