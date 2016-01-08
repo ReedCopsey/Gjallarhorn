@@ -31,7 +31,7 @@
     <Tailcalls>true</Tailcalls>
     <OutputPath>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>5</WarningLevel>
     <DocumentationFile>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
