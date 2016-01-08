@@ -110,3 +110,13 @@ module Bind =
     let watch name view (target : #IBindingTarget) =
         target.BindView name view
         target
+
+module Binding =    
+    /// Custom computation expression builder for composing IView instances dynamically    
+    type BindingBuilder(creator : unit -> IBindingTarget) =        
+        member __.Zero() = creator()
+        member __.Yield(_) = creator()
+        [<CustomOperation("edit", MaintainsVariableSpace = true)>]
+        member __.Edit (source : IBindingTarget, name, value) = Bind.edit name value source
+        [<CustomOperation("watch", MaintainsVariableSpace = true)>]
+        member __.Watch (source : IBindingTarget, name, view) = Bind.watch name view source        

@@ -288,11 +288,18 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
         View.map2 (fun f l -> f + " " + l) first last
         |> View.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
 
-    use dynamicVm = 
-        Bind.create()
-        |> Bind.edit "First" first
-        |> Bind.edit "Last" last
-        |> Bind.watch "Full" full
+//    use dynamicVm = 
+//        Bind.create()
+//        |> Bind.edit "First" first
+//        |> Bind.edit "Last" last
+//        |> Bind.watch "Full" full
+
+    use dynamicVm =
+        Binding.create {            
+            edit "First" first
+            edit "Last" last
+            watch "Full" full
+        }
 
     let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -317,3 +324,7 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
     Assert.IsTrue(dynamicVm.IsValid)
     Assert.AreEqual(1, obs.["IsValid"])        
     Assert.AreEqual(0, errors().Length)        
+
+    let cur = getProperty dynamicVm "Full" 
+    Assert.AreEqual("Foo Bar", cur)
+
