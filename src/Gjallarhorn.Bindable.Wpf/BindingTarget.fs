@@ -45,15 +45,20 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     member internal __.CustomProperties = customProps
     
-    override this.BindMutable<'a> name (value : IMutatable<'a>) =        
+    override __.BindMutable<'a> name (value : IMutatable<'a>) =        
         (bt()).TrackView name value
-        customProps.Add(name, (makePD name, makeEditIV value))    
+        customProps.Add(name, (makePD name, makeEditIV value))
 
-    override this.BindView<'a> name (view : IView<'a>) =        
+        match value with
+        | :? Validation.IValidatedMutatable<'a> as validator ->
+            (bt()).TrackValidator name validator.ValidationResult
+        | _ -> ()
+
+    override __.BindView<'a> name (view : IView<'a>) =        
         (bt()).TrackView name view
         customProps.Add(name, (makePD name, makeViewIV view))   
 
-    override this.BindCommand name command =        
+    override __.BindCommand name command =        
         customProps.Add(name, (makePD name, makeCommandIV command))
         
 and BindingTargetTypeDescriptorProvider(parent) =

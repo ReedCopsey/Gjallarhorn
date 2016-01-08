@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
+open Gjallarhorn.Validation
 open System.ComponentModel
 open System.Windows.Input
 
@@ -9,6 +10,9 @@ type BindingTargetBase() as self =
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
     let operationExecuting = Mutable.create false
+    let isValid = Mutable.create true
+
+    let errors = System.Collections.Generic.Dictionary<string, string list>()
 
     let disposables = ResizeArray<System.IDisposable>()
 
@@ -17,6 +21,28 @@ type BindingTargetBase() as self =
 
     let raisePropertyChangedExpr expr =
         raisePropertyChanged <| getPropertyNameFromExpression expr
+
+    let updateErrors name (result : ValidationResult) =
+        match errors.ContainsKey(name), result with
+        | false, Valid -> 
+            ()        
+        | _, Invalid(err) -> 
+            errors.[name] <- err
+            errorsChanged.Trigger(self, DataErrorsChangedEventArgs(name))
+            
+        | true, Valid -> 
+            errors.Remove(name) |> ignore
+            errorsChanged.Trigger(self, DataErrorsChangedEventArgs(name))
+
+    let updateValidState() = 
+        isValid.Value <- errors.Count = 0
+
+    do
+        errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
+        |> disposables.Add
+
+        (self :> IBindingTarget).TrackView "IsValid" isValid
+        (self :> IBindingTarget).TrackView "OperationExecuting" operationExecuting
 
     interface INotifyPropertyChanged with
         [<CLIEvent>]
@@ -31,20 +57,22 @@ type BindingTargetBase() as self =
     /// Add a binding target for a command with a given name
     abstract BindCommand : string -> ICommand -> unit
 
-    interface INotifyDataErrorInfo with
-        member __.GetErrors _ = 
-            // TODO
-            Seq.empty :> System.Collections.IEnumerable
+    member this.IsValid = isValid.Value
 
-        member __.HasErrors 
-            with get() = 
-                // TODO
-                false
+    interface INotifyDataErrorInfo with
+        member __.GetErrors name =             
+            match errors.TryGetValue name with
+            | true, err -> err :> System.Collections.IEnumerable
+            | false, _ -> [| |] :> System.Collections.IEnumerable
+
+        member __.HasErrors = errors.Count > 0
 
         [<CLIEvent>]
         member this.ErrorsChanged = errorsChanged.Publish
 
     interface IBindingTarget with
+        member this.IsValid = this.IsValid
+
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
         member __.OperationExecuting with get() = operationExecuting.Value
@@ -58,6 +86,13 @@ type BindingTargetBase() as self =
             |> View.subscribe (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
+        member __.TrackValidator name validator =
+            validator
+            |> View.subscribe (fun result -> updateErrors name result)
+            |> disposables.Add
+
+            updateErrors name validator.Value
+
     interface System.IDisposable with
         member __.Dispose() =
             disposables
@@ -68,10 +103,10 @@ type BindingTargetBase() as self =
 module Bind =
     // let create () : To implement by each framework library
 
-    let edit name mut (target : IBindingTarget) =
+    let edit name mut (target : #IBindingTarget) =
         target.BindMutable name mut
         target
         
-    let watch name view (target : IBindingTarget) =
+    let watch name view (target : #IBindingTarget) =
         target.BindView name view
         target

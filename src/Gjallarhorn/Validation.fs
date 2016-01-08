@@ -131,7 +131,7 @@ module Validation =
             custom validation step
 
     /// Defines a validation result
-    type ValidationResult<'a> =
+    type ValidationResult =
     /// Value is valid
     | Valid
     /// Value is invalid with a list of error messages
@@ -144,13 +144,13 @@ module Validation =
         | _ -> false
 
     /// Extracts the resulting errors from an invalid validation, or an empty list for success
-    let result (step : ValidationCollector<'a>) : ValidationResult<'a> =
+    let result (step : ValidationCollector<'a>) : ValidationResult =
         match step with
         | ValidationCollector.Valid(_) -> ValidationResult.Valid
         | ValidationCollector.Invalid(_, err, _) -> ValidationResult.Invalid(err)
 
     /// Produces a result of the validation, using a custom error message if an error occurred
-    let resultWithError customErrorMessage (step : ValidationCollector<'a>) : ValidationResult<'a> =
+    let resultWithError customErrorMessage (step : ValidationCollector<'a>) : ValidationResult =
         match step with
         | ValidationCollector.Valid(_) -> ValidationResult.Valid
         | ValidationCollector.Invalid(_, _, _) -> ValidationResult.Invalid([customErrorMessage])
@@ -160,7 +160,7 @@ module Validation =
         inherit IMutatable<'a>
     
         /// The current validation status
-        abstract member ValidationResult : IView<ValidationResult<'a>> with get
+        abstract member ValidationResult : IView<ValidationResult> with get
 
         abstract member IsValid : bool with get
 

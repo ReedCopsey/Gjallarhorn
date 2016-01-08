@@ -67,7 +67,7 @@ module Mutable =
             SignalManager.RemoveAllDependencies validationResult
 
         interface IValidatedMutatable<'a> with
-            member __.ValidationResult with get() = validationResult :> IView<ValidationResult<'a>>
+            member __.ValidationResult with get() = validationResult :> IView<ValidationResult>
 
             member __.IsValid = isValid validationResult.Value
             

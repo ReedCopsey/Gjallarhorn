@@ -89,7 +89,7 @@ let ``Mutable\validate provides proper error messages when fixed`` () =
 let ``Mutable\validate signals properly when value changes`` () =
     let validated = Mutable.createValidated notNullOrWhitespace ""
     
-    let states = ResizeArray<ValidationResult<string>>()
+    let states = ResizeArray<ValidationResult>()
 
     View.subscribe states.Add validated.ValidationResult 
     |> ignore

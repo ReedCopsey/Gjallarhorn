@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
+open Gjallarhorn.Validation
 
 open Microsoft.FSharp.Quotations
 
@@ -28,6 +29,9 @@ type IBindingTarget =
     inherit INotifyDataErrorInfo
     inherit System.IDisposable
 
+    /// Property allowing us to track whether any validation errors currently exist on this target
+    abstract member IsValid : bool
+
     /// Trigger the PropertyChanged event for a specific property
     abstract RaisePropertyChanged : string -> unit
 
@@ -36,6 +40,9 @@ type IBindingTarget =
 
     /// Track changes on a view to raise property changed events
     abstract TrackView<'a> : string -> IView<'a> -> unit
+
+    /// Track changes on a view of validation results to raise proper validation events
+    abstract TrackValidator : string -> IView<ValidationResult> -> unit
 
     /// Value used to notify view that an asynchronous operation is executing
     abstract OperationExecuting : bool with get

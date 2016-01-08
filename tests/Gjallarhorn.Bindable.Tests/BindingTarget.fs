@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Validation
 open System.ComponentModel
 open NUnit.Framework
 
@@ -218,3 +219,25 @@ let ``BindingTarget\BindView raises property changed appropriately`` () =
     last.Value <- "Bar"
     Assert.AreEqual(1, obs.["Last"])        
     Assert.AreEqual(2, obs.["Full"])
+
+[<Test>]
+let ``BindingTarget\Bind\edit with validator sets error state`` () =
+    let first = Mutable.createValidated notNullOrWhitespace ""
+    let last = Mutable.createValidated notNullOrWhitespace ""
+    let full = View.map2 (fun f l -> f + " " + l) first last
+
+    use dynamicVm = 
+        Bind.create()
+        |> Bind.edit "First" first
+        |> Bind.edit "Last" last
+        |> Bind.watch "Full" full
+
+    let obs = PropertyChangedObserver(dynamicVm)    
+
+    Assert.IsFalse(dynamicVm.IsValid)
+    first.Value <- "Foo"
+    Assert.IsFalse(dynamicVm.IsValid)
+    Assert.AreEqual(0, obs.["IsValid"])        
+    last.Value <- "Bar"
+    Assert.IsTrue(dynamicVm.IsValid)
+    Assert.AreEqual(1, obs.["IsValid"])        
