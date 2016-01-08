@@ -242,20 +242,20 @@ let ``BindingTarget\Bind\edit with validator sets error state`` () =
     Assert.IsTrue(dynamicVm.IsValid)
     Assert.AreEqual(1, obs.["IsValid"])        
 
+let fullNameValidation (value : string) = 
+    match System.String.IsNullOrWhiteSpace(value) with
+    | true -> Some "Value must contain at least a first and last name"
+    | false ->
+        let words = value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        if words.Length >= 2 then
+            None
+        else
+            Some "Value must contain at least a first and last name"
+
 [<Test>]
 let ``BindingTarget\Bind\watch with validator sets error state`` () =
     let first = Mutable.create ""
     let last = Mutable.create ""
-
-    let fullNameValidation (value : string) = 
-        match System.String.IsNullOrWhiteSpace(value) with
-        | true -> Some "Value must contain at least a first and last name"
-        | false ->
-            let words = value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-            if words.Length >= 2 then
-                None
-            else
-                Some "Value must contain at least a first and last name"
 
     let full = 
         View.map2 (fun f l -> f + " " + l) first last
@@ -284,16 +284,6 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
     let first = Mutable.create ""
     let last = Mutable.create ""
 
-    let fullNameValidation (value : string) = 
-        match System.String.IsNullOrWhiteSpace(value) with
-        | true -> Some "Value must contain at least a first and last name"
-        | false ->
-            let words = value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-            if words.Length >= 2 then
-                None
-            else
-                Some "Value must contain at least a first and last name"
-
     let full = 
         View.map2 (fun f l -> f + " " + l) first last
         |> View.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
@@ -306,7 +296,7 @@ let ``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` ()
 
     let obs = PropertyChangedObserver(dynamicVm)    
 
-    let errors() =
+    let errors () =
         let inde = dynamicVm :> INotifyDataErrorInfo
         inde.GetErrors("Full")
         |> Seq.cast<string>
