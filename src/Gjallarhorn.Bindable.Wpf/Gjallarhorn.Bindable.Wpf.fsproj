@@ -27,10 +27,10 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    <OutputPath>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\</OutputPath>
+    <OutputPath>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.Bindable.Wpf\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.Bindable.Wpf.XML</DocumentationFile>
+    <DocumentationFile>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.Bindable.Wpf\Gjallarhorn.Bindable.Wpf.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
