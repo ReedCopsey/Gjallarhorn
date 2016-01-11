@@ -23,6 +23,10 @@ module View =
                     ()
         }
 
+    /// Introduce arbitrary values into a view
+    let pure' = constant
+
+
     /// <summary>Create a cached view over a provider</summary>
     /// <remarks>
     /// This will not hold a reference to the provider, and will allow it to be garbage collected.
@@ -171,10 +175,12 @@ module View =
 [<AutoOpen>]
 /// Custom operators for composing IView instances
 module ViewOperators =
-    /// Performs the application, allowing for View.constant someFunUsingABC <*> a <*> b <*> c
+    /// Performs the application, allowing for pure' someFunUsingABC <*> a <*> b <*> c
     let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>
 
     /// <summary>Create a computation expression you can use to compose multiple views</summary>
     /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
     /// and rely on the GC to clean up the subscriptions.</remarks>
     let view = View.ViewBuilder()
+
+    

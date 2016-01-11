@@ -132,7 +132,7 @@ let ``Operator <*> allows arbitrary arity`` () =
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.constant f <*> v1 <*> v2 <*> v3 <*> v4
+    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
 
     Assert.AreEqual(view.Value, "1,2,3,4")
 
@@ -144,8 +144,8 @@ let ``Operator <*> preserves tracking`` () =
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.constant f <*> v1 <*> v2 <*> v3 <*> v4
-    // let view = View.apply( View.apply( View.apply( View.apply (View.constant f) v1) v2) v3) v4
+    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
+    // let view = View.apply( View.apply( View.apply( View.apply (View.pure' f) v1) v2) v3) v4
     
     // Mutate
     v1.Value <- 5
