@@ -34,35 +34,52 @@
         <div class="span9" id="main">
           
 <h1><a name="Gjallarhorn" class="anchor" href="#Gjallarhorn">Gjallarhorn</a></h1>
+<p>Gjallarhorn is a library designed to manage mutable state.  It provides mechanisms for signaling of changes, represented via Views.</p>
 <h2><a name="Example" class="anchor" href="#Example">Example</a></h2>
-<p>This example demonstrates using a function defined in this sample library.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
+<p>This example demonstrates using basic functionality in Gjallarhorn.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
-<span class="k">open</span> <span class="i">Gjallarhorn</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
 
 <span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">variable</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;Foo&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="f">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">variable</span><span class="o">.</span><span class="i">Value</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">var1</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">var2</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">2</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">result</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">pure&#39;</span> (<span class="k">fun</span> <span class="i">a</span> <span class="i">b</span> <span class="k">-&gt;</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>) <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">var1</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">var2</span>
+
+<span class="i">View</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span class="i">value</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="i">printfn</span> <span class="s">&quot;The sum of our variables is %d&quot;</span> <span class="i">value</span>) <span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="i">result</span>
+
+<span class="c">// Set first variable, which causes subscription to print</span>
+<span onmouseout="hideTip(event, 'fs2', 9)" onmouseover="showTip(event, 'fs2', 9)" class="i">var1</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">20</span>
+<span class="c">// Set first variable, which again causes subscription to print</span>
+<span onmouseout="hideTip(event, 'fs3', 10)" onmouseover="showTip(event, 'fs3', 10)" class="i">var2</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">22</span>
 </code></pre></td>
 </tr>
 </table>
-<p>Some more info</p>
+<p>For more information, see the detailed documentation.</p>
 <h2><a name="Samples-amp-documentation" class="anchor" href="#Samples-amp-documentation">Samples &amp; documentation</a></h2>
-<p>The library comes with comprehensible documentation.
-It can include a tutorials automatically generated from <code>*.fsx</code> files in [the content folder][content].
-The API reference is automatically generated from Markdown comments in the library implementation.</p>
 <ul>
-<li><p><a href="tutorial.html">Tutorial</a> contains a further explanation of this sample library.</p></li>
+<li><a href="intro.html">Introduction to Gjallarhorn</a>: A brief introduction to core concepts within Gjallarhorn.</li>
+</ul>
+<h2><a name="API-Reference" class="anchor" href="#API-Reference">API Reference</a></h2>
+<ul>
 <li>
-<p><a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
+<a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
 and functions in the library. This includes additional brief samples on using most of the
-functions.</p>
+functions.
 </li>
 </ul>
 <h2><a name="Contributing-and-copyright" class="anchor" href="#Contributing-and-copyright">Contributing and copyright</a></h2>
@@ -74,8 +91,11 @@ also want to read the [library design notes][readme] to understand how it works.
 redistribution for both commercial and non-commercial purposes. For more information see the
 [License file][license] in the GitHub repository.</p>
 
-<div class="tip" id="fs1">val variable : obj<br /><br />Full name: Index.variable</div>
-<div class="tip" id="fs2">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs1">namespace Gjallarhorn</div>
+<div class="tip" id="fs2">val var1 : obj<br /><br />Full name: Index.var1</div>
+<div class="tip" id="fs3">val var2 : obj<br /><br />Full name: Index.var2</div>
+<div class="tip" id="fs4">val result : obj<br /><br />Full name: Index.result</div>
+<div class="tip" id="fs5">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
 
         </div>
         <div class="span3">
