@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Introducing your project
+    <title>Introducing Gjallarhorn
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="Framework for managing mutable data with change notification and live views"/>
@@ -33,14 +33,17 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1><a name="Introducing-your-project" class="anchor" href="#Introducing-your-project">Introducing your project</a></h1>
-<p>Say more</p>
+<h1><a name="Introducing-Gjallarhorn" class="anchor" href="#Introducing-Gjallarhorn">Introducing Gjallarhorn</a></h1>
+<p>Gjallarhorn is centered around two core types - Views and Mutables.</p>
+<p>A Mutable is a holder for mutable variables, similar to a reference cell.  They are typically created via Mutable.create:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
 <span class="l">4: </span>
 <span class="l">5: </span>
 <span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
@@ -48,10 +51,12 @@
 <span class="c">// Create a mutable variable</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">variable</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">create</span> <span class="s">&quot;Foo&quot;</span>
 <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="f">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 6)" onmouseover="showTip(event, 'fs2', 6)" class="i">variable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">variable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 9)" onmouseover="showTip(event, 'fs6', 9)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
+<span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="f">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 11)" onmouseover="showTip(event, 'fs2', 11)" class="i">variable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 12)" onmouseover="showTip(event, 'fs6', 12)" class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
-<p>TODO</p>
+<p>In this simple example, we show creating, reading from, and updating a Mutable.</p>
 
 <div class="tip" id="fs1">namespace Gjallarhorn</div>
 <div class="tip" id="fs2">val variable : IMutatable&lt;string&gt;<br /><br />Full name: Tutorial.variable</div>
