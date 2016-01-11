@@ -8,6 +8,8 @@
 
 # Xamarin Studio / monodevelop user-specific
 *.userprefs
+*.dll.mdb
+*.exe.mdb
 
 # Build results
 
@@ -17,9 +19,6 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
-
-# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
-!packages/*/build/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -61,6 +60,9 @@ ipch/
 *.psess
 *.vsp
 *.vspx
+
+# Other Visual Studio data
+.vs/
 
 # Guidance Automation Toolkit
 *.gpState
@@ -183,3 +185,5 @@ paket-files
 .paket/paket.exe
 docs/content/license.md
 docs/content/release-notes.md
+.fake
+docs/tools/FSharp.Formatting.svclog
