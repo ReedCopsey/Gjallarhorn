@@ -42,6 +42,7 @@ Samples & documentation
 
  * [Introduction to Gjallarhorn](intro.html): A brief introduction to core concepts within Gjallarhorn.
  * [Views in Gjallarhorn](views.html): Details about Views in Gjallarhorn
+ * [Mutables in Gjallarhorn](mutables.html): Details about Mutables in Gjallarhorn
 
 API Reference
 -----------------------

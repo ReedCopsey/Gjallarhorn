@@ -150,3 +150,8 @@ obs
 // Prints: "New value of observable = 54"
 // Note that this starts as an observable, maps through a View, and back to an observable for the notification!
 e.Trigger 54
+
+(**
+ 
+Now, let's move on to [Mutables in Gjallarhorn](mutables.html).    
+*)
