@@ -92,7 +92,7 @@
 </code></pre></td>
 </tr>
 </table>
-<p>We can also use a custom computational expression to generate a view off any number of input views:</p>
+<p>We can also use an applicative functor to generate a view off any number of input views:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -105,21 +105,19 @@
 <span class="l">10: </span>
 <span class="l">11: </span>
 <span class="l">12: </span>
-<span class="l">13: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Map these two variables from a first and last name to a full name using the view CE</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 19)" onmouseover="showTip(event, 'fs7', 19)" class="i">full&#39;</span> <span class="o">=</span> <span class="i">view</span> {
-    <span class="k">let!</span> <span class="i">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 20)" onmouseover="showTip(event, 'fs4', 20)" class="i">first</span>
-    <span class="k">let!</span> <span class="i">b</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 21)" onmouseover="showTip(event, 'fs5', 21)" class="i">last</span>
-    <span class="k">return</span> <span class="i">a</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="i">b</span>
-}
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 19)" onmouseover="showTip(event, 'fs7', 19)" class="i">middle</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="c">// Map these two variables from a first and last name to a full name using the view CE</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="i">full&#39;</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">pure&#39;</span> (<span class="k">fun</span> <span class="i">f</span> <span class="i">m</span> <span class="i">l</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs9', 21)" onmouseover="showTip(event, 'fs9', 21)" class="i">sprintf</span> <span class="s">&quot;%s %s %s&quot;</span> <span class="i">f</span> <span class="i">m</span> <span class="i">l</span>) <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="i">first</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs7', 23)" onmouseover="showTip(event, 'fs7', 23)" class="i">middle</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs5', 24)" onmouseover="showTip(event, 'fs5', 24)" class="i">last</span>
 
-<span class="c">// Also prints: &quot;Hello Reed Copsey!&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs7', 23)" onmouseover="showTip(event, 'fs7', 23)" class="i">full&#39;</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs7', 25)" onmouseover="showTip(event, 'fs7', 25)" class="i">middle</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;D.&quot;</span>
 
-<span onmouseout="hideTip(event, 'fs5', 24)" onmouseover="showTip(event, 'fs5', 24)" class="i">last</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Copsey, Jr.&quot;</span>
-<span class="c">// Now prints: &quot;Hello Reed Copsey, Jr.!&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 25)" onmouseover="showTip(event, 'fs3', 25)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs7', 26)" onmouseover="showTip(event, 'fs7', 26)" class="i">full&#39;</span><span class="o">.</span><span class="i">Value</span>
+<span class="c">// Also prints: &quot;Hello Reed D. Copsey!&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 26)" onmouseover="showTip(event, 'fs3', 26)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs8', 27)" onmouseover="showTip(event, 'fs8', 27)" class="i">full&#39;</span><span class="o">.</span><span class="i">Value</span>
+
+<span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="i">last</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Copsey, Jr.&quot;</span>
+<span class="c">// Now prints: &quot;Hello Reed D. Copsey, Jr.!&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 29)" onmouseover="showTip(event, 'fs3', 29)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs8', 30)" onmouseover="showTip(event, 'fs8', 30)" class="i">full&#39;</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -130,7 +128,9 @@
 <div class="tip" id="fs4">val first : obj<br /><br />Full name: Intro.first</div>
 <div class="tip" id="fs5">val last : obj<br /><br />Full name: Intro.last</div>
 <div class="tip" id="fs6">val full : obj<br /><br />Full name: Intro.full</div>
-<div class="tip" id="fs7">val full&#39; : obj<br /><br />Full name: Intro.full&#39;</div>
+<div class="tip" id="fs7">val middle : obj<br /><br />Full name: Intro.middle</div>
+<div class="tip" id="fs8">val full&#39; : obj<br /><br />Full name: Intro.full&#39;</div>
+<div class="tip" id="fs9">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
 
         </div>
         <div class="span3">
