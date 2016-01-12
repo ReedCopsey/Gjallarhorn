@@ -55,20 +55,25 @@ printfn "Hello %s!" full.Value
 
 (**
 
-We can also use a custom computational expression to generate a view off any number of input views:
+We can also use an applicative functor to generate a view off any number of input views:
 
 *)
 
+let middle = Mutable.create ""
 // Map these two variables from a first and last name to a full name using the view CE
-let full' = view {
-    let! a = first
-    let! b = last
-    return a + " " + b
-}
+let full' = View.pure' (fun f m l -> sprintf "%s %s %s" f m l) <*> first <*> middle <*> last
 
-// Also prints: "Hello Reed Copsey!"
+middle.Value <- "D."
+
+// Also prints: "Hello Reed D. Copsey!"
 printfn "Hello %s!" full'.Value
 
 last.Value <- "Copsey, Jr."
-// Now prints: "Hello Reed Copsey, Jr.!"
+// Now prints: "Hello Reed D. Copsey, Jr.!"
 printfn "Hello %s!" full'.Value
+
+(** 
+
+Next, we'll go into [more details about Views](views.html).
+
+*)
