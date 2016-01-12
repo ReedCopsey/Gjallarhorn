@@ -137,6 +137,31 @@ let ``Operator <*> allows arbitrary arity`` () =
     Assert.AreEqual(view.Value, "1,2,3,4")
 
 [<Test>]
+let ``Operator <*> notifies properly with input changes`` () =
+    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3
+    let v4 = Mutable.create 4
+    
+    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
+
+    let changes = ref 0
+    use _disp = View.subscribe (fun v -> incr changes) view
+
+    Assert.AreEqual("1,2,3,4", view.Value)
+    Assert.AreEqual(0, !changes)
+    v1.Value <- 5
+    Assert.AreEqual("5,2,3,4", view.Value)
+    Assert.AreEqual(1, !changes)
+    v3.Value <- 7
+    Assert.AreEqual("5,2,7,4", view.Value)
+    Assert.AreEqual(2, !changes)
+    v4.Value <- 8
+    Assert.AreEqual("5,2,7,8", view.Value)
+    Assert.AreEqual(3, !changes)
+
+[<Test>]
 let ``Operator <*> preserves tracking`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
@@ -151,49 +176,3 @@ let ``Operator <*> preserves tracking`` () =
     v1.Value <- 5
     v3.Value <- 7
     Assert.AreEqual(view.Value, "5,2,7,4")
-
-[<Test>]
-let ``Compose a view using a computation expression``() =
-    let m1 = Mutable.create "Foo"
-    let m2 = Mutable.create "Bar"
-
-    let view' = view {
-        let! first = m1
-        let! last = m2
-        return sprintf "%s %s" first last
-    }
-    
-    Assert.AreEqual("Foo Bar", view'.Value)
-
-    // Mutate
-    m2.Value <- "Baz"
-    Assert.AreEqual("Foo Baz", view'.Value)
-
-[<Test>]
-let ``Compose a filtered view using a computation expression``() =
-    let m1 = Mutable.create 1
-    let m2 = Mutable.create 2
-
-    let v1 = m1 |> View.map (fun i -> i+10) 
-    let v2 = m2 |> View.map (fun i -> i*100) 
-
-    let view' = view {
-        let! start = v1
-        let! finish = v2
-        let! mut = m1
-        if finish > 500 then
-            return sprintf "%i" start
-        else
-            return sprintf "%i" (start + finish + mut)
-    }
-
-    let toNum = View.map Int32.Parse view'
-    
-    Assert.AreEqual(212, toNum.Value)
-
-    // Mutate
-    m1.Value <- 5
-    Assert.AreEqual(220, toNum.Value)
-
-    m2.Value <- 7
-    Assert.AreEqual(15, toNum.Value)

@@ -114,22 +114,9 @@ module View =
         view :> IDisposableView<'b>
 
     /// <summary>Converts any IView into an IObservable</summary>
-    /// <remarks>The result can be Disposed to stop tracking</remarks>
+    /// <remarks>The result can be Disposed to stop tracking</remarks> 
     let asObservable (view : IView<'a>) =
         new Observer<'a>(view) :> IDisposableObservable<'a>
-
-    /// Custom computation expression builder for composing IView instances dynamically
-    type ViewBuilder() =        
-        /// Called for let! in computation expression to extract the value from a view
-        member __.Bind(view : IView<'a>, f : 'a -> IView<'b>) = 
-            let unwrap value = f(value).Value
-            // TODO: Should this "dispose" the calling view somehow?
-            map unwrap view :> IView<'b>
-    
-        /// Called for return in computation expressions to recompose the view.
-        member __.Return (v : 'a) =
-            // TODO: Should this "dispose" the calling view somehow?
-            constant v
 
     type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) =
         inherit MappingView<'a,'a>(valueProvider, id, true)
@@ -177,10 +164,3 @@ module View =
 module ViewOperators =
     /// Performs the application, allowing for pure' someFunUsingABC <*> a <*> b <*> c
     let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>
-
-    /// <summary>Create a computation expression you can use to compose multiple views</summary>
-    /// <remarks>The main disadvantage to this approach is that the resulting views are not all disposable
-    /// and rely on the GC to clean up the subscriptions.</remarks>
-    let view = View.ViewBuilder()
-
-    
