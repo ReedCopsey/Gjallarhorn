@@ -114,3 +114,30 @@ valueEditor.Value <- 42
 
 // Prints: "New count = Reed: 42
 printfn "New count = %s: %d" count.Value.Name count.Value.Value
+
+(**
+
+
+The `Mutable` module also provides the option to filter mutables.  This allows you to provide
+a predicate which determines whether edits are passed down to the underlying Mutable
+
+*)
+
+// Create a mutable variable
+let source = Mutable.create 0
+
+// Create a filtered mutable
+let filtered = Mutable.filter (fun v -> v < 10) source
+
+// Prints "Values - Source 0 \ Filtered 0"
+printfn "Values - Source %d \ Filtered %d" source.Value filtered.Value
+
+filtered.Value <- 5
+// Prints "Values - Source 5 \ Filtered 5"
+printfn "Values - Source %d \ Filtered %d" source.Value filtered.Value
+
+// This won't change source, since the predicate fails:
+filtered.Value <- 25
+// Prints "Values - Source 5 \ Filtered 25"
+printfn "Values - Source %d \ Filtered %d" source.Value filtered.Value
+
