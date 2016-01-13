@@ -153,7 +153,7 @@ which allows you to subscribe to changes on views:</p>
 </code></pre></td>
 </tr>
 </table>
-<p>Views can be combined by using <code>View.map2</code> or <code>View.pure'</code>:</p>
+<p>Views can be combined by using <code>View.map2</code> or via custom operators:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -176,6 +176,8 @@ which allows you to subscribe to changes on views:</p>
 <span class="l">20: </span>
 <span class="l">21: </span>
 <span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 31)" onmouseover="showTip(event, 'fs9', 31)" class="i">a</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 32)" onmouseover="showTip(event, 'fs10', 32)" class="i">b</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
@@ -188,17 +190,19 @@ which allows you to subscribe to changes on views:</p>
 <span class="c">// Prints: &quot;v1.Value = FooBar&quot;</span>
 <span onmouseout="hideTip(event, 'fs3', 40)" onmouseover="showTip(event, 'fs3', 40)" class="f">printfn</span> <span class="s">&quot;v1.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="i">v1</span><span class="o">.</span><span class="i">Value</span>
 
-<span class="c">// Use View.pure&#39; to combine many views at once</span>
+<span class="c">// Use custom operators to combine many views at once, including mixed types</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 42)" onmouseover="showTip(event, 'fs12', 42)" class="i">c</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 43)" onmouseover="showTip(event, 'fs13', 43)" class="i">d</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 43)" onmouseover="showTip(event, 'fs13', 43)" class="i">v2</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">pure&#39;</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs11', 44)" onmouseover="showTip(event, 'fs11', 44)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs13', 45)" onmouseover="showTip(event, 'fs13', 45)" class="i">v2</span> <span class="i">v3</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 46)" onmouseover="showTip(event, 'fs11', 46)" class="i">v1</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs13', 47)" onmouseover="showTip(event, 'fs13', 47)" class="i">v2</span> <span class="o">+</span> <span class="i">v3</span>) <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs9', 48)" onmouseover="showTip(event, 'fs9', 48)" class="i">a</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs10', 49)" onmouseover="showTip(event, 'fs10', 49)" class="i">b</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs12', 50)" onmouseover="showTip(event, 'fs12', 50)" class="i">c</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 44)" onmouseover="showTip(event, 'fs14', 44)" class="i">v2</span> <span class="o">=</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs15', 45)" onmouseover="showTip(event, 'fs15', 45)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs16', 46)" onmouseover="showTip(event, 'fs16', 46)" class="i">v2</span> <span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="i">v3</span> <span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="i">v4</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs8', 49)" onmouseover="showTip(event, 'fs8', 49)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s"></span><span class="pf">%s</span><span class="s"></span><span class="pf">%s</span><span class="s"> : </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs15', 50)" onmouseover="showTip(event, 'fs15', 50)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs16', 51)" onmouseover="showTip(event, 'fs16', 51)" class="i">v2</span> <span onmouseout="hideTip(event, 'fs17', 52)" onmouseover="showTip(event, 'fs17', 52)" class="i">v3</span> <span onmouseout="hideTip(event, 'fs18', 53)" onmouseover="showTip(event, 'fs18', 53)" class="i">v4</span>) <span class="o">&lt;!&gt;</span> <span onmouseout="hideTip(event, 'fs9', 54)" onmouseover="showTip(event, 'fs9', 54)" class="i">a</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs10', 55)" onmouseover="showTip(event, 'fs10', 55)" class="i">b</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="i">c</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs13', 57)" onmouseover="showTip(event, 'fs13', 57)" class="i">d</span>
 
-<span class="c">// Prints: &quot;v2.Value = FooBar&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 51)" onmouseover="showTip(event, 'fs3', 51)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs13', 52)" onmouseover="showTip(event, 'fs13', 52)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+<span class="c">// Prints: &quot;v2.Value = FooBar : 0&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 58)" onmouseover="showTip(event, 'fs3', 58)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs14', 59)" onmouseover="showTip(event, 'fs14', 59)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs12', 53)" onmouseover="showTip(event, 'fs12', 53)" class="i">c</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Baz&quot;</span>
-<span class="c">// Prints: &quot;v2.Value = FooBarBaz&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 54)" onmouseover="showTip(event, 'fs3', 54)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs13', 55)" onmouseover="showTip(event, 'fs13', 55)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs12', 60)" onmouseover="showTip(event, 'fs12', 60)" class="i">c</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Baz&quot;</span>
+<span onmouseout="hideTip(event, 'fs13', 61)" onmouseover="showTip(event, 'fs13', 61)" class="i">d</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
+<span class="c">// Prints: &quot;v2.Value = FooBarBaz : 42&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 62)" onmouseover="showTip(event, 'fs3', 62)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs14', 63)" onmouseover="showTip(event, 'fs14', 63)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -229,29 +233,29 @@ notion of a value (represented in the <code>Value</code> property) which always 
 <span class="l">22: </span>
 <span class="l">23: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 56)" onmouseover="showTip(event, 'fs14', 56)" class="i">e</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 57)" onmouseover="showTip(event, 'fs15', 57)" class="t">Event</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs16', 58)" onmouseover="showTip(event, 'fs16', 58)" class="t">int</span><span class="o">&gt;</span>()
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs17', 59)" onmouseover="showTip(event, 'fs17', 59)" class="i">observable</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs14', 60)" onmouseover="showTip(event, 'fs14', 60)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 61)" onmouseover="showTip(event, 'fs18', 61)" class="i">Publish</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 64)" onmouseover="showTip(event, 'fs19', 64)" class="i">e</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 65)" onmouseover="showTip(event, 'fs20', 65)" class="t">Event</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs21', 66)" onmouseover="showTip(event, 'fs21', 66)" class="t">int</span><span class="o">&gt;</span>()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 67)" onmouseover="showTip(event, 'fs22', 67)" class="i">observable</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs19', 68)" onmouseover="showTip(event, 'fs19', 68)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">Publish</span>
 
 <span class="c">// Subscribe to the observable, with &quot;0&quot; as the initial value (since we always need a &quot;current value&quot;)</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 62)" onmouseover="showTip(event, 'fs19', 62)" class="i">v</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">fromObservable</span> <span class="n">0</span> <span onmouseout="hideTip(event, 'fs17', 63)" onmouseover="showTip(event, 'fs17', 63)" class="i">observable</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs24', 70)" onmouseover="showTip(event, 'fs24', 70)" class="i">v</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">fromObservable</span> <span class="n">0</span> <span onmouseout="hideTip(event, 'fs22', 71)" onmouseover="showTip(event, 'fs22', 71)" class="i">observable</span>
 
 <span class="c">// Prints: &quot;View&#39;s value = 0&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 64)" onmouseover="showTip(event, 'fs3', 64)" class="f">printfn</span> <span class="s">&quot;View&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs19', 65)" onmouseover="showTip(event, 'fs19', 65)" class="i">v</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 72)" onmouseover="showTip(event, 'fs3', 72)" class="f">printfn</span> <span class="s">&quot;View&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs24', 73)" onmouseover="showTip(event, 'fs24', 73)" class="i">v</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs14', 66)" onmouseover="showTip(event, 'fs14', 66)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 67)" onmouseover="showTip(event, 'fs20', 67)" class="f">Trigger</span> <span class="n">42</span>
+<span onmouseout="hideTip(event, 'fs19', 74)" onmouseover="showTip(event, 'fs19', 74)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 75)" onmouseover="showTip(event, 'fs25', 75)" class="f">Trigger</span> <span class="n">42</span>
 
 <span class="c">// Prints: &quot;View&#39;s value = 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 68)" onmouseover="showTip(event, 'fs3', 68)" class="f">printfn</span> <span class="s">&quot;View&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs19', 69)" onmouseover="showTip(event, 'fs19', 69)" class="i">v</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 76)" onmouseover="showTip(event, 'fs3', 76)" class="f">printfn</span> <span class="s">&quot;View&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs24', 77)" onmouseover="showTip(event, 'fs24', 77)" class="i">v</span><span class="o">.</span><span class="i">Value</span>
 
 <span class="c">// Convert back to an observable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 70)" onmouseover="showTip(event, 'fs21', 70)" class="i">obs</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">asObservable</span> <span onmouseout="hideTip(event, 'fs19', 71)" onmouseover="showTip(event, 'fs19', 71)" class="i">v</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 78)" onmouseover="showTip(event, 'fs26', 78)" class="i">obs</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">asObservable</span> <span onmouseout="hideTip(event, 'fs24', 79)" onmouseover="showTip(event, 'fs24', 79)" class="i">v</span>
 
-<span onmouseout="hideTip(event, 'fs21', 72)" onmouseover="showTip(event, 'fs21', 72)" class="i">obs</span>
-<span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 73)" onmouseover="showTip(event, 'fs22', 73)" class="t">Observable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 74)" onmouseover="showTip(event, 'fs23', 74)" class="f">add</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs24', 75)" onmouseover="showTip(event, 'fs24', 75)" class="i">v</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs3', 76)" onmouseover="showTip(event, 'fs3', 76)" class="f">printfn</span> <span class="s">&quot;New value of observable = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs24', 77)" onmouseover="showTip(event, 'fs24', 77)" class="i">v</span>)
+<span onmouseout="hideTip(event, 'fs26', 80)" onmouseover="showTip(event, 'fs26', 80)" class="i">obs</span>
+<span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs27', 81)" onmouseover="showTip(event, 'fs27', 81)" class="t">Observable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 82)" onmouseover="showTip(event, 'fs28', 82)" class="f">add</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs29', 83)" onmouseover="showTip(event, 'fs29', 83)" class="i">v</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs3', 84)" onmouseover="showTip(event, 'fs3', 84)" class="f">printfn</span> <span class="s">&quot;New value of observable = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs29', 85)" onmouseover="showTip(event, 'fs29', 85)" class="i">v</span>)
 
 <span class="c">// Prints: &quot;New value of observable = 54&quot;</span>
 <span class="c">// Note that this starts as an observable, maps through a View, and back to an observable for the notification!</span>
-<span onmouseout="hideTip(event, 'fs14', 78)" onmouseover="showTip(event, 'fs14', 78)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 79)" onmouseover="showTip(event, 'fs20', 79)" class="f">Trigger</span> <span class="n">54</span>
+<span onmouseout="hideTip(event, 'fs19', 86)" onmouseover="showTip(event, 'fs19', 86)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 87)" onmouseover="showTip(event, 'fs25', 87)" class="f">Trigger</span> <span class="n">54</span>
 </code></pre></td>
 </tr>
 </table>
@@ -269,18 +273,23 @@ notion of a value (represented in the <code>Value</code> property) which always 
 <div class="tip" id="fs10">val b : obj<br /><br />Full name: Views.b</div>
 <div class="tip" id="fs11">val v1 : obj<br /><br />Full name: Views.v1</div>
 <div class="tip" id="fs12">val c : obj<br /><br />Full name: Views.c</div>
-<div class="tip" id="fs13">val v2 : obj<br /><br />Full name: Views.v2</div>
-<div class="tip" id="fs14">val e : Event&lt;int&gt;<br /><br />Full name: Views.e</div>
-<div class="tip" id="fs15">Multiple items<br />module Event<br /><br />from Microsoft.FSharp.Control<br /><br />--------------------<br />type Event&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;T&gt;<br />&#160;&#160;member Trigger : arg:&#39;T -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_&gt;<br /><br />--------------------<br />type Event&lt;&#39;Delegate,&#39;Args (requires delegate and &#39;Delegate :&gt; Delegate)&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;<br />&#160;&#160;member Trigger : sender:obj * args:&#39;Args -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;Delegate,&#39;Args&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;</div>
-<div class="tip" id="fs16">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs17">val observable : IEvent&lt;int&gt;<br /><br />Full name: Views.observable</div>
-<div class="tip" id="fs18">property Event.Publish: IEvent&lt;int&gt;</div>
-<div class="tip" id="fs19">val v : &#39;a<br /><br />Full name: Views.v</div>
-<div class="tip" id="fs20">member Event.Trigger : arg:&#39;T -&gt; unit</div>
-<div class="tip" id="fs21">val obs : &#39;a (requires &#39;a :&gt; System.IObservable&lt;int&gt;)<br /><br />Full name: Views.obs</div>
-<div class="tip" id="fs22">module Observable<br /><br />from Microsoft.FSharp.Control</div>
-<div class="tip" id="fs23">val add : callback:(&#39;T -&gt; unit) -&gt; source:System.IObservable&lt;&#39;T&gt; -&gt; unit<br /><br />Full name: Microsoft.FSharp.Control.Observable.add</div>
-<div class="tip" id="fs24">val v : int</div>
+<div class="tip" id="fs13">val d : obj<br /><br />Full name: Views.d</div>
+<div class="tip" id="fs14">val v2 : obj<br /><br />Full name: Views.v2</div>
+<div class="tip" id="fs15">val v1 : string</div>
+<div class="tip" id="fs16">val v2 : string</div>
+<div class="tip" id="fs17">val v3 : string</div>
+<div class="tip" id="fs18">val v4 : int</div>
+<div class="tip" id="fs19">val e : Event&lt;int&gt;<br /><br />Full name: Views.e</div>
+<div class="tip" id="fs20">Multiple items<br />module Event<br /><br />from Microsoft.FSharp.Control<br /><br />--------------------<br />type Event&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;T&gt;<br />&#160;&#160;member Trigger : arg:&#39;T -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_&gt;<br /><br />--------------------<br />type Event&lt;&#39;Delegate,&#39;Args (requires delegate and &#39;Delegate :&gt; Delegate)&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;<br />&#160;&#160;member Trigger : sender:obj * args:&#39;Args -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;Delegate,&#39;Args&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;</div>
+<div class="tip" id="fs21">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
+<div class="tip" id="fs22">val observable : IEvent&lt;int&gt;<br /><br />Full name: Views.observable</div>
+<div class="tip" id="fs23">property Event.Publish: IEvent&lt;int&gt;</div>
+<div class="tip" id="fs24">val v : &#39;a<br /><br />Full name: Views.v</div>
+<div class="tip" id="fs25">member Event.Trigger : arg:&#39;T -&gt; unit</div>
+<div class="tip" id="fs26">val obs : &#39;a (requires &#39;a :&gt; System.IObservable&lt;int&gt;)<br /><br />Full name: Views.obs</div>
+<div class="tip" id="fs27">module Observable<br /><br />from Microsoft.FSharp.Control</div>
+<div class="tip" id="fs28">val add : callback:(&#39;T -&gt; unit) -&gt; source:System.IObservable&lt;&#39;T&gt; -&gt; unit<br /><br />Full name: Microsoft.FSharp.Control.Observable.add</div>
+<div class="tip" id="fs29">val v : int</div>
 
         </div>
         <div class="span3">
