@@ -157,7 +157,7 @@ module Validation =
 
     /// Core interface for all validated edit types
     type IValidatedMutatable<'a> =
-        inherit IMutatable<'a>
+        inherit IDisposableMutatable<'a>
     
         /// The current validation status
         abstract member ValidationResult : IView<ValidationResult> with get

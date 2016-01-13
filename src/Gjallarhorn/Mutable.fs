@@ -31,7 +31,7 @@ module Mutable =
 
     /// Filters the mutable, so only values set which match the predicate are pushed and propogated onwards
     let filter (predicate : 'a -> bool)  (provider : IMutatable<'a>) = 
-        new FilteredEditor<'a>(provider, predicate, false) :> IMutatable<'a>
+        new FilteredEditor<'a>(provider, predicate, false) :> IDisposableMutatable<'a>
 
     /// Transforms a mutatable value from one IConvertible type to another.
     let mapConvertible<'a,'b> (provider : IMutatable<'a>) =
