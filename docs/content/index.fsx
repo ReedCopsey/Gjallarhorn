@@ -37,12 +37,12 @@ var2.Value <- 22
 (**
 For more information, see the detailed documentation.
 
-Samples & documentation
+Core Types and Usage
 -----------------------
 
  * [Introduction to Gjallarhorn](intro.html): A brief introduction to core concepts within Gjallarhorn.
- * [Views in Gjallarhorn](views.html): Details about Views in Gjallarhorn
- * [Mutables in Gjallarhorn](mutables.html): Details about Mutables in Gjallarhorn
+ * [Views](views.html): Details about Views in Gjallarhorn
+ * [Mutables](mutables.html): Details about Mutables in Gjallarhorn
 
 API Reference
 -----------------------

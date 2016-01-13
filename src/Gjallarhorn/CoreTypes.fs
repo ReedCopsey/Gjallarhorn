@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn
 
 open Gjallarhorn.Internal
+open Gjallarhorn.Validation
 
 open System
 open System.Collections.Generic
@@ -22,7 +23,7 @@ module internal DisposeHelpers =
             d.Dispose()
         | _ -> ()
         
-    let dispose (provider : IView<'a> option) disposeProviderOnDispose mechanism self =
+    let dispose (provider : #IView<'a> option) disposeProviderOnDispose mechanism self =
             match provider with
             | None -> ()
             | Some(v) ->
@@ -290,6 +291,69 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
+type internal FilteredEditor<'a>(valueProvider : IMutatable<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
+    do
+        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+
+    let mutable v = valueProvider.Value
+
+    let mutable valueProvider = Some(valueProvider)
+    let dependencies = DependencyTracker(self)
+
+    let signal() = 
+        self.Signaling()
+        dependencies.Signal self
+
+    abstract member Disposing : unit -> unit
+    default __.Disposing() =
+        ()
+
+    abstract member Signaling : unit -> unit
+    default __.Signaling() =
+        ()
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()
+        GC.SuppressFinalize this
+    interface IDisposableMutatable<'a> with
+        member __.Value 
+            with get() = v
+            and set(newVal) =
+                if not(EqualityComparer<'a>.Default.Equals(v, newVal)) then            
+                    match filter newVal, valueProvider with
+                    | true, Some vp->
+                        // This will trigger a refresh request from valueProvider, and update us
+                        vp.Value <- newVal
+                    | _, _ ->
+                        v <- newVal
+                        signal()
+
+    interface IView<'a> with
+        member __.Value with get() = v
+        member __.AddDependency mechanism dep =
+            dependencies.Add mechanism dep
+        member __.RemoveDependency mechanism dep =
+            dependencies.Remove mechanism dep
+        member this.Signal () =
+            signal()
+
+    interface IDependent with
+        member __.RequestRefresh _ = 
+            match valueProvider with
+            | None -> ()
+            | Some(provider) ->
+                let value = provider.Value
+                if filter(value) then
+                    v <- value
+                    signal()
+                
+    interface IDisposable with
+        member this.Dispose() =
+            this.Disposing()
+            DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            valueProvider <- None
+            SignalManager.RemoveAllDependencies this
+
 type internal CachedView<'a> (valueProvider : IView<'a>) as self =
     do
         valueProvider.AddDependency DependencyTrackingMechanism.WeakReferenced self
@@ -335,3 +399,48 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
                     handle <- null
                     SignalManager.RemoveAllDependencies this
                 | false,_ -> ()
+
+module private ValidationHelpers =
+    let isValidValue validator value =
+        validate value 
+        |> validator 
+        |> Validation.result 
+        |> isValid
+type internal ValidatorMappingEditor<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IMutatable<'a>) =
+    inherit FilteredEditor<'a>(valueProvider, ValidationHelpers.isValidValue validator, true)
+
+    let validateValue newVal =
+        validate newVal
+        |> validator
+        |> Validation.result
+    let validateCurrent () = validateValue valueProvider.Value
+    let validationResult = Mutable(validateCurrent()) :> IMutatable<ValidationResult>
+
+    let subscriptionHandle =
+        let rec dependent =
+            {
+                new IDependent with
+                    member __.RequestRefresh _ =
+                        validationResult.Value <- validateCurrent()
+                interface System.IDisposable with
+                    member __.Dispose() = 
+                        valueProvider.RemoveDependency DependencyTrackingMechanism.Default dependent
+            }
+        valueProvider.AddDependency DependencyTrackingMechanism.Default dependent
+        dependent :> System.IDisposable
+
+    member private __.EditAndValidate value =  
+        validationResult.Value <- validateValue value
+
+    override this.Signaling() =
+        this.EditAndValidate (this :> IView<'a>).Value
+
+    override __.Disposing() =
+        subscriptionHandle.Dispose()
+        SignalManager.RemoveAllDependencies validationResult
+
+    interface IValidatedMutatable<'a> with
+        member __.ValidationResult with get() = validationResult :> IView<ValidationResult>
+
+        member __.IsValid = isValid validationResult.Value
+            

@@ -45,6 +45,11 @@ type IDisposableView<'a> =
     inherit IView<'a>
     inherit System.IDisposable
 
+/// A mutatable which implements IDisposable in order to stop tracking its source
+type IDisposableMutatable<'a> =
+    inherit IMutatable<'a>
+    inherit System.IDisposable
+
 /// <summary>A contract for an IObservable which is also IDisposable</summary>
 /// <remarks>Disposing is optional, but will cause the IObservable to stop tracking changes</remarks>
 type IDisposableObservable<'a> =

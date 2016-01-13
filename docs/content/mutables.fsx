@@ -10,7 +10,7 @@
 Mutables in Gjallarhorn
 ========================
 
-The other core types in Gjallarhorn is a Mutable. 
+The other core type in Gjallarhorn is a Mutable. 
 
 A Mutable extends the concept of a view by allowing the current value to be changed.
 

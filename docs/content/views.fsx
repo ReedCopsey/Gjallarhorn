@@ -24,7 +24,7 @@ The simplest View can be created via `View.constant`:
 #r "Gjallarhorn.dll"
 open Gjallarhorn
 
-// Create a mutable variable
+// Create a view over a constant value
 let v = View.constant 42
 
 // Prints "Value = 42"
@@ -60,7 +60,7 @@ Views can also be filtered or transformed:
 
 *)
 
-// Create a value
+// Create a mutable value
 let source = Mutable.create 0
 
 // Create a filter on this
