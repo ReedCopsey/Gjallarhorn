@@ -162,5 +162,8 @@ module View =
 [<AutoOpen>]
 /// Custom operators for composing IView instances
 module ViewOperators =
-    /// Performs the application, allowing for pure' someFunUsingABC <*> a <*> b <*> c
+    /// Applies the function inside the applicative functor, allowing for: View.pure' someFunUsingABC <*> a <*> b <*> c
     let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = View.apply f x :> IView<'b>
+
+    /// Lifts the function into the applicative functor via View.pure', allowing for: someFunUsingABC <!> a <*> b <*> c
+    let (<!>) f a = View.pure' f <*> a

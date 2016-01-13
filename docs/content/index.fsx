@@ -24,7 +24,7 @@ open Gjallarhorn
 // Create a mutable variable
 let var1 = Mutable.create 0
 let var2 = Mutable.create 2
-let result = View.pure' (fun a b -> a + b) <*> var1 <*> var2
+let result = (fun a b -> a + b) <!> var1 <*> var2
 
 View.subscribe (fun value -> printfn "The sum of our variables is %d" value) result
 

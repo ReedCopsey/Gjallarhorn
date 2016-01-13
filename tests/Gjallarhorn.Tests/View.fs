@@ -176,3 +176,19 @@ let ``Operator <*> preserves tracking`` () =
     v1.Value <- 5
     v3.Value <- 7
     Assert.AreEqual(view.Value, "5,2,7,4")
+
+[<Test>]
+let ``Operators <!> and <*> preserves tracking`` () =
+    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3
+    let v4 = Mutable.create 4
+    
+    let view = f <!> v1 <*> v2 <*> v3 <*> v4
+    // let view = View.apply( View.apply( View.apply( View.apply (View.pure' f) v1) v2) v3) v4
+    
+    // Mutate
+    v1.Value <- 5
+    v3.Value <- 7
+    Assert.AreEqual(view.Value, "5,2,7,4")

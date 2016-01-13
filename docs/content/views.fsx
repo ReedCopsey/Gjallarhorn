@@ -91,7 +91,7 @@ source.Value <- 2
 
 (**
 
-Views can be combined by using `View.map2` or `View.pure'`:
+Views can be combined by using `View.map2` or via custom operators:
 
 *)
 
@@ -106,16 +106,18 @@ b.Value <- "Bar"
 // Prints: "v1.Value = FooBar"
 printfn "v1.Value = %s" v1.Value
 
-// Use View.pure' to combine many views at once
+// Use custom operators to combine many views at once, including mixed types
 let c = Mutable.create ""
+let d = Mutable.create 0
 
-let v2 = View.pure' (fun v1 v2 v3 -> v1 + v2 + v3) <*> a <*> b <*> c
+let v2 = (fun v1 v2 v3 v4 -> sprintf "%s%s%s : %d" v1 v2 v3 v4) <!> a <*> b <*> c <*> d
 
-// Prints: "v2.Value = FooBar"
+// Prints: "v2.Value = FooBar : 0"
 printfn "v2.Value = %s" v2.Value
 
 c.Value <- "Baz"
-// Prints: "v2.Value = FooBarBaz"
+d.Value <- 42
+// Prints: "v2.Value = FooBarBaz : 42"
 printfn "v2.Value = %s" v2.Value
 
 (**
