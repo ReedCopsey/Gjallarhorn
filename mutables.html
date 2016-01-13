@@ -34,7 +34,7 @@
         <div class="span9" id="main">
           
 <h1><a name="Mutables-in-Gjallarhorn" class="anchor" href="#Mutables-in-Gjallarhorn">Mutables in Gjallarhorn</a></h1>
-<p>The other core types in Gjallarhorn is a Mutable.</p>
+<p>The other core type in Gjallarhorn is a Mutable.</p>
 <p>A Mutable extends the concept of a view by allowing the current value to be changed.</p>
 <p>The simplest Mutable can be created via <code>Mutable.create</code>:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
@@ -188,6 +188,46 @@ when mapping from a record to multiple editors:</p>
 </code></pre></td>
 </tr>
 </table>
+<p>The <code>Mutable</code> module also provides the option to filter mutables.  This allows you to provide
+a predicate which determines whether edits are passed down to the underlying Mutable</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 55)" onmouseover="showTip(event, 'fs18', 55)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="c">// Create a filtered mutable</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 56)" onmouseover="showTip(event, 'fs19', 56)" class="i">filtered</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">filter</span> (<span class="k">fun</span> <span class="i">v</span> <span class="k">-&gt;</span> <span class="i">v</span> <span class="o">&lt;</span> <span class="n">10</span>) <span onmouseout="hideTip(event, 'fs18', 57)" onmouseover="showTip(event, 'fs18', 57)" class="i">source</span>
+
+<span class="c">// Prints &quot;Values - Source 0 \ Filtered 0&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 58)" onmouseover="showTip(event, 'fs3', 58)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs18', 59)" onmouseover="showTip(event, 'fs18', 59)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 60)" onmouseover="showTip(event, 'fs13', 60)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs19', 61)" onmouseover="showTip(event, 'fs19', 61)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 62)" onmouseover="showTip(event, 'fs13', 62)" class="i">Value</span>
+
+<span onmouseout="hideTip(event, 'fs19', 63)" onmouseover="showTip(event, 'fs19', 63)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 64)" onmouseover="showTip(event, 'fs13', 64)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">5</span>
+<span class="c">// Prints &quot;Values - Source 5 \ Filtered 5&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 65)" onmouseover="showTip(event, 'fs3', 65)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs18', 66)" onmouseover="showTip(event, 'fs18', 66)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 67)" onmouseover="showTip(event, 'fs13', 67)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs19', 68)" onmouseover="showTip(event, 'fs19', 68)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 69)" onmouseover="showTip(event, 'fs13', 69)" class="i">Value</span>
+
+<span class="c">// This won&#39;t change source, since the predicate fails:</span>
+<span onmouseout="hideTip(event, 'fs19', 70)" onmouseover="showTip(event, 'fs19', 70)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 71)" onmouseover="showTip(event, 'fs13', 71)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">25</span>
+<span class="c">// Prints &quot;Values - Source 5 \ Filtered 25&quot;</span>
+<span onmouseout="hideTip(event, 'fs3', 72)" onmouseover="showTip(event, 'fs3', 72)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs18', 73)" onmouseover="showTip(event, 'fs18', 73)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 74)" onmouseover="showTip(event, 'fs13', 74)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs19', 75)" onmouseover="showTip(event, 'fs19', 75)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 76)" onmouseover="showTip(event, 'fs13', 76)" class="i">Value</span>
+</code></pre></td>
+</tr>
+</table>
 
 <div class="tip" id="fs1">namespace Gjallarhorn</div>
 <div class="tip" id="fs2">val m : obj<br /><br />Full name: Mutables.m</div>
@@ -206,6 +246,8 @@ when mapping from a record to multiple editors:</p>
 <div class="tip" id="fs15">val count : Counts<br /><br />Full name: Mutables.count</div>
 <div class="tip" id="fs16">val nameEditor : Counts<br /><br />Full name: Mutables.nameEditor</div>
 <div class="tip" id="fs17">val valueEditor : Counts<br /><br />Full name: Mutables.valueEditor</div>
+<div class="tip" id="fs18">val source : Counts<br /><br />Full name: Mutables.source</div>
+<div class="tip" id="fs19">val filtered : Counts<br /><br />Full name: Mutables.filtered</div>
 
         </div>
         <div class="span3">

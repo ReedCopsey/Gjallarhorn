@@ -52,7 +52,7 @@
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
 
-<span class="c">// Create a mutable variable</span>
+<span class="c">// Create a view over a constant value</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">v</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">constant</span> <span class="n">42</span>
 
 <span class="c">// Prints &quot;Value = 42&quot;</span>
@@ -122,7 +122,7 @@ which allows you to subscribe to changes on views:</p>
 <span class="l">27: </span>
 <span class="l">28: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a value</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable value</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
 <span class="c">// Create a filter on this</span>
