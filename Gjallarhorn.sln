@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{8E6D
 		docs\content\index.fsx = docs\content\index.fsx
 		docs\content\intro.fsx = docs\content\intro.fsx
 		docs\content\mutables.fsx = docs\content\mutables.fsx
+		docs\content\validate_types.fsx = docs\content\validate_types.fsx
 		docs\content\validation.fsx = docs\content\validation.fsx
 		docs\content\views.fsx = docs\content\views.fsx
 	EndProjectSection
