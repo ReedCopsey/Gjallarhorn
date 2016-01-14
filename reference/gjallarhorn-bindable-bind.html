@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IView<'a> - Gjallarhorn</title>
+    <title>Bind - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,42 +35,72 @@
 
 
 
-<h1>IView<'a></h1>
+<h1>Bind</h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
+  <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
 <div class="xmldoc">
-<p>Core interface for all members which provide a current value
-Dependent views can use this to query the current state
-of the mutable value</p>
-
 </div>
-  <h3>Instance members</h3>
+
+<!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-bind-binding.html">Binding</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            Value
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            edit name mut target
           </code>
-          <div class="tip" id="19">
-            <strong>Signature:</strong> &#39;a<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> name:string -&gt; mut:IMutatable&lt;&#39;?7443&gt; -&gt; target:&#39;?7444 -&gt; &#39;?7444<br />
+                          <strong>Type parameters:</strong> '?7443, '?7444          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L11-11" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L106-106" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The current value of the type</p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
 
-
-              <p>CompiledName: <code>get_Value</code></p>
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            watch name view target
+          </code>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> name:string -&gt; view:IView&lt;&#39;?7446&gt; -&gt; target:&#39;?7447 -&gt; &#39;?7447<br />
+                          <strong>Type parameters:</strong> '?7446, '?7447          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L110-110" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
         </td>
       </tr>
     </tbody>
