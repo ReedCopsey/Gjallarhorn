@@ -141,8 +141,6 @@ copyFiles()
 #if HELP
 buildDocumentation()
 #endif
-
-// REED: Removing this to always generate reference docs - otherwise, they don't generate
-// #if REFERENCE
+#if REFERENCE
 buildReference()
-// #endif
+#endif
