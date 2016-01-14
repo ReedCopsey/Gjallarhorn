@@ -65,7 +65,9 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     override __.BindCommand name command =        
         customProps.Add(name, (makePD name, makeCommandIV command))
-        
+
+/// [omit]
+/// Internal type used to allow dynamic binding targets to be generated.        
 and BindingTargetTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
 
