@@ -20,19 +20,19 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Gjallarhorn.Bindable.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Gjallarhorn.Bindable.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    <OutputPath>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.Bindable\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn.Bindable\Gjallarhorn.Bindable.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Gjallarhorn.Bindable.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
@@ -44,10 +44,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utilities.fs" />
-    <Compile Include="Contracts.fs" />
+    <Compile Include="BindingContracts.fs" />
     <Compile Include="BoundView.fs" />
     <Compile Include="BindingTarget.fs" />
-    <None Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gjallarhorn\Gjallarhorn.fsproj">

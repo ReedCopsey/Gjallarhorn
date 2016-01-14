@@ -1,9 +1,7 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#I "../../bin/Gjallarhorn"
-#I "../../bin/Gjallarhorn.Bindable"
-#I "../../bin/Gjallarhorn.Bindable.Wpf"
+#I "../../bin"
 #r "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.6.1/Facades/System.Runtime.dll"
 
 (**

@@ -5,23 +5,23 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>79269e6a-2c7e-442d-8b23-55b6d940a5d2</ProjectGuid>
+    <ProjectGuid>5ace0621-55cc-4dcd-a159-d7ab7d3057c6</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Gjallarhorn.Bindable.Wpf</RootNamespace>
-    <AssemblyName>Gjallarhorn.Bindable.Wpf</AssemblyName>
+    <RootNamespace>Gjallarhorn.ReferenceDocumentation</RootNamespace>
+    <AssemblyName>Gjallarhorn.ReferenceDocumentation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>Gjallarhorn.Bindable.Wpf</Name>
+    <Name>Gjallarhorn.ReferenceDocumentation</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Gjallarhorn.Bindable.Wpf.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Gjallarhorn.ReferenceDocumentation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +30,7 @@
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>..\..\bin\Gjallarhorn.Bindable.Wpf.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Gjallarhorn.ReferenceDocumentation.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -42,20 +42,42 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="BindingTarget.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Gjallarhorn.Bindable\Gjallarhorn.Bindable.fsproj">
-      <Name>Gjallarhorn.Bindable</Name>
-      <Project>{dc46e916-06fc-4256-acfc-ebc7c9dc95ea}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Gjallarhorn\Gjallarhorn.fsproj">
-      <Name>Gjallarhorn</Name>
-      <Project>{41fab705-05f3-45ae-99ef-524e6d9736ff}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Compile Include="..\Gjallarhorn\AssemblyInfo.fs">
+      <Link>AssemblyInfo.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\Contracts.fs">
+      <Link>Contracts.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\SignalManager.fs">
+      <Link>SignalManager.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\Validation.fs">
+      <Link>Validation.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\CoreTypes.fs">
+      <Link>CoreTypes.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\Mutable.fs">
+      <Link>Mutable.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\Observable.fs">
+      <Link>Observable.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn\View.fs">
+      <Link>View.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\Utilities.fs">
+      <Link>Utilities.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\BindingContracts.fs">
+      <Link>BindingContracts.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\BoundView.fs">
+      <Link>BoundView.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\BindingTarget.fs">
+      <Link>BindingTarget.fs</Link>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

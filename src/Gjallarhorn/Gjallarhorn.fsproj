@@ -29,10 +29,10 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    <OutputPath>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>5</WarningLevel>
-    <DocumentationFile>C:\Users\Reed\Documents\GitHub\Gjallarhorn\bin\Gjallarhorn\Gjallarhorn.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Gjallarhorn.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
