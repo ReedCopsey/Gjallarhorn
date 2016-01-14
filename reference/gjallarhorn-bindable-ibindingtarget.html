@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Mutable - Gjallarhorn</title>
+    <title>IBindingTarget - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,200 +35,209 @@
 
 
 
-<h1>Mutable</h1>
+<h1>IBindingTarget</h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
+  <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
 <div class="xmldoc">
-<p>Manages creation of mutable variables</p>
+<p>Interface used to manage a binding target</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Instance member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
-            create value
+          <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
+            BindCommand(arg1 arg2)
           </code>
-          <div class="tip" id="1">
-            <strong>Signature:</strong> value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br />
+          <div class="tip" id="88">
+            <strong>Signature:</strong> string -&gt; ICommand -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L57-57" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a binding target for a command with a given name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '89', 89)" onmouseover="showTip(event, '89', 89)">
+            BindMutable(arg1 arg2)
+          </code>
+          <div class="tip" id="89">
+            <strong>Signature:</strong> string -&gt; IMutatable&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L11-11" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L51-51" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a mutable variable wrapping an initial value</p>
+          <p>Add a binding target for a mutatable value with a given name</p>
 
 
-              <p>CompiledName: <code>Create</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            createValidated validator initialValue
+          <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
+            BindView(arg1 arg2)
           </code>
-          <div class="tip" id="2">
-            <strong>Signature:</strong> validator:(ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;) -&gt; initialValue:&#39;a -&gt; IValidatedMutatable&lt;&#39;a&gt;<br />
+          <div class="tip" id="90">
+            <strong>Signature:</strong> string -&gt; IView&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L47-47" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L54-54" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Add a binding target for a view with a given name</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            filter predicate provider
+          <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
+            IsValid
           </code>
-          <div class="tip" id="3">
-            <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IDisposableMutatable&lt;&#39;a&gt;<br />
+          <div class="tip" id="91">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L33-33" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Property allowing us to track whether any validation errors currently exist on this target</p>
+
+
+              <p>CompiledName: <code>get_IsValid</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
+            OperationExecuting
+          </code>
+          <div class="tip" id="92">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Value used to notify view that an asynchronous operation is executing</p>
+
+
+              <p>CompiledName: <code>get_OperationExecuting</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
+            RaisePropertyChanged(arg1)
+          </code>
+          <div class="tip" id="93">
+            <strong>Signature:</strong> Expr -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L39-39" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Trigger the PropertyChanged event for a specific property</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
+            RaisePropertyChanged(arg1)
+          </code>
+          <div class="tip" id="94">
+            <strong>Signature:</strong> string -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L36-36" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Trigger the PropertyChanged event for a specific property</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
+            TrackValidator(arg1 arg2)
+          </code>
+          <div class="tip" id="95">
+            <strong>Signature:</strong> string -&gt; IView&lt;ValidationResult&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L45-45" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Track changes on a view of validation results to raise proper validation events</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
+            TrackView(arg1 arg2)
+          </code>
+          <div class="tip" id="96">
+            <strong>Signature:</strong> string -&gt; IView&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L33-33" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Filters the mutable, so only values set which match the predicate are pushed and propogated onwards</p>
+          <p>Track changes on a view to raise property changed events</p>
 
 
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            get mutatable
-          </code>
-          <div class="tip" id="4">
-            <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; &#39;a<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L16-16" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Gets the value associated with the mutatable object</p>
-
-
-              <p>CompiledName: <code>Get</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            map viewMapping setMapping provider
-          </code>
-          <div class="tip" id="5">
-            <strong>Signature:</strong> viewMapping:(&#39;a -&gt; &#39;b) -&gt; setMapping:(&#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L25-25" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutatable value for editing by using a specified mapping function for view and edit.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            mapConvertible provider
-          </code>
-          <div class="tip" id="6">
-            <strong>Signature:</strong> provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L37-37" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutatable value from one IConvertible type to another.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            set mutatable value
-          </code>
-          <div class="tip" id="7">
-            <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; value:&#39;a -&gt; unit<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L21-21" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Sets the value associated with the mutatable object</p>
-
-
-              <p>CompiledName: <code>Set</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            step viewMapping stepFunction provider
-          </code>
-          <div class="tip" id="8">
-            <strong>Signature:</strong> viewMapping:(&#39;a -&gt; &#39;b) -&gt; stepFunction:(&#39;a -&gt; &#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L29-29" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutable value for editing by using a mapping function for the view and a step function for the edit</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            validate validator value
-          </code>
-          <div class="tip" id="9">
-            <strong>Signature:</strong> validator:(ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;) -&gt; value:IMutatable&lt;&#39;a&gt; -&gt; IValidatedMutatable&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L43-43" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
         </td>
       </tr>
     </tbody>

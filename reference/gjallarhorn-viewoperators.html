@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IView<'a> - Gjallarhorn</title>
+    <title>ViewOperators - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,105 +35,63 @@
 
 
 
-<h1>IView<'a></h1>
+<h1>ViewOperators</h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
 </p>
 <div class="xmldoc">
-<p>Core interface for all members which provide a current value
-Dependent views can use this to query the current state
-of the mutable value</p>
+<p>Custom operators for composing IView instances</p>
 
 </div>
-  <h3>Instance members</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
-            AddDependency(arg1 arg2)
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+            ( &lt;!&gt; ) f a
           </code>
-          <div class="tip" id="70">
-            <strong>Signature:</strong> DependencyTrackingMechanism -&gt; IDependent -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
+          <div class="tip" id="49">
+            <strong>Signature:</strong> f:(&#39;?47516 -&gt; &#39;?47517) -&gt; a:IView&lt;&#39;?47516&gt; -&gt; IView&lt;&#39;?47517&gt;<br />
+                          <strong>Type parameters:</strong> '?47516, '?47517          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L22-22" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/View.fs#L169-169" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Add a dependent to this view explicitly</p>
+          <p>Lifts the function into the applicative functor via View.pure', allowing for: someFunUsingABC <!> a <*> b <*> c</p>
 
 
+              <p>CompiledName: <code>op_LessBangGreater</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
-            RemoveDependency(arg1 arg2)
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+            ( &lt;*&gt; ) f x
           </code>
-          <div class="tip" id="71">
-            <strong>Signature:</strong> DependencyTrackingMechanism -&gt; IDependent -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
+          <div class="tip" id="50">
+            <strong>Signature:</strong> f:IView&lt;(&#39;a -&gt; &#39;b)&gt; -&gt; x:IView&lt;&#39;a&gt; -&gt; IView&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L25-25" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/View.fs#L166-166" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Remove a dependent from this view explicitly</p>
+          <p>Applies the function inside the applicative functor, allowing for: View.pure' someFunUsingABC <*> a <*> b <*> c</p>
 
 
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
-            Signal()
-          </code>
-          <div class="tip" id="72">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L28-28" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Signal to all dependents to refresh themselves</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
-            Value
-          </code>
-          <div class="tip" id="73">
-            <strong>Signature:</strong> &#39;a<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L19-19" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>The current value of the type</p>
-
-
-              <p>CompiledName: <code>get_Value</code></p>
+              <p>CompiledName: <code>op_LessMultiplyGreater</code></p>
         </td>
       </tr>
     </tbody>

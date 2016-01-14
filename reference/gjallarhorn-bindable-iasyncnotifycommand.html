@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Binding - Gjallarhorn</title>
+    <title>IAsyncNotifyCommand - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,40 +35,14 @@
 
 
 
-<h1>Binding</h1>
+<h1>IAsyncNotifyCommand</h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
-  <span>Parent Module: <a href="gjallarhorn-bindable-bind.html">Bind</a></span>
 </p>
 <div class="xmldoc">
-</div>
-  <h3>Constructors</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
+<p>Extension of INotifyCommand with a public property to supply a CancellationToken.</p>
 
-          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
-            new(creator)
-          </code>
-          <div class="tip" id="74">
-            <strong>Signature:</strong> (creator:(unit -&gt; IBindingTarget)) -&gt; Binding<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L114-114" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-              <p>CompiledName: <code>.ctor</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+</div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -78,73 +52,41 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
-            Edit(source, name, value)
+          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
+            CancellationToken()
           </code>
-          <div class="tip" id="75">
-            <strong>Signature:</strong> (source:IBindingTarget * name:string * value:IMutatable&lt;&#39;?47976&gt;) -&gt; IBindingTarget<br />
-                          <strong>Type parameters:</strong> '?47976          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L118-118" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
-            Watch(source, name, view)
-          </code>
-          <div class="tip" id="76">
-            <strong>Signature:</strong> (source:IBindingTarget * name:string * view:IView&lt;&#39;?47978&gt;) -&gt; IBindingTarget<br />
-                          <strong>Type parameters:</strong> '?47978          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L120-120" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
-            Yield()
-          </code>
-          <div class="tip" id="77">
-            <strong>Signature:</strong> unit -&gt; IBindingTarget<br />
+          <div class="tip" id="86">
+            <strong>Signature:</strong> unit -&gt; CancellationToken<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L116-116" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L24-24" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>set_CancellationToken</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
-            Zero()
+          <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
+            CancellationToken()
           </code>
-          <div class="tip" id="78">
-            <strong>Signature:</strong> unit -&gt; IBindingTarget<br />
+          <div class="tip" id="87">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L115-115" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L24-24" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>get_CancellationToken</code></p>
         </td>
       </tr>
     </tbody>

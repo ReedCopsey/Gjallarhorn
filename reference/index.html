@@ -45,9 +45,25 @@
     <tbody>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-dependencytrackingmechanism.html">DependencyTrackingMechanism</a>
+          </td>
+          <td class="xmldoc"><p>Used to define the type of tracking used.  This allows weak referencing to be supported as needed</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-idependent.html">IDependent</a>
           </td>
           <td class="xmldoc"><p>A type which depends on some IValueProvider</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-idisposablemutatable-1.html">IDisposableMutatable<'a></a>
+          </td>
+          <td class="xmldoc"><p>A mutatable which implements IDisposable in order to stop tracking its source</p>
 
 </td>
         </tr>
@@ -85,12 +101,6 @@ of the mutable value</p>
 
 </td>
         </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-viewextensions.html">ViewExtensions</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
     </tbody>
   </table>
   <table class="table table-bordered module-list">
@@ -108,9 +118,25 @@ of the mutable value</p>
         </tr>
         <tr>
           <td class="module-name">
+            <a href="gjallarhorn-validation.html">Validation</a>
+          </td>
+          <td class="xmldoc"><p>Basic validation support</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
             <a href="gjallarhorn-view.html">View</a>
           </td>
           <td class="xmldoc"><p>Provides mechanisms for working with IView views</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-viewoperators.html">ViewOperators</a>
+          </td>
+          <td class="xmldoc"><p>Custom operators for composing IView instances</p>
 
 </td>
         </tr>
@@ -125,6 +151,36 @@ of the mutable value</p>
       <tr><td>Type</td><td>Description</td></tr>
     </thead>
     <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-bindingtargetbase.html">BindingTargetBase</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-boundview-1.html">BoundView<'a></a>
+          </td>
+          <td class="xmldoc"><p>An IView<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the view as needed</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-iasyncnotifycommand.html">IAsyncNotifyCommand</a>
+          </td>
+          <td class="xmldoc"><p>Extension of INotifyCommand with a public property to supply a CancellationToken.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-ibindingtarget.html">IBindingTarget</a>
+          </td>
+          <td class="xmldoc"><p>Interface used to manage a binding target</p>
+
+</td>
+        </tr>
         <tr>
           <td class="type-name">
             <a href="gjallarhorn-bindable-inotifycommand.html">INotifyCommand</a>

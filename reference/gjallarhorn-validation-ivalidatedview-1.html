@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IView<'a> - Gjallarhorn</title>
+    <title>IValidatedView<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,14 +35,13 @@
 
 
 
-<h1>IView<'a></h1>
+<h1>IValidatedView<'a></h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
+  <span>Parent Module: <a href="gjallarhorn-validation.html">Validation</a></span>
 </p>
 <div class="xmldoc">
-<p>Core interface for all members which provide a current value
-Dependent views can use this to query the current state
-of the mutable value</p>
+<p>Core interface for all validated view types</p>
 
 </div>
   <h3>Instance members</h3>
@@ -54,86 +53,45 @@ of the mutable value</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
-            AddDependency(arg1 arg2)
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+            IsValid
           </code>
-          <div class="tip" id="70">
-            <strong>Signature:</strong> DependencyTrackingMechanism -&gt; IDependent -&gt; unit<br />
+          <div class="tip" id="57">
+            <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L22-22" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L177-177" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Add a dependent to this view explicitly</p>
+          <p>Check to see if type is currently in a valid state</p>
 
 
+              <p>CompiledName: <code>get_IsValid</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
-            RemoveDependency(arg1 arg2)
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+            ValidationResult
           </code>
-          <div class="tip" id="71">
-            <strong>Signature:</strong> DependencyTrackingMechanism -&gt; IDependent -&gt; unit<br />
+          <div class="tip" id="58">
+            <strong>Signature:</strong> IView&lt;ValidationResult&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L25-25" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L174-174" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Remove a dependent from this view explicitly</p>
+          <p>The current validation status</p>
 
 
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
-            Signal()
-          </code>
-          <div class="tip" id="72">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L28-28" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Signal to all dependents to refresh themselves</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
-            Value
-          </code>
-          <div class="tip" id="73">
-            <strong>Signature:</strong> &#39;a<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L19-19" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>The current value of the type</p>
-
-
-              <p>CompiledName: <code>get_Value</code></p>
+              <p>CompiledName: <code>get_ValidationResult</code></p>
         </td>
       </tr>
     </tbody>
