@@ -141,3 +141,7 @@ filtered.Value <- 25
 // Prints "Values - Source 5 \ Filtered 25"
 printfn "Values - Source %d \ Filtered %d" source.Value filtered.Value
 
+(**
+ 
+Now, let's move on to [Validation in Gjallarhorn](validation.html).    
+*)

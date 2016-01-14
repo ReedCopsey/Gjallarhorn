@@ -41,8 +41,10 @@ Core Types and Usage
 -----------------------
 
  * [Introduction to Gjallarhorn](intro.html): A brief introduction to core concepts within Gjallarhorn.
- * [Views](views.html): Details about Views in Gjallarhorn
- * [Mutables](mutables.html): Details about Mutables in Gjallarhorn
+ * [Views](views.html): Details about Views
+ * [Mutables](mutables.html): Details about Mutables
+ * [Validation](validation.html): The core validation engine 
+ * [Validating Views and Mutables](validate_types.html): Details about Validation of Views and Mutables
 
 API Reference
 -----------------------
