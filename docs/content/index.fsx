@@ -54,11 +54,11 @@ API Reference
 Contributing and copyright
 --------------------------
 
-The project is hosted on [GitHub][https://github.com/ReedCopsey/Gjallarhorn] where you can [report issues][https://github.com/ReedCopsey/Gjallarhorn/issues], fork 
+The project is hosted on [GitHub](https://github.com/ReedCopsey/Gjallarhorn) where you can [report issues](https://github.com/ReedCopsey/Gjallarhorn/issues), fork 
 the project and submit pull requests. 
 
 The library is available under the Apache 2.0 License, which allows modification and 
 redistribution for both commercial and non-commercial purposes. For more information see the 
-[License file][https://github.com/ReedCopsey/Gjallarhorn/blob/master/LICENSE.txt] in the GitHub repository. 
+[License file](https://github.com/ReedCopsey/Gjallarhorn/blob/master/LICENSE.txt) in the GitHub repository. 
 
 *)
