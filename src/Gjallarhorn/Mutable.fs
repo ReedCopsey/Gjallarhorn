@@ -39,11 +39,11 @@ module Mutable =
         let mut : IMutatable<'b> = map conv conv provider
         mut
 
-    // Creates a mutatable value which validates and filters by using a ValidationCollector
+    /// Creates a mutatable value which validates and filters by using a ValidationCollector
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (value : IMutatable<'a>) =
         new ValidatorMappingEditor<'a>(validator, value) :> IValidatedMutatable<'a>
 
-    // Creates a new mutatable value which validates and filters by using a ValidationCollector
+    /// Creates a new mutatable value which validates and filters by using a ValidationCollector
     let createValidated<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (initialValue : 'a) =
         create initialValue
         |> validate validator

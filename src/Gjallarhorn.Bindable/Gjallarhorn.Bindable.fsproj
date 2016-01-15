@@ -45,6 +45,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="BindingContracts.fs" />
+    <Compile Include="Commands.fs" />
     <Compile Include="BoundView.fs" />
     <Compile Include="BindingTarget.fs" />
   </ItemGroup>

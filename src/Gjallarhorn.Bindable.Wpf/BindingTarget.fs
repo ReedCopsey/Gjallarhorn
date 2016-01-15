@@ -124,8 +124,13 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
         | _ -> ()
     override __.ShouldSerializeValue(c) = false
 
-
+/// Functions to work with binding targets
 module Bind =
+    /// Create a new binding target
     let create () = new DesktopBindingTarget() :> IBindingTarget
 
+    /// Create and bind a binding target using a computational expression
     let binding = Bind.Binding(create)
+
+    /// Add bindings to an existing binding target using a computational expression
+    let addBindings target = Bind.Binding(target)
