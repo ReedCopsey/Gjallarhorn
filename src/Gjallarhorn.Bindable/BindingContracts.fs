@@ -32,6 +32,9 @@ type IBindingTarget =
     /// Property allowing us to track whether any validation errors currently exist on this target
     abstract member IsValid : bool
 
+    /// Property allowing us to watch our validation state
+    abstract member Valid : IView<bool>
+
     /// Trigger the PropertyChanged event for a specific property
     abstract RaisePropertyChanged : string -> unit
 

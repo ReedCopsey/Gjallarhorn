@@ -116,6 +116,7 @@ type BindingTargetBase() as self =
 
     interface IBindingTarget with
         member this.IsValid = this.IsValid
+        member this.Valid = this.Valid
 
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
@@ -155,6 +156,11 @@ module Bind =
     /// Add a watched view (one way property) to a binding target by name
     let watch name view (target : #IBindingTarget) =
         target.BindView name view
+        target
+
+    /// Add a command (one way property) to a binding target by name
+    let command name command (target : #IBindingTarget) =
+        target.BindCommand name command
         target
 
     /// A computational expression builder for a binding target
