@@ -23,7 +23,7 @@ module VM =
             okCommand 
             |> Command.subscribe (fun time -> System.Windows.MessageBox.Show(sprintf "Hello, %s!  It's %A" full.Value time) |> ignore)
                 
-        Bind.addBindings bt {
+        Bind.extend bt {
             edit "FirstName" first
             edit "LastName" last
             watch "FullName" full

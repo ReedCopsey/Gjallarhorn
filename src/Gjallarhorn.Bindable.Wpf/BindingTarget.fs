@@ -133,4 +133,4 @@ module Bind =
     let binding = Bind.Binding(create)
 
     /// Add bindings to an existing binding target using a computational expression
-    let addBindings target = Bind.Binding((fun _ -> target))
+    let extend target = Bind.Binding((fun _ -> target))
