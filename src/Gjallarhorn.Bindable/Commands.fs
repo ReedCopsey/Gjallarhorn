@@ -10,6 +10,9 @@ open System.Windows.Input
 type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
     let canExecuteChanged = new Event<EventHandler, EventArgs>()
 
+    member this.RaiseCanExecuteChanged() =
+        canExecuteChanged.Trigger(this, EventArgs.Empty)
+
     interface ICommand with
         [<CLIEvent>]
         member __.CanExecuteChanged = canExecuteChanged.Publish
@@ -19,10 +22,6 @@ type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
 
         member __.Execute(param : obj) =
             execute(param)
-
-    interface INotifyCommand with
-        member this.RaiseCanExecuteChanged() =
-            canExecuteChanged.Trigger(this, EventArgs.Empty)
     
 /// Command type which uses an IView<bool> to track whether it can execute, and implements IView<'a> with the command parameter each time the command updates
 /// Note that this will signal for each execution, whether or not the value has changed.
@@ -34,10 +33,12 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
 
     do
         allowExecute
-        |> View.subscribe (fun b -> (self :> INotifyCommand).RaiseCanExecuteChanged())    
+        |> View.subscribe (fun _ -> self.RaiseCanExecuteChanged())    
         |> disposeTracker.Add
 
     member private this.Signal () = SignalManager.Signal(this)
+    member this.RaiseCanExecuteChanged() =
+        canExecuteChanged.Trigger(this, EventArgs.Empty)
 
     /// Used to process the command itself
     abstract member HandleExecute : obj -> unit
@@ -49,6 +50,8 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
             this.Signal()
         | None ->
             ()
+
+    interface ITrackingCommand<'a> 
 
     interface IView<'a> with
         member __.Value with get() = value
@@ -67,10 +70,6 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
 
         member this.Execute(param : obj) =
             this.HandleExecute(param)
-
-    interface INotifyCommand with
-        member this.RaiseCanExecuteChanged() =
-            canExecuteChanged.Trigger(this, EventArgs.Empty)
 
     interface IDisposable with
         member __.Dispose() = disposeTracker.Dispose()
@@ -105,4 +104,18 @@ type ViewParameterCommand<'a> (allowExecute : IView<bool>) =
 
 /// Core module for creating and using ICommand implementations
 module Command =        
-    ()
+    /// Create a command with an optional enabling source, provided as an IView<bool>
+    let create enabledSource =
+        (new ViewCommand(enabledSource)) :> ITrackingCommand<CommandState>
+
+    /// Create a command which is always enabled
+    let createEnabled () =
+        create (View.constant true)
+
+    /// Create a subscription to the changes of a command which calls the provided function upon each change
+    let subscribe (f : DateTime -> unit) (provider : ITrackingCommand<CommandState>) = 
+        let f state =
+            match state with
+            | CommandState.Executed(time) -> f(time)
+            | _ -> ()
+        View.subscribe f provider

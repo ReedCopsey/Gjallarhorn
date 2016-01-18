@@ -48,7 +48,7 @@ type BindingTargetBase() as self =
 
     let errors = System.Collections.Generic.Dictionary<string, string list>()
 
-    let disposables = ResizeArray<System.IDisposable>()
+    let disposables = new CompositeDisposable()
 
     let raisePropertyChanged name =
         propertyChanged.Trigger(self, new PropertyChangedEventArgs(name))
@@ -90,6 +90,9 @@ type BindingTargetBase() as self =
     /// True when the current value is valid.  Can be used in bindings
     member __.IsValid with get() = isValid.Value
 
+    /// Track a disposable, and dispose it when we are disposed
+    member __.TrackDisposable disposable = disposables.Add(disposable)
+
     interface INotifyPropertyChanged with
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
@@ -112,7 +115,7 @@ type BindingTargetBase() as self =
         member __.HasErrors = errors.Count > 0
 
         [<CLIEvent>]
-        member this.ErrorsChanged = errorsChanged.Publish
+        member __.ErrorsChanged = errorsChanged.Publish
 
     interface IBindingTarget with
         member this.IsValid with get() = this.IsValid
@@ -125,6 +128,7 @@ type BindingTargetBase() as self =
         member this.BindMutable name value = this.BindMutable name value
         member this.BindView name view = this.BindView name view
         member this.BindCommand name command = this.BindCommand name command
+        member this.TrackDisposable disposable = this.TrackDisposable disposable
 
         member __.TrackView name view =
             view
@@ -139,10 +143,7 @@ type BindingTargetBase() as self =
             updateErrors name validator.Value
 
     interface System.IDisposable with
-        member __.Dispose() =
-            disposables
-            |> Seq.iter (fun d -> d.Dispose())            
-            disposables.Clear()
+        member __.Dispose() = disposables.Dispose()
 
 /// Functions to work with binding targets     
 module Bind =
@@ -173,3 +174,12 @@ module Bind =
         /// Add a watched view (one way property) to a binding target by name
         [<CustomOperation("watch", MaintainsVariableSpace = true)>]
         member __.Watch (source : IBindingTarget, name, view) = watch name view source                
+        /// Add a command (one way property) to a binding target by name
+        [<CustomOperation("command", MaintainsVariableSpace = true)>]
+        member __.Command (source : IBindingTarget, name, comm) = command name comm source                
+
+        /// Dispose of an object when we're disposed
+        [<CustomOperation("dispose", MaintainsVariableSpace = true)>]
+        member __.Dispose (source : IBindingTarget, disposable : #System.IDisposable) = 
+            source.TrackDisposable disposable 
+            source

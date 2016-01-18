@@ -8,18 +8,16 @@ open Microsoft.FSharp.Quotations
 open System.ComponentModel
 open System.Windows.Input
 
-/// <summary>Extension of ICommand with a public method to fire the CanExecuteChanged event</summary>
-/// <remarks>This type should provide a constructor which accepts an Execute (obj -> unit) and CanExecute (obj -> bool) function</remarks>
-type INotifyCommand =
+/// An ICommand which acts as a View over changes to the value.  This is frequently the current timestamp of the command.
+type ITrackingCommand<'a> =
     inherit ICommand 
+    inherit System.IDisposable
+    inherit IView<'a>
     
-    /// Trigger the CanExecuteChanged event for this specific ICommand
-    abstract RaiseCanExecuteChanged : unit -> unit
-
 /// <summary>Extension of INotifyCommand with a public property to supply a CancellationToken.</summary>
 /// <remarks>This allows the command to change the token for subsequent usages if required</remarks>
-type IAsyncNotifyCommand =
-    inherit INotifyCommand
+type IAsyncNotifyCommand<'a> =
+    inherit ITrackingCommand<'a>
 
     abstract member CancellationToken : System.Threading.CancellationToken with get, set
 
@@ -34,6 +32,9 @@ type IBindingTarget =
 
     /// Property allowing us to watch our validation state
     abstract member Valid : IView<bool>
+
+    /// Adds a disposable to track
+    abstract member TrackDisposable : System.IDisposable -> unit
 
     /// Trigger the PropertyChanged event for a specific property
     abstract RaisePropertyChanged : string -> unit
