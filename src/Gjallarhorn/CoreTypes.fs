@@ -6,6 +6,25 @@ open Gjallarhorn.Validation
 open System
 open System.Collections.Generic
 
+/// Type which allows tracking of multiple disposables at once
+type CompositeDisposable() =
+    let disposables = ResizeArray<_>()
+
+    /// Add a new disposable to this tracker
+    member __.Add (disposable : IDisposable) = disposables.Add(disposable)
+    /// Remove a disposable from this tracker without disposing of it
+    member __.Remove (disposable : IDisposable) = disposables.Remove(disposable)
+
+    /// Dispose all of our tracked disposables and remove them all 
+    member __.Dispose() =
+        disposables
+        |> Seq.iter (fun d -> d.Dispose())
+        disposables.Clear()
+
+    interface IDisposable with
+        /// Dispose all of our tracked disposables and remove them all 
+        member this.Dispose() = this.Dispose()
+
 module internal DisposeHelpers =
     let getValue (provider : IView<_> option) typeNameFun =
         match provider with 
@@ -319,14 +338,19 @@ type internal FilteredEditor<'a>(valueProvider : IMutatable<'a>, filter : 'a -> 
         member __.Value 
             with get() = v
             and set(newVal) =
+                let inline setValueLocal nv =
+                    v <- nv
+                    signal()                    
                 if not(EqualityComparer<'a>.Default.Equals(v, newVal)) then            
                     match filter newVal, valueProvider with
                     | true, Some vp->
                         // This will trigger a refresh request from valueProvider, and update us
-                        vp.Value <- newVal
-                    | _, _ ->
-                        v <- newVal
-                        signal()
+                        if not(EqualityComparer<'a>.Default.Equals(vp.Value, newVal)) then            
+                            vp.Value <- newVal                        
+                        else
+                            setValueLocal newVal
+                    | _ ->
+                            setValueLocal newVal
 
     interface IView<'a> with
         member __.Value with get() = v

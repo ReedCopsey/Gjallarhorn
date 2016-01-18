@@ -8,8 +8,17 @@
         fsxaml:ViewController.Custom="{x:Type views:MainViewController}">
     <UserControl.Resources>
         <fsxaml:BooleanToCollapsedConverter x:Key="TrueToCollapsed" />
+    <!-- We can use a factory to generate the view model from the view instead of code by uncommenting the following,
+        and commenting out the extra close of resources below: 
+
+        <local:ViewModelFactory x:Key="vmFactory" />
+        <UserControl.DataContext>
+            <StaticResource ResourceKey="vmFactory" />
+        </UserControl.DataContext>
+    <Grid DataContext="{Binding Value}">
+    -->
     </UserControl.Resources>
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -22,13 +31,13 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>        
         <TextBlock Margin="3" Grid.Row="0" Grid.Column="0" Text="First:" />
-        <TextBox Margin="3" Grid.Column="1" Grid.Row="0" FontSize="16" Text="{Binding FirstName}"/>
+        <TextBox Margin="3" Grid.Column="1" Grid.Row="0" FontSize="16" Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Margin="3" Grid.Row="1" Grid.Column="0" Text="Last:" />
-        <TextBox Margin="3" Grid.Column="1" Grid.Row="1" FontSize="16" Text="{Binding LastName}"/>
+        <TextBox Margin="3" Grid.Column="1" Grid.Row="1" FontSize="16" Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Margin="3" Grid.Row="2" Grid.Column="0" Text="Full Name:" />
         <TextBox x:Name="tbFullName" IsReadOnly="true" IsTabStop="False" Foreground="Gray"  Margin="3" Grid.Column="1" Grid.Row="2" FontSize="16" Text="{Binding FullName, Mode=OneWay}"/>
-        <Button Margin="3" Grid.Row="4" Grid.ColumnSpan="2" FontSize="16" Command="{Binding OkCommand}">Ok</Button>        
+        <Button Margin="3" Grid.Row="4" Grid.ColumnSpan="2" FontSize="16" IsDefault="True"  Command="{Binding OkCommand}">Ok</Button>        
     </Grid>
 </UserControl>

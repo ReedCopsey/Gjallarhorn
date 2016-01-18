@@ -40,7 +40,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         { 
             new IValueHolder with 
                 member __.GetValue() = box prop
-                member __.SetValue(v) = ()
+                member __.SetValue(_) = ()
         }
 
     member internal __.CustomProperties = customProps

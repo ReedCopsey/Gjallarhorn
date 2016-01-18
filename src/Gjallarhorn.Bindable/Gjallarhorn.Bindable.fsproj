@@ -48,6 +48,7 @@
     <Compile Include="Commands.fs" />
     <Compile Include="BoundView.fs" />
     <Compile Include="BindingTarget.fs" />
+    <Compile Include="BindingTargetFactory.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gjallarhorn\Gjallarhorn.fsproj">

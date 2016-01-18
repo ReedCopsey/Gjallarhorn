@@ -29,12 +29,13 @@ type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
 type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as self =
     let canExecuteChanged = new Event<EventHandler, EventArgs>()
 
+    let disposeTracker = new CompositeDisposable()
     let mutable value = initialValue
 
     do
         allowExecute
         |> View.subscribe (fun b -> (self :> INotifyCommand).RaiseCanExecuteChanged())    
-        |> ignore
+        |> disposeTracker.Add
 
     member private this.Signal () = SignalManager.Signal(this)
 
@@ -70,6 +71,9 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
     interface INotifyCommand with
         member this.RaiseCanExecuteChanged() =
             canExecuteChanged.Trigger(this, EventArgs.Empty)
+
+    interface IDisposable with
+        member __.Dispose() = disposeTracker.Dispose()
 
 /// Reports whether a command is executed, including the timestamp of the most recent execution
 type CommandState =

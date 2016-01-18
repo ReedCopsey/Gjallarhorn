@@ -85,10 +85,10 @@ type BindingTargetBase() as self =
     member __.Executing = executionTracker :> IView<bool>
 
     /// An IView<bool> used to track the current valid state
-    member __.Valid = isValid :> IView<bool>
+    member __.Valid with get() = isValid :> IView<bool>
 
     /// True when the current value is valid.  Can be used in bindings
-    member __.IsValid = isValid.Value
+    member __.IsValid with get() = isValid.Value
 
     interface INotifyPropertyChanged with
         [<CLIEvent>]
@@ -115,8 +115,8 @@ type BindingTargetBase() as self =
         member this.ErrorsChanged = errorsChanged.Publish
 
     interface IBindingTarget with
-        member this.IsValid = this.IsValid
-        member this.Valid = this.Valid
+        member this.IsValid with get() = this.IsValid
+        member this.Valid with get() = this.Valid
 
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
