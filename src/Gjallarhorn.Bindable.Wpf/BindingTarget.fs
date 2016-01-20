@@ -1,6 +1,7 @@
-﻿namespace Gjallarhorn.Bindable
+﻿namespace Gjallarhorn.Bindable.Wpf
 
 open Gjallarhorn
+open Gjallarhorn.Bindable
 open System
 open System.Collections.Generic
 open System.ComponentModel
@@ -124,13 +125,10 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
         | _ -> ()
     override __.ShouldSerializeValue(c) = false
 
-/// Functions to work with binding targets
-module Bind =
-    /// Create a new binding target
-    let create () = new DesktopBindingTarget() :> IBindingTarget
+namespace Gjallarhorn
 
-    /// Create and bind a binding target using a computational expression
-    let binding = Bind.Binding(create)
-
-    /// Add bindings to an existing binding target using a computational expression
-    let extend target = Bind.Binding((fun _ -> target))
+/// Platform installation
+module Wpf =
+    /// Installs WPF targets for binding into Gjallarhorn
+    let install () =
+        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> new Gjallarhorn.Bindable.Wpf.DesktopBindingTarget() :> Gjallarhorn.Bindable.IBindingTarget)

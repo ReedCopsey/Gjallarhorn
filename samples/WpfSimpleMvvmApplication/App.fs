@@ -6,7 +6,9 @@ type App = XAML<"App.xaml">
 
 [<STAThread>]
 [<EntryPoint>]
-let main argv = 
+let main _ = 
+    Gjallarhorn.Wpf.install()
+
     let window = Views.MainWindow().Root
     window.DataContext <- VM.createMain()
     App().Root.Run(window)

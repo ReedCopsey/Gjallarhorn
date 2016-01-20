@@ -147,7 +147,13 @@ type BindingTargetBase() as self =
 
 /// Functions to work with binding targets     
 module Bind =
-    // let create () : To implement by each framework library
+    let mutable private creationFunction : unit -> IBindingTarget = (fun _ -> failwith "Platform targets not installed")
+
+    module Internal =
+        let installCreationFunction f = creationFunction <- f
+
+    let create () =
+        creationFunction()
 
     /// Add an editor (two way property) to a binding target by name
     let edit name mut (target : #IBindingTarget) =
@@ -183,3 +189,9 @@ module Bind =
         member __.Dispose (source : IBindingTarget, disposable : #System.IDisposable) = 
             source.TrackDisposable disposable 
             source
+
+    /// Create and bind a binding target using a computational expression
+    let binding = Binding(create)
+
+    /// Add bindings to an existing binding target using a computational expression
+    let extend target = Binding((fun _ -> target))
