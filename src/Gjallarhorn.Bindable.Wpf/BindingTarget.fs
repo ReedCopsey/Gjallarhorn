@@ -46,25 +46,14 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     member internal __.CustomProperties = customProps
     
-    override __.BindMutable<'a> name (value : IMutatable<'a>) =        
-        (bt()).TrackView name value
-        customProps.Add(name, (makePD name, makeEditIV value))
-
-        match value with
-        | :? Validation.IValidatedMutatable<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult
-        | _ -> ()
-
-    override __.BindView<'a> name (view : IView<'a>) =        
-        (bt()).TrackView name view
+    override __.AddReadWriteProperty<'a> name value =
+        // TODO: Fix this
+        customProps.Add(name, (makePD name, makeEditIV (value :?> IMutatable<'a>)))
+        View.map id value :> IView<'a>
+    override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
         customProps.Add(name, (makePD name, makeViewIV view))   
 
-        match view with
-        | :? Validation.IValidatedView<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult
-        | _ -> ()
-
-    override __.BindCommand name command =        
+    override __.AddCommand name command =        
         customProps.Add(name, (makePD name, makeCommandIV command))
 
 /// [omit]

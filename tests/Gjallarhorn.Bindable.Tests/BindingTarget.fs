@@ -11,11 +11,11 @@ open Bind
 type TestBindingTarget() =
     inherit BindingTargetBase()
 
-    override __.BindMutable<'a> name (value : IMutatable<'a>) =
+    override __.AddReadWriteProperty<'a> name (value : IView<'a>) =
+        View.map id value :> IView<'a>
+    override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
         ()
-    override __.BindView<'a> name (view : IView<'a>) =
-        ()
-    override __.BindCommand name comm =
+    override __.AddCommand name comm =
         ()
 type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()

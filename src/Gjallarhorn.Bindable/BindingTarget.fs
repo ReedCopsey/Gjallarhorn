@@ -71,6 +71,9 @@ type BindingTargetBase() as self =
     let updateValidState() = 
         isValid.Value <- errors.Count = 0
 
+    let bt() =
+        self :> IBindingTarget
+
     do
         errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
         |> disposables.Add
@@ -97,14 +100,33 @@ type BindingTargetBase() as self =
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
 
+    abstract AddReadOnlyProperty<'a> : string -> IView<'a> -> unit
+    abstract AddReadWriteProperty<'a> : string -> IView<'a> -> IView<'a>
+    abstract AddCommand : string -> ICommand -> unit
+
     /// Add a binding target for a mutatable value with a given name
-    abstract BindMutable<'a> : string -> IMutatable<'a> -> unit
+    member this.BindMutable<'a> name (value : IMutatable<'a>) =
+        bt().TrackView name value
+        let result = this.AddReadWriteProperty name value
+
+        match value with
+        | :? Validation.IValidatedMutatable<'a> as validator ->
+            (bt()).TrackValidator name validator.ValidationResult
+        | _ -> ()
+
+        ignore result
     
     /// Add a binding target for a view with a given name
-    abstract BindView<'a> : string -> IView<'a> -> unit
+    member this.BindView<'a> name (view : IView<'a>) =
+        bt().TrackView name view
+        this.AddReadOnlyProperty name view
+        match view with
+        | :? Validation.IValidatedView<'a> as validator ->
+            (bt()).TrackValidator name validator.ValidationResult
+        | _ -> ()
 
     /// Add a binding target for a command with a given name
-    abstract BindCommand : string -> ICommand -> unit
+    member this.BindCommand = this.AddCommand
 
     interface INotifyDataErrorInfo with
         member __.GetErrors name =             
