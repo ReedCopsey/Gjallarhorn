@@ -79,7 +79,7 @@ module View =
         dependent :> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable
-    let subscribeCopy (target : IMutatable<'a>) (provider : IView<'a>) =
+    let copyTo (target : IMutatable<'a>) (provider : IView<'a>) =
         let rec dependent =
             {
                 new IDependent with
@@ -91,6 +91,22 @@ module View =
             }
         provider.AddDependency DependencyTrackingMechanism.Default dependent
         target.Value <- provider.Value
+        dependent :> IDisposable
+
+    /// Create a subscription to the changes of a view which copies its value upon change into a mutable via a stepping function
+    let copyStep (target : IMutatable<'b>) (stepFunction : 'b -> 'a -> 'b) (provider : IView<'a>) =
+        let update() =
+            target.Value <- stepFunction target.Value provider.Value
+        let rec dependent =
+            {
+                new IDependent with
+                    member __.RequestRefresh _ = update()
+                interface IDisposable with
+                    member __.Dispose() = 
+                        provider.RemoveDependency DependencyTrackingMechanism.Default dependent
+            }
+        provider.AddDependency DependencyTrackingMechanism.Default dependent
+        update()
         dependent :> IDisposable
         
     /// Gets the current value associated with the view

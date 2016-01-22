@@ -46,12 +46,12 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     member internal __.CustomProperties = customProps
     
-    override this.AddReadWriteProperty<'a> name value =
-        let editSource = Mutable.create value.Value
-        View.subscribeCopy editSource value
+    override this.AddReadWriteProperty<'a> name view =
+        let editSource = Mutable.create view.Value
+        View.copyTo editSource view
         |> this.TrackDisposable
         customProps.Add(name, (makePD name, makeEditIV editSource))
-        View.map id value :> IView<'a>
+        View.map id view :> IView<'a>
     override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
         customProps.Add(name, (makePD name, makeViewIV view))   
 

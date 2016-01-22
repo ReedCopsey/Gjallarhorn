@@ -115,6 +115,21 @@ type BindingTargetBase() as self =
         | _ -> ()
 
         ignore result
+
+    member this.BindEditor<'a> name validator (view : IView<'a>) =
+        bt().TrackView name view
+        let result = this.AddReadWriteProperty name view
+
+        let validated = 
+            result
+            |> View.validate validator
+
+        validated
+        |> this.TrackDisposable
+
+        bt().TrackValidator name validated.ValidationResult
+
+        validated :> IView<'a>
     
     /// Add a binding target for a view with a given name
     member this.BindView<'a> name (view : IView<'a>) =
@@ -148,6 +163,7 @@ type BindingTargetBase() as self =
         member __.OperationExecuting with get() = (executionTracker :> IView<bool>).Value
 
         member this.BindMutable name value = this.BindMutable name value
+        member this.BindEditor name validator view = this.BindEditor name validator view 
         member this.BindView name view = this.BindView name view
         member this.BindCommand name command = this.BindCommand name command
         member this.TrackDisposable disposable = this.TrackDisposable disposable

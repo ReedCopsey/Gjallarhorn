@@ -55,7 +55,7 @@ type IBindingTarget =
     abstract BindMutable<'a> : string -> IMutatable<'a> -> unit
     
     /// Binds an editor to the target, which consists of an input view and validator, and returns the view of the user edits
-    // abstract BindEditor<'a> : string -> IView<'a> -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> IView<'a>
+    abstract BindEditor<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> IView<'a> -> IView<'a>
 
     /// Add a binding target for a view with a given name
     abstract BindView<'a> : string -> IView<'a> -> unit
