@@ -44,6 +44,11 @@ type BindingTarget() =
         let prop = props.Find(name, false)
         unbox <| prop.GetValue(target)
 
+    let setProperty (target : obj) name value =
+        let props = TypeDescriptor.GetProperties target
+        let prop = props.Find(name, false)
+        prop.SetValue(target, box value)
+
     let fullNameValidation (value : string) = 
         match System.String.IsNullOrWhiteSpace(value) with
         | true -> Some "Value must contain at least a first and last name"
@@ -151,6 +156,27 @@ type BindingTarget() =
         v2.Value <- 29
         let cur = getProperty dynamicVm "Test2" 
         Assert.AreEqual(29, cur)
+
+    [<Test>]
+    member __.``BindingTarget\BindMutable add then modify property value from WPF`` () =
+        let v2 = Mutable.create 2
+        use dynamicVm = new DesktopBindingTarget()
+        dynamicVm.BindMutable "Test2" v2
+        
+        let cur = getProperty dynamicVm "Test2" 
+        Assert.AreEqual(2, cur)
+
+        // Set from mutable should impact front and back end
+        v2.Value <- 29
+        let cur = getProperty dynamicVm "Test2" 
+        Assert.AreEqual(29, cur)
+
+        // Set from view should not change back end
+        setProperty dynamicVm "Test2" 42
+        let cur = getProperty dynamicVm "Test2" 
+        Assert.AreNotEqual(cur, v2.Value)
+        Assert.AreEqual(42, cur)
+        Assert.AreEqual(29, v2.Value)
 
     [<Test>]
     member __.``BindingTarget\BindMutable add then modify property value raises property changed`` () =

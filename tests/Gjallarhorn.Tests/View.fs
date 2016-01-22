@@ -11,6 +11,24 @@ let ``View\constant constructs with proper value`` start =
 
     Assert.AreEqual(box start, value.Value)
 
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``View\subscribeCopy copies across proper values`` start finish =
+    let value = Mutable.create start
+
+    let view = Mutable.create Unchecked.defaultof<'a>
+
+    Assert.AreEqual(box Unchecked.defaultof<'a>, view.Value)
+
+    use __ = View.subscribeCopy view value 
+
+    Assert.AreEqual(box start, value.Value)
+    Assert.AreEqual(box start, view.Value)
+
+    value.Value <- finish
+    
+    Assert.AreEqual(box finish, value.Value)
+    Assert.AreEqual(box finish, view.Value)
+
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartToString")>]
 let ``View\map constructs from mutable`` start finish =
     let value = Mutable.create start
