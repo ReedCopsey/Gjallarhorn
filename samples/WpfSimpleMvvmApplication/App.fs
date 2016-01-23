@@ -14,6 +14,7 @@ let main _ =
     // Create our "source" that will get updated
     let name = Mutable.create { First = "" ; Last = "" }
 
+    // Print out changes to our model as they come in.    
     name
     |> View.subscribe (fun n -> printfn "Name updated to %A" n)
     |> ignore

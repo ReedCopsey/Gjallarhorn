@@ -5,10 +5,10 @@ open Gjallarhorn.Bindable
 
 open Gjallarhorn.Validation
 
-type Name = { First : string ; Last : string }
+type NameModel = { First : string ; Last : string }
 
 module VM =
-    let createMain (name : IMutatable<Name>) =
+    let createMain (name : IMutatable<NameModel>) =
         // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
         let bt = Bind.create()
 
