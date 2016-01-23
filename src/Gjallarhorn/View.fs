@@ -147,6 +147,11 @@ module View =
     /// Creates a view on two values that is true if both inputs are equal
     let equal a b =
         map2 (fun a b -> a = b) a b
+
+    /// Creates a view on two values that is true if both inputs are not equal
+    let notEqual a b =
+        map2 (fun a b -> a <> b) a b
+    
     
     /// Creates a view over a bool value that negates the input
     let not a =

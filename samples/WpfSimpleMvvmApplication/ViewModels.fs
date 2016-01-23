@@ -34,8 +34,7 @@ module VM =
         // Create a command that will only execute if
         // 1) We're valid and 2) our name has changed from the input
         let canExecute = 
-            View.equal name name'
-            |> View.not
+            View.notEqual name name'
             |> View.both bt.Valid
         let okCommand = Command.create canExecute
         okCommand |> bt.BindCommand "OkCommand"                
