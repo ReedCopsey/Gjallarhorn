@@ -144,6 +144,22 @@ module View =
         let view = new Mapping2View<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
         view :> IDisposableView<'b>
 
+    /// Creates a view on two values that is true if both inputs are equal
+    let equal a b =
+        map2 (fun a b -> a = b) a b
+    
+    /// Creates a view over a bool value that negates the input
+    let not a =
+        map (fun a -> not(a)) a
+    
+    /// Creates a view on two bools that is true if both inputs are true
+    let both (a : IView<bool>) (b : IView<bool>) =
+        map2 (fun a b -> a && b) a b
+
+    /// Creates a view on two bools that is true if either input is true
+    let either (a : IView<bool>) (b : IView<bool>) =
+        map2 (fun a b -> a || b) a b
+
     /// <summary>Converts any IView into an IObservable</summary>
     /// <remarks>The result can be Disposed to stop tracking</remarks> 
     let asObservable (view : IView<'a>) =
@@ -159,26 +175,10 @@ module View =
         let validationResult = 
             validateCurrent()
             |> Mutable.create
-
-        let subscriptionHandle =
-            let rec dependent =
-                {
-                    new IDependent with
-                        member __.RequestRefresh _ =
-                            validationResult.Value <- validateCurrent()
-                    interface System.IDisposable with
-                        member __.Dispose() = 
-                            valueProvider.RemoveDependency DependencyTrackingMechanism.Default dependent
-                }
-            valueProvider.AddDependency DependencyTrackingMechanism.Default dependent
-            dependent :> System.IDisposable
-
-        member private __.EditAndValidate value =  
+        
+        override __.Refreshing() =
             validationResult.Value <- validateCurrent()
-            value
-
         override __.Disposing() =
-            subscriptionHandle.Dispose()
             SignalManager.RemoveAllDependencies validationResult
 
         interface IValidatedView<'a> with

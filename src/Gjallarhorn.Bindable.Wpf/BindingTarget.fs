@@ -51,7 +51,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         View.copyTo editSource view
         |> this.TrackDisposable
         customProps.Add(name, (makePD name, makeEditIV editSource))
-        View.map id view :> IView<'a>
+        editSource :> IView<'a>
     override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
         customProps.Add(name, (makePD name, makeViewIV view))   
 

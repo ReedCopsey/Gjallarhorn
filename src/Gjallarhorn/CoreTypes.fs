@@ -119,6 +119,10 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
     default __.Disposing() =
         ()
 
+    abstract member Refreshing : unit -> unit
+    default __.Refreshing() =
+        ()
+
     interface IDisposableView<'b> with
         member __.Value with get() = value()
         member __.AddDependency mechanism dep =
@@ -130,6 +134,7 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
 
     interface IDependent with
         member this.RequestRefresh _ = 
+            this.Refreshing()
             dependencies.Signal this
 
     interface IDisposable with

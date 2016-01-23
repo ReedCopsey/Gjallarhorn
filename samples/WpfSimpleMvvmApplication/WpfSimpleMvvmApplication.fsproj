@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6ed91d96-3519-4ba1-83ea-457fd5ede893</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>WpfSimpleMvvmApplication</RootNamespace>
     <AssemblyName>WpfSimpleMvvmApplication</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
