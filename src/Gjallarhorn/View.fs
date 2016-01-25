@@ -35,33 +35,12 @@ module View =
     let cache (provider : IView<'a>) = 
         new CachedView<'a>(provider) :> IDisposableView<'a>
 
-    /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required     
-    let fromObservable initialValue (observable : IObservable<'a>) =
+    /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required.
+    /// Returns view and subscription handle
+    let subscribeToObservable initialValue (observable : IObservable<'a>) =
         let value = Mutable.create initialValue        
-        let disposable = observable.Subscribe (fun v -> value.Value <- v)
-        
-        // Return a wrapper around a mutable that changes when the observable changes
-        let rec dependent = {
-            new IDisposableView<'a> with
-                member __.Value = value.Value
-                member this.AddDependency dep =
-                    SignalManager.AddDependency this dep                
-                member this.RemoveDependency dep =
-                    SignalManager.RemoveDependency this dep
-                member this.Signal () =
-                    SignalManager.Signal(this)
-            interface IDependent with
-                member __.RequestRefresh _ = 
-                    SignalManager.Signal dependent                
-            interface IDisposable with
-                member __.Dispose() =
-                    disposable.Dispose()
-                    value.RemoveDependency (dependent :?> IDependent)
-                    SignalManager.RemoveAllDependencies dependent
-        }
-
-        value.AddDependency (dependent :?> IDependent)
-        dependent
+        let disposable = observable.Subscribe (fun v -> value.Value <- v)        
+        value :> IView<'a> , disposable
 
     /// Create a subscription to the changes of a view which calls the provided function upon each change
     let subscribe (f : 'a -> unit) (provider : IView<'a>) = 
@@ -75,38 +54,19 @@ module View =
                         provider.RemoveDependency dependent
             }
         provider.AddDependency dependent
-        dependent :> IDisposable
+        dependent :?> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable
     let copyTo (target : IMutatable<'a>) (provider : IView<'a>) =
-        let rec dependent =
-            {
-                new IDependent with
-                    member __.RequestRefresh _ =
-                        target.Value <- provider.Value
-                interface IDisposable with
-                    member __.Dispose() = 
-                        provider.RemoveDependency dependent
-            }
-        provider.AddDependency dependent
         target.Value <- provider.Value
-        dependent :> IDisposable
+        subscribe (fun v -> target.Value <- v) provider
 
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable via a stepping function
     let copyStep (target : IMutatable<'b>) (stepFunction : 'b -> 'a -> 'b) (provider : IView<'a>) =
         let update() =
             target.Value <- stepFunction target.Value provider.Value
-        let rec dependent =
-            {
-                new IDependent with
-                    member __.RequestRefresh _ = update()
-                interface IDisposable with
-                    member __.Dispose() = 
-                        provider.RemoveDependency dependent
-            }
-        provider.AddDependency dependent
-        update()
-        dependent :> IDisposable
+        update()        
+        subscribe (fun _ -> update()) provider
         
     /// Gets the current value associated with the view
     let get (view : IView<'a>) = 

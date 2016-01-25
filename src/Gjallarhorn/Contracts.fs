@@ -21,8 +21,7 @@ type IView<'a> =
     abstract member Signal : unit -> unit
 and 
     /// A type which depends on some IValueProvider
-    [<AllowNullLiteral>] IDependent =
-    inherit System.IDisposable
+    [<AllowNullLiteral>] IDependent =    
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
     abstract member RequestRefresh : IView<'a> -> unit
 

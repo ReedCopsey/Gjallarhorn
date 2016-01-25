@@ -55,20 +55,22 @@ let ``Observable Dispose stops tracking`` (start:int) finish =
     Assert.AreEqual(finish, !changedValue)
  
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
-let ``View\fromObservable initializes properly`` start =
+let ``View\subscribeToObservable initializes properly`` start =
     let evt = Event<'a>()
     let obs = evt.Publish
 
-    let view = View.fromObservable start obs
+    let view, handle = View.subscribeToObservable start obs
     Assert.AreEqual(box start, view.Value)
+    handle.Dispose()
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
-let ``View\fromObservable tracks changes in values`` start finish =
+let ``View\subscribeToObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish
 
-    let view = View.fromObservable start obs 
+    let view, handle = View.subscribeToObservable start obs 
     Assert.AreEqual(box start, view.Value)
 
     evt.Trigger finish
     Assert.AreEqual(box finish, view.Value)
+    handle.Dispose()

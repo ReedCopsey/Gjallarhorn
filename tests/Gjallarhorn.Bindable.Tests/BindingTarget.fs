@@ -267,15 +267,19 @@ type BindingTarget() =
 
     [<Test>]
     member __.``BindingTarget\Bind\edit with validator sets error state`` () =
-        let first = Mutable.createValidated notNullOrWhitespace ""
-        let last = Mutable.createValidated notNullOrWhitespace ""
+        let first = Mutable.create ""
+           
+        let last = Mutable.create ""
         let full = View.map2 (fun f l -> f + " " + l) first last
+
 
         use dynamicVm = 
             Bind.create()
-            |> Bind.edit "First" first
-            |> Bind.edit "Last" last
             |> Bind.watch "Full" full
+
+        let first' = dynamicVm.BindEditor "First" notNullOrWhitespace first
+        let last' = dynamicVm.BindEditor "Last" notNullOrWhitespace last            
+            
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
