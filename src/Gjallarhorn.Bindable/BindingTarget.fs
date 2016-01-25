@@ -33,10 +33,10 @@ type ExecutionTracker() =
     // Mutable uses SignalManager to manage its dependencies (always)
     interface IView<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
-        member this.AddDependency _ dep =            
-            SignalManager.AddDependency this dep                
-        member this.RemoveDependency _ dep =
-            SignalManager.RemoveDependency this dep
+        member this.AddDependency dep =            
+            SignalManager.AddDependency this dep   
+        member this.RemoveDependency dep =
+            SignalManager.RemoveDependency this dep |> ignore
         member this.Signal () = this.Signal()
 
 [<AbstractClass>]

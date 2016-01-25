@@ -23,7 +23,7 @@ module VM =
             |> bt.BindEditor "LastName" (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
 
         // Read only properties can optionally be validated as well, allowing for "entity level" validation
-        (fun f l -> f + " " + l) <!> first <*> last
+        View.lift2 (fun f l -> f + " " + l) first last
         |> View.validate (notEqual "Reed Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
         |> bt.BindView "FullName"
 

@@ -42,11 +42,11 @@ module internal DisposeHelpers =
             d.Dispose()
         | _ -> ()
         
-    let dispose (provider : #IView<'a> option) disposeProviderOnDispose mechanism self =
+    let dispose (provider : #IView<'a> option) disposeProviderOnDispose self =
             match provider with
             | None -> ()
             | Some(v) ->
-                v.RemoveDependency mechanism self
+                v.RemoveDependency self
                 
                 if disposeProviderOnDispose then
                     disposeIfDisposable v
@@ -68,44 +68,23 @@ type internal Mutable<'a>(value : 'a) =
     // Mutable uses SignalManager to manage its dependencies (always)
     interface IView<'a> with
         member __.Value with get() = v
-        member this.AddDependency _ dep =            
+        member this.AddDependency dep =            
             SignalManager.AddDependency this dep                
-        member this.RemoveDependency _ dep =
+        member this.RemoveDependency dep =
             SignalManager.RemoveDependency this dep
         member this.Signal () =
             this.Signal()
 
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
-
-type internal DependencyTracker<'a>(view: IView<'a>) =
-    let dependencies = HashSet<IDependent>()
-
-    member __.Add mechanism dep =
-        match mechanism with
-        | DependencyTrackingMechanism.Default ->
-            dependencies.Add dep |> ignore
-        | DependencyTrackingMechanism.WeakReferenced ->
-            SignalManager.AddDependency view dep
-
-    member __.Remove mechanism dep =
-        match mechanism with
-        | DependencyTrackingMechanism.Default ->
-            dependencies.Remove dep |> ignore
-        | DependencyTrackingMechanism.WeakReferenced ->
-            SignalManager.RemoveDependency view dep
-
-    member __.Signal source =
-        let signal (dep : IDependent) = dep.RequestRefresh(source)        
-        Seq.iter signal dependencies
-        SignalManager.Signal source
         
 type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+        // TODO: Remove this until needed
+        valueProvider.AddDependency self
 
     let mutable valueProvider = Some(valueProvider)
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
     let value () = 
         DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
@@ -125,31 +104,31 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
 
     interface IDisposableView<'b> with
         member __.Value with get() = value()
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep 
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep 
+        member __.AddDependency dep =
+            dependencies.Add dep 
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDependent with
         member this.RequestRefresh _ = 
             this.Refreshing()
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDisposable with
         member this.Dispose() =
             this.Disposing()
-            DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose valueProvider disposeProviderOnDispose this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
 type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping : 'a -> 'b, editMapping : 'b -> 'a, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+        valueProvider.AddDependency self
 
     let mutable valueProvider = Some(valueProvider)
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
     let vpToView vp = 
         Option.map (fun m -> m :> IView<_>) vp
@@ -174,30 +153,29 @@ type internal MappingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping :
         member __.Value with get() = value() and set(v) = set v
     interface IView<'b> with
         member __.Value with get() = value()
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep 
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep 
+        member __.AddDependency dep =
+            dependencies.Add dep 
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDependent with
-        member this.RequestRefresh _ = 
-            dependencies.Signal this
+        member this.RequestRefresh _ = dependencies.Signal this |> ignore
 
     interface IDisposable with
         member this.Dispose() =
             this.Disposing()
-            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
 type internal SteppingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping : 'a -> 'b, stepFunction : 'a -> 'b -> 'a, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+        valueProvider.AddDependency self
 
     let mutable valueProvider = Some(valueProvider)
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
     let vpToView vp = 
         Option.map (fun m -> m :> IView<_>) vp
@@ -218,32 +196,31 @@ type internal SteppingEditor<'a,'b>(valueProvider : IMutatable<'a>, viewMapping 
         member __.Value with get() = value() and set(v) = set v
     interface IView<'b> with
         member __.Value with get() = value()
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep 
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep 
+        member __.AddDependency dep =
+            dependencies.Add dep 
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDependent with
         member this.RequestRefresh _ = 
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose (vpToView valueProvider) disposeProviderOnDispose this
             valueProvider <- None
-            SignalManager.RemoveAllDependencies this
 
 type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
     do
-        valueProvider1.AddDependency DependencyTrackingMechanism.Default self
-        valueProvider2.AddDependency DependencyTrackingMechanism.Default self
+        valueProvider1.AddDependency self
+        valueProvider2.AddDependency self
 
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
 
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
     let value () = 
         let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> self.GetType().FullName)
@@ -256,35 +233,35 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
 
     interface IDisposableView<'c> with
         member __.Value with get() = value()
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep         
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep 
+        member __.AddDependency dep =
+            dependencies.Add  dep         
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDependent with
         member this.RequestRefresh _ =
-            dependencies.Signal this
+            dependencies.Signal this |> ignore
 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose valueProvider1 false DependencyTrackingMechanism.Default this
-            DisposeHelpers.dispose valueProvider2 false DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose valueProvider1 false this
+            DisposeHelpers.dispose valueProvider2 false this
             valueProvider1 <- None
             valueProvider2 <- None
             SignalManager.RemoveAllDependencies this
 
 type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+        valueProvider.AddDependency self
 
     let mutable v = valueProvider.Value
 
     let mutable valueProvider = Some(valueProvider)
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
-    let signal() = dependencies.Signal self
+    let signal() = dependencies.Signal self |> ignore
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -292,10 +269,10 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
 
     interface IDisposableView<'a> with
         member __.Value with get() = v
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep
+        member __.AddDependency dep =
+            dependencies.Add dep
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
             signal()
 
@@ -311,22 +288,22 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
                 
     interface IDisposable with
         member this.Dispose() =
-            DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose valueProvider disposeProviderOnDispose this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
 type internal FilteredEditor<'a>(valueProvider : IMutatable<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.Default self
+        valueProvider.AddDependency self
 
     let mutable v = valueProvider.Value
 
     let mutable valueProvider = Some(valueProvider)
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
     let signal() = 
         self.Signaling()
-        dependencies.Signal self
+        dependencies.Signal self |> ignore
 
     abstract member Disposing : unit -> unit
     default __.Disposing() =
@@ -359,10 +336,10 @@ type internal FilteredEditor<'a>(valueProvider : IMutatable<'a>, filter : 'a -> 
 
     interface IView<'a> with
         member __.Value with get() = v
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep
+        member __.AddDependency dep =
+            dependencies.Add dep
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member this.Signal () =
             signal()
 
@@ -379,22 +356,22 @@ type internal FilteredEditor<'a>(valueProvider : IMutatable<'a>, filter : 'a -> 
     interface IDisposable with
         member this.Dispose() =
             this.Disposing()
-            DisposeHelpers.dispose valueProvider disposeProviderOnDispose DependencyTrackingMechanism.Default this
+            DisposeHelpers.dispose valueProvider disposeProviderOnDispose this
             valueProvider <- None
             SignalManager.RemoveAllDependencies this
 
 type internal CachedView<'a> (valueProvider : IView<'a>) as self =
     do
-        valueProvider.AddDependency DependencyTrackingMechanism.WeakReferenced self
+        valueProvider.AddDependency self
 
     let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
     let mutable handle = WeakReference<_>(valueProvider)
 
-    let dependencies = DependencyTracker(self)
+    let dependencies = DependencyTracker()
 
-    let signal() = dependencies.Signal self
+    let signal() = dependencies.Signal self |> ignore
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -402,10 +379,10 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
 
     interface IDisposableView<'a> with
         member __.Value with get() = v
-        member __.AddDependency mechanism dep =
-            dependencies.Add mechanism dep
-        member __.RemoveDependency mechanism dep =
-            dependencies.Remove mechanism dep
+        member __.AddDependency dep =
+            dependencies.Add dep
+        member __.RemoveDependency dep =
+            dependencies.Remove dep |> ignore
         member __.Signal () =
             signal()
 
@@ -424,9 +401,8 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
             if handle <> null then
                 match handle.TryGetTarget() with
                 | true, v ->
-                    v.RemoveDependency DependencyTrackingMechanism.WeakReferenced this
+                    v.RemoveDependency this
                     handle <- null
-                    SignalManager.RemoveAllDependencies this
                 | false,_ -> ()
 
 module private ValidationHelpers =
@@ -453,9 +429,9 @@ type internal ValidatorMappingEditor<'a>(validator : ValidationCollector<'a> -> 
                         validationResult.Value <- validateCurrent()
                 interface System.IDisposable with
                     member __.Dispose() = 
-                        valueProvider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                        valueProvider.RemoveDependency dependent
             }
-        valueProvider.AddDependency DependencyTrackingMechanism.Default dependent
+        valueProvider.AddDependency dependent
         dependent :> System.IDisposable
 
     member private __.EditAndValidate value =  

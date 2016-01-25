@@ -15,9 +15,9 @@ module View =
                 member __.Value = value
 
                 // A constant never changes/signals, so do nothing for these
-                member __.AddDependency _ _ =
+                member __.AddDependency _ =
                     ()
-                member __.RemoveDependency _ _ =
+                member __.RemoveDependency _ =
                     ()
                 member __.Signal () =
                     ()
@@ -44,10 +44,9 @@ module View =
         let rec dependent = {
             new IDisposableView<'a> with
                 member __.Value = value.Value
-                member this.AddDependency mechanism dep =
-                    // TODO: Should this always be weak?
+                member this.AddDependency dep =
                     SignalManager.AddDependency this dep                
-                member this.RemoveDependency mechanism dep =
+                member this.RemoveDependency dep =
                     SignalManager.RemoveDependency this dep
                 member this.Signal () =
                     SignalManager.Signal(this)
@@ -57,11 +56,11 @@ module View =
             interface IDisposable with
                 member __.Dispose() =
                     disposable.Dispose()
-                    value.RemoveDependency DependencyTrackingMechanism.Default (dependent :?> IDependent)
+                    value.RemoveDependency (dependent :?> IDependent)
                     SignalManager.RemoveAllDependencies dependent
         }
 
-        value.AddDependency DependencyTrackingMechanism.Default (dependent :?> IDependent)
+        value.AddDependency (dependent :?> IDependent)
         dependent
 
     /// Create a subscription to the changes of a view which calls the provided function upon each change
@@ -73,9 +72,9 @@ module View =
                         f(provider.Value)
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                        provider.RemoveDependency dependent
             }
-        provider.AddDependency DependencyTrackingMechanism.Default dependent
+        provider.AddDependency dependent
         dependent :> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable
@@ -87,9 +86,9 @@ module View =
                         target.Value <- provider.Value
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                        provider.RemoveDependency dependent
             }
-        provider.AddDependency DependencyTrackingMechanism.Default dependent
+        provider.AddDependency dependent
         target.Value <- provider.Value
         dependent :> IDisposable
 
@@ -103,9 +102,9 @@ module View =
                     member __.RequestRefresh _ = update()
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.RemoveDependency DependencyTrackingMechanism.Default dependent
+                        provider.RemoveDependency dependent
             }
-        provider.AddDependency DependencyTrackingMechanism.Default dependent
+        provider.AddDependency dependent
         update()
         dependent :> IDisposable
         

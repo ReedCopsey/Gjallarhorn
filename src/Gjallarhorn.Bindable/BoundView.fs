@@ -35,12 +35,13 @@ type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
 
     member this.Signal () = SignalManager.Signal(this)
 
+    // TODO: Change to use dependencies without SM?
     interface IDisposableView<'a> with
         member __.Value with get() = value.Value
-        member this.AddDependency _ dep =            
+        member this.AddDependency dep =            
             SignalManager.AddDependency this dep                
-        member this.RemoveDependency _ dep =
-            SignalManager.RemoveDependency this dep
+        member this.RemoveDependency dep =
+            SignalManager.RemoveDependency this dep |> ignore
         member this.Signal () =
             this.Signal()
         

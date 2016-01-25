@@ -53,12 +53,13 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
 
     interface ITrackingCommand<'a> 
 
+    // TODO: Track dependencies directly instead of SM
     interface IView<'a> with
         member __.Value with get() = value
-        member this.AddDependency _ dep =            
+        member this.AddDependency dep =            
             SignalManager.AddDependency this dep                
-        member this.RemoveDependency _ dep =
-            SignalManager.RemoveDependency this dep
+        member this.RemoveDependency dep =
+            SignalManager.RemoveDependency this dep |> ignore
         member this.Signal () = this.Signal()            
 
     interface ICommand with

@@ -71,7 +71,7 @@ module Memory =
         let cached = View.cache view.Value
 
         Assert.AreEqual(true, SignalManager.IsTracked value.Value)
-        Assert.AreEqual(true, SignalManager.IsTracked view.Value)
+        Assert.AreEqual(false, SignalManager.IsTracked view.Value)
     
         let wrValue = WeakReference(value.Value)
         let wrView = WeakReference(view.Value)
