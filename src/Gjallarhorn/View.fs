@@ -194,7 +194,37 @@ module View =
     /// Validates a view with a validation chain
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (view : IView<'a>) =
         new ValidatorMappingView<'a>(validator, view) :> IValidatedView<'a>
+
+    // Apply in reverse to allow for easy piping in liftN
+    let private applyR provider (mappingView : IView<'a -> 'b>) =        
+        let view = new Mapping2View<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
+        view :> IDisposableView<'b>
     
+    /// Combines two views using a specified function, equivelent to View.map2
+    let lift2 f a b = map2 f a b
+            
+    /// Combines three views using a specified function
+    let lift3 f a b c = 
+        pure' f
+        |> applyR a
+        |> applyR b       
+        |> applyR c
+    
+    /// Combines four views using a specified function
+    let lift4 f a b c d = 
+        lift3 f a b c
+        |> applyR d
+    
+    /// Combines five views using a specified function
+    let lift5 f a b c d e = 
+        lift4 f a b c d
+        |> applyR e
+        
+    /// Combines six views using a specified function
+    let lift6 f a b c d e f' = 
+        lift5 f a b c d e
+        |> applyR f'
+
 [<AutoOpen>]
 /// Custom operators for composing IView instances
 module ViewOperators =

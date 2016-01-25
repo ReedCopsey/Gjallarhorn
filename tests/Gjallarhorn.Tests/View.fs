@@ -48,6 +48,20 @@ let ``View\map2 constructs from mutables`` start1 start2 finish =
 
     Assert.AreEqual(box view.Value, finish)
 
+[<Test;TestCaseSource(typeof<Utilities>,"CasesPairToString")>]
+let ``View\lift2 matches map2`` start1 start2 finish =
+    let v1 = Mutable.create start1
+    let v2 = Mutable.create start2
+    let map i j = i.ToString() + "," + j.ToString()
+    let view1 = 
+        View.map2 map v1 v2
+
+    let view2 =
+        View.lift2 map v1 v2
+
+    Assert.AreEqual(box view1.Value, finish)
+    Assert.AreEqual(box view2.Value, finish)
+
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
 let ``View updates with mutable`` start initialView finish finalView =
@@ -153,6 +167,76 @@ let ``Operator <*> allows arbitrary arity`` () =
     let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
 
     Assert.AreEqual(view.Value, "1,2,3,4")
+
+[<Test>]
+let ``View\lift2 matches operator <!> and <*>`` () =
+    let f = (fun a b -> sprintf "%d,%d" a b)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    
+    let view1 = f <!> v1 <*> v2 
+    let view2 = View.lift2 f v1 v2
+
+    Assert.AreEqual("1,2", view1.Value)
+    Assert.AreEqual("1,2", view2.Value)
+
+[<Test>]
+let ``View\lift3 matches operator <!> and <*>`` () =
+    let f = (fun a b c -> sprintf "%d,%d,%f" a b c)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    
+    let view1 = f <!> v1 <*> v2 <*> v3 
+    let view2 = View.lift3 f v1 v2 v3
+
+    Assert.AreEqual("1,2,3.000000", view1.Value)
+    Assert.AreEqual("1,2,3.000000", view2.Value)
+
+[<Test>]
+let ``View\lift4 matches operator <!> and <*>`` () =
+    let f = (fun a b c d -> sprintf "%d,%d,%f,%d" a b c d)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+
+    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4
+    let view2 = View.lift4 f v1 v2 v3 v4
+
+    Assert.AreEqual("1,2,3.000000,4", view1.Value)
+    Assert.AreEqual("1,2,3.000000,4", view2.Value)
+
+[<Test>]
+let ``View\lift5 matches operator <!> and <*>`` () =
+    let f = (fun a b c d e -> sprintf "%d,%d,%f,%d,%d" a b c d e)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+    let v5 = Mutable.create 5
+
+    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4 <*> v5
+    let view2 = View.lift5 f v1 v2 v3 v4 v5
+
+    Assert.AreEqual("1,2,3.000000,4,5", view1.Value)
+    Assert.AreEqual("1,2,3.000000,4,5", view2.Value)
+
+[<Test>]
+let ``View\lift6 matches operator <!> and <*>`` () =
+    let f = (fun a b c d e f' -> sprintf "%d,%d,%f,%d,%d,%d" a b c d e f')
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+    let v5 = Mutable.create 5
+    let v6 = Mutable.create 6
+
+    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4 <*> v5 <*> v6
+    let view2 = View.lift6 f v1 v2 v3 v4 v5 v6
+
+    Assert.AreEqual("1,2,3.000000,4,5,6", view1.Value)
+    Assert.AreEqual("1,2,3.000000,4,5,6", view2.Value)
 
 [<Test>]
 let ``Operator <*> notifies properly with input changes`` () =
