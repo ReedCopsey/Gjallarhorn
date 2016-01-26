@@ -4,19 +4,19 @@ namespace Gjallarhorn
 [<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Bindable")>]
 do ()
 
-/// <summary>Core interface for all members which provide a current value
-/// Dependent views can use this to query the current state
-/// of the mutable value</summary>
-type Dependency<'a> =
-    | View of dep : IDependent
-    | Observer of obs : System.IObserver<'a>
 /// Type used to track dependencies
-and [<AllowNullLiteral>] IDependencyManager<'a> =
+type [<AllowNullLiteral>] IDependencyManager<'a> =
     /// Add a dependent to this view explicitly
-    abstract member Add : Dependency<'a> -> unit
+    abstract member Add : IDependent -> unit
+
+    /// Add a dependent observer to this view explicitly
+    abstract member Add : System.IObserver<'a> -> unit
     
     /// Remove a dependent from this view explicitly
-    abstract member Remove : Dependency<'a> -> unit
+    abstract member Remove : IDependent -> unit
+
+    /// Remove a dependent observer from this view explicitly
+    abstract member Remove : System.IObserver<'a> -> unit
 
     /// Remove all dependencies from this view
     abstract member RemoveAll : unit -> unit

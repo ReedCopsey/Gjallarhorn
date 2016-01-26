@@ -16,62 +16,90 @@ type private DependencyTracker<'a>() =
 
     // We want this as lightweight as possible,
     // so we do our own management as needed
-    let mutable dependencies : WeakReference<Dependency<'a>> array = [| |]
-
-    let signal (dep : Dependency<_>) source =
-        match dep with
-        | View(dep') -> dep'.RequestRefresh source
-        | Observer(obs) -> obs.OnNext(source.Value)
-
-    // This is ugly, as it purposefully creates side effects
+    let mutable depIDeps : WeakReference<IDependent> array = [| |]
+    let mutable depObservers : WeakReference<IObserver<'a>> array = [| |]
+        
+    // These are ugly, as it purposefully creates side effects
     // It returns true if we signaled and the object is alive,
     // otherwise false
-    let signalIfAlive source (wr: WeakReference<Dependency<'a>>) =
+    let signalIfAliveDep source (wr: WeakReference<IDependent>) =
         let success, dep = wr.TryGetTarget() 
-        if success then signal dep source
+        if success then 
+            dep.RequestRefresh source
+        success
+    let signalIfAliveObs (source : IView<'a>) (wr: WeakReference<IObserver<'a>>) =
+        let success, obs = wr.TryGetTarget() 
+        if success then 
+            obs.OnNext(source.Value)
         success
 
     // Do our signal, but also remove any unneeded dependencies while we're at it
     let signalAndUpdateDependencies source =
-        dependencies <- dependencies |> Array.filter (signalIfAlive source)
+        depIDeps <- depIDeps |> Array.filter (signalIfAliveDep source)
+        depObservers <- depObservers |> Array.filter (signalIfAliveObs source)
 
     // Remove a dependency, as well as all "dead" dependencies
-    let removeAndFilter dep (wr : WeakReference<Dependency<_>>) =
+    let removeAndFilterDep dep (wr : WeakReference<IDependent>) =
         match wr.TryGetTarget() with
         | false, _ -> false
         | true, v when v = dep -> 
-            match v with
-            | Observer(o) -> 
-                // Mark observers as being completed when removed
-                o.OnCompleted()
-            | _ -> ()            
             false
-        | _ -> true
+        | true, _ -> true
+    let removeAndFilterObs obs (wr : WeakReference<IObserver<'a>>) =
+        match wr.TryGetTarget() with
+        | false, _ -> false
+        | true, v when v = obs -> 
+            // Mark observer completed
+            obs.OnCompleted()
+            false
+        | true, _ -> true
+    let markObsComplete (wr : WeakReference<IObserver<'a>>) =
+        match wr.TryGetTarget() with
+        | true, obs -> 
+            obs.OnCompleted()
+        | _ -> ()
+
+
+    member private __.LockObj with get() = depIDeps // Always lock on this array
 
     /// Adds a new dependency to the tracker
-    member __.Add dep =
-        lock dependencies (fun _ ->
-            dependencies <- dependencies |> Array.append [| WeakReference<_>(dep) |])
+    member this.Add dep =
+        lock this.LockObj (fun _ ->
+            depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |])
+    member this.Add obs =
+        lock this.LockObj (fun _ ->
+            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |])
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
-    member __.Remove dep = 
-        lock dependencies (fun _ ->
-            dependencies <- dependencies |> Array.filter (removeAndFilter dep)
-            dependencies.Length > 0)
+    member this.Remove dep = 
+        lock this.LockObj (fun _ ->
+            depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
+            depIDeps.Length + depObservers.Length > 0)
+    member this.Remove obs = 
+        lock this.LockObj (fun _ ->
+            depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
+            depIDeps.Length + depObservers.Length > 0)
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
-    member __.RemoveAll () = 
-        lock dependencies (fun _ -> dependencies <- [| |])
+    member this.RemoveAll () = 
+        lock this.LockObj 
+            (fun _ -> 
+                depIDeps <- [| |]
+                depObservers
+                |> Array.iter markObsComplete
+                depObservers <- [| |])
 
     /// Signals the dependencies with a given source, and returns true if there are still dependencies remaining
-    member __.Signal (source : IView<'a>) = 
-        lock dependencies (fun _ ->
+    member this.Signal (source : IView<'a>) = 
+        lock this.LockObj (fun _ ->
             signalAndUpdateDependencies source
-            dependencies.Length > 0)
+            depIDeps.Length > 0)
 
     interface IDependencyManager<'a> with
-        member this.Add dep = this.Add dep    
-        member this.Remove dep = this.Remove dep |> ignore
+        member this.Add (dep: IDependent) = this.Add dep
+        member this.Add (dep: IObserver<'a> ) = this.Add dep
+        member this.Remove (dep: IDependent) = ignore <| this.Remove dep
+        member this.Remove (dep: IObserver<'a> ) = ignore <| this.Remove dep
         member this.RemoveAll () = this.RemoveAll()
         member this.Signal source = ignore <| this.Signal source
 
@@ -100,13 +128,25 @@ type SignalManager() =
                     remove source)
     
     /// Adds dependency tracked on a given source
-    static member AddDependency (source : IView<'a>) target =
+    static member internal AddDependency (source : IView<'a>, target : IDependent) =
+        lock dependencies (fun _ -> 
+            let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
+            dep.Add target)
+    static member internal AddDependency (source : IView<'a>, target : IObserver<'a>) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
             dep.Add target)
 
     /// Removes a dependency tracked on a given source
-    static member RemoveDependency (source : IView<'a>) target =
+    static member internal RemoveDependency (source : IView<'a>, target : IDependent) =
+        let removeDep () =
+            match tryGet source with
+            | true, dep ->
+                if not(dep.Remove target) then
+                    remove source
+            | false, _ -> ()
+        lock dependencies removeDep
+    static member internal RemoveDependency (source : IView<'a>, target : IObserver<'a>) =
         let removeDep () =
             match tryGet source with
             | true, dep ->
@@ -123,12 +163,14 @@ type SignalManager() =
     static member IsTracked (source : IView<'a>) =
         lock dependencies (fun _ -> fst <| dependencies.TryGetValue(source))
 
-type private RemoteDependencyMananger<'a>(source) =
+type internal RemoteDependencyMananger<'a>(source : IView<'a>) =
     interface IDependencyManager<'a> with
-        member this.Add dep = SignalManager.AddDependency source dep    
-        member this.Remove dep = SignalManager.RemoveDependency source dep
-        member this.Signal source = SignalManager.Signal source
-        member this.RemoveAll () = SignalManager.RemoveAllDependencies source
+        member __.Add (dep: IDependent) = SignalManager.AddDependency(source, dep)
+        member __.Remove (dep: IDependent) = SignalManager.RemoveDependency(source, dep)
+        member __.Add (obs: IObserver<'a> ) = SignalManager.AddDependency(source, obs)
+        member __.Remove (obs: IObserver<'a> ) = SignalManager.RemoveDependency(source, obs)
+        member __.Signal source = SignalManager.Signal source
+        member __.RemoveAll () = SignalManager.RemoveAllDependencies source
 
 /// Module used to create and manage dependencies
 module Dependencies =

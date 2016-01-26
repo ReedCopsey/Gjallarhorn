@@ -16,8 +16,10 @@ module View =
                 member __.DependencyManager with get() = 
                                                         { new IDependencyManager<'a> with 
                                                             // A constant never changes/signals, so do nothing for these
-                                                            member __.Add _ = ()
-                                                            member __.Remove _ = ()
+                                                            member __.Add (_d : IDependent) = ()
+                                                            member __.Remove (_d : IDependent) = ()
+                                                            member __.Add (_d : IObserver<'a>) = ()
+                                                            member __.Remove (_d : IObserver<'a>) = ()
                                                             member __.RemoveAll () = ()
                                                             member __.Signal _ = ()
                                                         }
@@ -51,9 +53,9 @@ module View =
                         f(provider.Value)
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.DependencyManager.Remove (View dependent)
+                        provider.DependencyManager.Remove dependent
             }
-        provider.DependencyManager.Add (View dependent)
+        provider.DependencyManager.Add dependent
         dependent :?> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable

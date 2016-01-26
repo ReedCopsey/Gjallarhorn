@@ -42,11 +42,11 @@ module internal DisposeHelpers =
             d.Dispose()
         | _ -> ()
         
-    let dispose (provider : #IView<'a> option) disposeProviderOnDispose self =
+    let dispose (provider : #IView<'a> option) disposeProviderOnDispose (self : IDependent) =
             match provider with
             | None -> ()
             | Some(v) ->
-                v.DependencyManager.Remove (View self)
+                v.DependencyManager.Remove self
                 
                 if disposeProviderOnDispose then
                     disposeIfDisposable v
@@ -55,18 +55,20 @@ module internal DisposeHelpers =
 type internal Mutable<'a>(value : 'a) =
 
     let mutable v = value
+
+    member private this.Dependencies with get() = Dependencies.createRemote this
     
     member this.Value 
         with get() = v
         and set(value) =
             if not(EqualityComparer<'a>.Default.Equals(v, value)) then            
                 v <- value
-                SignalManager.Signal this
+                this.Dependencies.Signal(this)
 
     // Mutable uses SignalManager to manage its dependencies (always)
     interface IView<'a> with
         member __.Value with get() = v
-        member this.DependencyManager with get() = Dependencies.createRemote this
+        member this.DependencyManager with get() = this.Dependencies
 
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
@@ -74,7 +76,7 @@ type internal Mutable<'a>(value : 'a) =
 type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
     do
         // TODO: Remove this until needed
-        valueProvider.DependencyManager.Add (View self)
+        valueProvider.DependencyManager.Add self
 
     let mutable valueProvider = Some(valueProvider)
     let dependencies = Dependencies.create()
@@ -113,8 +115,8 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
 
 type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
     do
-        valueProvider1.DependencyManager.Add (View self)
-        valueProvider2.DependencyManager.Add (View self)
+        valueProvider1.DependencyManager.Add self
+        valueProvider2.DependencyManager.Add self
 
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
@@ -148,7 +150,7 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
 
 type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     do
-        valueProvider.DependencyManager.Add (View self)
+        valueProvider.DependencyManager.Add self
 
     let mutable v = valueProvider.Value
 
@@ -182,7 +184,7 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
 
 type internal CachedView<'a> (valueProvider : IView<'a>) as self =
     do
-        valueProvider.DependencyManager.Add (View self)
+        valueProvider.DependencyManager.Add self
 
     let mutable v = valueProvider.Value
 
@@ -216,7 +218,7 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
             if handle <> null then
                 match handle.TryGetTarget() with
                 | true, v ->
-                    v.DependencyManager.Remove (View this)
+                    v.DependencyManager.Remove this
                     handle <- null
                 | false,_ -> ()
             dependencies.RemoveAll()
