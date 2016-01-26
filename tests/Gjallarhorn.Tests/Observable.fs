@@ -10,11 +10,10 @@ open NUnit.Framework
 [<TestCase(Int32.MinValue, Int32.MaxValue)>]
 let ``Mutation triggers IObservable`` (start : int) finish =
     let result = Mutable.create start
-    let obs = result |> View.asObservable
     
     let changedValue = ref result.Value
     use subscription = 
-        obs |> Observable.subscribe((fun i -> changedValue := i))
+        result |> Observable.subscribe((fun i -> changedValue := i))
     
     result.Value <- finish
     Assert.AreEqual(finish, !changedValue)
@@ -24,12 +23,11 @@ let ``Mutation triggers IObservable`` (start : int) finish =
 [<TestCase(Int32.MinValue, Int32.MaxValue, "2147483647")>]
 let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string) =
     let result = Mutable.create start
-    let view = View.map (fun i -> i.ToString()) result
-    let obs = view |> View.asObservable
+    let view = View.map (fun i -> i.ToString()) result    
     
     let changedValue = ref view.Value
     use subscription = 
-        obs |> Observable.subscribe((fun s -> changedValue := s))
+        view |> Observable.subscribe((fun s -> changedValue := s))
         
     result.Value <- finish
     Assert.AreEqual(viewFinish, !changedValue)
@@ -39,11 +37,10 @@ let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string
 [<TestCase(Int32.MinValue, Int32.MaxValue)>]
 let ``Observable Dispose stops tracking`` (start:int) finish =
     let result = Mutable.create start    
-    let obs = result |> View.asObservable
     
     let changedValue = ref result.Value
     let subscription = 
-        obs |> Observable.subscribe((fun i -> changedValue := i))
+        result |> Observable.subscribe((fun i -> changedValue := i))
         
     // Should track/change
     result.Value <- finish

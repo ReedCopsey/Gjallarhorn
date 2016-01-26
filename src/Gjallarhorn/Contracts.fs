@@ -29,7 +29,8 @@ and
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
     abstract member RequestRefresh : IView<'a> -> unit
 and IView<'a> =
-//     inherit System.IObservable<'a>
+    inherit System.IObservable<'a>
+
     /// The current value of the type
     abstract member Value : 'a with get
 
@@ -51,11 +52,5 @@ type IDisposableView<'a> =
 /// A mutatable which implements IDisposable in order to stop tracking its source
 type IDisposableMutatable<'a> =
     inherit IMutatable<'a>
-    inherit System.IDisposable
-
-/// <summary>A contract for an IObservable which is also IDisposable</summary>
-/// <remarks>Disposing is optional, but will cause the IObservable to stop tracking changes</remarks>
-type IDisposableObservable<'a> =
-    inherit System.IObservable<'a>
     inherit System.IDisposable
 

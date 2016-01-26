@@ -60,9 +60,6 @@
     <Compile Include="..\Gjallarhorn\Mutable.fs">
       <Link>Mutable.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn\Observable.fs">
-      <Link>Observable.fs</Link>
-    </Compile>
     <Compile Include="..\Gjallarhorn\View.fs">
       <Link>View.fs</Link>
     </Compile>

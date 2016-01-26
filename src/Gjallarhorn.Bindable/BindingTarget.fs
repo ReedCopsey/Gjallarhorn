@@ -9,7 +9,9 @@ open System.Windows.Input
 type ExecutionTracker() =
     let handles = ResizeArray<_>()
 
-    member private this.Signal () = SignalManager.Signal this
+    let dependencies = Dependencies.create()
+
+    member private this.Signal () = dependencies.Signal this
      
     member private this.AddHandle h =
         lock handles (fun _ ->
@@ -31,9 +33,16 @@ type ExecutionTracker() =
         handle
 
     // This uses SignalManager directly
+    interface System.IObservable<bool> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new System.IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
     interface IView<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
-        member this.DependencyManager with get() = Dependencies.createRemote this
+        member this.DependencyManager with get() = dependencies
 
 [<AbstractClass>]
 type BindingTargetBase() as self =

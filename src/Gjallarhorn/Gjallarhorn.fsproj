@@ -48,7 +48,6 @@
     <Compile Include="Validation.fs" />
     <Compile Include="CoreTypes.fs" />
     <Compile Include="Mutable.fs" />
-    <Compile Include="Observable.fs" />
     <Compile Include="View.fs" />
   </ItemGroup>
   <PropertyGroup>

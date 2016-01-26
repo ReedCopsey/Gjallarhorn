@@ -56,6 +56,7 @@ type internal Mutable<'a>(value : 'a) =
 
     let mutable v = value
 
+    // Mutable uses SignalManager to manage its dependencies (always)
     member private this.Dependencies with get() = Dependencies.createRemote this
     
     member this.Value 
@@ -65,7 +66,14 @@ type internal Mutable<'a>(value : 'a) =
                 v <- value
                 this.Dependencies.Signal(this)
 
-    // Mutable uses SignalManager to manage its dependencies (always)
+    interface IObservable<'a> with
+        member this.Subscribe obs = 
+            this.Dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = this.Dependencies.Remove obs
+            }
+    
     interface IView<'a> with
         member __.Value with get() = v
         member this.DependencyManager with get() = this.Dependencies
@@ -96,6 +104,14 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
     abstract member Refreshing : unit -> unit
     default __.Refreshing() =
         ()
+
+    interface IObservable<'b> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
 
     interface IDisposableView<'b> with
         member __.Value with get() = value()
@@ -132,6 +148,14 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
 
+    interface IObservable<'c> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
+
     interface IDisposableView<'c> with
         member __.Value with get() = value()
         member __.DependencyManager with get() = dependencies
@@ -161,6 +185,14 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
+
+    interface IObservable<'a> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
 
     interface IDisposableView<'a> with
         member __.Value with get() = v
@@ -198,6 +230,14 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
     override this.Finalize() =
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
+
+    interface IObservable<'a> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
 
     interface IDisposableView<'a> with
         member __.Value with get() = v

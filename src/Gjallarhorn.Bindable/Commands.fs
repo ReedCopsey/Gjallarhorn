@@ -53,8 +53,15 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
             ()
 
     interface ITrackingCommand<'a> 
+    
+    interface IObservable<'a> with
+        member __.Subscribe obs = 
+            dependencies.Add obs
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove obs
+            }
 
-    // TODO: Track dependencies directly instead of SM
     interface IView<'a> with
         member __.Value with get() = value
         member __.DependencyManager with get() = dependencies

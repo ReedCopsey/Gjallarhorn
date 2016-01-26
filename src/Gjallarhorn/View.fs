@@ -23,6 +23,13 @@ module View =
                                                             member __.RemoveAll () = ()
                                                             member __.Signal _ = ()
                                                         }
+            interface IObservable<'a> with
+                member __.Subscribe obs = 
+                    obs.OnNext(value)
+                    obs.OnCompleted()
+                    { new IDisposable with
+                        member __.Dispose() = ()
+                    }
         }
 
     /// Introduce arbitrary values into a view
@@ -125,11 +132,6 @@ module View =
     /// Creates a view on two bools that is true if either input is true
     let either (a : IView<bool>) (b : IView<bool>) =
         map2 (fun a b -> a || b) a b
-
-    /// <summary>Converts any IView into an IObservable</summary>
-    /// <remarks>The result can be Disposed to stop tracking</remarks> 
-    let asObservable (view : IView<'a>) =
-        new Observer<'a>(view) :> IDisposableObservable<'a>
 
     type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) =
         inherit MappingView<'a,'a>(valueProvider, id, true)
