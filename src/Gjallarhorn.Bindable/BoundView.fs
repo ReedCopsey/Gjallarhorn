@@ -33,19 +33,12 @@ type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
     let subscription = 
         source.PropertyChanged.Subscribe handler
 
-    member this.Signal () = SignalManager.Signal(this)
-
     // TODO: Change to use dependencies without SM?
     interface IDisposableView<'a> with
         member __.Value with get() = value.Value
-        member this.AddDependency dep =            
-            SignalManager.AddDependency this dep                
-        member this.RemoveDependency dep =
-            SignalManager.RemoveDependency this dep |> ignore
-        member this.Signal () =
-            this.Signal()
+        member this.DependencyManager with get() = value.DependencyManager
         
     interface System.IDisposable with
         member this.Dispose() =
             subscription.Dispose()            
-            SignalManager.RemoveAllDependencies this
+            value.DependencyManager.RemoveAll()

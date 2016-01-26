@@ -9,7 +9,7 @@ open System.Windows.Input
 type ExecutionTracker() =
     let handles = ResizeArray<_>()
 
-    member private this.Signal () = SignalManager.Signal(this)
+    member private this.Signal () = SignalManager.Signal this
      
     member private this.AddHandle h =
         lock handles (fun _ ->
@@ -30,14 +30,10 @@ type ExecutionTracker() =
         this.AddHandle handle
         handle
 
-    // Mutable uses SignalManager to manage its dependencies (always)
+    // This uses SignalManager directly
     interface IView<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
-        member this.AddDependency dep =            
-            SignalManager.AddDependency this dep   
-        member this.RemoveDependency dep =
-            SignalManager.RemoveDependency this dep |> ignore
-        member this.Signal () = this.Signal()
+        member this.DependencyManager with get() = Dependencies.createRemote this
 
 [<AbstractClass>]
 type BindingTargetBase() as self =

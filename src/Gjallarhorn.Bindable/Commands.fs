@@ -31,12 +31,13 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
     let disposeTracker = new CompositeDisposable()
     let mutable value = initialValue
 
+    let dependencies = Dependencies.create()
+
     do
         allowExecute
         |> View.subscribe (fun _ -> self.RaiseCanExecuteChanged())    
         |> disposeTracker.Add
 
-    member private this.Signal () = SignalManager.Signal(this)
     member this.RaiseCanExecuteChanged() =
         canExecuteChanged.Trigger(this, EventArgs.Empty)
 
@@ -47,7 +48,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
         match v with
         | Some newVal ->
             value <- newVal
-            this.Signal()
+            dependencies.Signal this
         | None ->
             ()
 
@@ -56,11 +57,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
     // TODO: Track dependencies directly instead of SM
     interface IView<'a> with
         member __.Value with get() = value
-        member this.AddDependency dep =            
-            SignalManager.AddDependency this dep                
-        member this.RemoveDependency dep =
-            SignalManager.RemoveDependency this dep |> ignore
-        member this.Signal () = this.Signal()            
+        member __.DependencyManager with get() = dependencies
 
     interface ICommand with
         [<CLIEvent>]

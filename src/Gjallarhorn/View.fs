@@ -13,14 +13,14 @@ module View =
         {
             new IView<'a> with
                 member __.Value = value
-
-                // A constant never changes/signals, so do nothing for these
-                member __.AddDependency _ =
-                    ()
-                member __.RemoveDependency _ =
-                    ()
-                member __.Signal () =
-                    ()
+                member __.DependencyManager with get() = 
+                                                        { new IDependencyManager<'a> with 
+                                                            // A constant never changes/signals, so do nothing for these
+                                                            member __.Add _ = ()
+                                                            member __.Remove _ = ()
+                                                            member __.RemoveAll () = ()
+                                                            member __.Signal _ = ()
+                                                        }
         }
 
     /// Introduce arbitrary values into a view
@@ -37,7 +37,7 @@ module View =
 
     /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required.
     /// Returns view and subscription handle
-    let subscribeToObservable initialValue (observable : IObservable<'a>) =
+    let subscribeFromObservable initialValue (observable : IObservable<'a>) =
         let value = Mutable.create initialValue        
         let disposable = observable.Subscribe (fun v -> value.Value <- v)        
         value :> IView<'a> , disposable
@@ -51,9 +51,9 @@ module View =
                         f(provider.Value)
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.RemoveDependency dependent
+                        provider.DependencyManager.Remove (View dependent)
             }
-        provider.AddDependency dependent
+        provider.DependencyManager.Add (View dependent)
         dependent :?> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable
@@ -142,8 +142,6 @@ module View =
         
         override __.Refreshing() =
             validationResult.Value <- validateCurrent()
-        override __.Disposing() =
-            SignalManager.RemoveAllDependencies validationResult
 
         interface IValidatedView<'a> with
             member __.ValidationResult with get() = validationResult :> IView<ValidationResult>

@@ -59,7 +59,7 @@ let ``View\subscribeToObservable initializes properly`` start =
     let evt = Event<'a>()
     let obs = evt.Publish
 
-    let view, handle = View.subscribeToObservable start obs
+    let view, handle = View.subscribeFromObservable start obs
     Assert.AreEqual(box start, view.Value)
     handle.Dispose()
 
@@ -68,7 +68,7 @@ let ``View\subscribeToObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish
 
-    let view, handle = View.subscribeToObservable start obs 
+    let view, handle = View.subscribeFromObservable start obs 
     Assert.AreEqual(box start, view.Value)
 
     evt.Trigger finish

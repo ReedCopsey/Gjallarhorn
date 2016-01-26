@@ -7,23 +7,34 @@ do ()
 /// <summary>Core interface for all members which provide a current value
 /// Dependent views can use this to query the current state
 /// of the mutable value</summary>
-type IView<'a> =
-    /// The current value of the type
-    abstract member Value : 'a with get
-
+type Dependency<'a> =
+    | View of dep : IDependent
+    | Observer of obs : System.IObserver<'a>
+/// Type used to track dependencies
+and [<AllowNullLiteral>] IDependencyManager<'a> =
     /// Add a dependent to this view explicitly
-    abstract member AddDependency : IDependent -> unit
+    abstract member Add : Dependency<'a> -> unit
     
     /// Remove a dependent from this view explicitly
-    abstract member RemoveDependency : IDependent -> unit
+    abstract member Remove : Dependency<'a> -> unit
+
+    /// Remove all dependencies from this view
+    abstract member RemoveAll : unit -> unit
 
     /// Signal to all dependents to refresh themselves
-    abstract member Signal : unit -> unit
+    abstract member Signal : IView<'a> -> unit
 and 
     /// A type which depends on some IValueProvider
     [<AllowNullLiteral>] IDependent =    
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
     abstract member RequestRefresh : IView<'a> -> unit
+and IView<'a> =
+//     inherit System.IObservable<'a>
+    /// The current value of the type
+    abstract member Value : 'a with get
+
+    /// Get the dependency manager responsible for managing this view
+    abstract member DependencyManager : IDependencyManager<'a> with get
 
 /// Core interface for all mutatable types
 type IMutatable<'a> =

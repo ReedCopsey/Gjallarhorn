@@ -48,8 +48,8 @@
     <Compile Include="..\Gjallarhorn\Contracts.fs">
       <Link>Contracts.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn\SignalManager.fs">
-      <Link>SignalManager.fs</Link>
+    <Compile Include="..\Gjallarhorn\Dependencies.fs">
+      <Link>Dependencies.fs</Link>
     </Compile>
     <Compile Include="..\Gjallarhorn\Validation.fs">
       <Link>Validation.fs</Link>

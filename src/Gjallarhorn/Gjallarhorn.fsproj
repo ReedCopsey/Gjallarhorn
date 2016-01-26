@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Contracts.fs" />
-    <Compile Include="SignalManager.fs" />
+    <Compile Include="Dependencies.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="CoreTypes.fs" />
     <Compile Include="Mutable.fs" />

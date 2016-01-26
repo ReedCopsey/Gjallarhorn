@@ -9,7 +9,7 @@ open System.Runtime.CompilerServices
 type internal Observer<'a>(provider: IView<'a>) as self =    
     let subscribers = ResizeArray<IObserver<'a>>()
     do
-        provider.AddDependency self
+        provider.DependencyManager.Add (View self)
     let mutable provider = Some(provider)
 
     let value () = DisposeHelpers.getValue provider (fun _ -> self.GetType().FullName)
