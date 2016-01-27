@@ -13,16 +13,9 @@ module View =
         {
             new IView<'a> with
                 member __.Value = value
-                member __.DependencyManager with get() = 
-                                                        { new IDependencyManager<'a> with 
-                                                            // A constant never changes/signals, so do nothing for these
-                                                            member __.Add (_d : IDependent) = ()
-                                                            member __.Remove (_d : IDependent) = ()
-                                                            member __.Add (_d : IObserver<'a>) = ()
-                                                            member __.Remove (_d : IObserver<'a>) = ()
-                                                            member __.RemoveAll () = ()
-                                                            member __.Signal _ = ()
-                                                        }
+            interface ITracksDependents with
+                member __.Track _ = ()
+                member __.Untrack _ = ()
             interface IObservable<'a> with
                 member __.Subscribe obs = 
                     obs.OnNext(value)
@@ -53,16 +46,19 @@ module View =
 
     /// Create a subscription to the changes of a view which calls the provided function upon each change
     let subscribe (f : 'a -> unit) (provider : IView<'a>) = 
+        let tracker = provider :> ITracksDependents
         let rec dependent =
             {
                 new IDependent with
                     member __.RequestRefresh _ =
                         f(provider.Value)
+                    member __.HasDependencies with get() = true
+
                 interface IDisposable with
                     member __.Dispose() = 
-                        provider.DependencyManager.Remove dependent
+                        tracker.Untrack dependent
             }
-        provider.DependencyManager.Add dependent
+        tracker.Track dependent
         dependent :?> IDisposable
     
     /// Create a subscription to the changes of a view which copies its value upon change into a mutable

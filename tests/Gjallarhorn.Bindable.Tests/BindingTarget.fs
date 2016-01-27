@@ -108,97 +108,6 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\BindMutable does not throw`` () =
-        Assert.DoesNotThrow(fun _ -> 
-            use dvm = new DesktopBindingTarget()
-            let v = Mutable.create 42
-            dvm.BindMutable "Test" v
-        )
-
-    [<Test>]
-    member __.``BindingTarget\BindMutable add then read property works`` () =
-        use dvm = new DesktopBindingTarget()
-        let v = Mutable.create 42
-        dvm.BindMutable "Test" v
-    
-        let props = TypeDescriptor.GetProperties(dvm)
-        let prop = props.Find("Test", false)
-
-        Assert.IsNotNull(prop)
-
-    [<Test>]
-    member __.``BindingTarget\BindMutable add then read property value`` () =
-        use dvm = new DesktopBindingTarget()
-        let v = Mutable.create 42
-        dvm.BindMutable "Test" v
-    
-        let v = getProperty dvm "Test"
-        Assert.AreEqual(42, v)
-
-    [<Test>]
-    member __.``BindingTarget\BindMutable add then modify property value`` () =
-        let v1 = Mutable.create 1
-        let v2 = Mutable.create 2
-        use dynamicVm = new DesktopBindingTarget()
-        dynamicVm.BindMutable "Test" v1
-        dynamicVm.BindMutable "Test2" v2
-        
-        let cur = getProperty dynamicVm "Test" 
-        Assert.AreEqual(1, cur)
-
-        v1.Value <- 55
-        let cur = getProperty dynamicVm "Test" 
-        Assert.AreEqual(55, cur)
-
-        let cur = getProperty dynamicVm "Test2" 
-        Assert.AreEqual(2, cur)
-
-        v2.Value <- 29
-        let cur = getProperty dynamicVm "Test2" 
-        Assert.AreEqual(29, cur)
-
-    [<Test>]
-    member __.``BindingTarget\BindMutable add then modify property value from WPF`` () =
-        let v2 = Mutable.create 2
-        use dynamicVm = new DesktopBindingTarget()
-        dynamicVm.BindMutable "Test2" v2
-        
-        let cur = getProperty dynamicVm "Test2" 
-        Assert.AreEqual(2, cur)
-
-        // Set from mutable should impact front and back end
-        v2.Value <- 29
-        let cur = getProperty dynamicVm "Test2" 
-        Assert.AreEqual(29, cur)
-
-        // Set from view should not change back end
-        setProperty dynamicVm "Test2" 42
-        let cur = getProperty dynamicVm "Test2" 
-        Assert.AreNotEqual(cur, v2.Value)
-        Assert.AreEqual(42, cur)
-        Assert.AreEqual(29, v2.Value)
-
-    [<Test>]
-    member __.``BindingTarget\BindMutable add then modify property value raises property changed`` () =
-        let v1 = Mutable.create 1
-        use dynamicVm = new DesktopBindingTarget()
-        dynamicVm.BindMutable "Test" v1
-
-        let obs = PropertyChangedObserver(dynamicVm)    
-    
-        let cur = getProperty dynamicVm "Test" 
-        Assert.AreEqual(1, cur)
-
-        v1.Value <- 55 // Change 1
-        let cur = getProperty dynamicVm "Test" 
-        Assert.AreEqual(55, cur)
-
-        v1.Value <- 66 // Change 2
-        v1.Value <- 66 // No Change  - Value the same
-        v1.Value <- 77 // Change 3
-        Assert.AreEqual(3, obs.["Test"])
-
-    [<Test>]
     member __.``BindingTarget\BindView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = View.map (fun i -> i+1) v1
@@ -227,8 +136,6 @@ type BindingTarget() =
 
         use dynamicVm = 
             Bind.create()
-            |> Bind.edit "First" first
-            |> Bind.edit "Last" last
             |> Bind.watch "Full" full
     
         let fullValue() = getProperty dynamicVm "Full"
@@ -249,8 +156,8 @@ type BindingTarget() =
 
         use dynamicVm = 
             Bind.create()
-            |> Bind.edit "First" first
-            |> Bind.edit "Last" last
+            |> Bind.watch "First" first
+            |> Bind.watch "Last" last
             |> Bind.watch "Full" full
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -302,8 +209,8 @@ type BindingTarget() =
 
         use dynamicVm = 
             Bind.create()
-            |> Bind.edit "First" first
-            |> Bind.edit "Last" last
+            |> Bind.watch "First" first
+            |> Bind.watch "Last" last
             |> Bind.watch "Full" full
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -328,8 +235,8 @@ type BindingTarget() =
 
         use dynamicVm =
             binding {            
-                edit "First" first
-                edit "Last" last            
+                watch "First" first
+                watch "Last" last            
                 watch "Full" full            
             }
 

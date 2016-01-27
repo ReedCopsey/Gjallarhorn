@@ -5,13 +5,44 @@ open Gjallarhorn
 open System
 open System.Runtime.CompilerServices
 
+////////////////////////////////////////////////////////
+// This file contains the basic implementations used
+// for tracking dependencies between objects.
+// The module exposes the functions required to create
+// the appropriate types, and is all that should be used
+// directly from here.
+////////////////////////////////////////////////////////
+
+/// Type used to track dependencies
+type [<AllowNullLiteral>] IDependencyManager<'a> =
+    /// Add a dependent to this view explicitly
+    abstract member Add : IDependent -> unit
+
+    /// Add a dependent observer to this view explicitly
+    abstract member Add : System.IObserver<'a> -> unit
+    
+    /// Remove a dependent from this view explicitly
+    abstract member Remove : IDependent -> unit
+
+    /// Remove a dependent observer from this view explicitly
+    abstract member Remove : System.IObserver<'a> -> unit
+
+    /// Remove all dependencies from this view
+    abstract member RemoveAll : unit -> unit
+
+    /// Signal to all dependents to refresh themselves
+    abstract member Signal : IView<'a> -> unit
+
+    /// Determines whether there are dependencies currently being managed
+    abstract member HasDependencies : bool with get
+
 [<AbstractClass;AllowNullLiteral>]
 type private DependencyTrackerBase() =
     do ()
 /// <summary>Used to track dependencies</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to dependent targets</remarks>
 [<AllowNullLiteral>]
-type private DependencyTracker<'a>() =
+type private DependencyTracker<'a>(dependsOn : ITracksDependents array) =
     inherit DependencyTrackerBase()
 
     // We want this as lightweight as possible,
@@ -62,6 +93,9 @@ type private DependencyTracker<'a>() =
 
     member private __.LockObj with get() = depIDeps // Always lock on this array
 
+    /// determines whether there are currently any dependencies on this object
+    member this.HasDependencies with get() = lock this.LockObj (fun _ -> depIDeps.Length + depObservers.Length > 0)
+
     /// Adds a new dependency to the tracker
     member this.Add dep =
         lock this.LockObj (fun _ ->
@@ -74,11 +108,11 @@ type private DependencyTracker<'a>() =
     member this.Remove dep = 
         lock this.LockObj (fun _ ->
             depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
-            depIDeps.Length + depObservers.Length > 0)
+            this.HasDependencies)
     member this.Remove obs = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
-            depIDeps.Length + depObservers.Length > 0)
+            this.HasDependencies)
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
     member this.RemoveAll () = 
@@ -102,13 +136,14 @@ type private DependencyTracker<'a>() =
         member this.Remove (dep: IObserver<'a> ) = ignore <| this.Remove dep
         member this.RemoveAll () = this.RemoveAll()
         member this.Signal source = ignore <| this.Signal source
+        member this.HasDependencies with get() = this.HasDependencies
 
 /// <summary>Manager of all dependency tracking.  Handles signaling of IDependent instances from any given source</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to either source or dependent targets</remarks>
 [<AbstractClass; Sealed>]
-type SignalManager() =
+type internal SignalManager() = // Note: Internal to allow for testing in memory tests
     static let dependencies = ConditionalWeakTable<obj, DependencyTrackerBase>()
-    static let createValueCallbackFor (view : IView<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>() :> DependencyTrackerBase))
+    static let createValueCallbackFor (view : IView<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>([| |]) :> DependencyTrackerBase))
 
     static let remove source =
         lock dependencies (fun _ -> dependencies.Remove(source) |> ignore)
@@ -163,20 +198,19 @@ type SignalManager() =
     static member IsTracked (source : IView<'a>) =
         lock dependencies (fun _ -> fst <| dependencies.TryGetValue(source))
 
-type internal RemoteDependencyMananger<'a>(source : IView<'a>) =
-    interface IDependencyManager<'a> with
-        member __.Add (dep: IDependent) = SignalManager.AddDependency(source, dep)
-        member __.Remove (dep: IDependent) = SignalManager.RemoveDependency(source, dep)
-        member __.Add (obs: IObserver<'a> ) = SignalManager.AddDependency(source, obs)
-        member __.Remove (obs: IObserver<'a> ) = SignalManager.RemoveDependency(source, obs)
-        member __.Signal source = SignalManager.Signal source
-        member __.RemoveAll () = SignalManager.RemoveAllDependencies source
-
 /// Module used to create and manage dependencies
 module Dependencies =
     /// Create a dependency manager
-    let create () = 
-        DependencyTracker<_>() :> IDependencyManager<_>
-    /// Create a remote dependency manager
+    let create (dependsOn : ITracksDependents array) = 
+        DependencyTracker<_>(dependsOn) :> IDependencyManager<_>
+    /// Create a dependency manager for a source object which stores dependency information outside of the object's memory space.  
     let createRemote source =
-        RemoteDependencyMananger<_>(source) :> IDependencyManager<_>
+        { new IDependencyManager<'a> with
+            member __.Add (dep: IDependent) = SignalManager.AddDependency(source, dep)
+            member __.Remove (dep: IDependent) = SignalManager.RemoveDependency(source, dep)
+            member __.Add (obs: IObserver<'a> ) = SignalManager.AddDependency(source, obs)
+            member __.Remove (obs: IObserver<'a> ) = SignalManager.RemoveDependency(source, obs)
+            member __.Signal source = SignalManager.Signal source
+            member __.RemoveAll () = SignalManager.RemoveAllDependencies source
+            member __.HasDependencies with get() = SignalManager.IsTracked source
+        }

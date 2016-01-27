@@ -9,7 +9,7 @@ open System.Windows.Input
 type ExecutionTracker() =
     let handles = ResizeArray<_>()
 
-    let dependencies = Dependencies.create()
+    let dependencies = Dependencies.create [| |]
 
     member private this.Signal () = dependencies.Signal this
      
@@ -32,7 +32,6 @@ type ExecutionTracker() =
         this.AddHandle handle
         handle
 
-    // This uses SignalManager directly
     interface System.IObservable<bool> with
         member __.Subscribe obs = 
             dependencies.Add obs
@@ -40,10 +39,13 @@ type ExecutionTracker() =
                 new System.IDisposable with
                     member __.Dispose() = dependencies.Remove obs
             }
+    interface ITracksDependents with
+        member __.Track dep = dependencies.Add dep
+        member __.Untrack dep = dependencies.Remove dep
+
     interface IView<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
-        member this.DependencyManager with get() = dependencies
-
+        
 [<AbstractClass>]
 type BindingTargetBase() as self =
     let propertyChanged = new Event<_, _>()
@@ -109,18 +111,6 @@ type BindingTargetBase() as self =
     abstract AddReadWriteProperty<'a> : string -> IView<'a> -> IView<'a>
     abstract AddCommand : string -> ICommand -> unit
 
-    /// Add a binding target for a mutatable value with a given name
-    member this.BindMutable<'a> name (value : IMutatable<'a>) =
-        bt().TrackView name value
-        let result = this.AddReadWriteProperty name value
-
-        match value with
-        | :? Validation.IValidatedMutatable<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult
-        | _ -> ()
-
-        ignore result
-
     member this.BindEditor<'a> name validator (view : IView<'a>) =
         bt().TrackView name view
         let result = this.AddReadWriteProperty name view
@@ -167,7 +157,6 @@ type BindingTargetBase() as self =
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
         member __.OperationExecuting with get() = (executionTracker :> IView<bool>).Value
 
-        member this.BindMutable name value = this.BindMutable name value
         member this.BindEditor name validator view = this.BindEditor name validator view 
         member this.BindView name view = this.BindView name view
         member this.BindCommand name command = this.BindCommand name command
@@ -196,12 +185,7 @@ module Bind =
         let installCreationFunction f = creationFunction <- f
 
     let create () =
-        creationFunction()
-
-    /// Add an editor (two way property) to a binding target by name
-    let edit name mut (target : #IBindingTarget) =
-        target.BindMutable name mut
-        target
+        creationFunction()    
        
     /// Add a watched view (one way property) to a binding target by name
     let watch name view (target : #IBindingTarget) =
@@ -217,9 +201,9 @@ module Bind =
     type Binding(creator : unit -> IBindingTarget) =        
         member __.Zero() = creator()
         member __.Yield(()) = creator()
-        /// Add an editor (two way property) to a binding target by name
-        [<CustomOperation("edit", MaintainsVariableSpace = true)>]
-        member __.Edit (source : IBindingTarget, name, value) = edit name value source
+//        /// Add an editor (two way property) to a binding target by name
+//        [<CustomOperation("edit", MaintainsVariableSpace = true)>]
+//        member __.Edit (source : IBindingTarget, name, value) = edit name value source
         /// Add a watched view (one way property) to a binding target by name
         [<CustomOperation("watch", MaintainsVariableSpace = true)>]
         member __.Watch (source : IBindingTarget, name, view) = watch name view source                

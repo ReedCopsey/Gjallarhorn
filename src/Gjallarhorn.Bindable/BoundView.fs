@@ -35,18 +35,16 @@ type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
 
     // TODO: Change to use dependencies without SM?
     interface System.IObservable<'a> with
-        member __.Subscribe obs = 
-            value.DependencyManager.Add obs
-            { 
-                new System.IDisposable with
-                    member __.Dispose() = value.DependencyManager.Remove obs
-            }
+        member __.Subscribe obs = value.Subscribe obs
+
+    interface ITracksDependents with
+        member __.Track dep = value.Track dep
+        member __.Untrack dep = value.Untrack dep
 
     interface IDisposableView<'a> with
         member __.Value with get() = value.Value
-        member this.DependencyManager with get() = value.DependencyManager
         
     interface System.IDisposable with
         member this.Dispose() =
             subscription.Dispose()            
-            value.DependencyManager.RemoveAll()
+            

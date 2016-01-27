@@ -31,7 +31,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
     let disposeTracker = new CompositeDisposable()
     let mutable value = initialValue
 
-    let dependencies = Dependencies.create()
+    let dependencies = Dependencies.create [| |]
 
     do
         allowExecute
@@ -62,9 +62,12 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
                     member __.Dispose() = dependencies.Remove obs
             }
 
+    interface ITracksDependents with
+        member __.Track dep = dependencies.Add dep
+        member __.Untrack dep = dependencies.Remove dep
+
     interface IView<'a> with
         member __.Value with get() = value
-        member __.DependencyManager with get() = dependencies
 
     interface ICommand with
         [<CLIEvent>]

@@ -12,6 +12,24 @@ module Memory =
         let value = Mutable.create 42
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
+
+    [<Test>]
+    let ``View\map then GC removes tracking`` () =
+        let value = Mutable.create 42
+
+        Assert.AreEqual(false, SignalManager.IsTracked value)
+
+        let test() =
+            let view = View.map id value
+            Assert.AreEqual(true, SignalManager.IsTracked value)
+
+        test()
+
+        GC.Collect()
+        GC.WaitForPendingFinalizers()
+        // GC.Collect()
+
+        Assert.AreEqual(false, SignalManager.IsTracked value)
     
     [<Test>]
     let ``View\map causes tracking`` () =
