@@ -136,13 +136,22 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
 type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
     let dependencies = Dependencies.create [| valueProvider1 ; valueProvider2 |] self
 
+    let mutable lastValue = mapping valueProvider1.Value valueProvider2.Value
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
 
-    member private this.Value () = 
-        let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
-        let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
-        mapping v1 v2
+    member private this.Signal() = dependencies.Signal this |> ignore
+
+    member private this.UpdateAndGetValue () =
+        let value () = 
+            let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
+            let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
+            mapping v1 v2
+        let value = value()
+        if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            lastValue <- value
+            this.Signal()
+        lastValue
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -161,11 +170,12 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
         member __.Untrack dep = dependencies.Remove dep
 
     interface IView<'c> with
-        member this.Value with get() = this.Value()
+        member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
         member this.RequestRefresh _ =
-            dependencies.Signal this |> ignore
+            this.UpdateAndGetValue()
+            |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
 
     interface IDisposable with
