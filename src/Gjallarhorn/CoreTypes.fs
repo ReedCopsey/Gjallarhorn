@@ -175,6 +175,17 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
 
     member private this.Signal() = dependencies.Signal this |> ignore
 
+    member private this.UpdateAndGetValue () =
+        match valueProvider with
+        | None -> ()
+        | Some provider ->
+            let value = provider.Value
+            if (filter(value)) then
+                if not <| EqualityComparer<'a>.Default.Equals(v, value) then
+                    v <- value
+                    this.Signal()
+        v
+
     override this.Finalize() =
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
@@ -192,17 +203,12 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
         member __.Untrack dep = dependencies.Remove dep
 
     interface IView<'a> with
-        member __.Value with get() = v
+        member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
         member this.RequestRefresh _ = 
-            match valueProvider with
-            | None -> ()
-            | Some(provider) ->
-                let value = provider.Value
-                if filter(value) then
-                    v <- value
-                    this.Signal()
+            this.UpdateAndGetValue()
+            |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
                 
     interface IDisposable with
@@ -221,6 +227,17 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
 
     member private this.Signal() = dependencies.Signal this |> ignore
 
+    member private this.UpdateAndGetValue () =
+        if handle <> null then
+            match handle.TryGetTarget() with
+            | true, provider ->
+                let value = provider.Value
+                if not <| EqualityComparer<'a>.Default.Equals(v, value) then
+                    v <- value
+                    this.Signal()
+            | false, _ -> ()
+        v
+
     override this.Finalize() =
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this
@@ -238,17 +255,12 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
         member __.Untrack dep = dependencies.Remove dep
 
     interface IView<'a> with
-        member __.Value with get() = v
+        member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
         member this.RequestRefresh _ =
-            if handle <> null then
-                match handle.TryGetTarget() with
-                | true, provider -> 
-                    let value = provider.Value                    
-                    v <- value
-                    this.Signal()
-                | false,_ -> ()
+            this.UpdateAndGetValue()
+            |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
 
     interface IDisposable with
@@ -256,7 +268,7 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
             if handle <> null then
                 match handle.TryGetTarget() with
                 | true, v ->
-                    v.Untrack this
+                    v.Untrack this                    
                     handle <- null
                 | false,_ -> ()
             dependencies.RemoveAll()
