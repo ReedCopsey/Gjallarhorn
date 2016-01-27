@@ -29,7 +29,7 @@ module VM =
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
-        let name' = (fun f l -> {First = f; Last = l}) <!> first <*> last
+        let name' = View.lift2 (fun f l -> {First = f; Last = l}) first last
 
         // Create a command that will only execute if
         // 1) We're valid and 2) our name has changed from the input
