@@ -87,11 +87,20 @@ type internal Mutable<'a>(value : 'a) =
         
 type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
+    let mutable lastValue = mapping valueProvider.Value
     let mutable valueProvider = Some(valueProvider)
 
-    let value () = 
-        DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
-        |> mapping
+    member private this.Signal() = dependencies.Signal this |> ignore
+
+    member private this.UpdateAndGetValue () =
+        let value () = 
+            DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
+            |> mapping
+        let value = value()
+        if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            lastValue <- value
+            this.Signal()
+        lastValue
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -110,11 +119,12 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
         member __.Untrack dep = dependencies.Remove dep
 
     interface IView<'b> with
-        member __.Value with get() = value()
+        member this.Value with get() = this.UpdateAndGetValue ()
 
     interface IDependent with
         member this.RequestRefresh _ =             
-            dependencies.Signal this
+            this.UpdateAndGetValue ()
+            |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
 
     interface IDisposable with
