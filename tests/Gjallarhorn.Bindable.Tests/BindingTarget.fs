@@ -12,7 +12,7 @@ type TestBindingTarget() =
     inherit BindingTargetBase()
 
     override __.AddReadWriteProperty<'a> name (value : IView<'a>) =
-        View.map id value :> IView<'a>
+        View.map id value
     override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
         ()
     override __.AddCommand name comm =

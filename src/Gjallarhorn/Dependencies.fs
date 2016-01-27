@@ -42,32 +42,33 @@ type private DependencyTrackerBase() =
 /// <summary>Used to track dependencies</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to dependent targets</remarks>
 [<AllowNullLiteral>]
-type private DependencyTracker<'a>(dependsOn : ITracksDependents array) =
+type private DependencyTracker<'a>(dependsOn : ITracksDependents array, source : IView<'a>) =
     inherit DependencyTrackerBase()
 
     // We want this as lightweight as possible,
     // so we do our own management as needed
     let mutable depIDeps : WeakReference<IDependent> array = [| |]
     let mutable depObservers : WeakReference<IObserver<'a>> array = [| |]
+    let mutable trackingUpstream = false
         
     // These are ugly, as it purposefully creates side effects
     // It returns true if we signaled and the object is alive,
     // otherwise false
-    let signalIfAliveDep source (wr: WeakReference<IDependent>) =
+    let signalIfAliveDep (wr: WeakReference<IDependent>) =
         let success, dep = wr.TryGetTarget() 
         if success then 
             dep.RequestRefresh source
         success
-    let signalIfAliveObs (source : IView<'a>) (wr: WeakReference<IObserver<'a>>) =
+    let signalIfAliveObs (wr: WeakReference<IObserver<'a>>) =
         let success, obs = wr.TryGetTarget() 
         if success then 
             obs.OnNext(source.Value)
         success
 
     // Do our signal, but also remove any unneeded dependencies while we're at it
-    let signalAndUpdateDependencies source =
-        depIDeps <- depIDeps |> Array.filter (signalIfAliveDep source)
-        depObservers <- depObservers |> Array.filter (signalIfAliveObs source)
+    let signalAndUpdateDependencies () =
+        depIDeps <- depIDeps |> Array.filter signalIfAliveDep
+        depObservers <- depObservers |> Array.filter signalIfAliveObs
 
     // Remove a dependency, as well as all "dead" dependencies
     let removeAndFilterDep dep (wr : WeakReference<IDependent>) =
@@ -90,6 +91,20 @@ type private DependencyTracker<'a>(dependsOn : ITracksDependents array) =
             obs.OnCompleted()
         | _ -> ()
 
+    member private this.UpdateUpstreamTracking () =
+        match this.HasDependencies, trackingUpstream with
+        | true, true -> ()
+        | true, false -> 
+            dependsOn
+            |> Array.iter (fun d -> d.Track source)
+            trackingUpstream <- true
+        | false, false -> ()
+        | false, true ->
+            // Stop tracking
+            dependsOn
+            |> Array.iter (fun d -> d.Untrack source)
+            trackingUpstream <- false
+
 
     member private __.LockObj with get() = depIDeps // Always lock on this array
 
@@ -99,35 +114,40 @@ type private DependencyTracker<'a>(dependsOn : ITracksDependents array) =
     /// Adds a new dependency to the tracker
     member this.Add dep =
         lock this.LockObj (fun _ ->
-            depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |])
+            depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |]
+            this.UpdateUpstreamTracking())
     member this.Add obs =
         lock this.LockObj (fun _ ->
-            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |])
+            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |]
+            this.UpdateUpstreamTracking())
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
     member this.Remove dep = 
         lock this.LockObj (fun _ ->
             depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
+            this.UpdateUpstreamTracking()
             this.HasDependencies)
     member this.Remove obs = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
+            this.UpdateUpstreamTracking()
             this.HasDependencies)
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
-    member this.RemoveAll () = 
+    member this.RemoveAll source = 
         lock this.LockObj 
             (fun _ -> 
                 depIDeps <- [| |]
                 depObservers
                 |> Array.iter markObsComplete
-                depObservers <- [| |])
+                depObservers <- [| |]
+                this.UpdateUpstreamTracking())
 
     /// Signals the dependencies with a given source, and returns true if there are still dependencies remaining
     member this.Signal (source : IView<'a>) = 
         lock this.LockObj (fun _ ->
-            signalAndUpdateDependencies source
-            depIDeps.Length > 0)
+            signalAndUpdateDependencies()
+            this.HasDependencies)
 
     interface IDependencyManager<'a> with
         member this.Add (dep: IDependent) = this.Add dep
@@ -143,7 +163,7 @@ type private DependencyTracker<'a>(dependsOn : ITracksDependents array) =
 [<AbstractClass; Sealed>]
 type internal SignalManager() = // Note: Internal to allow for testing in memory tests
     static let dependencies = ConditionalWeakTable<obj, DependencyTrackerBase>()
-    static let createValueCallbackFor (view : IView<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>([| |]) :> DependencyTrackerBase))
+    static let createValueCallbackFor (view : IView<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>([| |], view) :> DependencyTrackerBase))
 
     static let remove source =
         lock dependencies (fun _ -> dependencies.Remove(source) |> ignore)
@@ -201,8 +221,8 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
 /// Module used to create and manage dependencies
 module Dependencies =
     /// Create a dependency manager
-    let create (dependsOn : ITracksDependents array) = 
-        DependencyTracker<_>(dependsOn) :> IDependencyManager<_>
+    let create (dependsOn : ITracksDependents array) source = 
+        DependencyTracker<_>(dependsOn, source) :> IDependencyManager<_>
     /// Create a dependency manager for a source object which stores dependency information outside of the object's memory space.  
     let createRemote source =
         { new IDependencyManager<'a> with

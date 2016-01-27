@@ -41,7 +41,10 @@ type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
         member __.Track dep = value.Track dep
         member __.Untrack dep = value.Untrack dep
 
-    interface IDisposableView<'a> with
+    interface IDependent with
+        member __.RequestRefresh v = value.RequestRefresh v
+        member __.HasDependencies with get() = value.HasDependencies
+    interface IView<'a> with
         member __.Value with get() = value.Value
         
     interface System.IDisposable with

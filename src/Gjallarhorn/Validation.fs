@@ -158,7 +158,7 @@ module Validation =
 
     /// Core interface for all validated view types
     type IValidatedView<'a> =
-        inherit IDisposableView<'a>
+        inherit IView<'a>
     
         /// The current validation status
         abstract member ValidationResult : IView<ValidationResult> with get

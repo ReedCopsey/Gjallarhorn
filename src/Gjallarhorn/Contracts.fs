@@ -8,6 +8,7 @@ do ()
 type IView<'a> =
     inherit System.IObservable<'a>
     inherit ITracksDependents
+    inherit IDependent
 
     /// The current value of the type
     abstract member Value : 'a with get
@@ -30,9 +31,3 @@ type IMutatable<'a> =
     
     /// The current value of the type
     abstract member Value : 'a with get, set
-
-/// A view which implements IDisposable in order to stop tracking its source
-type IDisposableView<'a> =
-    inherit IView<'a>
-    inherit System.IDisposable
-

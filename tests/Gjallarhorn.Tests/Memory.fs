@@ -14,13 +14,13 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
     [<Test>]
-    let ``View\map then GC removes tracking`` () =
+    let ``View\subscribe then GC removes tracking`` () =
         let value = Mutable.create 42
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
         let test() =
-            let view = View.map id value
+            let view = View.subscribe (fun _ ->()) value
             Assert.AreEqual(true, SignalManager.IsTracked value)
 
         test()
@@ -32,23 +32,40 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
     
     [<Test>]
-    let ``View\map causes tracking`` () =
+    let ``View\map doesn't cause tracking`` () =
         let value = Mutable.create 42
         let view = View.map (fun v -> v.ToString()) value
 
+        Assert.AreEqual(false, value.HasDependencies)
+        Assert.AreEqual(false, view.HasDependencies)
+
+    [<Test>]
+    let ``View\subscribe causes tracking`` () =
+        let value = Mutable.create 42
+        let view = View.map (fun v -> v.ToString()) value
+
+        Assert.AreEqual(false, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+
+        let sub = View.subscribe (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
     [<Test>]
-    let ``View disposal stops tracking`` () =
+    let ``View\subscribe disposal stops tracking`` () =
         let value = Mutable.create 42
-        let view = View.map (fun v -> v.ToString()) value 
+        let view = View.map (fun v -> v.ToString()) value
 
+        Assert.AreEqual(false, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+
+        let sub = View.subscribe (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        view.Dispose()
+        sub.Dispose()
         Assert.AreEqual(false, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
 
     [<Test>]
     let ``Source doesn't prevent view from being garbage collected`` () =

@@ -76,6 +76,9 @@ type internal Mutable<'a>(value : 'a) =
     interface ITracksDependents with
         member this.Track dep = this.Dependencies.Add dep
         member this.Untrack dep = this.Dependencies.Remove dep
+    interface IDependent with
+        member __.RequestRefresh _ = ()
+        member this.HasDependencies with get() = this.Dependencies.HasDependencies
     interface IView<'a> with
         member __.Value with get() = v
 
@@ -83,11 +86,7 @@ type internal Mutable<'a>(value : 'a) =
         member this.Value with get() = v and set(v) = this.Value <- v
         
 type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
-    do
-        // TODO: Remove this until needed
-        valueProvider.Track self
-
-    let dependencies = Dependencies.create [| valueProvider |]
+    let dependencies = Dependencies.create [| valueProvider |] self
     let mutable valueProvider = Some(valueProvider)
 
     let value () = 
@@ -97,14 +96,6 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
         GC.SuppressFinalize this        
-
-    abstract member Disposing : unit -> unit
-    default __.Disposing() =
-        ()
-
-    abstract member Refreshing : unit -> unit
-    default __.Refreshing() =
-        ()
 
     interface IObservable<'b> with
         member __.Subscribe obs = 
@@ -118,35 +109,29 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IDisposableView<'b> with
+    interface IView<'b> with
         member __.Value with get() = value()
 
     interface IDependent with
-        member this.RequestRefresh _ = 
-            this.Refreshing()
-            dependencies.Signal this |> ignore
+        member this.RequestRefresh _ =             
+            dependencies.Signal this
         member __.HasDependencies with get() = dependencies.HasDependencies
 
     interface IDisposable with
         member this.Dispose() =
-            this.Disposing()
             DisposeHelpers.dispose valueProvider disposeProviderOnDispose this
             valueProvider <- None
             dependencies.RemoveAll()
 
 type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
-    do
-        valueProvider1.Track self
-        valueProvider2.Track self
-
-    let dependencies = Dependencies.create [| valueProvider1 ; valueProvider2 |]
+    let dependencies = Dependencies.create [| valueProvider1 ; valueProvider2 |] self
 
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
 
-    let value () = 
-        let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> self.GetType().FullName)
-        let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> self.GetType().FullName)
+    member private this.Value () = 
+        let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
+        let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
         mapping v1 v2
 
     override this.Finalize() =
@@ -165,8 +150,8 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IDisposableView<'c> with
-        member __.Value with get() = value()
+    interface IView<'c> with
+        member this.Value with get() = this.Value()
 
     interface IDependent with
         member this.RequestRefresh _ =
@@ -182,15 +167,13 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
             dependencies.RemoveAll()
 
 type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
-    do
-        valueProvider.Track self
-
-    let dependencies = Dependencies.create [| valueProvider |]
+    let dependencies = Dependencies.create [| valueProvider |] self
 
     let mutable v = valueProvider.Value
 
-    let mutable valueProvider = Some(valueProvider)
-    let signal() = dependencies.Signal self |> ignore
+    let mutable valueProvider = Some(valueProvider)    
+
+    member private this.Signal() = dependencies.Signal this |> ignore
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -208,18 +191,18 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IDisposableView<'a> with
+    interface IView<'a> with
         member __.Value with get() = v
 
     interface IDependent with
-        member __.RequestRefresh _ = 
+        member this.RequestRefresh _ = 
             match valueProvider with
             | None -> ()
             | Some(provider) ->
                 let value = provider.Value
                 if filter(value) then
                     v <- value
-                    signal()
+                    this.Signal()
         member __.HasDependencies with get() = dependencies.HasDependencies
                 
     interface IDisposable with
@@ -229,17 +212,14 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
             dependencies.RemoveAll()
 
 type internal CachedView<'a> (valueProvider : IView<'a>) as self =
-    do
-        valueProvider.Track self
-
-    let dependencies = Dependencies.create [| valueProvider |]
+    let dependencies = Dependencies.create [| valueProvider |] self
 
     let mutable v = valueProvider.Value
 
     // Only store a weak reference to our provider
     let mutable handle = WeakReference<_>(valueProvider)
 
-    let signal() = dependencies.Signal self |> ignore
+    member private this.Signal() = dependencies.Signal this |> ignore
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -257,17 +237,17 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IDisposableView<'a> with
+    interface IView<'a> with
         member __.Value with get() = v
 
     interface IDependent with
-        member __.RequestRefresh _ =
+        member this.RequestRefresh _ =
             if handle <> null then
                 match handle.TryGetTarget() with
                 | true, provider -> 
                     let value = provider.Value                    
                     v <- value
-                    signal()
+                    this.Signal()
                 | false,_ -> ()
         member __.HasDependencies with get() = dependencies.HasDependencies
 

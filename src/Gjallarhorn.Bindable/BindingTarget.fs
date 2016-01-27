@@ -6,10 +6,10 @@ open Gjallarhorn.Validation
 open System.ComponentModel
 open System.Windows.Input
 
-type ExecutionTracker() =
+type ExecutionTracker() as self =
     let handles = ResizeArray<_>()
 
-    let dependencies = Dependencies.create [| |]
+    let dependencies = Dependencies.create [| |] self
 
     member private this.Signal () = dependencies.Signal this
      
@@ -42,6 +42,10 @@ type ExecutionTracker() =
     interface ITracksDependents with
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
+
+    interface IDependent with
+        member __.RequestRefresh _ = ()
+        member __.HasDependencies = dependencies.HasDependencies
 
     interface IView<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
@@ -118,9 +122,6 @@ type BindingTargetBase() as self =
         let validated = 
             result
             |> View.validate validator
-
-        validated
-        |> this.TrackDisposable
 
         bt().TrackValidator name validated.ValidationResult
 

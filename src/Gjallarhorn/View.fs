@@ -1,5 +1,7 @@
 ﻿namespace Gjallarhorn
 
+#nowarn "40"
+
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
 
@@ -11,8 +13,12 @@ module View =
     /// Create a view over a constant, immutable value
     let constant (value : 'a) = 
         {
+            // TODO: Should this use a dependency tracker anyways?  Right now, we always return false on has dependencies, but that's not accurate
             new IView<'a> with
                 member __.Value = value
+            interface IDependent with
+                member __.RequestRefresh _ = ()
+                member __.HasDependencies with get() = false
             interface ITracksDependents with
                 member __.Track _ = ()
                 member __.Untrack _ = ()
@@ -35,7 +41,7 @@ module View =
     /// As such, it caches the "last valid" state of the view locally.
     /// </remarks>
     let cache (provider : IView<'a>) = 
-        new CachedView<'a>(provider) :> IDisposableView<'a>
+        new CachedView<'a>(provider) :> IView<'a>
 
     /// Create a view from an observable.  As an IView always provides a value, the initial value to use upon creation is required.
     /// Returns view and subscription handle
@@ -49,14 +55,18 @@ module View =
         let tracker = provider :> ITracksDependents
         let rec dependent =
             {
-                new IDependent with
+                new obj() with
+                    override this.Finalize() =
+                        (this :?> IDisposable).Dispose()
+                interface IDependent with
                     member __.RequestRefresh _ =
                         f(provider.Value)
                     member __.HasDependencies with get() = true
-
+                    
                 interface IDisposable with
-                    member __.Dispose() = 
+                    member this.Dispose() = 
                         tracker.Untrack dependent
+                        GC.SuppressFinalize this
             }
         tracker.Track dependent
         dependent :?> IDisposable
@@ -84,29 +94,29 @@ module View =
     /// Transforms a view value by using a specified mapping function.
     let map (mapping : 'a -> 'b)  (provider : IView<'a>) = 
         let view = new MappingView<'a, 'b>(provider, mapping, false)
-        view :> IDisposableView<'b>
+        view :> IView<'b>
 
     /// Transforms two view values by using a specified mapping function.
     let map2 (mapping : 'a -> 'b -> 'c) (provider1 : IView<'a>) (provider2 : IView<'b>) = 
         let view = new Mapping2View<'a, 'b, 'c>(provider1, provider2, mapping)
-        view :> IDisposableView<'c>
+        view :> IView<'c>
 
     /// Filters the view, so only values matching the predicate are cached and propogated onwards
     let filter (predicate : 'a -> bool) (provider : IView<'a>) =
         let view = new FilteredView<'a>(provider, predicate, false)
-        view :> IDisposableView<'a>
+        view :> IView<'a>
 
     /// Need a description
     let choose (predicate : 'a -> 'b option) (provider : IView<'a>) =        
         let map = new MappingView<'a,'b option>(provider, predicate, false)
         let filter = new FilteredView<'b option>(map, (fun v -> v <> None), true)
         let view = new MappingView<'b option, 'b>(filter, (fun opt -> opt.Value), true)
-        view :> IDisposableView<'b>
+        view :> IView<'b>
 
     /// Applies a View of a function in order to provide mapping of arbitrary arity
     let apply (mappingView : IView<'a -> 'b>) provider =        
         let view = new Mapping2View<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
-        view :> IDisposableView<'b>
+        view :> IView<'b>
 
     /// Creates a view on two values that is true if both inputs are equal
     let equal a b =
@@ -129,24 +139,50 @@ module View =
     let either (a : IView<bool>) (b : IView<bool>) =
         map2 (fun a b -> a || b) a b
 
-    type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) =
-        inherit MappingView<'a,'a>(valueProvider, id, true)
+    type internal ValidatorMappingView<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : IView<'a>) as self =
+        let dependencies = Dependencies.create [| valueProvider |] self
 
-        let validateCurrent () =
-            validate valueProvider.Value
+        let validateCurrent value =
+            value
+            |> validate 
             |> validator
             |> Validation.result
         let validationResult = 
-            validateCurrent()
-            |> Mutable.create
-        
-        override __.Refreshing() =
-            validationResult.Value <- validateCurrent()
+            valueProvider
+            |> map validateCurrent
+
+        override this.Finalize() =
+            (this :> IDisposable).Dispose()
+            GC.SuppressFinalize this        
 
         interface IValidatedView<'a> with
-            member __.ValidationResult with get() = validationResult :> IView<ValidationResult>
+            member __.ValidationResult with get() = validationResult
 
             member __.IsValid = isValid validationResult.Value
+
+        interface IObservable<'a> with
+            member __.Subscribe obs = 
+                dependencies.Add obs
+                { 
+                    new IDisposable with
+                        member __.Dispose() = dependencies.Remove obs
+                }
+
+        interface ITracksDependents with
+            member __.Track dep = dependencies.Add dep
+            member __.Untrack dep = dependencies.Remove dep
+
+        interface IView<'a> with
+            member __.Value with get() = valueProvider.Value
+
+        interface IDependent with
+            member this.RequestRefresh _ =             
+                dependencies.Signal this
+            member __.HasDependencies with get() = dependencies.HasDependencies
+
+        interface IDisposable with
+            member this.Dispose() =
+                dependencies.RemoveAll()
 
     /// Validates a view with a validation chain
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (view : IView<'a>) =
@@ -155,7 +191,7 @@ module View =
     // Apply in reverse to allow for easy piping in liftN
     let private applyR provider (mappingView : IView<'a -> 'b>) =        
         let view = new Mapping2View<'a->'b, 'a, 'b>(mappingView, provider, (fun a b -> a b))
-        view :> IDisposableView<'b>
+        view :> IView<'b>
     
     /// Combines two views using a specified function, equivelent to View.map2
     let lift2 f a b = map2 f a b
@@ -185,7 +221,7 @@ module View =
     /// Custom operators for composing IView instances
     module Operators =
         /// Applies the function inside the applicative functor, allowing for: View.pure' someFunUsingABC <*> a <*> b <*> c
-        let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = apply f x :> IView<'b>
+        let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = apply f x
 
         /// Lifts the function into the applicative functor via View.pure', allowing for: someFunUsingABC <!> a <*> b <*> c
         let (<!>) f a = pure' f <*> a
