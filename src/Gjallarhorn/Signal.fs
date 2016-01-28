@@ -104,44 +104,44 @@ module Signal =
         f', bc
 
     /// Combines three signals using a specified mapping function
-    let map3 f a b c = 
-        let f1, bc = lift f a b c
-        map2 f1 a bc
+    let map3 f v1 v2 v3 = 
+        let f1, bc = lift f v1 v2 v3
+        map2 f1 v1 bc
     
     /// Combines four signals using a specified mapping function
-    let map4 f a b c d = 
-        let f1, bc = lift f a b c
-        map3 f1 a bc d
+    let map4 f v1 v2 v3 v4 = 
+        let f1, bc = lift f v1 v2 v3
+        map3 f1 v1 bc v4
     
     /// Combines five signals using a specified mapping function
-    let map5 f a b c d e = 
-        let f1, bc = lift f a b c
-        map4 f1 a bc d e
+    let map5 f v1 v2 v3 v4 v5 = 
+        let f1, bc = lift f v1 v2 v3
+        map4 f1 v1 bc v4 v5
         
     /// Combines six signals using a specified mapping function
-    let map6 f a b c d e f' = 
-        let f1, bc = lift f a b c
-        map5 f1 a bc d e f'
+    let map6 f v1 v2 v3 v4 v5 v6 = 
+        let f1, bc = lift f v1 v2 v3
+        map5 f1 v1 bc v4 v5 v6
 
     /// Combines seven signals using a specified mapping function
-    let map7 f a b c d e f' g= 
-        let f1, bc = lift f a b c
-        map6 f1 a bc d e f' g
+    let map7 f v1 v2 v3 v4 v5 v6 v7= 
+        let f1, bc = lift f v1 v2 v3
+        map6 f1 v1 bc v4 v5 v6 v7
 
     /// Combines eight signals using a specified mapping function
-    let map8 f a b c d e f' g h = 
-        let f1, bc = lift f a b c
-        map7 f1 a bc d e f' g h
+    let map8 f v1 v2 v3 v4 v5 v6 v7 v8 = 
+        let f1, bc = lift f v1 v2 v3
+        map7 f1 v1 bc v4 v5 v6 v7 v8
 
     /// Combines nine signals using a specified mapping function
-    let map9 f a b c d e f' g h i = 
-        let f1, bc = lift f a b c
-        map8 f1 a bc d e f' g h i
+    let map9 f v1 v2 v3 v4 v5 v6 v7 v8 v9 = 
+        let f1, bc = lift f v1 v2 v3
+        map8 f1 v1 bc v4 v5 v6 v7 v8 v9
 
     /// Combines ten signals using a specified mapping function
-    let map10 f a b c d e f' g h i j = 
-        let f1, bc = lift f a b c
-        map9 f1 a bc d e f' g h i j
+    let map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 = 
+        let f1, bc = lift f v1 v2 v3
+        map9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
 
     /// Filters the signal, so only values matching the predicate are cached and propogated onwards
     let filter (predicate : 'a -> bool) (provider : ISignal<'a>) =
