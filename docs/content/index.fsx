@@ -8,7 +8,7 @@
 Gjallarhorn
 ===================
 
-Gjallarhorn is a library designed to manage mutable state.  It provides mechanisms for signaling of changes, represented via Views.
+Gjallarhorn is a library designed to manage notifications and mutable state.  It provides mechanisms for signaling of changes, represented via signals.
 
 Example
 -------
@@ -22,9 +22,9 @@ open Gjallarhorn
 // Create a mutable variable
 let var1 = Mutable.create 0
 let var2 = Mutable.create 2
-let result = (fun a b -> a + b) <!> var1 <*> var2
+let result = Signal.map2 (fun a b -> a + b) var1 var2
 
-View.subscribe (fun value -> printfn "The sum of our variables is %d" value) result
+Signal.subscribe (fun value -> printfn "The sum of our variables is %d" value) result
 
 // Set first variable, which causes subscription to print
 var1.Value <- 20
@@ -39,10 +39,10 @@ Core Types and Usage
 -----------------------
 
  * [Introduction to Gjallarhorn](intro.html): A brief introduction to core concepts within Gjallarhorn.
- * [Views](views.html): Details about Views
+ * [Signals](signals.html): Details about Signals
  * [Mutables](mutables.html): Details about Mutables
  * [Validation](validation.html): The core validation engine 
- * [Validating Views and Mutables](validate_types.html): Details about Validation of Views and Mutables
+ * [Validating Signals](validate_types.html): Details about Validation of Signals
 
 API Reference
 -----------------------

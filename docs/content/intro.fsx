@@ -8,9 +8,9 @@
 A Brief Introduction to Gjallarhorn
 ========================
 
-Gjallarhorn is centered around two core types - Views and Mutables.
+Gjallarhorn is centered around two core types - Signals and Mutables.
 
-A View represents a value that changes over time, and has the following properties:
+A signal represents a value that changes over time, and has the following properties:
 - A current value, which can always be fetched
 - A mechanism to signal changes to subscribers that the value has been updated
 
@@ -33,9 +33,9 @@ In this simple example, we show creating, reading from, and updating a Mutable.
 Mutable variables in Gjallarhorn have some distict features:
 
 - Very low memory overhead: When created, a mutable like the one above has no memory overhead above that of a standard reference cell. It is effectively nothing but a thin wrapper around the current value, without any extra fields.
-- They expose themselves as a View - there is always a current value and they can notify subscribers of changes
+- They expose themselves as a signal - there is always a current value and they can notify subscribers of changes
 
-Once your core data is held within a Mutable or pulled in via something that provides a View, you can use the View module to transform the data
+Once your core data is held within a Mutable or pulled in via something that provides a signal, you can use the Signal module to transform the data
 
 *)
 
@@ -43,7 +43,7 @@ Once your core data is held within a Mutable or pulled in via something that pro
 let first = Mutable.create ""
 let last = Mutable.create ""
 // Map these two variables from a first and last name to a full name
-let full = View.map2 (fun f l -> f + " " + l) first last
+let full = Signal.map2 (fun f l -> f + " " + l) first last
 
 printfn "initial = %s" full.Value
 first.Value <- "Reed"
@@ -51,27 +51,9 @@ last.Value <- "Copsey"
 // Prints: "Hello Reed Copsey!"
 printfn "Hello %s!" full.Value
 
-(**
-
-We can also use an applicative functor to generate a view off any number of input views:
-
-*)
-
-let middle = Mutable.create ""
-// Map these two variables from a first and last name to a full name using the view CE
-let full' = View.pure' (fun f m l -> sprintf "%s %s %s" f m l) <*> first <*> middle <*> last
-
-middle.Value <- "D."
-
-// Also prints: "Hello Reed D. Copsey!"
-printfn "Hello %s!" full'.Value
-
-last.Value <- "Copsey, Jr."
-// Now prints: "Hello Reed D. Copsey, Jr.!"
-printfn "Hello %s!" full'.Value
 
 (** 
 
-Next, we'll go into [more details about Views](views.html).
+Next, we'll go into [more details about signals](signals.html).
 
 *)
