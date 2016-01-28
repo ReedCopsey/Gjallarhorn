@@ -31,9 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{8E6D
 		docs\content\index.fsx = docs\content\index.fsx
 		docs\content\intro.fsx = docs\content\intro.fsx
 		docs\content\mutables.fsx = docs\content\mutables.fsx
+		docs\content\signals.fsx = docs\content\signals.fsx
 		docs\content\validate_types.fsx = docs\content\validate_types.fsx
 		docs\content\validation.fsx = docs\content\validation.fsx
-		docs\content\views.fsx = docs\content\views.fsx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
