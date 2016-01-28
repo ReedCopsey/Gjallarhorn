@@ -156,12 +156,12 @@ module Validation =
         | ValidationCollector.Invalid(_, _, _) -> ValidationResult.Invalid([customErrorMessage])
 
 
-    /// Core interface for all validated view types
-    type IValidatedView<'a> =
-        inherit IView<'a>
+    /// Core interface for all validated signal types
+    type IValidatedSignal<'a> =
+        inherit ISignal<'a>
     
         /// The current validation status
-        abstract member ValidationResult : IView<ValidationResult> with get
+        abstract member ValidationResult : ISignal<ValidationResult> with get
 
         /// Check to see if type is currently in a valid state
         abstract member IsValid : bool with get

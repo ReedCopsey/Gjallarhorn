@@ -23,9 +23,9 @@ type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
         member __.Execute(param : obj) =
             execute(param)
     
-/// Command type which uses an IView<bool> to track whether it can execute, and implements IView<'a> with the command parameter each time the command updates
+/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
 /// Note that this will signal for each execution, whether or not the value has changed.
-type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as self =
+type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as self =
     let canExecuteChanged = new Event<EventHandler, EventArgs>()
 
     let disposeTracker = new CompositeDisposable()
@@ -35,7 +35,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
 
     do
         allowExecute
-        |> View.subscribe (fun _ -> self.RaiseCanExecuteChanged())    
+        |> Signal.subscribe (fun _ -> self.RaiseCanExecuteChanged())    
         |> disposeTracker.Add
 
     member this.RaiseCanExecuteChanged() =
@@ -70,7 +70,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : IView<bool>) as sel
         member __.RequestRefresh _ = ()
         member __.HasDependencies = dependencies.HasDependencies
 
-    interface IView<'a> with
+    interface ISignal<'a> with
         member __.Value with get() = value
 
     interface ICommand with
@@ -93,8 +93,8 @@ type CommandState =
     /// The command has been executed at a specific time
     | Executed of timestamp : DateTime
 
-/// Command type which uses an IView<bool> to track whether it can execute, and implements IView<CommandState>, where each execute passes DateTime.UtcNow on execution
-type ViewCommand (allowExecute : IView<bool>) =
+/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<CommandState>, where each execute passes DateTime.UtcNow on execution
+type SignalCommand (allowExecute : ISignal<bool>) =
     inherit ParameterCommand<CommandState>(Unexecuted, allowExecute)
 
     override __.HandleExecute _ =
@@ -107,8 +107,8 @@ type CommandParameterState<'a> =
     /// The command has been executed at a specific time with a specific argument
     | Executed of timestamp : DateTime * parameter : 'a    
 
-/// Command type which uses an IView<bool> to track whether it can execute, and implements IView<DateTime>, where each execute passes DateTime.UtcNow on execution
-type ViewParameterCommand<'a> (allowExecute : IView<bool>) =
+/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<DateTime>, where each execute passes DateTime.UtcNow on execution
+type SignalParameterCommand<'a> (allowExecute : ISignal<bool>) =
     inherit ParameterCommand<CommandParameterState<'a>>(Unexecuted, allowExecute)
 
     override __.HandleExecute p =
@@ -116,13 +116,13 @@ type ViewParameterCommand<'a> (allowExecute : IView<bool>) =
 
 /// Core module for creating and using ICommand implementations
 module Command =        
-    /// Create a command with an optional enabling source, provided as an IView<bool>
+    /// Create a command with an optional enabling source, provided as an ISignal<bool>
     let create enabledSource =
-        (new ViewCommand(enabledSource)) :> ITrackingCommand<CommandState>
+        (new SignalCommand(enabledSource)) :> ITrackingCommand<CommandState>
 
     /// Create a command which is always enabled
     let createEnabled () =
-        create (View.constant true)
+        create (Signal.constant true)
 
     /// Create a subscription to the changes of a command which calls the provided function upon each change
     let subscribe (f : DateTime -> unit) (provider : ITrackingCommand<CommandState>) = 
@@ -130,4 +130,4 @@ module Command =
             match state with
             | CommandState.Executed(time) -> f(time)
             | _ -> ()
-        View.subscribe f provider
+        Signal.subscribe f provider

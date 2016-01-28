@@ -6,6 +6,7 @@ open Gjallarhorn.Validation
 open System.ComponentModel
 open System.Windows.Input
 
+/// Type which tracks execution, allowing commands to disable as needed
 type ExecutionTracker() as self =
     let handles = ResizeArray<_>()
 
@@ -47,10 +48,11 @@ type ExecutionTracker() as self =
         member __.RequestRefresh _ = ()
         member __.HasDependencies = dependencies.HasDependencies
 
-    interface IView<bool> with
+    interface ISignal<bool> with
         member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
         
 [<AbstractClass>]
+/// Base class for binding targets, used by platform specific libraries to share implementation details
 type BindingTargetBase() as self =
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
@@ -89,17 +91,17 @@ type BindingTargetBase() as self =
         errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
         |> disposables.Add
 
-        (self :> IBindingTarget).TrackView "IsValid" isValid
-        (self :> IBindingTarget).TrackView "OperationExecuting" executionTracker
+        (self :> IBindingTarget).TrackSignal "IsValid" isValid
+        (self :> IBindingTarget).TrackSignal "OperationExecuting" executionTracker
 
     /// Used by commanding to track executing operations
     member __.ExecutionTracker = executionTracker
 
-    /// An IView<bool> that is set to true while tracked commands execute
-    member __.Executing = executionTracker :> IView<bool>
+    /// An ISignal<bool> that is set to true while tracked commands execute
+    member __.Executing = executionTracker :> ISignal<bool>
 
-    /// An IView<bool> used to track the current valid state
-    member __.Valid with get() = isValid :> IView<bool>
+    /// An ISignal<bool> used to track the current valid state
+    member __.Valid with get() = isValid :> ISignal<bool>
 
     /// True when the current value is valid.  Can be used in bindings
     member __.IsValid with get() = isValid.Value
@@ -111,28 +113,28 @@ type BindingTargetBase() as self =
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
 
-    abstract AddReadOnlyProperty<'a> : string -> IView<'a> -> unit
-    abstract AddReadWriteProperty<'a> : string -> IView<'a> -> IView<'a>
+    abstract AddReadOnlyProperty<'a> : string -> ISignal<'a> -> unit
+    abstract AddReadWriteProperty<'a> : string -> ISignal<'a> -> ISignal<'a>
     abstract AddCommand : string -> ICommand -> unit
 
-    member this.BindEditor<'a> name validator (view : IView<'a>) =
-        bt().TrackView name view
-        let result = this.AddReadWriteProperty name view
+    member this.BindEditor<'a> name validator (signal : ISignal<'a>) =
+        bt().TrackSignal name signal
+        let result = this.AddReadWriteProperty name signal
 
         let validated = 
             result
-            |> View.validate validator
+            |> Signal.validate validator
 
         bt().TrackValidator name validated.ValidationResult
 
-        validated :> IView<'a>
+        validated :> ISignal<'a>
     
-    /// Add a binding target for a view with a given name
-    member this.BindView<'a> name (view : IView<'a>) =
-        bt().TrackView name view
-        this.AddReadOnlyProperty name view
-        match view with
-        | :? Validation.IValidatedView<'a> as validator ->
+    /// Add a binding target for a signal with a given name
+    member this.BindSignal<'a> name (signal : ISignal<'a>) =
+        bt().TrackSignal name signal
+        this.AddReadOnlyProperty name signal
+        match signal with
+        | :? Validation.IValidatedSignal<'a> as validator ->
             (bt()).TrackValidator name validator.ValidationResult
         | _ -> ()
 
@@ -156,21 +158,21 @@ type BindingTargetBase() as self =
 
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
-        member __.OperationExecuting with get() = (executionTracker :> IView<bool>).Value
+        member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
 
-        member this.BindEditor name validator view = this.BindEditor name validator view 
-        member this.BindView name view = this.BindView name view
+        member this.BindEditor name validator signal = this.BindEditor name validator signal 
+        member this.BindSignal name signal = this.BindSignal name signal
         member this.BindCommand name command = this.BindCommand name command
         member this.TrackDisposable disposable = this.TrackDisposable disposable
 
-        member __.TrackView name view =
-            view
-            |> View.subscribe (fun _ -> raisePropertyChanged name)
+        member __.TrackSignal name signal =
+            signal
+            |> Signal.subscribe (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
         member __.TrackValidator name validator =
             validator
-            |> View.subscribe (fun result -> updateErrors name result)
+            |> Signal.subscribe (fun result -> updateErrors name result)
             |> disposables.Add
 
             updateErrors name validator.Value
@@ -188,9 +190,9 @@ module Bind =
     let create () =
         creationFunction()    
        
-    /// Add a watched view (one way property) to a binding target by name
-    let watch name view (target : #IBindingTarget) =
-        target.BindView name view
+    /// Add a watched signal (one way property) to a binding target by name
+    let watch name signal (target : #IBindingTarget) =
+        target.BindSignal name signal
         target
 
     /// Add a command (one way property) to a binding target by name
@@ -205,9 +207,9 @@ module Bind =
 //        /// Add an editor (two way property) to a binding target by name
 //        [<CustomOperation("edit", MaintainsVariableSpace = true)>]
 //        member __.Edit (source : IBindingTarget, name, value) = edit name value source
-        /// Add a watched view (one way property) to a binding target by name
+        /// Add a watched signal (one way property) to a binding target by name
         [<CustomOperation("watch", MaintainsVariableSpace = true)>]
-        member __.Watch (source : IBindingTarget, name, view) = watch name view source                
+        member __.Watch (source : IBindingTarget, name, signal) = watch name signal source                
         /// Add a command (one way property) to a binding target by name
         [<CustomOperation("command", MaintainsVariableSpace = true)>]
         member __.Command (source : IBindingTarget, name, comm) = command name comm source                

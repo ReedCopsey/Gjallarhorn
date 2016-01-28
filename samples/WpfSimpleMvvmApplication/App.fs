@@ -16,7 +16,7 @@ let main _ =
 
     // Print out changes to our model as they come in.    
     name
-    |> View.subscribe (fun n -> printfn "Name updated to %A" n)
+    |> Signal.subscribe (fun n -> printfn "Name updated to %A" n)
     |> ignore
 
     let window = Views.MainWindow().Root

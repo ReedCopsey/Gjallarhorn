@@ -5,8 +5,8 @@ open Gjallarhorn.Internal
 open System.ComponentModel
 open System.Reflection
 
-/// An IView<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the view as needed
-type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
+/// An ISignal<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the signal as needed
+type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
     let value = Mutable.create initialValue        
 
     let getValue () =
@@ -44,7 +44,7 @@ type BoundView<'a>(name, initialValue, source : INotifyPropertyChanged) =
     interface IDependent with
         member __.RequestRefresh v = value.RequestRefresh v
         member __.HasDependencies with get() = value.HasDependencies
-    interface IView<'a> with
+    interface ISignal<'a> with
         member __.Value with get() = value.Value
         
     interface System.IDisposable with

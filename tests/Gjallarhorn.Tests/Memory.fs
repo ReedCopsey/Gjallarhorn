@@ -20,7 +20,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
         let test() =
-            let view = View.subscribe (fun _ ->()) value
+            let view = Signal.subscribe (fun _ ->()) value
             Assert.AreEqual(true, SignalManager.IsTracked value)
 
         test()
@@ -34,7 +34,7 @@ module Memory =
     [<Test>]
     let ``View\map doesn't cause tracking`` () =
         let value = Mutable.create 42
-        let view = View.map (fun v -> v.ToString()) value
+        let view = Signal.map (fun v -> v.ToString()) value
 
         Assert.AreEqual(false, value.HasDependencies)
         Assert.AreEqual(false, view.HasDependencies)
@@ -42,24 +42,24 @@ module Memory =
     [<Test>]
     let ``View\subscribe causes tracking`` () =
         let value = Mutable.create 42
-        let view = View.map (fun v -> v.ToString()) value
+        let view = Signal.map (fun v -> v.ToString()) value
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        let sub = View.subscribe (fun v -> ()) view
+        let sub = Signal.subscribe (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
     [<Test>]
     let ``View\subscribe disposal stops tracking`` () =
         let value = Mutable.create 42
-        let view = View.map (fun v -> v.ToString()) value
+        let view = Signal.map (fun v -> v.ToString()) value
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        let sub = View.subscribe (fun v -> ()) view
+        let sub = Signal.subscribe (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
@@ -70,7 +70,7 @@ module Memory =
     [<Test>]
     let ``Source doesn't prevent view from being garbage collected`` () =
         let value = Mutable.create 42
-        let mutable view = Some(View.map (fun v -> v.ToString()) value)
+        let mutable view = Some(Signal.map (fun v -> v.ToString()) value)
 
         Assert.AreEqual("42", view.Value.Value)
         let wr = WeakReference(view.Value)
@@ -84,12 +84,12 @@ module Memory =
 
         let mutable view = 
             value.Value
-            |> View.map id
+            |> Signal.map id
  
         let viewWr = WeakReference(view)
         let valueWr = WeakReference(value.Value)
 
-        view <- view |> View.cache
+        view <- view |> Signal.cache
     
         value.Value.Value <- finish
 
@@ -104,9 +104,9 @@ module Memory =
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
     let ``View\cache allows source and view to be garbage collected`` start _ finish finalView =
         let mutable value = Some(Mutable.create start)
-        let mutable view = Some(View.map (fun v -> v.ToString()) value.Value)
+        let mutable view = Some(Signal.map (fun v -> v.ToString()) value.Value)
 
-        let cached = View.cache view.Value
+        let cached = Signal.cache view.Value
     
         let wrValue = WeakReference(value.Value)
         let wrView = WeakReference(view.Value)

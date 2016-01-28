@@ -31,7 +31,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
                 member __.GetValue() = box prop.Value
                 member __.SetValue(v) = prop.Value <- unbox v         
         }
-    let makeViewIV (prop : IView<'a>) = 
+    let makeSignalIV (prop : ISignal<'a>) = 
         { 
             new IValueHolder with 
                 member __.GetValue() = box prop.Value
@@ -46,14 +46,14 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     member internal __.CustomProperties = customProps
     
-    override this.AddReadWriteProperty<'a> name view =
-        let editSource = Mutable.create view.Value
-        View.copyTo editSource view
+    override this.AddReadWriteProperty<'a> name signal =
+        let editSource = Mutable.create signal.Value
+        Signal.copyTo editSource signal
         |> this.TrackDisposable
         customProps.Add(name, (makePD name, makeEditIV editSource))
-        editSource :> IView<'a>
-    override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
-        customProps.Add(name, (makePD name, makeViewIV view))   
+        editSource :> ISignal<'a>
+    override __.AddReadOnlyProperty<'a> name (signal : ISignal<'a>) =
+        customProps.Add(name, (makePD name, makeSignalIV signal))   
 
     override __.AddCommand name command =        
         customProps.Add(name, (makePD name, makeCommandIV command))

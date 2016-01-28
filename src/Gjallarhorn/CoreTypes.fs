@@ -26,7 +26,7 @@ type CompositeDisposable() =
         member this.Dispose() = this.Dispose()
 
 module internal DisposeHelpers =
-    let getValue (provider : IView<_> option) typeNameFun =
+    let getValue (provider : ISignal<_> option) typeNameFun =
         match provider with 
         | Some(v) -> v.Value
         | None -> raise <| ObjectDisposedException(typeNameFun())        
@@ -42,7 +42,7 @@ module internal DisposeHelpers =
             d.Dispose()
         | _ -> ()
         
-    let dispose (provider : #IView<'a> option) disposeProviderOnDispose (self : IDependent) =
+    let dispose (provider : #ISignal<'a> option) disposeProviderOnDispose (self : IDependent) =
             match provider with
             | None -> ()
             | Some(v) ->
@@ -79,13 +79,13 @@ type internal Mutable<'a>(value : 'a) =
     interface IDependent with
         member __.RequestRefresh _ = ()
         member this.HasDependencies with get() = this.Dependencies.HasDependencies
-    interface IView<'a> with
+    interface ISignal<'a> with
         member __.Value with get() = v
 
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
         
-type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
+type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
     let mutable lastValue = mapping valueProvider.Value
     let mutable valueProvider = Some(valueProvider)
@@ -118,7 +118,7 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IView<'b> with
+    interface ISignal<'b> with
         member this.Value with get() = this.UpdateAndGetValue ()
 
     interface IDependent with
@@ -133,7 +133,7 @@ type internal MappingView<'a,'b>(valueProvider : IView<'a>, mapping : 'a -> 'b, 
             valueProvider <- None
             dependencies.RemoveAll()
 
-type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 : IView<'b>, mapping : 'a -> 'b -> 'c) as self =
+type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) as self =
     let dependencies = Dependencies.create [| valueProvider1 ; valueProvider2 |] self
 
     let mutable lastValue = mapping valueProvider1.Value valueProvider2.Value
@@ -169,7 +169,7 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IView<'c> with
+    interface ISignal<'c> with
         member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
@@ -186,7 +186,7 @@ type internal Mapping2View<'a,'b,'c>(valueProvider1 : IView<'a>, valueProvider2 
             valueProvider2 <- None
             dependencies.RemoveAll()
 
-type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
+type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
 
     let mutable v = valueProvider.Value
@@ -222,7 +222,7 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IView<'a> with
+    interface ISignal<'a> with
         member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
@@ -237,7 +237,7 @@ type internal FilteredView<'a> (valueProvider : IView<'a>, filter : 'a -> bool, 
             valueProvider <- None
             dependencies.RemoveAll()
 
-type internal CachedView<'a> (valueProvider : IView<'a>) as self =
+type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
 
     let mutable v = valueProvider.Value
@@ -279,7 +279,7 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
         member __.Track dep = dependencies.Add dep
         member __.Untrack dep = dependencies.Remove dep
 
-    interface IView<'a> with
+    interface ISignal<'a> with
         member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
@@ -293,6 +293,6 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
             handle
             |> WeakRef.execute (fun v ->
                 v.Untrack this                    
-                handle.SetTarget(Unchecked.defaultof<IView<'a>>))
+                handle.SetTarget(Unchecked.defaultof<ISignal<'a>>))
             |> ignore
             dependencies.RemoveAll()

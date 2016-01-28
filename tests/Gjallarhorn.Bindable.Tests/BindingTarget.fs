@@ -11,9 +11,9 @@ open Bind
 type TestBindingTarget() =
     inherit BindingTargetBase()
 
-    override __.AddReadWriteProperty<'a> name (value : IView<'a>) =
-        View.map id value
-    override __.AddReadOnlyProperty<'a> name (view : IView<'a>) =
+    override __.AddReadWriteProperty<'a> name (value : ISignal<'a>) =
+        Signal.map id value
+    override __.AddReadOnlyProperty<'a> name (view : ISignal<'a>) =
         ()
     override __.AddCommand name comm =
         ()
@@ -85,7 +85,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackView "Test" value
+        ibt.TrackSignal "Test" value
         value.Value <- 1
         value.Value <- 2
     
@@ -100,7 +100,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackView "Test" value
+        ibt.TrackSignal "Test" value
         value.Value <- 1
         value.Value <- 2
         value.Value <- 2
@@ -110,9 +110,9 @@ type BindingTarget() =
     [<Test>]
     member __.``BindingTarget\BindView raises property changed`` () =
         let v1 = Mutable.create 1
-        let v2 = View.map (fun i -> i+1) v1
+        let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingTarget()
-        dynamicVm.BindView "Test" v2
+        dynamicVm.BindSignal "Test" v2
 
         let obs = PropertyChangedObserver(dynamicVm)    
     
@@ -132,7 +132,7 @@ type BindingTarget() =
     member __.``BindingTarget\BindView tracks values properly`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
-        let full = View.map2 (fun f l -> f + " " + l) first last
+        let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
             Bind.create()
@@ -152,7 +152,7 @@ type BindingTarget() =
     member __.``BindingTarget\BindView raises property changed appropriately`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
-        let full = View.map2 (fun f l -> f + " " + l) first last
+        let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
             Bind.create()
@@ -177,7 +177,7 @@ type BindingTarget() =
         let first = Mutable.create ""
            
         let last = Mutable.create ""
-        let full = View.map2 (fun f l -> f + " " + l) first last
+        let full = Signal.map2 (fun f l -> f + " " + l) first last
 
 
         use dynamicVm = 
@@ -204,8 +204,8 @@ type BindingTarget() =
         let last = Mutable.create ""
 
         let full = 
-            View.map2 (fun f l -> f + " " + l) first last
-            |> View.validate (notNullOrWhitespace >> (custom fullNameValidation))
+            Signal.map2 (fun f l -> f + " " + l) first last
+            |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
 
         use dynamicVm = 
             Bind.create()
@@ -230,8 +230,8 @@ type BindingTarget() =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = 
-            View.map2 (fun f l -> f + " " + l) first last
-            |> View.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
+            Signal.map2 (fun f l -> f + " " + l) first last
+            |> Signal.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
 
         use dynamicVm =
             binding {            

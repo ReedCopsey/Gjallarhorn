@@ -10,7 +10,7 @@ open NUnit.Framework
 let ``View\validate works on value`` () =
     let value = Mutable.create 12
     
-    let validate = View.validate (greaterThan 24 >> lessThan 64) value
+    let validate = Signal.validate (greaterThan 24 >> lessThan 64) value
         
     validate.IsValid |> Assert.IsFalse
 
@@ -24,7 +24,7 @@ let ``View\validate works on value`` () =
 let ``View\validate works on string`` () =
     let value = Mutable.create ""
     
-    let validate = View.validate (notNullOrWhitespace >> noSpaces >> notEqual "Reed") value
+    let validate = Signal.validate (notNullOrWhitespace >> noSpaces >> notEqual "Reed") value
         
     validate.IsValid |> Assert.IsFalse
 
@@ -47,7 +47,7 @@ let ``View\validate works on string`` () =
 let ``View\validate provides proper error messages`` () =
     let value = Mutable.create ""
     
-    let validate = View.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
+    let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
         
     match validate.ValidationResult.Value with
     | Valid -> Assert.Fail()
@@ -71,11 +71,11 @@ let ``View\validate provides proper error messages`` () =
 [<Test>]
 let ``View\validate signals properly when value changes`` () =
     let value = Mutable.create ""
-    let validated = View.validate notNullOrWhitespace value
+    let validated = Signal.validate notNullOrWhitespace value
     
     let states = ResizeArray<ValidationResult>()
 
-    View.subscribe states.Add validated.ValidationResult 
+    Signal.subscribe states.Add validated.ValidationResult 
     |> ignore
 
     Assert.AreEqual(0, states.Count)
@@ -105,11 +105,11 @@ let ``View\validate signals properly when value changes`` () =
 [<Test>]
 let ``View\validate subscriptions last through GC collections`` () =
     let value = Mutable.create ""
-    let validated = View.validate notNullOrWhitespace value
+    let validated = Signal.validate notNullOrWhitespace value
     
     let states = ResizeArray<ValidationResult>()
 
-    use subscription = View.subscribe states.Add validated.ValidationResult 
+    use subscription = Signal.subscribe states.Add validated.ValidationResult 
     // |> ignore
 
     System.GC.Collect();
@@ -146,7 +146,7 @@ let ``View\validate subscriptions last through GC collections`` () =
 [<Test>]
 let ``View\validate provides proper error messages when fixed`` () =
     let value = Mutable.create ""
-    let validate = View.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
+    let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
         
     match validate.ValidationResult.Value with
     | Valid -> Assert.Fail()

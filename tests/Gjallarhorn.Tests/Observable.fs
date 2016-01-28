@@ -23,7 +23,7 @@ let ``Mutation triggers IObservable`` (start : int) finish =
 [<TestCase(Int32.MinValue, Int32.MaxValue, "2147483647")>]
 let ``View triggers IObservable`` (start : int) (finish:int) (viewFinish: string) =
     let result = Mutable.create start
-    let view = View.map (fun i -> i.ToString()) result    
+    let view = Signal.map (fun i -> i.ToString()) result    
     
     let changedValue = ref view.Value
     use subscription = 
@@ -56,7 +56,7 @@ let ``View\subscribeToObservable initializes properly`` start =
     let evt = Event<'a>()
     let obs = evt.Publish
 
-    let view, handle = View.subscribeFromObservable start obs
+    let view, handle = Signal.subscribeFromObservable start obs
     Assert.AreEqual(box start, view.Value)
     handle.Dispose()
 
@@ -65,7 +65,7 @@ let ``View\subscribeToObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish
 
-    let view, handle = View.subscribeFromObservable start obs 
+    let view, handle = Signal.subscribeFromObservable start obs 
     Assert.AreEqual(box start, view.Value)
 
     evt.Trigger finish

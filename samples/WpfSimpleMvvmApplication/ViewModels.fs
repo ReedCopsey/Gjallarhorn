@@ -12,38 +12,38 @@ module VM =
         // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
         let bt = Bind.create()
 
-        // Create the "properties" we want to bind to - this could be mutables, views (for read-only), or commands
+        // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
         let first = 
             name
-            |> View.map (fun n -> n.First) 
+            |> Signal.map (fun n -> n.First) 
             |> bt.BindEditor "FirstName" (notNullOrWhitespace >> noSpaces >> notEqual "Reed") 
         let last = 
             name
-            |> View.map (fun n -> n.Last) 
+            |> Signal.map (fun n -> n.Last) 
             |> bt.BindEditor "LastName" (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
 
         // Read only properties can optionally be validated as well, allowing for "entity level" validation
-        View.lift2 (fun f l -> f + " " + l) first last
-        |> View.validate (notEqual "Reed Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> bt.BindView "FullName"
+        Signal.map2 (fun f l -> f + " " + l) first last
+        |> Signal.validate (notEqual "Reed Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
+        |> bt.BindSignal "FullName"
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
-        let name' = View.lift2 (fun f l -> {First = f; Last = l}) first last
+        let name' = Signal.map2 (fun f l -> {First = f; Last = l}) first last
 
         // Create a command that will only execute if
         // 1) We're valid and 2) our name has changed from the input
         let canExecute = 
-            View.notEqual name name'
-            |> View.both bt.Valid
+            Signal.notEqual name name'
+            |> Signal.both bt.Valid
         let okCommand = Command.create canExecute
         okCommand |> bt.BindCommand "OkCommand"                
 
         // Uncomment the following to automatically push back all changes to 
         // source "name" mutable without requiring the button click
 //        name'
-//        |> View.filter (fun _ -> bt.IsValid)
-//        |> View.copyTo name
+//        |> Signal.filter (fun _ -> bt.IsValid)
+//        |> Signal.copyTo name
 //        |> bt.TrackDisposable
         
         // Subscribe to our command to push values back to our source mutable

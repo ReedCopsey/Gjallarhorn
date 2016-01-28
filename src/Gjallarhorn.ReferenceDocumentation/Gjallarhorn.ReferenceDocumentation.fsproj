@@ -60,8 +60,8 @@
     <Compile Include="..\Gjallarhorn\Mutable.fs">
       <Link>Mutable.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn\View.fs">
-      <Link>View.fs</Link>
+    <Compile Include="..\Gjallarhorn\Signal.fs">
+      <Link>Signal.fs</Link>
     </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\Utilities.fs">
       <Link>Utilities.fs</Link>

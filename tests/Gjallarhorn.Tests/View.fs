@@ -8,7 +8,7 @@ open NUnit.Framework
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
 let ``View\constant constructs with proper value`` start =
-    let value = View.constant start
+    let value = Signal.constant start
 
     Assert.AreEqual(box start, value.Value)
 
@@ -20,7 +20,7 @@ let ``View\copyTo copies across proper values`` start finish =
 
     Assert.AreEqual(box Unchecked.defaultof<'a>, view.Value)
 
-    use __ = View.copyTo view value 
+    use __ = Signal.copyTo view value 
 
     Assert.AreEqual(box start, value.Value)
     Assert.AreEqual(box start, view.Value)
@@ -35,7 +35,7 @@ let ``View\map constructs from mutable`` start finish =
     let value = Mutable.create start
     let view = 
         value 
-        |> View.map (fun i -> i.ToString()) 
+        |> Signal.map (fun i -> i.ToString()) 
 
     Assert.AreEqual(box view.Value, finish)
 
@@ -45,29 +45,15 @@ let ``View\map2 constructs from mutables`` start1 start2 finish =
     let v2 = Mutable.create start2
     let map i j = i.ToString() + "," + j.ToString()
     let view = 
-        View.map2 map v1 v2
+        Signal.map2 map v1 v2
 
     Assert.AreEqual(box view.Value, finish)
-
-[<Test;TestCaseSource(typeof<Utilities>,"CasesPairToString")>]
-let ``View\lift2 matches map2`` start1 start2 finish =
-    let v1 = Mutable.create start1
-    let v2 = Mutable.create start2
-    let map i j = i.ToString() + "," + j.ToString()
-    let view1 = 
-        View.map2 map v1 v2
-
-    let view2 =
-        View.lift2 map v1 v2
-
-    Assert.AreEqual(box view1.Value, finish)
-    Assert.AreEqual(box view2.Value, finish)
 
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
 let ``View updates with mutable`` start initialView finish finalView =
   let result = Mutable.create start
-  let view = View.map (fun i -> i.ToString()) result
+  let view = Signal.map (fun i -> i.ToString()) result
 
   Assert.AreEqual(view.Value, initialView)
 
@@ -78,7 +64,7 @@ let ``View updates with mutable`` start initialView finish finalView =
 let ``View2 updates from mutables`` start1 start2 startResult finish1 finish2 finishResult =
     let v1 = Mutable.create start1
     let v2 = Mutable.create start2
-    let view = View.map2 (fun i j -> i.ToString() + "," + j.ToString()) v1 v2
+    let view = Signal.map2 (fun i j -> i.ToString() + "," + j.ToString()) v1 v2
 
     Assert.AreEqual(box view.Value, startResult)
 
@@ -94,10 +80,10 @@ let ``View updates with view`` start initialView finish finalView =
     let result = Mutable.create start
     
     // Create a view to turn the value from int -> string
-    let view = View.map (fun i -> i.ToString()) result
+    let view = Signal.map (fun i -> i.ToString()) result
     
     // Create a view to turn the first view back from string -> int
-    let backView = View.map (fun s -> Convert.ChangeType(s, start.GetType())) view
+    let backView = Signal.map (fun s -> Convert.ChangeType(s, start.GetType())) view
     
     Assert.AreEqual(view.Value, initialView)
     Assert.AreEqual(backView.Value, start)
@@ -112,13 +98,13 @@ let ``Cached View updates with View`` start initialView finish finalView =
     let result = Mutable.create start
     
     // Create a view to turn the value from int -> string
-    let view = View.map (fun i -> i.ToString()) result
+    let view = Signal.map (fun i -> i.ToString()) result
     
     // Create a view to turn the first view back from string -> int
-    let bv = View.map (fun s -> Convert.ChangeType(s, start.GetType())) view
+    let bv = Signal.map (fun s -> Convert.ChangeType(s, start.GetType())) view
 
     // Cache the view
-    let backView = View.cache bv
+    let backView = Signal.cache bv
     
     Assert.AreEqual(view.Value, initialView)
     Assert.AreEqual(backView.Value, start)
@@ -130,9 +116,9 @@ let ``Cached View updates with View`` start initialView finish finalView =
 [<Test>]
 let ``View\filter doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
-    let view = View.map (fun i -> 10*i) v
+    let view = Signal.map (fun i -> 10*i) v
 
-    let filter = View.filter (fun i -> i < 100) view
+    let filter = Signal.filter (fun i -> i < 100) view
 
     Assert.AreEqual(10, filter.Value)
 
@@ -145,9 +131,9 @@ let ``View\filter doesn't propogate inappropriate changes`` () =
 [<Test>]
 let ``View\choose doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
-    let view = View.map (fun i -> 10*i) v
+    let view = Signal.map (fun i -> 10*i) v
 
-    let filter = View.choose (fun i -> if i < 100 then Some(i) else None) view
+    let filter = Signal.choose (fun i -> if i < 100 then Some(i) else None) view
 
     Assert.AreEqual(10, filter.Value)
 
@@ -158,33 +144,33 @@ let ``View\choose doesn't propogate inappropriate changes`` () =
     Assert.AreEqual(50, filter.Value)   
 
 [<Test>]
-let ``View\lift3 propogates successfully`` () =
+let ``View\map3 propogates successfully`` () =
     let f = (fun a b c -> sprintf "%d,%d,%f" a b c)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3.0
     
-    let view = View.lift3 f v1 v2 v3
+    let view = Signal.map3 f v1 v2 v3
 
-    use sub = View.subscribe (fun _ -> ()) view
+    use sub = Signal.subscribe (fun _ -> ()) view
     Assert.AreEqual("1,2,3.000000", view.Value)
 
     Assert.IsNotNull(sub)
 
 [<Test>]
-let ``View\lift4 propogates successfully`` () =
+let ``View\map4 propogates successfully`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%f,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3.0
     let v4 = Mutable.create 4
 
-    let view = View.lift4 f v1 v2 v3 v4
+    let view = Signal.map4 f v1 v2 v3 v4
 
     Assert.AreEqual("1,2,3.000000,4", view.Value)
 
 [<Test>]
-let ``View\lift5 propogates successfully`` () =
+let ``View\map5 propogates successfully`` () =
     let f = (fun a b c d e -> sprintf "%d,%d,%f,%d,%d" a b c d e)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -192,12 +178,12 @@ let ``View\lift5 propogates successfully`` () =
     let v4 = Mutable.create 4
     let v5 = Mutable.create 5
 
-    let view = View.lift5 f v1 v2 v3 v4 v5
+    let view = Signal.map5 f v1 v2 v3 v4 v5
 
     Assert.AreEqual("1,2,3.000000,4,5", view.Value)
 
 [<Test>]
-let ``View\lift6 propogates successfully`` () =
+let ``View\map6 propogates successfully`` () =
     let f = (fun a b c d e f' -> sprintf "%d,%d,%f,%d,%d,%d" a b c d e f')
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -206,12 +192,12 @@ let ``View\lift6 propogates successfully`` () =
     let v5 = Mutable.create 5
     let v6 = Mutable.create 6
 
-    let view = View.lift6 f v1 v2 v3 v4 v5 v6
+    let view = Signal.map6 f v1 v2 v3 v4 v5 v6
 
     Assert.AreEqual("1,2,3.000000,4,5,6", view.Value)
 
 [<Test>]
-let ``View\lift10 propogates successfully`` () =
+let ``View\map10 propogates successfully`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -224,12 +210,12 @@ let ``View\lift10 propogates successfully`` () =
     let v9 = Mutable.create 9
     let v10 = Mutable.create 10
 
-    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+    let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
 
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
 
 [<Test>]
-let ``View\lift10 notifies properly with input changes`` () =
+let ``View\map10 notifies properly with input changes`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -242,12 +228,12 @@ let ``View\lift10 notifies properly with input changes`` () =
     let v9 = Mutable.create 9
     let v10 = Mutable.create 10
 
-    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+    let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
 
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
 
     let changes = ref 0
-    use _disp = View.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.subscribe (fun _ -> incr changes) view
 
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
     Assert.AreEqual(0, !changes)
@@ -264,7 +250,7 @@ let ``View\lift10 notifies properly with input changes`` () =
     Assert.IsNotNull(_disp)
 
 [<Test>]
-let ``View\lift10 handles subscription tracking properly`` () =
+let ``View\map10 handles subscription tracking properly`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -289,13 +275,13 @@ let ``View\lift10 handles subscription tracking properly`` () =
         v9 :> IDependent ; 
         v10 :> IDependent |]
 
-    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+    let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
 
     depChecks
     |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
 
     let changes = ref 0
-    use _disp = View.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.subscribe (fun _ -> incr changes) view
 
     depChecks
     |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
@@ -314,17 +300,17 @@ let ``View\lift10 handles subscription tracking properly`` () =
 
 
 [<Test>]
-let ``View\lift4 notifies properly with input changes`` () =
+let ``View\map4 notifies properly with input changes`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.lift4 f v1 v2 v3 v4
+    let view = Signal.map4 f v1 v2 v3 v4
 
     let changes = ref 0
-    use _disp = View.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.subscribe (fun _ -> incr changes) view
 
     Assert.AreEqual("1,2,3,4", view.Value)
     Assert.AreEqual(0, !changes)
@@ -340,14 +326,14 @@ let ``View\lift4 notifies properly with input changes`` () =
 
     Assert.IsNotNull(_disp)
 [<Test>]
-let ``View\lift4 preserves tracking`` () =
+let ``View\map4 preserves tracking`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.lift4 f v1 v2 v3 v4
+    let view = Signal.map4 f v1 v2 v3 v4
     
     // Mutate
     v1.Value <- 5

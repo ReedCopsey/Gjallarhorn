@@ -35,23 +35,23 @@ module WeakRef =
 
 /// Type used to track dependencies
 type [<AllowNullLiteral>] IDependencyManager<'a> =
-    /// Add a dependent to this view explicitly
+    /// Add a dependent to this signal explicitly
     abstract member Add : IDependent -> unit
 
-    /// Add a dependent observer to this view explicitly
+    /// Add a dependent observer to this signal explicitly
     abstract member Add : System.IObserver<'a> -> unit
     
-    /// Remove a dependent from this view explicitly
+    /// Remove a dependent from this signal explicitly
     abstract member Remove : IDependent -> unit
 
-    /// Remove a dependent observer from this view explicitly
+    /// Remove a dependent observer from this signal explicitly
     abstract member Remove : System.IObserver<'a> -> unit
 
-    /// Remove all dependencies from this view
+    /// Remove all dependencies from this signal
     abstract member RemoveAll : unit -> unit
 
     /// Signal to all dependents to refresh themselves
-    abstract member Signal : IView<'a> -> unit
+    abstract member Signal : ISignal<'a> -> unit
 
     /// Determines whether there are dependencies currently being managed
     abstract member HasDependencies : bool with get
@@ -62,7 +62,7 @@ type private DependencyTrackerBase() =
 /// <summary>Used to track dependencies</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to dependent targets</remarks>
 [<AllowNullLiteral>]
-type private DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents> array, source : IView<'a>) =
+type private DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents> array, source : ISignal<'a>) =
     inherit DependencyTrackerBase()
 
     // We want this as lightweight as possible,
@@ -158,7 +158,7 @@ type private DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents> 
                 this.UpdateUpstreamTracking())
 
     /// Signals the dependencies with a given source, and returns true if there are still dependencies remaining
-    member this.Signal (source : IView<'a>) = 
+    member this.Signal (source : ISignal<'a>) = 
         lock this.LockObj (fun _ ->
             signalAndUpdateDependencies()
             this.HasDependencies)
@@ -177,19 +177,19 @@ type private DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents> 
 [<AbstractClass; Sealed>]
 type internal SignalManager() = // Note: Internal to allow for testing in memory tests
     static let dependencies = ConditionalWeakTable<obj, DependencyTrackerBase>()
-    static let createValueCallbackFor (view : IView<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>([| |], view) :> DependencyTrackerBase))
+    static let createValueCallbackFor (signal : ISignal<'a>) = ConditionalWeakTable<obj, DependencyTrackerBase>.CreateValueCallback((fun _ -> DependencyTracker<'a>([| |], signal) :> DependencyTrackerBase))
 
     static let remove source =
         lock dependencies (fun _ -> dependencies.Remove(source) |> ignore)
 
-    static let tryGet (source : IView<'a>) =
+    static let tryGet (source : ISignal<'a>) =
         match dependencies.TryGetValue(source) with
         | true, dep -> true, dep :?> DependencyTracker<'a>
         | false, _ -> false, null
         
 
     /// Signals all dependencies tracked on a given source
-    static member Signal (source : IView<'a>) =
+    static member Signal (source : ISignal<'a>) =
         lock dependencies (fun _ ->
             let exists, dep = tryGet source
             if exists then             
@@ -197,17 +197,17 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
                     remove source)
     
     /// Adds dependency tracked on a given source
-    static member internal AddDependency (source : IView<'a>, target : IDependent) =
+    static member internal AddDependency (source : ISignal<'a>, target : IDependent) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
             dep.Add target)
-    static member internal AddDependency (source : IView<'a>, target : IObserver<'a>) =
+    static member internal AddDependency (source : ISignal<'a>, target : IObserver<'a>) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
             dep.Add target)
 
     /// Removes a dependency tracked on a given source
-    static member internal RemoveDependency (source : IView<'a>, target : IDependent) =
+    static member internal RemoveDependency (source : ISignal<'a>, target : IDependent) =
         let removeDep () =
             match tryGet source with
             | true, dep ->
@@ -215,7 +215,7 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
                     remove source
             | false, _ -> ()
         lock dependencies removeDep
-    static member internal RemoveDependency (source : IView<'a>, target : IObserver<'a>) =
+    static member internal RemoveDependency (source : ISignal<'a>, target : IObserver<'a>) =
         let removeDep () =
             match tryGet source with
             | true, dep ->
@@ -225,11 +225,11 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
         lock dependencies removeDep
 
     /// Removes all dependencies tracked on a given source
-    static member RemoveAllDependencies (source : IView<'a>) =
+    static member RemoveAllDependencies (source : ISignal<'a>) =
         remove source
 
     /// Returns true if a given source has dependencies
-    static member IsTracked (source : IView<'a>) =
+    static member IsTracked (source : ISignal<'a>) =
         lock dependencies (fun _ -> fst <| dependencies.TryGetValue(source))
 
 /// Module used to create and manage dependencies
