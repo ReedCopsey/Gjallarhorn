@@ -34,8 +34,8 @@
         <div class="span9" id="main">
           
 <h1><a name="Mutables-in-Gjallarhorn" class="anchor" href="#Mutables-in-Gjallarhorn">Mutables in Gjallarhorn</a></h1>
-<p>The other core type in Gjallarhorn is a Mutable.</p>
-<p>A Mutable extends the concept of a view by allowing the current value to be changed.</p>
+<p>One core type in Gjallarhorn is a Mutable.</p>
+<p>A Mutable extends the concept of a signal by allowing the current value to be changed.</p>
 <p>The simplest Mutable can be created via <code>Mutable.create</code>:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
@@ -66,8 +66,8 @@
 </tr>
 </table>
 <p>As it's name suggests, <code>Mutable.create</code> takes an initial value and wraps it into a Mutable, which is represented via the <code>IMutatable&lt;'a&gt;</code> interface.</p>
-<p><code>IMutatable&lt;'a&gt;</code> inherits <code>IView&lt;'a&gt;</code>, but extends the <code>.Value</code> property to be both gettable and settable, which we can use to fetch or mutate the current value at any point.</p>
-<p>As all Mutables are also Views, the <code>View</code> module functionality still works:</p>
+<p><code>IMutatable&lt;'a&gt;</code> inherits <code>ISignal&lt;'a&gt;</code>, but extends the <code>.Value</code> property to be both gettable and settable, which we can use to fetch or mutate the current value at any point.</p>
+<p>As all Mutables are also signals, the <code>Signal</code> module functionality still works:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -84,7 +84,7 @@
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 13)" onmouseover="showTip(event, 'fs2', 13)" class="i">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="f">create</span> <span class="n">0</span>
 
-<span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="t">View</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="f">subscribe</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="f">printfn</span> <span class="s">&quot;Value is now </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs2', 21)" onmouseover="showTip(event, 'fs2', 21)" class="i">m</span> 
+<span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="t">Signal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="f">subscribe</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="f">printfn</span> <span class="s">&quot;Value is now </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs2', 21)" onmouseover="showTip(event, 'fs2', 21)" class="i">m</span> 
 
 <span class="c">// After this is set, a print will occur</span>
 <span class="c">// Prints: &quot;Value is now 1&quot;</span>
@@ -96,138 +96,6 @@
 </code></pre></td>
 </tr>
 </table>
-<p>Mutatables can also be transformed via a map operation.  Note that mapping operations require
-two mapping functions - one to go from the original type to the new (for the View), and a second
-to go from the new type back to the original (for the edit operation)</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
-<span class="l">18: </span>
-<span class="l">19: </span>
-<span class="l">20: </span>
-<span class="l">21: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a value</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 26)" onmouseover="showTip(event, 'fs10', 26)" class="i">source</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 28)" onmouseover="showTip(event, 'fs4', 28)" class="f">create</span> <span class="n">0</span>
-
-<span class="c">// Create a map that transforms this into a string</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 29)" onmouseover="showTip(event, 'fs11', 29)" class="i">mapped</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 30)" onmouseover="showTip(event, 'fs3', 30)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 31)" onmouseover="showTip(event, 'fs12', 31)" class="f">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs13', 32)" onmouseover="showTip(event, 'fs13', 32)" class="i">v</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs13', 33)" onmouseover="showTip(event, 'fs13', 33)" class="i">v</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 34)" onmouseover="showTip(event, 'fs14', 34)" class="f">ToString</span>()) (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs15', 35)" onmouseover="showTip(event, 'fs15', 35)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 36)" onmouseover="showTip(event, 'fs16', 36)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 37)" onmouseover="showTip(event, 'fs17', 37)" class="t">Int32</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 38)" onmouseover="showTip(event, 'fs18', 38)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs15', 39)" onmouseover="showTip(event, 'fs15', 39)" class="i">s</span>)) <span onmouseout="hideTip(event, 'fs10', 40)" onmouseover="showTip(event, 'fs10', 40)" class="i">source</span>
-
-<span class="c">// Subscribe to the final notifications:</span>
-<span onmouseout="hideTip(event, 'fs7', 41)" onmouseover="showTip(event, 'fs7', 41)" class="t">View</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 42)" onmouseover="showTip(event, 'fs8', 42)" class="f">subscribe</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs19', 43)" onmouseover="showTip(event, 'fs19', 43)" class="i">v</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 44)" onmouseover="showTip(event, 'fs5', 44)" class="f">printfn</span> <span class="s">&quot;Mapped value is </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs19', 45)" onmouseover="showTip(event, 'fs19', 45)" class="i">v</span>) <span onmouseout="hideTip(event, 'fs11', 46)" onmouseover="showTip(event, 'fs11', 46)" class="i">mapped</span>
-
-<span class="c">// Now, let&#39;s set some values:</span>
-<span class="c">// Prints: &quot;Mapped value is 1&quot;</span>
-<span onmouseout="hideTip(event, 'fs10', 47)" onmouseover="showTip(event, 'fs10', 47)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 48)" onmouseover="showTip(event, 'fs6', 48)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
-
-<span class="c">// Prints: &quot;Mapped value is 3&quot;</span>
-<span onmouseout="hideTip(event, 'fs10', 49)" onmouseover="showTip(event, 'fs10', 49)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 50)" onmouseover="showTip(event, 'fs6', 50)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
-
-<span class="c">// Now set via our mapping:</span>
-<span class="c">// Prints: &quot;Mapped value is 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs11', 51)" onmouseover="showTip(event, 'fs11', 51)" class="i">mapped</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 52)" onmouseover="showTip(event, 'fs20', 52)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;42&quot;</span>
-
-<span onmouseout="hideTip(event, 'fs5', 53)" onmouseover="showTip(event, 'fs5', 53)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, mapped = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 54)" onmouseover="showTip(event, 'fs10', 54)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 55)" onmouseover="showTip(event, 'fs6', 55)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs11', 56)" onmouseover="showTip(event, 'fs11', 56)" class="i">mapped</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 57)" onmouseover="showTip(event, 'fs20', 57)" class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
-<p>Simple mappings between types where both implement IConvertable can be done directly:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 58)" onmouseover="showTip(event, 'fs21', 58)" class="i">mapped&#39;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 59)" onmouseover="showTip(event, 'fs3', 59)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 60)" onmouseover="showTip(event, 'fs22', 60)" class="f">mapConvertible</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs23', 61)" onmouseover="showTip(event, 'fs23', 61)" class="t">int</span>,<span onmouseout="hideTip(event, 'fs24', 62)" onmouseover="showTip(event, 'fs24', 62)" class="t">string</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 63)" onmouseover="showTip(event, 'fs10', 63)" class="i">source</span>
-
-<span onmouseout="hideTip(event, 'fs21', 64)" onmouseover="showTip(event, 'fs21', 64)" class="i">mapped&#39;</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 65)" onmouseover="showTip(event, 'fs20', 65)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;54&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 66)" onmouseover="showTip(event, 'fs5', 66)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, mapped = </span><span class="pf">%s</span><span class="s">, mapped&#39; = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 67)" onmouseover="showTip(event, 'fs10', 67)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 68)" onmouseover="showTip(event, 'fs6', 68)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs11', 69)" onmouseover="showTip(event, 'fs11', 69)" class="i">mapped</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 70)" onmouseover="showTip(event, 'fs20', 70)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs21', 71)" onmouseover="showTip(event, 'fs21', 71)" class="i">mapped&#39;</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 72)" onmouseover="showTip(event, 'fs20', 72)" class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
-<p>The <code>Mutable</code> module also provides the option to map via a stepping function.  This is frequently useful
-when mapping from a record to multiple editors:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs25', 73)" onmouseover="showTip(event, 'fs25', 73)" class="t">Counts</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs26', 74)" onmouseover="showTip(event, 'fs26', 74)" class="i">Value</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs23', 75)" onmouseover="showTip(event, 'fs23', 75)" class="t">int</span> ; <span onmouseout="hideTip(event, 'fs27', 76)" onmouseover="showTip(event, 'fs27', 76)" class="i">Name</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs24', 77)" onmouseover="showTip(event, 'fs24', 77)" class="t">string</span> }
-
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 78)" onmouseover="showTip(event, 'fs28', 78)" class="i">count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 79)" onmouseover="showTip(event, 'fs3', 79)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 80)" onmouseover="showTip(event, 'fs4', 80)" class="f">create</span> { <span class="i">Value</span> <span class="o">=</span> <span class="n">0</span> ; <span class="i">Name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> }
-
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 81)" onmouseover="showTip(event, 'fs29', 81)" class="i">nameEditor</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 82)" onmouseover="showTip(event, 'fs3', 82)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 83)" onmouseover="showTip(event, 'fs30', 83)" class="f">step</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs31', 84)" onmouseover="showTip(event, 'fs31', 84)" class="i">c</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs31', 85)" onmouseover="showTip(event, 'fs31', 85)" class="i">c</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 86)" onmouseover="showTip(event, 'fs27', 86)" class="i">Name</span>) (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs31', 87)" onmouseover="showTip(event, 'fs31', 87)" class="i">c</span> <span onmouseout="hideTip(event, 'fs32', 88)" onmouseover="showTip(event, 'fs32', 88)" class="i">n</span> <span class="k">-&gt;</span> {<span onmouseout="hideTip(event, 'fs31', 89)" onmouseover="showTip(event, 'fs31', 89)" class="i">c</span> <span class="k">with</span> <span class="i">Name</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs32', 90)" onmouseover="showTip(event, 'fs32', 90)" class="i">n</span>}) <span onmouseout="hideTip(event, 'fs28', 91)" onmouseover="showTip(event, 'fs28', 91)" class="i">count</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 92)" onmouseover="showTip(event, 'fs33', 92)" class="i">valueEditor</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 93)" onmouseover="showTip(event, 'fs3', 93)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 94)" onmouseover="showTip(event, 'fs30', 94)" class="f">step</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs31', 95)" onmouseover="showTip(event, 'fs31', 95)" class="i">c</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs31', 96)" onmouseover="showTip(event, 'fs31', 96)" class="i">c</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 97)" onmouseover="showTip(event, 'fs26', 97)" class="i">Value</span>) (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs31', 98)" onmouseover="showTip(event, 'fs31', 98)" class="i">c</span> <span onmouseout="hideTip(event, 'fs13', 99)" onmouseover="showTip(event, 'fs13', 99)" class="i">v</span> <span class="k">-&gt;</span> {<span onmouseout="hideTip(event, 'fs31', 100)" onmouseover="showTip(event, 'fs31', 100)" class="i">c</span> <span class="k">with</span> <span class="i">Value</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 101)" onmouseover="showTip(event, 'fs13', 101)" class="i">v</span>}) <span onmouseout="hideTip(event, 'fs28', 102)" onmouseover="showTip(event, 'fs28', 102)" class="i">count</span>
-
-<span onmouseout="hideTip(event, 'fs29', 103)" onmouseover="showTip(event, 'fs29', 103)" class="i">nameEditor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 104)" onmouseover="showTip(event, 'fs20', 104)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Reed&quot;</span>
-<span onmouseout="hideTip(event, 'fs33', 105)" onmouseover="showTip(event, 'fs33', 105)" class="i">valueEditor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 106)" onmouseover="showTip(event, 'fs6', 106)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
-
-<span class="c">// Prints: &quot;New count = Reed: 42</span>
-<span onmouseout="hideTip(event, 'fs5', 107)" onmouseover="showTip(event, 'fs5', 107)" class="f">printfn</span> <span class="s">&quot;New count = </span><span class="pf">%s</span><span class="s">: </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs28', 108)" onmouseover="showTip(event, 'fs28', 108)" class="i">count</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 109)" onmouseover="showTip(event, 'fs34', 109)" class="i">Value</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 110)" onmouseover="showTip(event, 'fs27', 110)" class="i">Name</span> <span onmouseout="hideTip(event, 'fs28', 111)" onmouseover="showTip(event, 'fs28', 111)" class="i">count</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 112)" onmouseover="showTip(event, 'fs34', 112)" class="i">Value</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 113)" onmouseover="showTip(event, 'fs26', 113)" class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
-<p>The <code>Mutable</code> module also provides the option to filter mutables.  This allows you to provide
-a predicate which determines whether edits are passed down to the underlying Mutable</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 114)" onmouseover="showTip(event, 'fs10', 114)" class="i">source</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 115)" onmouseover="showTip(event, 'fs3', 115)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 116)" onmouseover="showTip(event, 'fs4', 116)" class="f">create</span> <span class="n">0</span>
-
-<span class="c">// Create a filtered mutable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 117)" onmouseover="showTip(event, 'fs35', 117)" class="i">filtered</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 118)" onmouseover="showTip(event, 'fs3', 118)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 119)" onmouseover="showTip(event, 'fs36', 119)" class="f">filter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs13', 120)" onmouseover="showTip(event, 'fs13', 120)" class="i">v</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs13', 121)" onmouseover="showTip(event, 'fs13', 121)" class="i">v</span> <span class="o">&lt;</span> <span class="n">10</span>) <span onmouseout="hideTip(event, 'fs10', 122)" onmouseover="showTip(event, 'fs10', 122)" class="i">source</span>
-
-<span class="c">// Prints &quot;Values - Source 0 \ Filtered 0&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 123)" onmouseover="showTip(event, 'fs5', 123)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 124)" onmouseover="showTip(event, 'fs10', 124)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 125)" onmouseover="showTip(event, 'fs6', 125)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs35', 126)" onmouseover="showTip(event, 'fs35', 126)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 127)" onmouseover="showTip(event, 'fs6', 127)" class="i">Value</span>
-
-<span onmouseout="hideTip(event, 'fs35', 128)" onmouseover="showTip(event, 'fs35', 128)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 129)" onmouseover="showTip(event, 'fs6', 129)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">5</span>
-<span class="c">// Prints &quot;Values - Source 5 \ Filtered 5&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 130)" onmouseover="showTip(event, 'fs5', 130)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 131)" onmouseover="showTip(event, 'fs10', 131)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 132)" onmouseover="showTip(event, 'fs6', 132)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs35', 133)" onmouseover="showTip(event, 'fs35', 133)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 134)" onmouseover="showTip(event, 'fs6', 134)" class="i">Value</span>
-
-<span class="c">// This won&#39;t change source, since the predicate fails:</span>
-<span onmouseout="hideTip(event, 'fs35', 135)" onmouseover="showTip(event, 'fs35', 135)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 136)" onmouseover="showTip(event, 'fs6', 136)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">25</span>
-<span class="c">// Prints &quot;Values - Source 5 \ Filtered 25&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 137)" onmouseover="showTip(event, 'fs5', 137)" class="f">printfn</span> <span class="s">&quot;Values - Source </span><span class="pf">%d</span><span class="s"> \ Filtered </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 138)" onmouseover="showTip(event, 'fs10', 138)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 139)" onmouseover="showTip(event, 'fs6', 139)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs35', 140)" onmouseover="showTip(event, 'fs35', 140)" class="i">filtered</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 141)" onmouseover="showTip(event, 'fs6', 141)" class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
 <p>Now, let's move on to <a href="validation.html">Validation in Gjallarhorn</a>.</p>
 
 <div class="tip" id="fs1">namespace Gjallarhorn</div>
@@ -236,36 +104,9 @@ a predicate which determines whether edits are passed down to the underlying Mut
 <div class="tip" id="fs4">val create : value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Mutable.create</div>
 <div class="tip" id="fs5">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
 <div class="tip" id="fs6">property IMutatable.Value: int</div>
-<div class="tip" id="fs7">module View<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs8">val subscribe : f:(&#39;a -&gt; unit) -&gt; provider:IView&lt;&#39;a&gt; -&gt; System.IDisposable<br /><br />Full name: Gjallarhorn.View.subscribe</div>
+<div class="tip" id="fs7">module Signal<br /><br />from Gjallarhorn</div>
+<div class="tip" id="fs8">val subscribe : f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; System.IDisposable<br /><br />Full name: Gjallarhorn.Signal.subscribe</div>
 <div class="tip" id="fs9">val currentValue : int</div>
-<div class="tip" id="fs10">val source : IMutatable&lt;int&gt;<br /><br />Full name: Mutables.source</div>
-<div class="tip" id="fs11">val mapped : IMutatable&lt;string&gt;<br /><br />Full name: Mutables.mapped</div>
-<div class="tip" id="fs12">val map : viewMapping:(&#39;a -&gt; &#39;b) -&gt; setMapping:(&#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br /><br />Full name: Gjallarhorn.Mutable.map</div>
-<div class="tip" id="fs13">val v : int</div>
-<div class="tip" id="fs14">System.Int32.ToString() : string<br />System.Int32.ToString(provider: System.IFormatProvider) : string<br />System.Int32.ToString(format: string) : string<br />System.Int32.ToString(format: string, provider: System.IFormatProvider) : string</div>
-<div class="tip" id="fs15">val s : string</div>
-<div class="tip" id="fs16">namespace System</div>
-<div class="tip" id="fs17">type Int32 =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;member CompareTo : value:obj -&gt; int + 1 overload<br />&#160;&#160;&#160;&#160;member Equals : obj:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member GetTypeCode : unit -&gt; TypeCode<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 3 overloads<br />&#160;&#160;&#160;&#160;static val MaxValue : int<br />&#160;&#160;&#160;&#160;static val MinValue : int<br />&#160;&#160;&#160;&#160;static member Parse : s:string -&gt; int + 3 overloads<br />&#160;&#160;&#160;&#160;static member TryParse : s:string * result:int -&gt; bool + 1 overload<br />&#160;&#160;end<br /><br />Full name: System.Int32</div>
-<div class="tip" id="fs18">System.Int32.Parse(s: string) : int<br />System.Int32.Parse(s: string, provider: System.IFormatProvider) : int<br />System.Int32.Parse(s: string, style: System.Globalization.NumberStyles) : int<br />System.Int32.Parse(s: string, style: System.Globalization.NumberStyles, provider: System.IFormatProvider) : int</div>
-<div class="tip" id="fs19">val v : string</div>
-<div class="tip" id="fs20">property IMutatable.Value: string</div>
-<div class="tip" id="fs21">val mapped&#39; : IMutatable&lt;string&gt;<br /><br />Full name: Mutables.mapped&#39;</div>
-<div class="tip" id="fs22">val mapConvertible : provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br /><br />Full name: Gjallarhorn.Mutable.mapConvertible</div>
-<div class="tip" id="fs23">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs24">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = System.String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
-<div class="tip" id="fs25">type Counts =<br />&#160;&#160;{Value: int;<br />&#160;&#160;&#160;Name: string;}<br /><br />Full name: Mutables.Counts</div>
-<div class="tip" id="fs26">Counts.Value: int</div>
-<div class="tip" id="fs27">Counts.Name: string</div>
-<div class="tip" id="fs28">val count : IMutatable&lt;Counts&gt;<br /><br />Full name: Mutables.count</div>
-<div class="tip" id="fs29">val nameEditor : IMutatable&lt;string&gt;<br /><br />Full name: Mutables.nameEditor</div>
-<div class="tip" id="fs30">val step : viewMapping:(&#39;a -&gt; &#39;b) -&gt; stepFunction:(&#39;a -&gt; &#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br /><br />Full name: Gjallarhorn.Mutable.step</div>
-<div class="tip" id="fs31">val c : Counts</div>
-<div class="tip" id="fs32">val n : string</div>
-<div class="tip" id="fs33">val valueEditor : IMutatable&lt;int&gt;<br /><br />Full name: Mutables.valueEditor</div>
-<div class="tip" id="fs34">property IMutatable.Value: Counts</div>
-<div class="tip" id="fs35">val filtered : IDisposableMutatable&lt;int&gt;<br /><br />Full name: Mutables.filtered</div>
-<div class="tip" id="fs36">val filter : predicate:(&#39;a -&gt; bool) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IDisposableMutatable&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Mutable.filter</div>
 
         </div>
         <div class="span3">

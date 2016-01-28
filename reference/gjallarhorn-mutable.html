@@ -63,7 +63,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L11-11" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L8-8" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -77,54 +77,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            createValidated validator initialValue
-          </code>
-          <div class="tip" id="2">
-            <strong>Signature:</strong> validator:(ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;) -&gt; initialValue:&#39;a -&gt; IValidatedMutatable&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L47-47" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Creates a new mutatable value which validates and filters by using a ValidationCollector</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            filter predicate provider
-          </code>
-          <div class="tip" id="3">
-            <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IDisposableMutatable&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L33-33" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Filters the mutable, so only values set which match the predicate are pushed and propogated onwards</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
             get mutatable
           </code>
-          <div class="tip" id="4">
+          <div class="tip" id="2">
             <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; &#39;a<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L16-16" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L13-13" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -137,55 +97,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            map viewMapping setMapping provider
-          </code>
-          <div class="tip" id="5">
-            <strong>Signature:</strong> viewMapping:(&#39;a -&gt; &#39;b) -&gt; setMapping:(&#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L25-25" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutatable value for editing by using a specified mapping function for view and edit.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            mapConvertible provider
-          </code>
-          <div class="tip" id="6">
-            <strong>Signature:</strong> provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L37-37" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutatable value from one IConvertible type to another.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
             set mutatable value
           </code>
-          <div class="tip" id="7">
+          <div class="tip" id="3">
             <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; value:&#39;a -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L18-18" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -193,46 +113,6 @@
 
 
               <p>CompiledName: <code>Set</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            step viewMapping stepFunction provider
-          </code>
-          <div class="tip" id="8">
-            <strong>Signature:</strong> viewMapping:(&#39;a -&gt; &#39;b) -&gt; stepFunction:(&#39;a -&gt; &#39;b -&gt; &#39;a) -&gt; provider:IMutatable&lt;&#39;a&gt; -&gt; IMutatable&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L29-29" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Transforms a mutable value for editing by using a mapping function for the view and a step function for the edit</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            validate validator value
-          </code>
-          <div class="tip" id="9">
-            <strong>Signature:</strong> validator:(ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;) -&gt; value:IMutatable&lt;&#39;a&gt; -&gt; IValidatedMutatable&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L43-43" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Creates a mutatable value which validates and filters by using a ValidationCollector</p>
-
-
         </td>
       </tr>
     </tbody>

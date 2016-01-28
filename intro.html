@@ -34,8 +34,8 @@
         <div class="span9" id="main">
           
 <h1><a name="A-Brief-Introduction-to-Gjallarhorn" class="anchor" href="#A-Brief-Introduction-to-Gjallarhorn">A Brief Introduction to Gjallarhorn</a></h1>
-<p>Gjallarhorn is centered around two core types - Views and Mutables.</p>
-<p>A View represents a value that changes over time, and has the following properties:
+<p>Gjallarhorn is centered around two core types - Signals and Mutables.</p>
+<p>A signal represents a value that changes over time, and has the following properties:
 - A current value, which can always be fetched
 - A mechanism to signal changes to subscribers that the value has been updated</p>
 <p>A Mutable is a holder for mutable variables, similar to a reference cell.  They are typically created via Mutable.create:</p>
@@ -63,9 +63,9 @@
 <p>Mutable variables in Gjallarhorn have some distict features:</p>
 <ul>
 <li>Very low memory overhead: When created, a mutable like the one above has no memory overhead above that of a standard reference cell. It is effectively nothing but a thin wrapper around the current value, without any extra fields.</li>
-<li>They expose themselves as a View - there is always a current value and they can notify subscribers of changes</li>
+<li>They expose themselves as a signal - there is always a current value and they can notify subscribers of changes</li>
 </ul>
-<p>Once your core data is held within a Mutable or pulled in via something that provides a View, you can use the View module to transform the data</p>
+<p>Once your core data is held within a Mutable or pulled in via something that provides a signal, you can use the Signal module to transform the data</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -82,7 +82,7 @@
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 13)" onmouseover="showTip(event, 'fs7', 13)" class="i">first</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="f">create</span> <span class="s">&quot;&quot;</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">last</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 17)" onmouseover="showTip(event, 'fs3', 17)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="f">create</span> <span class="s">&quot;&quot;</span>
 <span class="c">// Map these two variables from a first and last name to a full name</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="i">full</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="t">View</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="f">map2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs12', 22)" onmouseover="showTip(event, 'fs12', 22)" class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="i">l</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs12', 24)" onmouseover="showTip(event, 'fs12', 24)" class="i">f</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs13', 25)" onmouseover="showTip(event, 'fs13', 25)" class="i">l</span>) <span onmouseout="hideTip(event, 'fs7', 26)" onmouseover="showTip(event, 'fs7', 26)" class="i">first</span> <span onmouseout="hideTip(event, 'fs8', 27)" onmouseover="showTip(event, 'fs8', 27)" class="i">last</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="i">full</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="t">Signal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="f">map2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs12', 22)" onmouseover="showTip(event, 'fs12', 22)" class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="i">l</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs12', 24)" onmouseover="showTip(event, 'fs12', 24)" class="i">f</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs13', 25)" onmouseover="showTip(event, 'fs13', 25)" class="i">l</span>) <span onmouseout="hideTip(event, 'fs7', 26)" onmouseover="showTip(event, 'fs7', 26)" class="i">first</span> <span onmouseout="hideTip(event, 'fs8', 27)" onmouseover="showTip(event, 'fs8', 27)" class="i">last</span>
 
 <span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="f">printfn</span> <span class="s">&quot;initial = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs9', 29)" onmouseover="showTip(event, 'fs9', 29)" class="i">full</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 30)" onmouseover="showTip(event, 'fs14', 30)" class="i">Value</span>
 <span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="i">first</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Reed&quot;</span>
@@ -92,36 +92,7 @@
 </code></pre></td>
 </tr>
 </table>
-<p>We can also use an applicative functor to generate a view off any number of input views:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="i">middle</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 39)" onmouseover="showTip(event, 'fs3', 39)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 40)" onmouseover="showTip(event, 'fs4', 40)" class="f">create</span> <span class="s">&quot;&quot;</span>
-<span class="c">// Map these two variables from a first and last name to a full name using the view CE</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 41)" onmouseover="showTip(event, 'fs16', 41)" class="i">full&#39;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 42)" onmouseover="showTip(event, 'fs10', 42)" class="t">View</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 43)" onmouseover="showTip(event, 'fs17', 43)" class="f">pure&#39;</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs12', 44)" onmouseover="showTip(event, 'fs12', 44)" class="i">f</span> <span onmouseout="hideTip(event, 'fs18', 45)" onmouseover="showTip(event, 'fs18', 45)" class="i">m</span> <span onmouseout="hideTip(event, 'fs13', 46)" onmouseover="showTip(event, 'fs13', 46)" class="i">l</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs19', 47)" onmouseover="showTip(event, 'fs19', 47)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s"> </span><span class="pf">%s</span><span class="s"> </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs12', 48)" onmouseover="showTip(event, 'fs12', 48)" class="i">f</span> <span onmouseout="hideTip(event, 'fs18', 49)" onmouseover="showTip(event, 'fs18', 49)" class="i">m</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="i">l</span>) <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs7', 51)" onmouseover="showTip(event, 'fs7', 51)" class="i">first</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs15', 52)" onmouseover="showTip(event, 'fs15', 52)" class="i">middle</span> <span class="o">&lt;*&gt;</span> <span onmouseout="hideTip(event, 'fs8', 53)" onmouseover="showTip(event, 'fs8', 53)" class="i">last</span>
-
-<span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="i">middle</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 55)" onmouseover="showTip(event, 'fs6', 55)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;D.&quot;</span>
-
-<span class="c">// Also prints: &quot;Hello Reed D. Copsey!&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 56)" onmouseover="showTip(event, 'fs5', 56)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs16', 57)" onmouseover="showTip(event, 'fs16', 57)" class="i">full&#39;</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 58)" onmouseover="showTip(event, 'fs14', 58)" class="i">Value</span>
-
-<span onmouseout="hideTip(event, 'fs8', 59)" onmouseover="showTip(event, 'fs8', 59)" class="i">last</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 60)" onmouseover="showTip(event, 'fs6', 60)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Copsey, Jr.&quot;</span>
-<span class="c">// Now prints: &quot;Hello Reed D. Copsey, Jr.!&quot;</span>
-<span onmouseout="hideTip(event, 'fs5', 61)" onmouseover="showTip(event, 'fs5', 61)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs16', 62)" onmouseover="showTip(event, 'fs16', 62)" class="i">full&#39;</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 63)" onmouseover="showTip(event, 'fs14', 63)" class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
-<p>Next, we'll go into <a href="views.html">more details about Views</a>.</p>
+<p>Next, we'll go into <a href="signals.html">more details about signals</a>.</p>
 
 <div class="tip" id="fs1">namespace Gjallarhorn</div>
 <div class="tip" id="fs2">val variable : IMutatable&lt;string&gt;<br /><br />Full name: Intro.variable</div>
@@ -131,17 +102,12 @@
 <div class="tip" id="fs6">property IMutatable.Value: string</div>
 <div class="tip" id="fs7">val first : IMutatable&lt;string&gt;<br /><br />Full name: Intro.first</div>
 <div class="tip" id="fs8">val last : IMutatable&lt;string&gt;<br /><br />Full name: Intro.last</div>
-<div class="tip" id="fs9">val full : IDisposableView&lt;string&gt;<br /><br />Full name: Intro.full</div>
-<div class="tip" id="fs10">module View<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs11">val map2 : mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:IView&lt;&#39;a&gt; -&gt; provider2:IView&lt;&#39;b&gt; -&gt; IDisposableView&lt;&#39;c&gt;<br /><br />Full name: Gjallarhorn.View.map2</div>
+<div class="tip" id="fs9">val full : ISignal&lt;string&gt;<br /><br />Full name: Intro.full</div>
+<div class="tip" id="fs10">module Signal<br /><br />from Gjallarhorn</div>
+<div class="tip" id="fs11">val map2 : mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:ISignal&lt;&#39;a&gt; -&gt; provider2:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;c&gt;<br /><br />Full name: Gjallarhorn.Signal.map2</div>
 <div class="tip" id="fs12">val f : string</div>
 <div class="tip" id="fs13">val l : string</div>
-<div class="tip" id="fs14">property IView.Value: string</div>
-<div class="tip" id="fs15">val middle : IMutatable&lt;string&gt;<br /><br />Full name: Intro.middle</div>
-<div class="tip" id="fs16">val full&#39; : IView&lt;string&gt;<br /><br />Full name: Intro.full&#39;</div>
-<div class="tip" id="fs17">val pure&#39; : (&#39;a -&gt; IView&lt;&#39;a&gt;)<br /><br />Full name: Gjallarhorn.View.pure&#39;</div>
-<div class="tip" id="fs18">val m : string</div>
-<div class="tip" id="fs19">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
+<div class="tip" id="fs14">property ISignal.Value: string</div>
 
         </div>
         <div class="span3">

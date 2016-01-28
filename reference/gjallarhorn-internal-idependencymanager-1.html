@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Binding - Gjallarhorn</title>
+    <title>IDependencyManager<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,42 +35,14 @@
 
 
 
-<h1>Binding</h1>
+<h1>IDependencyManager<'a></h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
-  <span>Parent Module: <a href="gjallarhorn-bindable-bind.html">Bind</a></span>
+  <span>Namespace: Gjallarhorn.Internal</span><br />
 </p>
 <div class="xmldoc">
-<p>A computational expression builder for a binding target</p>
+<p>Type used to track dependencies</p>
 
 </div>
-  <h3>Constructors</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
-            new(creator)
-          </code>
-          <div class="tip" id="86">
-            <strong>Signature:</strong> (creator:(unit -&gt; IBindingTarget)) -&gt; Binding<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L204-204" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-              <p>CompiledName: <code>.ctor</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -80,19 +52,20 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
-            Command(source, name, comm)
+          <code onmouseout="hideTip(event, '120', 120)" onmouseover="showTip(event, '120', 120)">
+            Add(arg1)
           </code>
-          <div class="tip" id="87">
-            <strong>Signature:</strong> (source:IBindingTarget * name:string * comm:ICommand) -&gt; IBindingTarget<br />
+          <div class="tip" id="120">
+            <strong>Signature:</strong> IObserver&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L215-215" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Add a command (one way property) to a binding target by name</p>
+          <p>Add a dependent observer to this signal explicitly</p>
 
 
         </td>
@@ -100,77 +73,128 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
-            Dispose(source, disposable)
+          <code onmouseout="hideTip(event, '121', 121)" onmouseover="showTip(event, '121', 121)">
+            Add(arg1)
           </code>
-          <div class="tip" id="88">
-            <strong>Signature:</strong> (source:IBindingTarget * disposable:&#39;?47946) -&gt; IBindingTarget<br />
-                          <strong>Type parameters:</strong> '?47946          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L219-219" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Dispose of an object when we're disposed</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '89', 89)" onmouseover="showTip(event, '89', 89)">
-            Watch(source, name, signal)
-          </code>
-          <div class="tip" id="89">
-            <strong>Signature:</strong> (source:IBindingTarget * name:string * signal:ISignal&lt;&#39;?47943&gt;) -&gt; IBindingTarget<br />
-                          <strong>Type parameters:</strong> '?47943          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L212-212" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add a watched signal (one way property) to a binding target by name</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
-            Yield()
-          </code>
-          <div class="tip" id="90">
-            <strong>Signature:</strong> unit -&gt; IBindingTarget<br />
+          <div class="tip" id="121">
+            <strong>Signature:</strong> IDependent -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L206-206" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L39-39" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Add a dependent to this signal explicitly</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
-            Zero()
+          <code onmouseout="hideTip(event, '122', 122)" onmouseover="showTip(event, '122', 122)">
+            HasDependencies
           </code>
-          <div class="tip" id="91">
-            <strong>Signature:</strong> unit -&gt; IBindingTarget<br />
+          <div class="tip" id="122">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L205-205" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L57-57" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Determines whether there are dependencies currently being managed</p>
+
+
+              <p>CompiledName: <code>get_HasDependencies</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
+            Remove(arg1)
+          </code>
+          <div class="tip" id="123">
+            <strong>Signature:</strong> IObserver&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Remove a dependent observer from this signal explicitly</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
+            Remove(arg1)
+          </code>
+          <div class="tip" id="124">
+            <strong>Signature:</strong> IDependent -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L45-45" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Remove a dependent from this signal explicitly</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
+            RemoveAll()
+          </code>
+          <div class="tip" id="125">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L51-51" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Remove all dependencies from this signal</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
+            Signal(arg1)
+          </code>
+          <div class="tip" id="126">
+            <strong>Signature:</strong> ISignal&lt;&#39;a&gt; -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L54-54" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Signal to all dependents to refresh themselves</p>
+
+
         </td>
       </tr>
     </tbody>

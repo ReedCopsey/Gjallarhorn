@@ -53,41 +53,9 @@
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-dependencytrackingmechanism.html">DependencyTrackingMechanism</a>
-          </td>
-          <td class="xmldoc"><p>Used to define the type of tracking used.  This allows weak referencing to be supported as needed</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
             <a href="gjallarhorn-idependent.html">IDependent</a>
           </td>
-          <td class="xmldoc"><p>A type which depends on some IValueProvider</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idisposablemutatable-1.html">IDisposableMutatable<'a></a>
-          </td>
-          <td class="xmldoc"><p>A mutatable which implements IDisposable in order to stop tracking its source</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idisposableobservable-1.html">IDisposableObservable<'a></a>
-          </td>
-          <td class="xmldoc"><p>A contract for an IObservable which is also IDisposable</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-idisposableview-1.html">IDisposableView<'a></a>
-          </td>
-          <td class="xmldoc"><p>A view which implements IDisposable in order to stop tracking its source</p>
+          <td class="xmldoc"><p>A type which depends on a signal</p>
 
 </td>
         </tr>
@@ -101,11 +69,17 @@
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-iview-1.html">IView<'a></a>
+            <a href="gjallarhorn-isignal-1.html">ISignal<'a></a>
           </td>
-          <td class="xmldoc"><p>Core interface for all members which provide a current value
-Dependent views can use this to query the current state
-of the mutable value</p>
+          <td class="xmldoc"><p>Core interface for signals</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-itracksdependents.html">ITracksDependents</a>
+          </td>
+          <td class="xmldoc"><p>Interface that allows a type to remotely add itself as a dependent</p>
 
 </td>
         </tr>
@@ -126,6 +100,14 @@ of the mutable value</p>
         </tr>
         <tr>
           <td class="module-name">
+            <a href="gjallarhorn-signal.html">Signal</a>
+          </td>
+          <td class="xmldoc"><p>Provides mechanisms for working with signals</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
             <a href="gjallarhorn-validation.html">Validation</a>
           </td>
           <td class="xmldoc"><p>Basic validation support</p>
@@ -134,17 +116,9 @@ of the mutable value</p>
         </tr>
         <tr>
           <td class="module-name">
-            <a href="gjallarhorn-view.html">View</a>
+            <a href="gjallarhorn-wpf.html">Wpf</a>
           </td>
-          <td class="xmldoc"><p>Provides mechanisms for working with IView views</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-viewoperators.html">ViewOperators</a>
-          </td>
-          <td class="xmldoc"><p>Custom operators for composing IView instances</p>
+          <td class="xmldoc"><p>Platform installation</p>
 
 </td>
         </tr>
@@ -163,13 +137,15 @@ of the mutable value</p>
           <td class="type-name">
             <a href="gjallarhorn-bindable-bindingtargetbase.html">BindingTargetBase</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Base class for binding targets, used by platform specific libraries to share implementation details</p>
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-boundview-1.html">BoundView<'a></a>
+            <a href="gjallarhorn-bindable-boundsignal-1.html">BoundSignal<'a></a>
           </td>
-          <td class="xmldoc"><p>An IView<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the view as needed</p>
+          <td class="xmldoc"><p>An ISignal<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the signal as needed</p>
 
 </td>
         </tr>
@@ -177,11 +153,13 @@ of the mutable value</p>
           <td class="type-name">
             <a href="gjallarhorn-bindable-executiontracker.html">ExecutionTracker</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Type which tracks execution, allowing commands to disable as needed</p>
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-iasyncnotifycommand.html">IAsyncNotifyCommand</a>
+            <a href="gjallarhorn-bindable-iasyncnotifycommand-1.html">IAsyncNotifyCommand<'a></a>
           </td>
           <td class="xmldoc"><p>Extension of INotifyCommand with a public property to supply a CancellationToken.</p>
 
@@ -197,9 +175,9 @@ of the mutable value</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-inotifycommand.html">INotifyCommand</a>
+            <a href="gjallarhorn-bindable-itrackingcommand-1.html">ITrackingCommand<'a></a>
           </td>
-          <td class="xmldoc"><p>Extension of ICommand with a public method to fire the CanExecuteChanged event</p>
+          <td class="xmldoc"><p>An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.</p>
 
 </td>
         </tr>
@@ -218,13 +196,46 @@ of the mutable value</p>
 
 </td>
         </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Bindable.Wpf Namespace</h2>
+  <h2>Gjallarhorn.Internal Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
         <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-bindable-bind-0.html">Bind</a>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-idependencymanager-1.html">IDependencyManager<'a></a>
           </td>
-          <td class="xmldoc"><p>Functions to work with binding targets</p>
+          <td class="xmldoc"><p>Type used to track dependencies</p>
 
 </td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-internal-dependencies.html">Dependencies</a>
+          </td>
+          <td class="xmldoc"><p>Module used to create and manage dependencies</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-internal-weakref.html">WeakRef</a>
+          </td>
+          <td class="xmldoc"></td>
         </tr>
     </tbody>
   </table>
