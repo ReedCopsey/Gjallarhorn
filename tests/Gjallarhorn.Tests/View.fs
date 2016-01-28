@@ -1,7 +1,7 @@
 module Gjallarhorn.Tests.View
 
 open Gjallarhorn
-open Gjallarhorn.View.Operators
+// open Gjallarhorn.View.Operators
 
 open System
 open NUnit.Framework
@@ -155,61 +155,36 @@ let ``View\choose doesn't propogate inappropriate changes`` () =
     Assert.AreEqual(50, filter.Value)
 
     v.Value <- 25
-    Assert.AreEqual(50, filter.Value)
-    
-[<Test>]
-let ``Operator <*> allows arbitrary arity`` () =
-    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
-    let v1 = Mutable.create 1
-    let v2 = Mutable.create 2
-    let v3 = Mutable.create 3
-    let v4 = Mutable.create 4
-    
-    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
-
-    Assert.AreEqual(view.Value, "1,2,3,4")
+    Assert.AreEqual(50, filter.Value)   
 
 [<Test>]
-let ``View\lift2 matches operator <!> and <*>`` () =
-    let f = (fun a b -> sprintf "%d,%d" a b)
-    let v1 = Mutable.create 1
-    let v2 = Mutable.create 2
-    
-    let view1 = f <!> v1 <*> v2 
-    let view2 = View.lift2 f v1 v2
-
-    Assert.AreEqual("1,2", view1.Value)
-    Assert.AreEqual("1,2", view2.Value)
-
-[<Test>]
-let ``View\lift3 matches operator <!> and <*>`` () =
+let ``View\lift3 propogates successfully`` () =
     let f = (fun a b c -> sprintf "%d,%d,%f" a b c)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3.0
     
-    let view1 = f <!> v1 <*> v2 <*> v3 
-    let view2 = View.lift3 f v1 v2 v3
+    let view = View.lift3 f v1 v2 v3
 
-    Assert.AreEqual("1,2,3.000000", view1.Value)
-    Assert.AreEqual("1,2,3.000000", view2.Value)
+    use sub = View.subscribe (fun _ -> ()) view
+    Assert.AreEqual("1,2,3.000000", view.Value)
+
+    Assert.IsNotNull(sub)
 
 [<Test>]
-let ``View\lift4 matches operator <!> and <*>`` () =
+let ``View\lift4 propogates successfully`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%f,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3.0
     let v4 = Mutable.create 4
 
-    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4
-    let view2 = View.lift4 f v1 v2 v3 v4
+    let view = View.lift4 f v1 v2 v3 v4
 
-    Assert.AreEqual("1,2,3.000000,4", view1.Value)
-    Assert.AreEqual("1,2,3.000000,4", view2.Value)
+    Assert.AreEqual("1,2,3.000000,4", view.Value)
 
 [<Test>]
-let ``View\lift5 matches operator <!> and <*>`` () =
+let ``View\lift5 propogates successfully`` () =
     let f = (fun a b c d e -> sprintf "%d,%d,%f,%d,%d" a b c d e)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -217,14 +192,12 @@ let ``View\lift5 matches operator <!> and <*>`` () =
     let v4 = Mutable.create 4
     let v5 = Mutable.create 5
 
-    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4 <*> v5
-    let view2 = View.lift5 f v1 v2 v3 v4 v5
+    let view = View.lift5 f v1 v2 v3 v4 v5
 
-    Assert.AreEqual("1,2,3.000000,4,5", view1.Value)
-    Assert.AreEqual("1,2,3.000000,4,5", view2.Value)
+    Assert.AreEqual("1,2,3.000000,4,5", view.Value)
 
 [<Test>]
-let ``View\lift6 matches operator <!> and <*>`` () =
+let ``View\lift6 propogates successfully`` () =
     let f = (fun a b c d e f' -> sprintf "%d,%d,%f,%d,%d,%d" a b c d e f')
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -233,25 +206,125 @@ let ``View\lift6 matches operator <!> and <*>`` () =
     let v5 = Mutable.create 5
     let v6 = Mutable.create 6
 
-    let view1 = f <!> v1 <*> v2 <*> v3 <*> v4 <*> v5 <*> v6
-    let view2 = View.lift6 f v1 v2 v3 v4 v5 v6
+    let view = View.lift6 f v1 v2 v3 v4 v5 v6
 
-    Assert.AreEqual("1,2,3.000000,4,5,6", view1.Value)
-    Assert.AreEqual("1,2,3.000000,4,5,6", view2.Value)
+    Assert.AreEqual("1,2,3.000000,4,5,6", view.Value)
 
-// TODO: Figure out why this is stack overflowing!!!
-// [<Test>]
-let ``Operator <*> notifies properly with input changes`` () =
+[<Test>]
+let ``View\lift10 propogates successfully`` () =
+    let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+    let v5 = Mutable.create 5
+    let v6 = Mutable.create 6
+    let v7 = Mutable.create 7.1
+    let v8 = Mutable.create 8
+    let v9 = Mutable.create 9
+    let v10 = Mutable.create 10
+
+    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+
+    Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+
+[<Test>]
+let ``View\lift10 notifies properly with input changes`` () =
+    let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+    let v5 = Mutable.create 5
+    let v6 = Mutable.create 6
+    let v7 = Mutable.create 7.1
+    let v8 = Mutable.create 8
+    let v9 = Mutable.create 9
+    let v10 = Mutable.create 10
+
+    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+
+    Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+
+    let changes = ref 0
+    use _disp = View.subscribe (fun _ -> incr changes) view
+
+    Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(0, !changes)
+    v1.Value <- 5
+    Assert.AreEqual("5,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(1, !changes)
+    v3.Value <- 7.0
+    Assert.AreEqual("5,2,7.000000,4,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(2, !changes)
+    v4.Value <- 8
+    Assert.AreEqual("5,2,7.000000,8,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(3, !changes)
+
+    Assert.IsNotNull(_disp)
+
+[<Test>]
+let ``View\lift10 handles subscription tracking properly`` () =
+    let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
+    let v1 = Mutable.create 1
+    let v2 = Mutable.create 2
+    let v3 = Mutable.create 3.0
+    let v4 = Mutable.create 4
+    let v5 = Mutable.create 5
+    let v6 = Mutable.create 6
+    let v7 = Mutable.create 7.1
+    let v8 = Mutable.create 8
+    let v9 = Mutable.create 9
+    let v10 = Mutable.create 10
+
+    let depChecks = [| 
+        v1 :> IDependent ; 
+        v2 :> IDependent ; 
+        v3 :> IDependent ; 
+        v4 :> IDependent ; 
+        v5 :> IDependent ; 
+        v6 :> IDependent ; 
+        v7 :> IDependent ; 
+        v8 :> IDependent ; 
+        v9 :> IDependent ; 
+        v10 :> IDependent |]
+
+    let view = View.lift10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+
+    depChecks
+    |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
+
+    let changes = ref 0
+    use _disp = View.subscribe (fun _ -> incr changes) view
+
+    depChecks
+    |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
+
+    Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(0, !changes)
+    v1.Value <- 5
+    Assert.AreEqual("5,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+    Assert.AreEqual(1, !changes)
+
+    Assert.IsNotNull(_disp)
+    _disp.Dispose();
+    
+    depChecks
+    |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
+
+
+[<Test>]
+let ``View\lift4 notifies properly with input changes`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
+    let view = View.lift4 f v1 v2 v3 v4
 
     let changes = ref 0
-    use _disp = View.subscribe (fun v -> incr changes) view
+    use _disp = View.subscribe (fun _ -> incr changes) view
 
     Assert.AreEqual("1,2,3,4", view.Value)
     Assert.AreEqual(0, !changes)
@@ -265,32 +338,16 @@ let ``Operator <*> notifies properly with input changes`` () =
     Assert.AreEqual("5,2,7,8", view.Value)
     Assert.AreEqual(3, !changes)
 
+    Assert.IsNotNull(_disp)
 [<Test>]
-let ``Operator <*> preserves tracking`` () =
+let ``View\lift4 preserves tracking`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
     let v3 = Mutable.create 3
     let v4 = Mutable.create 4
     
-    let view = View.pure' f <*> v1 <*> v2 <*> v3 <*> v4
-    // let view = View.apply( View.apply( View.apply( View.apply (View.pure' f) v1) v2) v3) v4
-    
-    // Mutate
-    v1.Value <- 5
-    v3.Value <- 7
-    Assert.AreEqual(view.Value, "5,2,7,4")
-
-[<Test>]
-let ``Operators <!> and <*> preserves tracking`` () =
-    let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
-    let v1 = Mutable.create 1
-    let v2 = Mutable.create 2
-    let v3 = Mutable.create 3
-    let v4 = Mutable.create 4
-    
-    let view = f <!> v1 <*> v2 <*> v3 <*> v4
-    // let view = View.apply( View.apply( View.apply( View.apply (View.pure' f) v1) v2) v3) v4
+    let view = View.lift4 f v1 v2 v3 v4
     
     // Mutate
     v1.Value <- 5

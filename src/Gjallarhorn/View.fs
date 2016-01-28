@@ -195,33 +195,47 @@ module View =
     
     /// Combines two views using a specified function, equivelent to View.map2
     let lift2 f a b = map2 f a b
-            
+
+    let private lift f a b c =
+        let f' a bc = f a (fst bc) (snd bc)
+        let bc = map2 (fun b c -> b,c) b c
+        f', bc
     /// Combines three views using a specified function
     let lift3 f a b c = 
-        pure' f
-        |> applyR a
-        |> applyR b       
-        |> applyR c
+        let f1, bc = lift f a b c
+        lift2 f1 a bc
     
     /// Combines four views using a specified function
     let lift4 f a b c d = 
-        lift3 f a b c
-        |> applyR d
+        let f1, bc = lift f a b c
+        lift3 f1 a bc d
     
     /// Combines five views using a specified function
     let lift5 f a b c d e = 
-        lift4 f a b c d
-        |> applyR e
+        let f1, bc = lift f a b c
+        lift4 f1 a bc d e
         
     /// Combines six views using a specified function
     let lift6 f a b c d e f' = 
-        lift5 f a b c d e
-        |> applyR f'
+        let f1, bc = lift f a b c
+        lift5 f1 a bc d e f'
 
-    /// Custom operators for composing IView instances
-    module Operators =
-        /// Applies the function inside the applicative functor, allowing for: View.pure' someFunUsingABC <*> a <*> b <*> c
-        let ( <*> ) (f : IView<'a->'b>) (x : IView<'a>) : IView<'b> = apply f x
+    /// Combines seven views using a specified function
+    let lift7 f a b c d e f' g= 
+        let f1, bc = lift f a b c
+        lift6 f1 a bc d e f' g
 
-        /// Lifts the function into the applicative functor via View.pure', allowing for: someFunUsingABC <!> a <*> b <*> c
-        let (<!>) f a = pure' f <*> a
+    /// Combines eight views using a specified function
+    let lift8 f a b c d e f' g h = 
+        let f1, bc = lift f a b c
+        lift7 f1 a bc d e f' g h
+
+    /// Combines nine views using a specified function
+    let lift9 f a b c d e f' g h i = 
+        let f1, bc = lift f a b c
+        lift8 f1 a bc d e f' g h i
+
+    /// Combines ten views using a specified function
+    let lift10 f a b c d e f' g h i j = 
+        let f1, bc = lift f a b c
+        lift9 f1 a bc d e f' g h i j
