@@ -4,19 +4,9 @@
         xmlns:fsxaml="http://github.com/fsprojects/FsXaml"
         xmlns:local="clr-namespace:ViewModels;assembly=WpfSimpleMvvmApplication"         
         xmlns:views="clr-namespace:Views;assembly=WpfSimpleMvvmApplication"         
-        MinHeight="120" MinWidth="300" Height="Auto"
-        fsxaml:ViewController.Custom="{x:Type views:MainViewController}">
+        MinHeight="120" MinWidth="300" Height="Auto"        >
     <UserControl.Resources>
         <fsxaml:BooleanToCollapsedConverter x:Key="TrueToCollapsed" />
-    <!-- We can use a factory to generate the view model from the view instead of code by uncommenting the following,
-        and commenting out the extra close of resources below: 
-
-        <local:ViewModelFactory x:Key="vmFactory" />
-        <UserControl.DataContext>
-            <StaticResource ResourceKey="vmFactory" />
-        </UserControl.DataContext>
-    <Grid DataContext="{Binding Value}">
-    -->
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>

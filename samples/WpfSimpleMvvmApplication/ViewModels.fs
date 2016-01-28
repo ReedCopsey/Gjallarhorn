@@ -1,5 +1,6 @@
 ﻿namespace ViewModels
 
+open System
 open Gjallarhorn
 open Gjallarhorn.Bindable
 
@@ -8,11 +9,12 @@ open Gjallarhorn.Validation
 type NameModel = { First : string ; Last : string }
 
 module VM =
-    let createMain (name : IMutatable<NameModel>) =
+    let createMainViewModel (nameIn : IObservable<NameModel>) =
         // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
         let bt = Bind.create()
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
+        let name, handle = Signal.subscribeFromObservable { First = "" ; Last = "" } nameIn
         let first = 
             name
             |> Signal.map (fun n -> n.First) 
@@ -39,26 +41,21 @@ module VM =
         let okCommand = Command.create canExecute
         okCommand |> bt.BindCommand "OkCommand"                
 
+        let nameOut = Mutable.create name.Value
+
+        // Subscribe to our command to push values back to our source mutable
+        okCommand 
+        |> Command.subscribe (fun _ -> nameOut.Value <- name'.Value)
+        |> bt.TrackDisposable
+
         // Uncomment the following to automatically push back all changes to 
         // source "name" mutable without requiring the button click
 //        name'
 //        |> Signal.filter (fun _ -> bt.IsValid)
-//        |> Signal.copyTo name
+//        |> Signal.copyTo nameOut
 //        |> bt.TrackDisposable
         
-        // Subscribe to our command to push values back to our source mutable
-        okCommand 
-        |> Command.subscribe (fun _ -> name.Value <- name'.Value)
-        |> bt.TrackDisposable
 
         // Return the binding target for use as a View Model
-        bt
+        bt, nameOut :> ISignal<NameModel>
 
-// This provides a view-first approach to creating and supplying a ViewModel
-// Currently unused in this sample.
-type ViewModelFactory() =
-    inherit BindingTargetFactory()
-    
-    override __.Generate() = 
-        let name = Mutable.create {First = "foo" ; Last = "bar"}
-        VM.createMain name
