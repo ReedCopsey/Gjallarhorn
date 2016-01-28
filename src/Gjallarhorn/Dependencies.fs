@@ -5,6 +5,26 @@ open Gjallarhorn
 open System
 open System.Runtime.CompilerServices
 
+module WeakRef =
+    let toOption (wr : WeakReference<_>) =
+        match wr.TryGetTarget() with
+        | true, t -> Some t
+        | false, _ -> None
+
+    let execute (f : 'a -> unit) (wr : WeakReference<'a>) =
+        match wr.TryGetTarget() with
+        | true, t ->
+            f(t)
+            true
+        | _ -> false
+
+    let test (f : 'a -> bool) (wr : WeakReference<'a>) =
+        match wr.TryGetTarget() with
+        | true, t ->
+            true, f(t)
+        | _ -> 
+            false, false
+
 ////////////////////////////////////////////////////////
 // This file contains the basic implementations used
 // for tracking dependencies between objects.
@@ -42,7 +62,7 @@ type private DependencyTrackerBase() =
 /// <summary>Used to track dependencies</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to dependent targets</remarks>
 [<AllowNullLiteral>]
-type private DependencyTracker<'a>(dependsOn : ITracksDependents array, source : IView<'a>) =
+type private DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents> array, source : IView<'a>) =
     inherit DependencyTrackerBase()
 
     // We want this as lightweight as possible,
@@ -55,15 +75,9 @@ type private DependencyTracker<'a>(dependsOn : ITracksDependents array, source :
     // It returns true if we signaled and the object is alive,
     // otherwise false
     let signalIfAliveDep (wr: WeakReference<IDependent>) =
-        let success, dep = wr.TryGetTarget() 
-        if success then 
-            dep.RequestRefresh source
-        success
+        wr |> WeakRef.execute (fun dep -> dep.RequestRefresh source)
     let signalIfAliveObs (wr: WeakReference<IObserver<'a>>) =
-        let success, obs = wr.TryGetTarget() 
-        if success then 
-            obs.OnNext(source.Value)
-        success
+        wr |> WeakRef.execute (fun obs-> obs.OnNext(source.Value))
 
     // Do our signal, but also remove any unneeded dependencies while we're at it
     let signalAndUpdateDependencies () =
@@ -72,37 +86,37 @@ type private DependencyTracker<'a>(dependsOn : ITracksDependents array, source :
 
     // Remove a dependency, as well as all "dead" dependencies
     let removeAndFilterDep dep (wr : WeakReference<IDependent>) =
-        match wr.TryGetTarget() with
+        match WeakRef.test ( (=) dep) wr with
         | false, _ -> false
-        | true, v when v = dep -> 
-            false
-        | true, _ -> true
-    let removeAndFilterObs obs (wr : WeakReference<IObserver<'a>>) =
-        match wr.TryGetTarget() with
+        | true, true -> false
+        | true, false -> true
+    let removeAndFilterObs obs (wr : WeakReference<IObserver<'a>>) =        
+        match WeakRef.test ( (=) obs) wr with
         | false, _ -> false
-        | true, v when v = obs -> 
+        | true, true -> 
             // Mark observer completed
             obs.OnCompleted()
             false
-        | true, _ -> true
+        | true, false -> true
     let markObsComplete (wr : WeakReference<IObserver<'a>>) =
-        match wr.TryGetTarget() with
-        | true, obs -> 
-            obs.OnCompleted()
-        | _ -> ()
+        wr 
+        |> WeakRef.execute (fun obs-> obs.OnCompleted())
+        |> ignore
 
     member private this.UpdateUpstreamTracking () =
         match this.HasDependencies, trackingUpstream with
         | true, true -> ()
         | true, false -> 
             dependsOn
-            |> Array.iter (fun d -> d.Track source)
+            |> Seq.choose WeakRef.toOption
+            |> Seq.iter (fun d -> d.Track source)
             trackingUpstream <- true
         | false, false -> ()
         | false, true ->
             // Stop tracking
             dependsOn
-            |> Array.iter (fun d -> d.Untrack source)
+            |> Seq.choose WeakRef.toOption
+            |> Seq.iter (fun d -> d.Untrack source)
             trackingUpstream <- false
 
 
@@ -222,7 +236,10 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
 module Dependencies =
     /// Create a dependency manager
     let create (dependsOn : ITracksDependents array) source = 
-        DependencyTracker<_>(dependsOn, source) :> IDependencyManager<_>
+        let deps =
+            dependsOn
+            |> Array.map (fun t -> WeakReference<_>(t))
+        DependencyTracker<_>(deps, source) :> IDependencyManager<_>
     /// Create a dependency manager for a source object which stores dependency information outside of the object's memory space.  
     let createRemote source =
         { new IDependencyManager<'a> with

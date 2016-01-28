@@ -242,20 +242,25 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
 
     let mutable v = valueProvider.Value
 
+    // Caching acts like a subscription, since it has to update in case the
+    // target is GCed
+    // Note: Tracking does not hold a strong reference, so disposal is not necessary still
+    do 
+        valueProvider.Track self
+
     // Only store a weak reference to our provider
-    let mutable handle = WeakReference<_>(valueProvider)
+    let handle = WeakReference<_>(valueProvider)
 
     member private this.Signal() = dependencies.Signal this |> ignore
 
-    member private this.UpdateAndGetValue () =
-        if handle <> null then
-            match handle.TryGetTarget() with
-            | true, provider ->
-                let value = provider.Value
-                if not <| EqualityComparer<'a>.Default.Equals(v, value) then
-                    v <- value
-                    this.Signal()
-            | false, _ -> ()
+    member private this.UpdateAndGetValue () =        
+        handle
+        |> WeakRef.execute (fun provider ->
+            let value = provider.Value
+            if not <| EqualityComparer<'a>.Default.Equals(v, value) then
+                v <- value
+                this.Signal())
+        |> ignore
         v
 
     override this.Finalize() =
@@ -285,10 +290,9 @@ type internal CachedView<'a> (valueProvider : IView<'a>) as self =
 
     interface IDisposable with
         member this.Dispose() =
-            if handle <> null then
-                match handle.TryGetTarget() with
-                | true, v ->
-                    v.Untrack this                    
-                    handle <- null
-                | false,_ -> ()
+            handle
+            |> WeakRef.execute (fun v ->
+                v.Untrack this                    
+                handle.SetTarget(Unchecked.defaultof<IView<'a>>))
+            |> ignore
             dependencies.RemoveAll()

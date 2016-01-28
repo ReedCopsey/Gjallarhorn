@@ -109,26 +109,22 @@ let ``View\validate subscriptions last through GC collections`` () =
     
     let states = ResizeArray<ValidationResult>()
 
-    let subscription = View.subscribe states.Add validated.ValidationResult 
+    use subscription = View.subscribe states.Add validated.ValidationResult 
     // |> ignore
 
     System.GC.Collect();
     Assert.AreEqual(0, states.Count)
-    printfn "Setting first value"
     value.Value <- ""
     System.GC.Collect();
     Assert.AreEqual(0, states.Count)
-    printfn "Setting second value"
     value.Value <- "Test"
     System.GC.Collect();
     Assert.AreEqual(1, states.Count)
     Assert.IsTrue(ValidationResult.Valid = states.[0])
-    printfn "Setting third value"
     value.Value <- "Change to another valid state"
     System.GC.Collect();
     Assert.AreEqual(1, states.Count)
     Assert.IsTrue(ValidationResult.Valid = states.[0])
-    printfn "Setting fourth value"
     value.Value <- ""
     System.GC.Collect();
     Assert.AreEqual(2, states.Count)
@@ -145,6 +141,8 @@ let ``View\validate subscriptions last through GC collections`` () =
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
+    // Keep this alive for release testing
+    Assert.IsNotNull(subscription)
 [<Test>]
 let ``View\validate provides proper error messages when fixed`` () =
     let value = Mutable.create ""

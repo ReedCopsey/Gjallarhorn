@@ -82,11 +82,14 @@ module Memory =
     let ``View\cache allows source to be garbage collected`` start finish =
         let mutable value = Some(Mutable.create start)
 
-        let cached = View.cache value.Value
+        let mutable view = 
+            value.Value
+            |> View.map id
+ 
+        let viewWr = WeakReference(view)
+        let valueWr = WeakReference(value.Value)
 
-        Assert.AreEqual(true, SignalManager.IsTracked value.Value)
-    
-        let wrValue = WeakReference(value.Value)
+        view <- view |> View.cache
     
         value.Value.Value <- finish
 
@@ -94,9 +97,9 @@ module Memory =
 
         GC.Collect()
 
-        Assert.AreEqual(false, wrValue.IsAlive)
-
-        Assert.AreEqual(box finish, cached.Value)
+        Assert.AreEqual(box finish, view.Value)
+        Assert.AreEqual(false, valueWr.IsAlive)
+        Assert.AreEqual(false, viewWr.IsAlive)
 
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
     let ``View\cache allows source and view to be garbage collected`` start _ finish finalView =
@@ -104,9 +107,6 @@ module Memory =
         let mutable view = Some(View.map (fun v -> v.ToString()) value.Value)
 
         let cached = View.cache view.Value
-
-        Assert.AreEqual(true, SignalManager.IsTracked value.Value)
-        Assert.AreEqual(false, SignalManager.IsTracked view.Value)
     
         let wrValue = WeakReference(value.Value)
         let wrView = WeakReference(view.Value)
@@ -116,6 +116,8 @@ module Memory =
         view <- None
         value <- None
 
+        GC.Collect()
+        GC.WaitForPendingFinalizers()
         GC.Collect()
 
         Assert.AreEqual(false, wrValue.IsAlive)

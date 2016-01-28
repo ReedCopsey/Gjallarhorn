@@ -1,6 +1,6 @@
 ﻿namespace Gjallarhorn
 
-#nowarn "40"
+#nowarn "40" "21"
 
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
