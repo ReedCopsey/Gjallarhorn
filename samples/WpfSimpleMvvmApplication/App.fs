@@ -65,4 +65,4 @@ let main _ =
 
     let window = Views.MainWindow().Root
     window.DataContext <- vm
-    App().Root.Run(window)
+    App().Root.Run window
