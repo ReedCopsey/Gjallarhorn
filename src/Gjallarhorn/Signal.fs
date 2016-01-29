@@ -46,38 +46,39 @@ module Signal =
         let disposable = observable.Subscribe (fun v -> value.Value <- v)        
         value :> ISignal<'a> , disposable
 
-    /// Create a subscription to the changes of a signal which calls the provided function upon each change
-    let subscribe (f : 'a -> unit) (provider : ISignal<'a>) = 
-        let tracker = provider :> ITracksDependents
-        let rec dependent =
-            {
-                new obj() with
-                    override this.Finalize() =
-                        (this :?> IDisposable).Dispose()
-                interface IDependent with
-                    member __.RequestRefresh _ =
-                        f(provider.Value)
-                    member __.HasDependencies with get() = true
+    module Subscription =
+        /// Create a subscription to the changes of a signal which calls the provided function upon each change
+        let create (f : 'a -> unit) (provider : ISignal<'a>) = 
+            let tracker = provider :> ITracksDependents
+            let rec dependent =
+                {
+                    new obj() with
+                        override this.Finalize() =
+                            (this :?> IDisposable).Dispose()
+                    interface IDependent with
+                        member __.RequestRefresh _ =
+                            f(provider.Value)
+                        member __.HasDependencies with get() = true
                     
-                interface IDisposable with
-                    member this.Dispose() = 
-                        tracker.Untrack dependent
-                        GC.SuppressFinalize this
-            }
-        tracker.Track dependent
-        dependent :?> IDisposable
+                    interface IDisposable with
+                        member this.Dispose() = 
+                            tracker.Untrack dependent
+                            GC.SuppressFinalize this
+                }
+            tracker.Track dependent
+            dependent :?> IDisposable
     
-    /// Create a subscription to the changes of a signal which copies its value upon change into a mutable
-    let copyTo (target : IMutatable<'a>) (provider : ISignal<'a>) =
-        target.Value <- provider.Value
-        subscribe (fun v -> target.Value <- v) provider
+        /// Create a subscription to the changes of a signal which copies its value upon change into a mutable
+        let copyTo (target : IMutatable<'a>) (provider : ISignal<'a>) =
+            target.Value <- provider.Value
+            create (fun v -> target.Value <- v) provider
 
-    /// Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function
-    let copyStep (target : IMutatable<'b>) (stepFunction : 'b -> 'a -> 'b) (provider : ISignal<'a>) =
-        let update() =
-            target.Value <- stepFunction target.Value provider.Value
-        update()        
-        subscribe (fun _ -> update()) provider
+        /// Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function
+        let copyStep (target : IMutatable<'b>) (stepFunction : 'b -> 'a -> 'b) (provider : ISignal<'a>) =
+            let update() =
+                target.Value <- stepFunction target.Value provider.Value
+            update()        
+            create (fun _ -> update()) provider
         
     /// Gets the current value associated with the signal
     let get (signal : ISignal<'a>) = 

@@ -20,7 +20,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
         let test() =
-            let view = Signal.subscribe (fun _ ->()) value
+            let view = Signal.Subscription.create (fun _ ->()) value
             Assert.AreEqual(true, SignalManager.IsTracked value)
 
         test()
@@ -47,7 +47,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        let sub = Signal.subscribe (fun v -> ()) view
+        let sub = Signal.Subscription.create (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
@@ -59,7 +59,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        let sub = Signal.subscribe (fun v -> ()) view
+        let sub = Signal.Subscription.create (fun v -> ()) view
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
 

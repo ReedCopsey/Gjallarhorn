@@ -167,12 +167,12 @@ type BindingTargetBase() as self =
 
         member __.TrackSignal name signal =
             signal
-            |> Signal.subscribe (fun _ -> raisePropertyChanged name)
+            |> Signal.Subscription.create (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
         member __.TrackValidator name validator =
             validator
-            |> Signal.subscribe (fun result -> updateErrors name result)
+            |> Signal.Subscription.create (fun result -> updateErrors name result)
             |> disposables.Add
 
             updateErrors name validator.Value

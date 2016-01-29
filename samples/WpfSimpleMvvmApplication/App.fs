@@ -61,7 +61,7 @@ let main _ =
 
     // Copy updates out of our vm into our model
     // This could easily track history, etc, if desired
-    use _sub2 = updates |> Signal.subscribe Model.add
+    use _sub2 = updates |> Signal.Subscription.create Model.add
 
     let window = Views.MainWindow().Root
     window.DataContext <- vm

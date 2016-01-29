@@ -20,7 +20,7 @@ let ``View\copyTo copies across proper values`` start finish =
 
     Assert.AreEqual(box Unchecked.defaultof<'a>, view.Value)
 
-    use __ = Signal.copyTo view value 
+    use __ = Signal.Subscription.copyTo view value 
 
     Assert.AreEqual(box start, value.Value)
     Assert.AreEqual(box start, view.Value)
@@ -152,7 +152,7 @@ let ``View\map3 propogates successfully`` () =
     
     let view = Signal.map3 f v1 v2 v3
 
-    use sub = Signal.subscribe (fun _ -> ()) view
+    use sub = Signal.Subscription.create (fun _ -> ()) view
     Assert.AreEqual("1,2,3.000000", view.Value)
 
     Assert.IsNotNull(sub)
@@ -233,7 +233,7 @@ let ``View\map10 notifies properly with input changes`` () =
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
 
     let changes = ref 0
-    use _disp = Signal.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.Subscription.create (fun _ -> incr changes) view
 
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
     Assert.AreEqual(0, !changes)
@@ -281,7 +281,7 @@ let ``View\map10 handles subscription tracking properly`` () =
     |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
 
     let changes = ref 0
-    use _disp = Signal.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.Subscription.create (fun _ -> incr changes) view
 
     depChecks
     |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
@@ -310,7 +310,7 @@ let ``View\map4 notifies properly with input changes`` () =
     let view = Signal.map4 f v1 v2 v3 v4
 
     let changes = ref 0
-    use _disp = Signal.subscribe (fun _ -> incr changes) view
+    use _disp = Signal.Subscription.create (fun _ -> incr changes) view
 
     Assert.AreEqual("1,2,3,4", view.Value)
     Assert.AreEqual(0, !changes)

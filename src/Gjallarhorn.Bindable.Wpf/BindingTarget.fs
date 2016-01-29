@@ -48,7 +48,7 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
     
     override this.AddReadWriteProperty<'a> name signal =
         let editSource = Mutable.create signal.Value
-        Signal.copyTo editSource signal
+        Signal.Subscription.copyTo editSource signal
         |> this.TrackDisposable
         customProps.Add(name, (makePD name, makeEditIV editSource))
         editSource :> ISignal<'a>

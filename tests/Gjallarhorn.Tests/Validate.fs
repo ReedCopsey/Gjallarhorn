@@ -75,7 +75,7 @@ let ``View\validate signals properly when value changes`` () =
     
     let states = ResizeArray<ValidationResult>()
 
-    Signal.subscribe states.Add validated.ValidationResult 
+    Signal.Subscription.create states.Add validated.ValidationResult 
     |> ignore
 
     Assert.AreEqual(0, states.Count)
@@ -109,7 +109,7 @@ let ``View\validate subscriptions last through GC collections`` () =
     
     let states = ResizeArray<ValidationResult>()
 
-    use subscription = Signal.subscribe states.Add validated.ValidationResult 
+    use subscription = Signal.Subscription.create states.Add validated.ValidationResult 
     // |> ignore
 
     System.GC.Collect();

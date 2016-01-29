@@ -35,7 +35,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
 
     do
         allowExecute
-        |> Signal.subscribe (fun _ -> self.RaiseCanExecuteChanged())    
+        |> Signal.Subscription.create (fun _ -> self.RaiseCanExecuteChanged())    
         |> disposeTracker.Add
 
     member this.RaiseCanExecuteChanged() =
@@ -130,4 +130,4 @@ module Command =
             match state with
             | CommandState.Executed(time) -> f(time)
             | _ -> ()
-        Signal.subscribe f provider
+        Signal.Subscription.create f provider
