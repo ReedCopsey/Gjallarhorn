@@ -15,6 +15,7 @@ module VM =
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
         let name, handle = Signal.subscribeFromObservable { First = "" ; Last = "" } nameIn
+        bt.TrackDisposable handle
         let first = 
             name
             |> Signal.map (fun n -> n.First) 

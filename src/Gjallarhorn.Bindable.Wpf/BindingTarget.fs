@@ -118,8 +118,20 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
 
 namespace Gjallarhorn
 
+open System.Threading
+open System.Windows.Threading
+
 /// Platform installation
 module Wpf =
     /// Installs WPF targets for binding into Gjallarhorn
     let install () =
         Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> new Gjallarhorn.Bindable.Wpf.DesktopBindingTarget() :> Gjallarhorn.Bindable.IBindingTarget)
+
+    // Gets, and potentially installs, the WPF synchronization context
+    let installAndGetSynchronizationContext () =
+        if SynchronizationContext.Current = null then
+            // Create our UI sync context, and install it:
+            DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher)
+            |> SynchronizationContext.SetSynchronizationContext
+
+        SynchronizationContext.Current
