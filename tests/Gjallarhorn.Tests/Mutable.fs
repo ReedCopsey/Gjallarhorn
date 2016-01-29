@@ -35,7 +35,7 @@ let ``Mutable\set mutates value`` start finish =
     let value = Mutable.create start
     Assert.AreEqual(box start, box value.Value)
     
-    Mutable.set value finish
+    Mutable.set value finish 
     Assert.AreEqual(box finish, box value.Value)
   
 

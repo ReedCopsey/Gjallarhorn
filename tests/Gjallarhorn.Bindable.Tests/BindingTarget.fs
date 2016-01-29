@@ -61,7 +61,7 @@ type BindingTarget() =
 
     [<TestFixtureSetUp>]
     member __.Initialize() =
-        Gjallarhorn.Wpf.install()
+        Gjallarhorn.Wpf.install(false) |> ignore
 
     [<Test>]
     member __.``BindingTarget raises property changed`` () =

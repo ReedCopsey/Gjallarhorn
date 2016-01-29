@@ -123,10 +123,6 @@ open System.Windows.Threading
 
 /// Platform installation
 module Wpf =
-    /// Installs WPF targets for binding into Gjallarhorn
-    let install () =
-        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> new Gjallarhorn.Bindable.Wpf.DesktopBindingTarget() :> Gjallarhorn.Bindable.IBindingTarget)
-
     // Gets, and potentially installs, the WPF synchronization context
     let installAndGetSynchronizationContext () =
         if SynchronizationContext.Current = null then
@@ -135,3 +131,11 @@ module Wpf =
             |> SynchronizationContext.SetSynchronizationContext
 
         SynchronizationContext.Current
+
+    /// Installs WPF targets for binding into Gjallarhorn
+    let install installSynchronizationContext =
+        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> new Gjallarhorn.Bindable.Wpf.DesktopBindingTarget() :> Gjallarhorn.Bindable.IBindingTarget)
+
+        match installSynchronizationContext with
+        | true -> installAndGetSynchronizationContext ()
+        | false -> SynchronizationContext.Current

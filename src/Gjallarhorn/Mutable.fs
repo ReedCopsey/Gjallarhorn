@@ -15,7 +15,7 @@ module Mutable =
 
     [<CompiledName("Set")>]
     /// Sets the value associated with the mutatable object
-    let set value (mutatable : IMutatable<'a>) = 
+    let set (mutatable : IMutatable<'a>) value = 
         mutatable.Value <- value
 
     /// Updates the value associated with the mutatable object via a function that takes the original value

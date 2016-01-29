@@ -29,10 +29,9 @@ module Model =
 [<STAThread>]
 [<EntryPoint>]
 let main _ = 
-    // Install WPF Binding targets
-    Gjallarhorn.Wpf.install()
-    // This is only required to allow our async workflow to put ourselves onto the UI thread properly
-    let uiContext = Gjallarhorn.Wpf.installAndGetSynchronizationContext()
+    // Install WPF Binding targets (and syncronizationContext
+    // The context is only required here to allow our async workflow to put ourselves onto the UI thread properly
+    let uiContext = Gjallarhorn.Wpf.install true
 
     // This simulates stuff happening outside of the GUI - 
     // Note that the UI updates every 5 seconds automatically
