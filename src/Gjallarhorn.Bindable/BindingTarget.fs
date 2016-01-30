@@ -106,36 +106,13 @@ type BindingTargetBase() as self =
     /// True when the current value is valid.  Can be used in bindings
     member __.IsValid with get() = isValid.Value
 
-    /// Track a disposable, and dispose it when we are disposed
-    member __.TrackDisposable disposable = disposables.Add(disposable)
-
     interface INotifyPropertyChanged with
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
 
-    abstract AddConstantProperty<'a> : string -> 'a -> unit
-    abstract AddReadOnlyProperty<'a> : string -> ISignal<'a> -> unit
-    abstract AddReadWriteProperty<'a> : string -> ISignal<'a> -> ISignal<'a>
+    abstract AddReadOnlyProperty<'a> : string -> (unit -> 'a) -> unit
+    abstract AddReadWriteProperty<'a> : string -> (unit -> 'a) -> ('a -> unit) -> unit
     
-    /// Add a binding target for a signal with a given name
-    member this.Bind<'a> name (signal : ISignal<'a>) =
-        bt().TrackObservable name signal
-        let result = this.AddReadWriteProperty name signal
-        match signal with
-        | :? Validation.IValidatedSignal<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
-        | _ -> ()
-
-        result
-
-    member this.Watch<'a> name (signal : ISignal<'a>) =
-        bt().TrackObservable name signal
-        this.AddReadOnlyProperty name signal
-        match signal with
-        | :? Validation.IValidatedSignal<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
-        | _ -> ()
-
     interface INotifyDataErrorInfo with
         member __.GetErrors name =             
             match errors.TryGetValue name with
@@ -155,10 +132,45 @@ type BindingTargetBase() as self =
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
         member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
 
-        member this.Bind name signal = this.Bind name signal
-        member this.Watch name signal = this.Watch name signal
-        member this.Constant name value = this.AddConstantProperty name value
-        member this.TrackDisposable disposable = this.TrackDisposable disposable
+        member this.Bind<'a> name signal = 
+            let editSource = Mutable.create signal.Value
+            Signal.Subscription.copyTo editSource signal
+            |> disposables.Add 
+
+            bt().TrackObservable name signal
+            this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
+            match signal with
+            | :? Validation.IValidatedSignal<'a> as validator ->
+                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
+            | _ -> ()
+
+            editSource :> ISignal<'a>
+
+        member this.Edit name validation signal =
+            let output = (this :> IBindingTarget).Bind name signal
+            let validated =
+                output
+                |> Signal.validate validation
+            bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+            validated
+
+        member this.Watch<'a> name (signal : ISignal<'a>) = 
+            bt().TrackObservable name signal
+            this.AddReadOnlyProperty name (fun _ -> signal.Value)
+            match signal with
+            | :? Validation.IValidatedSignal<'a> as validator ->
+                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
+            | _ -> ()
+
+        member this.Constant name value = 
+            this.AddReadOnlyProperty name (fun _ -> value)
+
+        member __.AddDisposable disposable = 
+            disposables.Add(disposable)
+
+        member __.AddDisposable2<'a> (tuple : 'a * System.IDisposable) = 
+            disposables.Add(snd tuple)
+            fst tuple
 
         member __.TrackObservable name observable =
             observable
@@ -172,6 +184,18 @@ type BindingTargetBase() as self =
 
             updateErrors name current 
 
+        member __.Command name =
+            let command = Command.createEnabled()
+            disposables.Add command
+            bt().Constant name command
+            command
+
+        member __.CommandChecked name canExecute =
+            let command = Command.create canExecute
+            disposables.Add command
+            bt().Constant name command
+            command
+
     interface System.IDisposable with
         member __.Dispose() = disposables.Dispose()
 
@@ -182,41 +206,59 @@ module Bind =
     module Internal =
         let installCreationFunction f = creationFunction <- f
 
+    /// Create a binding target for the installed platform
     let create () =
         creationFunction()    
-       
+      
+    let edit name signal (target : IBindingTarget) =
+        target.Bind name signal
     /// Add a watched signal (one way property) to a binding target by name
-    let watch name signal (target : #IBindingTarget) =
-        target.Bind name signal |> ignore
-        target
+    let watch name signal (target : IBindingTarget) =
+        target.Watch name signal        
 
-    /// Add a command (one way property) to a binding target by name
-    let command name command (target : #IBindingTarget) =
-        target.Constant name command
-        target
+    /// Add a constant value (one way property) to a binding target by name
+    let constant name value (target : IBindingTarget) =
+        target.Constant name value        
 
-    /// A computational expression builder for a binding target
-    type Binding(creator : unit -> IBindingTarget) =        
-        member __.Zero() = creator()
-        member __.Yield(()) = creator()
-//        /// Add an editor (two way property) to a binding target by name
-//        [<CustomOperation("edit", MaintainsVariableSpace = true)>]
-//        member __.Edit (source : IBindingTarget, name, value) = edit name value source
-        /// Add a watched signal (one way property) to a binding target by name
-        [<CustomOperation("watch", MaintainsVariableSpace = true)>]
-        member __.Watch (source : IBindingTarget, name, signal) = watch name signal source                
-        /// Add a command (one way property) to a binding target by name
-        [<CustomOperation("command", MaintainsVariableSpace = true)>]
-        member __.Command (source : IBindingTarget, name, comm) = command name comm source                
+    /// Add an ICommand (one way property) to a binding target by name
+    let command name (command : ICommand) (target : IBindingTarget) =
+        constant name command target
 
-        /// Dispose of an object when we're disposed
-        [<CustomOperation("dispose", MaintainsVariableSpace = true)>]
-        member __.Dispose (source : IBindingTarget, disposable : #System.IDisposable) = 
-            source.TrackDisposable disposable 
-            source
+    module Builder =
+        let private builderWatch name signal (target : #IBindingTarget) =
+            watch name signal target
+            target
+
+        let private builderConstant name value (target : #IBindingTarget) =
+            constant name value target
+            target
+
+        let private builderCommand name (command : ICommand) (target : #IBindingTarget) =
+            builderConstant name command target
+        
+        /// A computational expression builder for a binding target
+        type Binding(creator : unit -> IBindingTarget) =        
+            member __.Zero() = creator()
+            member __.Yield(()) = creator()
+            /// Add a watched signal (one way property) to a binding target by name
+            [<CustomOperation("watch", MaintainsVariableSpace = true)>]
+            member __.Watch (source : IBindingTarget, name, signal) = builderWatch name signal source                
+            /// Add a constant (one way property) to a binding target by name
+            [<CustomOperation("constant", MaintainsVariableSpace = true)>]
+            member __.Constant (source : IBindingTarget, name, comm) = builderConstant name comm source                
+            /// Add a command (one way property) to a binding target by name
+            [<CustomOperation("command", MaintainsVariableSpace = true)>]
+            member __.Command (source : IBindingTarget, name, comm) = builderCommand name comm source                
+
+            /// Dispose of an object when we're disposed
+            [<CustomOperation("dispose", MaintainsVariableSpace = true)>]
+            member __.Dispose (source : IBindingTarget, disposables : #seq<System.IDisposable>) = 
+                disposables
+                |> Seq.iter (fun disposable -> source.AddDisposable disposable)
+                source
 
     /// Create and bind a binding target using a computational expression
-    let binding = Binding(create)
+    let binding = Builder.Binding(create)
 
     /// Add bindings to an existing binding target using a computational expression
-    let extend target = Binding((fun _ -> target))
+    let extend target = Builder.Binding((fun _ -> target))

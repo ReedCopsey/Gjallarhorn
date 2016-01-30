@@ -11,11 +11,9 @@ open Bind
 type TestBindingTarget() =
     inherit BindingTargetBase()
 
-    override __.AddReadWriteProperty<'a> name (value : ISignal<'a>) =
-        Signal.map id value
-    override __.AddReadOnlyProperty<'a> name (view : ISignal<'a>) =
+    override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         ()
-    override __.AddConstantProperty<'a> name (value : 'a) =
+    override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
         ()
 type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()
@@ -111,7 +109,7 @@ type BindingTarget() =
     member __.``BindingTarget\BindView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
-        use dynamicVm = new DesktopBindingTarget()
+        use dynamicVm = new DesktopBindingTarget() :> IBindingTarget
         dynamicVm.Bind "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -135,8 +133,9 @@ type BindingTarget() =
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
-            Bind.create()
-            |> Bind.watch "Full" full
+            Bind.binding {
+                watch "Full" full
+            }
     
         let fullValue() = getProperty dynamicVm "Full"
 
@@ -155,10 +154,11 @@ type BindingTarget() =
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
-            Bind.create()
-            |> Bind.watch "First" first
-            |> Bind.watch "Last" last
-            |> Bind.watch "Full" full
+            Bind.binding {
+                watch "First" first
+                watch "Last" last
+                watch "Full" full
+            }
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -181,8 +181,9 @@ type BindingTarget() =
 
 
         use dynamicVm = 
-            Bind.create()
-            |> Bind.watch "Full" full
+            Bind.binding {
+                watch "Full" full
+            }
 
         let first' = 
             first
@@ -214,10 +215,11 @@ type BindingTarget() =
             |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
 
         use dynamicVm = 
-            Bind.create()
-            |> Bind.watch "First" first
-            |> Bind.watch "Last" last
-            |> Bind.watch "Full" full
+            Bind.binding {
+                watch "First" first
+                watch "Last" last
+                watch "Full" full
+            }
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -239,11 +241,14 @@ type BindingTarget() =
             Signal.map2 (fun f l -> f + " " + l) first last
             |> Signal.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
 
+        let sub1 = first.Subscribe(fun a -> ())
+        let sub2 = last.Subscribe(fun a -> ())
         use dynamicVm =
             binding {            
                 watch "First" first
                 watch "Last" last            
                 watch "Full" full            
+                dispose [sub1 ; sub2]
             }
 
         let obs = PropertyChangedObserver(dynamicVm)    

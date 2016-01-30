@@ -66,10 +66,12 @@
     <Compile Include="..\Gjallarhorn.Bindable\Utilities.fs">
       <Link>Utilities.fs</Link>
     </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\Commands.fs">
+      <Link>Commands.fs</Link>
+    </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\BindingContracts.fs">
       <Link>BindingContracts.fs</Link>
     </Compile>
-    <Compile Include="Commands.fs" />
     <Compile Include="..\Gjallarhorn.Bindable\BoundView.fs">
       <Link>BoundView.fs</Link>
     </Compile>

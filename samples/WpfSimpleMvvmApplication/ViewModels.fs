@@ -14,18 +14,17 @@ module VM =
         let bt = Bind.create()
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
-        let name, handle = Signal.subscribeFromObservable { First = "" ; Last = "" } nameIn
-        bt.TrackDisposable handle
+        let name = 
+            Signal.Subscription.fromObservable { First = "" ; Last = "" } nameIn
+            |> bt.AddDisposable2
         let first = 
             name
-            |> Signal.map (fun n -> n.First) 
-            |> Signal.validate (notNullOrWhitespace >> noSpaces >> notEqual "Reed") 
-            |> bt.Bind "FirstName"
+            |> Signal.map (fun n -> n.First)             
+            |> bt.Edit "FirstName" (notNullOrWhitespace >> noSpaces >> notEqual "Reed") 
         let last = 
             name
-            |> Signal.map (fun n -> n.Last) 
-            |> Signal.validate (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
-            |> bt.Bind "LastName"
+            |> Signal.map (fun n -> n.Last)             
+            |> bt.Edit "LastName" (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
 
         // Read only properties can optionally be validated as well, allowing for "entity level" validation
         Signal.map2 (fun f l -> f + " " + l) first last
@@ -42,24 +41,20 @@ module VM =
         let canExecute = 
             Signal.notEqual name name'
             |> Signal.both bt.Valid
-        let okCommand = Command.create canExecute
-        okCommand |> bt.Constant "OkCommand"                
-
-        let nameOut = Mutable.create name.Value
-
-        // Subscribe to our command to push values back to our source mutable
-        okCommand 
-        |> Command.subscribe (fun _ -> nameOut.Value <- name'.Value)
-        |> bt.TrackDisposable
+        let okCommand = bt.CommandChecked "OkCommand" canExecute
 
         // Uncomment the following to automatically push back all changes to 
         // source "name" mutable without requiring the button click
+//        let nameOut = Mutable.create name.Value
 //        name'
 //        |> Signal.filter (fun _ -> bt.IsValid)
 //        |> Signal.copyTo nameOut
-//        |> bt.TrackDisposable
+//        |> bt.AddDisposable
         
+        let nameOut =
+            okCommand
+            |> Signal.map (fun _ -> name'.Value)
 
         // Return the binding target for use as a View Model
-        bt, nameOut :> ISignal<NameModel>
+        bt, nameOut
 

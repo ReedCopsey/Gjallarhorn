@@ -39,13 +39,6 @@ module Signal =
     let cache (provider : ISignal<'a>) = 
         new CachedSignal<'a>(provider) :> ISignal<'a>
 
-    /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
-    /// Returns signal and subscription handle
-    let subscribeFromObservable initialValue (observable : IObservable<'a>) =
-        let value = Mutable.create initialValue        
-        let disposable = observable.Subscribe (fun v -> value.Value <- v)        
-        value :> ISignal<'a> , disposable
-
     module Subscription =
         /// Create a subscription to the changes of a signal which calls the provided function upon each change
         let create (f : 'a -> unit) (provider : ISignal<'a>) = 
@@ -79,6 +72,14 @@ module Signal =
                 target.Value <- stepFunction target.Value provider.Value
             update()        
             create (fun _ -> update()) provider
+
+        /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
+        /// Returns signal and subscription handle
+        let fromObservable initialValue (observable : IObservable<'a>) =
+            let value = Mutable.create initialValue        
+            let disposable = observable.Subscribe (fun v -> value.Value <- v)        
+            value :> ISignal<'a> , disposable
+
         
     /// Gets the current value associated with the signal
     let get (signal : ISignal<'a>) = 

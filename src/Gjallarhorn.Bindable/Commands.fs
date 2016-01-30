@@ -6,6 +6,19 @@ open Gjallarhorn.Internal
 open System
 open System.Windows.Input
 
+/// An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.
+type ITrackingCommand<'a> =
+    inherit ICommand 
+    inherit System.IDisposable
+    inherit ISignal<'a>
+    
+/// <summary>Extension of INotifyCommand with a public property to supply a CancellationToken.</summary>
+/// <remarks>This allows the command to change the token for subsequent usages if required</remarks>
+type IAsyncNotifyCommand<'a> =
+    inherit ITrackingCommand<'a>
+
+    abstract member CancellationToken : System.Threading.CancellationToken with get, set
+
 /// Simple Command implementation for ICommand and INotifyCommand
 type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
     let canExecuteChanged = new Event<EventHandler, EventArgs>()

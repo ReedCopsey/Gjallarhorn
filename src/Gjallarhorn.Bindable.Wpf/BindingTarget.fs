@@ -26,11 +26,11 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     let makePD name = BindingTargetPropertyDescriptor(name) :> PropertyDescriptor
 
-    let makeReadWriteIV (prop : IMutatable<'a>) = 
+    let makeReadWriteIV getter setter = 
         { 
             new IValueHolder with 
-                member __.GetValue() = box prop.Value
-                member __.SetValue(v) = prop.Value <- unbox v     
+                member __.GetValue() = box <| getter()
+                member __.SetValue(v) = setter(unbox(v))
                 member __.ReadOnly = false    
         }
     let makeReadOnlyIV getValue = 
@@ -43,17 +43,10 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     member internal __.CustomProperties = customProps
     
-    override this.AddReadWriteProperty<'a> name signal =
-        let editSource = Mutable.create signal.Value
-        Signal.Subscription.copyTo editSource signal
-        |> this.TrackDisposable
-        customProps.Add(name, (makePD name, makeReadWriteIV editSource))
-        editSource :> ISignal<'a>
-    override __.AddReadOnlyProperty<'a> name (signal : ISignal<'a>) =
-        customProps.Add(name, (makePD name, makeReadOnlyIV (fun _ -> signal.Value)))   
-
-    override __.AddConstantProperty name constant =        
-        customProps.Add(name, (makePD name, makeReadOnlyIV (fun _ -> constant)))
+    override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+        customProps.Add(name, (makePD name, makeReadWriteIV getter setter))        
+    override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+        customProps.Add(name, (makePD name, makeReadOnlyIV getter))   
 
 /// [omit]
 /// Internal type used to allow dynamic binding targets to be generated.        
