@@ -43,17 +43,21 @@ module VM =
             |> Signal.both bt.Valid
         let okCommand = bt.CommandChecked "OkCommand" canExecute
 
-        // Uncomment the following to automatically push back all changes to 
+        // Change the following to automatically push back all changes to 
         // source "name" mutable without requiring the button click
-//        let nameOut = Mutable.create name.Value
-//        name'
-//        |> Signal.filter (fun _ -> bt.IsValid)
-//        |> Signal.copyTo nameOut
-//        |> bt.AddDisposable
-        
+        let pushAutomatically = false
         let nameOut =
-            okCommand
-            |> Signal.map (fun _ -> name'.Value)
+            match pushAutomatically with
+            | true ->
+                let nameOut' = Mutable.create name.Value
+                name'
+                |> Signal.filter (fun _ -> bt.IsValid)
+                |> Signal.Subscription.copyTo nameOut'
+                |> bt.AddDisposable
+                nameOut' :> ISignal<NameModel>
+            | false ->
+                okCommand
+                |> Signal.map (fun _ -> name'.Value)
 
         // Return the binding target for use as a View Model
         bt, nameOut
