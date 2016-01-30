@@ -49,6 +49,7 @@ module VM =
         let nameOut =
             match pushAutomatically with
             | true ->
+                // To push automatically, we create a mutable, and push values into it on all valid changes
                 let nameOut' = Mutable.create name.Value
                 name'
                 |> Signal.filter (fun _ -> bt.IsValid)
@@ -56,6 +57,7 @@ module VM =
                 |> bt.AddDisposable
                 nameOut' :> ISignal<NameModel>
             | false ->
+                // In this case, we can use our command to map the right value out when it's clicked
                 okCommand
                 |> Signal.map (fun _ -> name'.Value)
 
