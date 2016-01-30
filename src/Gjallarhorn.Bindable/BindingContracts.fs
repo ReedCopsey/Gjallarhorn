@@ -5,6 +5,7 @@ open Gjallarhorn.Validation
 
 open Microsoft.FSharp.Quotations
 
+open System
 open System.ComponentModel
 open System.Windows.Input
 
@@ -42,23 +43,23 @@ type IBindingTarget =
     /// Trigger the PropertyChanged event for a specific property
     abstract RaisePropertyChanged : Expr -> unit
 
-    /// Track changes on a signal to raise property changed events
-    abstract TrackSignal<'a> : string -> ISignal<'a> -> unit
+    /// Track changes on an observable to raise property changed events
+    abstract TrackObservable<'a> : string -> IObservable<'a> -> unit
 
-    /// Track changes on a signal of validation results to raise proper validation events
-    abstract TrackValidator : string -> ISignal<ValidationResult> -> unit
+    /// Track changes on an observable of validation results to raise proper validation events, initialized with a starting validation result
+    abstract TrackValidator : string -> ValidationResult -> ISignal<ValidationResult> -> unit
 
     /// Value used to notify signal that an asynchronous operation is executing
     abstract OperationExecuting : bool with get
     
-    /// Binds an editor to the target, which consists of an input signal and validator, and returns the signal of the user edits
-    abstract BindEditor<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'a> -> ISignal<'a>
+    /// Add a binding target for a signal with a given name, and returns a signal of the user edits
+    abstract Bind<'a> : string -> ISignal<'a> -> ISignal<'a>
 
-    /// Add a binding target for a signal with a given name
-    abstract BindSignal<'a> : string -> ISignal<'a> -> unit
+    /// Add a readonly binding target for a signal with a given name
+    abstract Watch<'a> : string -> ISignal<'a> -> unit
 
-    /// Add a binding target for a command with a given name
-    abstract BindCommand : string -> ICommand -> unit
+    /// Add a readonly binding target for a constant value with a given name
+    abstract Constant<'a> : string -> 'a -> unit
 
 
 

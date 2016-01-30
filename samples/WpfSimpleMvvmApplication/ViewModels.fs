@@ -19,16 +19,19 @@ module VM =
         let first = 
             name
             |> Signal.map (fun n -> n.First) 
-            |> bt.BindEditor "FirstName" (notNullOrWhitespace >> noSpaces >> notEqual "Reed") 
+            |> Signal.validate (notNullOrWhitespace >> noSpaces >> notEqual "Reed") 
+            |> bt.Bind "FirstName"
         let last = 
             name
             |> Signal.map (fun n -> n.Last) 
-            |> bt.BindEditor "LastName" (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
+            |> Signal.validate (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces)
+            |> bt.Bind "LastName"
 
         // Read only properties can optionally be validated as well, allowing for "entity level" validation
         Signal.map2 (fun f l -> f + " " + l) first last
         |> Signal.validate (notEqual "Reed Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> bt.BindSignal "FullName"
+        |> bt.Bind "FullName"
+        |> ignore
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
@@ -40,7 +43,7 @@ module VM =
             Signal.notEqual name name'
             |> Signal.both bt.Valid
         let okCommand = Command.create canExecute
-        okCommand |> bt.BindCommand "OkCommand"                
+        okCommand |> bt.Constant "OkCommand"                
 
         let nameOut = Mutable.create name.Value
 

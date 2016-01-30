@@ -14,6 +14,7 @@ do ()
 type internal IValueHolder =
     abstract member GetValue : unit -> obj
     abstract member SetValue : obj -> unit
+    abstract member ReadOnly : bool
 
 type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget() as self =
     inherit BindingTargetBase()
@@ -25,23 +26,19 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
 
     let makePD name = BindingTargetPropertyDescriptor(name) :> PropertyDescriptor
 
-    let makeEditIV (prop : IMutatable<'a>) = 
+    let makeReadWriteIV (prop : IMutatable<'a>) = 
         { 
             new IValueHolder with 
                 member __.GetValue() = box prop.Value
-                member __.SetValue(v) = prop.Value <- unbox v         
+                member __.SetValue(v) = prop.Value <- unbox v     
+                member __.ReadOnly = false    
         }
-    let makeSignalIV (prop : ISignal<'a>) = 
+    let makeReadOnlyIV getValue = 
         { 
             new IValueHolder with 
-                member __.GetValue() = box prop.Value
-                member __.SetValue(v) = ()
-        }
-    let makeCommandIV (prop : ICommand) = 
-        { 
-            new IValueHolder with 
-                member __.GetValue() = box prop
+                member __.GetValue() = box <| getValue()
                 member __.SetValue(_) = ()
+                member __.ReadOnly = true
         }
 
     member internal __.CustomProperties = customProps
@@ -50,13 +47,13 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         let editSource = Mutable.create signal.Value
         Signal.Subscription.copyTo editSource signal
         |> this.TrackDisposable
-        customProps.Add(name, (makePD name, makeEditIV editSource))
+        customProps.Add(name, (makePD name, makeReadWriteIV editSource))
         editSource :> ISignal<'a>
     override __.AddReadOnlyProperty<'a> name (signal : ISignal<'a>) =
-        customProps.Add(name, (makePD name, makeSignalIV signal))   
+        customProps.Add(name, (makePD name, makeReadOnlyIV (fun _ -> signal.Value)))   
 
-    override __.AddCommand name command =        
-        customProps.Add(name, (makePD name, makeCommandIV command))
+    override __.AddConstantProperty name constant =        
+        customProps.Add(name, (makePD name, makeReadOnlyIV (fun _ -> constant)))
 
 /// [omit]
 /// Internal type used to allow dynamic binding targets to be generated.        

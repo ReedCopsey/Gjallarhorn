@@ -15,7 +15,7 @@ type TestBindingTarget() =
         Signal.map id value
     override __.AddReadOnlyProperty<'a> name (view : ISignal<'a>) =
         ()
-    override __.AddCommand name comm =
+    override __.AddConstantProperty<'a> name (value : 'a) =
         ()
 type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()
@@ -85,7 +85,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackSignal "Test" value
+        ibt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
     
@@ -100,7 +100,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackSignal "Test" value
+        ibt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
         value.Value <- 2
@@ -112,7 +112,7 @@ type BindingTarget() =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingTarget()
-        dynamicVm.BindSignal "Test" v2
+        dynamicVm.Bind "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
     
@@ -184,8 +184,14 @@ type BindingTarget() =
             Bind.create()
             |> Bind.watch "Full" full
 
-        let first' = dynamicVm.BindEditor "First" notNullOrWhitespace first
-        let last' = dynamicVm.BindEditor "Last" notNullOrWhitespace last            
+        let first' = 
+            first
+            |> Signal.validate notNullOrWhitespace
+            |> dynamicVm.Bind "First"
+        let last' = 
+            last
+            |> Signal.validate notNullOrWhitespace
+            |> dynamicVm.Bind "Last"
             
 
         let obs = PropertyChangedObserver(dynamicVm)    

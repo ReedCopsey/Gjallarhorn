@@ -91,8 +91,8 @@ type BindingTargetBase() as self =
         errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
         |> disposables.Add
 
-        (self :> IBindingTarget).TrackSignal "IsValid" isValid
-        (self :> IBindingTarget).TrackSignal "OperationExecuting" executionTracker
+        (self :> IBindingTarget).TrackObservable "IsValid" isValid
+        (self :> IBindingTarget).TrackObservable "OperationExecuting" executionTracker
 
     /// Used by commanding to track executing operations
     member __.ExecutionTracker = executionTracker
@@ -113,33 +113,28 @@ type BindingTargetBase() as self =
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
 
+    abstract AddConstantProperty<'a> : string -> 'a -> unit
     abstract AddReadOnlyProperty<'a> : string -> ISignal<'a> -> unit
     abstract AddReadWriteProperty<'a> : string -> ISignal<'a> -> ISignal<'a>
-    abstract AddCommand : string -> ICommand -> unit
-
-    member this.BindEditor<'a> name validator (signal : ISignal<'a>) =
-        bt().TrackSignal name signal
-        let result = this.AddReadWriteProperty name signal
-
-        let validated = 
-            result
-            |> Signal.validate validator
-
-        bt().TrackValidator name validated.ValidationResult
-
-        validated :> ISignal<'a>
     
     /// Add a binding target for a signal with a given name
-    member this.BindSignal<'a> name (signal : ISignal<'a>) =
-        bt().TrackSignal name signal
+    member this.Bind<'a> name (signal : ISignal<'a>) =
+        bt().TrackObservable name signal
+        let result = this.AddReadWriteProperty name signal
+        match signal with
+        | :? Validation.IValidatedSignal<'a> as validator ->
+            (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
+        | _ -> ()
+
+        result
+
+    member this.Watch<'a> name (signal : ISignal<'a>) =
+        bt().TrackObservable name signal
         this.AddReadOnlyProperty name signal
         match signal with
         | :? Validation.IValidatedSignal<'a> as validator ->
-            (bt()).TrackValidator name validator.ValidationResult
+            (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
         | _ -> ()
-
-    /// Add a binding target for a command with a given name
-    member this.BindCommand = this.AddCommand
 
     interface INotifyDataErrorInfo with
         member __.GetErrors name =             
@@ -160,22 +155,22 @@ type BindingTargetBase() as self =
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
         member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
 
-        member this.BindEditor name validator signal = this.BindEditor name validator signal 
-        member this.BindSignal name signal = this.BindSignal name signal
-        member this.BindCommand name command = this.BindCommand name command
+        member this.Bind name signal = this.Bind name signal
+        member this.Watch name signal = this.Watch name signal
+        member this.Constant name value = this.AddConstantProperty name value
         member this.TrackDisposable disposable = this.TrackDisposable disposable
 
-        member __.TrackSignal name signal =
-            signal
-            |> Signal.Subscription.create (fun _ -> raisePropertyChanged name)
+        member __.TrackObservable name observable =
+            observable
+            |> Observable.subscribe (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
-        member __.TrackValidator name validator =
+        member __.TrackValidator name current validator =
             validator
-            |> Signal.Subscription.create (fun result -> updateErrors name result)
+            |> Observable.subscribe (fun result -> updateErrors name result)
             |> disposables.Add
 
-            updateErrors name validator.Value
+            updateErrors name current 
 
     interface System.IDisposable with
         member __.Dispose() = disposables.Dispose()
@@ -192,12 +187,12 @@ module Bind =
        
     /// Add a watched signal (one way property) to a binding target by name
     let watch name signal (target : #IBindingTarget) =
-        target.BindSignal name signal
+        target.Bind name signal |> ignore
         target
 
     /// Add a command (one way property) to a binding target by name
     let command name command (target : #IBindingTarget) =
-        target.BindCommand name command
+        target.Constant name command
         target
 
     /// A computational expression builder for a binding target
