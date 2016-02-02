@@ -7,11 +7,14 @@ open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
 
 type NameModel = { First : string ; Last : string }
+with
+    override this.ToString() =
+        sprintf "Name: [%s] [%s]" this.First this.Last
 
 module VM =
     let createMainViewModel (nameIn : IObservable<NameModel>) =
         // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
-        let bt = Bind.create()
+        let bt = Bind.createSubject ()
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
         let name = 
@@ -29,8 +32,7 @@ module VM =
         // Read only properties can optionally be validated as well, allowing for "entity level" validation
         Signal.map2 (fun f l -> f + " " + l) first last
         |> Signal.validate (notEqual "Reed Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> bt.Bind "FullName"
-        |> ignore
+        |> bt.Watch "FullName"        
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
@@ -46,21 +48,18 @@ module VM =
         // Change the following to automatically push back all changes to 
         // source "name" mutable without requiring the button click
         let pushAutomatically = false
-        let nameOut =
-            match pushAutomatically with
-            | true ->
-                // To push automatically, we create a mutable, and push values into it on all valid changes
-                let nameOut' = Mutable.create name.Value
-                name'
-                |> Signal.filter (fun _ -> bt.IsValid)
-                |> Signal.Subscription.copyTo nameOut'
-                |> bt.AddDisposable
-                nameOut' :> ISignal<NameModel>
-            | false ->
-                // In this case, we can use our command to map the right value out when it's clicked
-                okCommand
-                |> Signal.map (fun _ -> name'.Value)
+        match pushAutomatically with
+        | true ->
+            // To push automatically, we output the signal whenever it's valid as an observable
+            name'
+            |> Signal.filter (fun _ -> bt.IsValid)
+            |> bt.OutputObservable
+        | false ->
+            // In this case, we can use our command to map the right value out when it's clicked
+            okCommand
+            |> Signal.map (fun _ -> name'.Value)
+            |> bt.OutputObservable
 
-        // Return the binding target for use as a View Model
-        bt, nameOut
+        // Return the binding subject for use as a View Model
+        bt
 
