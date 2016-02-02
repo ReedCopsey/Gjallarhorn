@@ -53,11 +53,12 @@ type ExecutionTracker() as self =
         
 [<AbstractClass>]
 /// Base class for binding targets, used by platform specific libraries to share implementation details
-type BindingTargetBase() as self =
+type BindingTargetBase<'b>() as self =
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
     let executionTracker = ExecutionTracker()
     let isValid = Mutable.create true
+    let output = Mutable.create Unchecked.defaultof<'b>
 
     let errors = System.Collections.Generic.Dictionary<string, string list>()
 
@@ -123,6 +124,9 @@ type BindingTargetBase() as self =
 
         [<CLIEvent>]
         member __.ErrorsChanged = errorsChanged.Publish
+
+    interface System.IObservable<'b> with
+        member __.Subscribe obs = output.Subscribe(obs)
 
     interface IBindingTarget with
         member this.IsValid with get() = this.IsValid
@@ -196,19 +200,26 @@ type BindingTargetBase() as self =
             bt().Constant name command
             command
 
+    interface IBindingSubject<'b> with
+        member __.OutputValue value = output.Value <- value
+
+        member __.OutputObservable obs =
+            let sub = obs.Subscribe(fun v -> output.Value <- v)
+            disposables.Add sub
+
     interface System.IDisposable with
         member __.Dispose() = disposables.Dispose()
 
 /// Functions to work with binding targets     
 module Bind =
-    let mutable private creationFunction : unit -> IBindingTarget = (fun _ -> failwith "Platform targets not installed")
+    let mutable private creationFunction : System.Type -> IBindingTarget = (fun _ -> failwith "Platform targets not installed")
 
     module Internal =
         let installCreationFunction f = creationFunction <- f
 
     /// Create a binding target for the installed platform
     let create () =
-        creationFunction()    
+        creationFunction typeof<System.Object>
       
     let edit name signal (target : IBindingTarget) =
         target.Bind name signal

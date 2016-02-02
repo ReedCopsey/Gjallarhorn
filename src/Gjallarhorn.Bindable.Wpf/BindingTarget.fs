@@ -16,8 +16,11 @@ type internal IValueHolder =
     abstract member SetValue : obj -> unit
     abstract member ReadOnly : bool
 
-type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget() as self =
-    inherit BindingTargetBase()
+type internal IPropertyBag =
+    abstract member CustomProperties : Dictionary<string,PropertyDescriptor * IValueHolder>
+
+type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget<'b>() as self =
+    inherit BindingTargetBase<'b>()    
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
 
@@ -40,13 +43,14 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
                 member __.SetValue(_) = ()
                 member __.ReadOnly = true
         }
-
-    member internal __.CustomProperties = customProps
     
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         customProps.Add(name, (makePD name, makeReadWriteIV getter setter))        
     override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
         customProps.Add(name, (makePD name, makeReadOnlyIV getter))   
+
+    interface IPropertyBag with
+        member __.CustomProperties = customProps
 
 /// [omit]
 /// Internal type used to allow dynamic binding targets to be generated.        
@@ -54,7 +58,7 @@ and BindingTargetTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
 
     let mutable td = null, null
-    new() = BindingTargetTypeDescriptorProvider(TypeDescriptor.GetProvider(typeof<DesktopBindingTarget>))
+    new() = BindingTargetTypeDescriptorProvider(TypeDescriptor.GetProvider(typedefof<DesktopBindingTarget<_>>))
 
     override __.GetTypeDescriptor(objType, inst) =
         match td with
@@ -62,11 +66,11 @@ and BindingTargetTypeDescriptorProvider(parent) =
             desc
         | _ ->
             let parent = base.GetTypeDescriptor(objType, inst)
-            let desc = BindingTargetTypeDescriptor(parent, inst :?> DesktopBindingTarget) :> ICustomTypeDescriptor
+            let desc = BindingTargetTypeDescriptor(parent, inst :?> IPropertyBag) :> ICustomTypeDescriptor
             td <- desc, inst
             desc
 
-and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : DesktopBindingTarget) =
+and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : IPropertyBag) =
     inherit CustomTypeDescriptor(parent)
 
     override __.GetProperties() =
@@ -83,7 +87,7 @@ and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : Des
 and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     inherit PropertyDescriptor(name, [| |])
 
-    override __.ComponentType = typeof<DesktopBindingTarget>
+    override __.ComponentType = typeof<IPropertyBag>
     override __.PropertyType = typeof<'a>
     override __.Description = String.Empty
     override __.IsBrowsable = true
@@ -91,7 +95,7 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     override __.CanResetValue(o) = false
     override __.GetValue(comp) =
         match comp with
-        | :? DesktopBindingTarget as dvm ->
+        | :? IPropertyBag as dvm ->
             let prop = dvm.CustomProperties.[name]
             let vh = snd prop
             vh.GetValue()
@@ -99,7 +103,7 @@ and internal BindingTargetPropertyDescriptor<'a>(name : string) =
     override __.ResetValue(comp) = ()
     override __.SetValue(comp, v) =
         match comp with
-        | :? DesktopBindingTarget as dvm ->
+        | :? IPropertyBag as dvm ->
             let prop = dvm.CustomProperties.[name]
             let vh = snd prop
             vh.SetValue(v)
@@ -122,9 +126,13 @@ module Wpf =
 
         SynchronizationContext.Current
 
+    let private creation (typ : System.Type) =
+        let targetType = typedefof<Gjallarhorn.Bindable.Wpf.DesktopBindingTarget<_>>.MakeGenericType([|typ|])
+        System.Activator.CreateInstance(targetType) 
+
     /// Installs WPF targets for binding into Gjallarhorn
     let install installSynchronizationContext =
-        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> new Gjallarhorn.Bindable.Wpf.DesktopBindingTarget() :> Gjallarhorn.Bindable.IBindingTarget)
+        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun t -> (creation t) :?> Gjallarhorn.Bindable.IBindingTarget )
 
         match installSynchronizationContext with
         | true -> installAndGetSynchronizationContext ()

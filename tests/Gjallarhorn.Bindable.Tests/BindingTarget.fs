@@ -8,8 +8,8 @@ open System.ComponentModel
 open NUnit.Framework
 open Bind
 
-type TestBindingTarget() =
-    inherit BindingTargetBase()
+type TestBindingTarget<'b>() =
+    inherit BindingTargetBase<'b>()
 
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         ()
@@ -63,7 +63,7 @@ type BindingTarget() =
 
     [<Test>]
     member __.``BindingTarget raises property changed`` () =
-        use bt = new TestBindingTarget()
+        use bt = new TestBindingTarget<obj>()
 
         let obs = PropertyChangedObserver(bt)    
 
@@ -76,7 +76,7 @@ type BindingTarget() =
 
     [<Test>]
     member __.``BindingTarget\TrackView tracks a view change`` () =
-        use bt = new TestBindingTarget()
+        use bt = new TestBindingTarget<obj>()
 
         let value = Mutable.create 0
         let obs = PropertyChangedObserver(bt)    
@@ -91,7 +91,7 @@ type BindingTarget() =
 
     [<Test>]
     member __.``BindingTarget\TrackView ignores view changes with same value`` () =
-        use bt = new TestBindingTarget()
+        use bt = new TestBindingTarget<obj>()
 
         let value = Mutable.create 0
         let obs = PropertyChangedObserver(bt)    
@@ -109,7 +109,7 @@ type BindingTarget() =
     member __.``BindingTarget\BindView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
-        use dynamicVm = new DesktopBindingTarget() :> IBindingTarget
+        use dynamicVm = new DesktopBindingTarget<obj>() :> IBindingTarget
         dynamicVm.Bind "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    

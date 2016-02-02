@@ -24,7 +24,7 @@ type IBindingTarget =
     abstract member AddDisposable : System.IDisposable -> unit
 
     /// Adds a disposable to track from the second element of a tuple, and returns the first element.  Used with Signal subscription functions.
-    abstract member AddDisposable2<'a> : ('a * System.IDisposable) -> 'a
+    abstract member AddDisposable2<'a> : ('a * System.IDisposable) -> 'a    
 
     /// Trigger the PropertyChanged event for a specific property
     abstract RaisePropertyChanged : string -> unit
@@ -59,6 +59,15 @@ type IBindingTarget =
     /// Creates a new command given a binding name and signal for tracking execution
     abstract CommandChecked : string -> ISignal<bool> -> ITrackingCommand<CommandState>
 
+/// Interface used to manage a typed binding target which outputs changes via IObservable
+type IBindingSubject<'b> =
+    inherit IBindingTarget
+    inherit System.IObservable<'b>
 
+    /// Outputs a value through it's observable implementation
+    abstract member OutputValue : 'b -> unit
+
+    /// Outputs values by subscribing to changes on an observable
+    abstract member OutputObservable : IObservable<'b> -> unit
 
 
