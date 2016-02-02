@@ -179,23 +179,31 @@ module Signal =
         map2 (fun a b -> a || b) a b
 
     type internal ValidatorMappingSignal<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : ISignal<'a>) as self =
-        let dependencies = Dependencies.create [| valueProvider |] self
+        let v = Mutable.create valueProvider.Value
+
+        let dependencies = Dependencies.create [| valueProvider ; v |] self
 
         let validateCurrent value =
             value
             |> validate 
             |> validator
             |> Validation.result
-        let validationResult = 
-            valueProvider
-            |> map validateCurrent
+        let validationResult = Mutable.create (validateCurrent v.Value)
+
+        member private this.Signal() = dependencies.Signal this
+
+        member private this.UpdateAndSetValue () =
+            let signal = false = System.Collections.Generic.EqualityComparer<_>.Default.Equals(v.Value, valueProvider.Value)
+            validationResult.Value <- validateCurrent valueProvider.Value
+            v.Value <- valueProvider.Value
+            if signal then this.Signal()
 
         override this.Finalize() =
             (this :> IDisposable).Dispose()
             GC.SuppressFinalize this        
 
         interface IValidatedSignal<'a> with
-            member __.ValidationResult with get() = validationResult
+            member __.ValidationResult with get() = validationResult :> ISignal<_>
 
             member __.IsValid = isValid validationResult.Value
 
@@ -212,11 +220,13 @@ module Signal =
             member __.Untrack dep = dependencies.Remove dep
 
         interface ISignal<'a> with
-            member __.Value with get() = valueProvider.Value
+            member this.Value 
+                with get() = 
+                    this.UpdateAndSetValue()
+                    v.Value
 
         interface IDependent with
-            member this.RequestRefresh _ =             
-                dependencies.Signal this
+            member this.RequestRefresh _ = this.Signal()
             member __.HasDependencies with get() = dependencies.HasDependencies
 
         interface IDisposable with

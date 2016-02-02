@@ -33,11 +33,14 @@ let main _ =
     // The context is only required here to allow our async workflow to put ourselves onto the UI thread properly
     let uiContext = Gjallarhorn.Wpf.install true
 
+    // Create application (before other windows) - this allows application-wide sytles to exist when other objects are created
+    let app = App().Root
+
     // This simulates stuff happening outside of the GUI - 
     // Note that the UI updates every 5 seconds automatically
     let rec backgroundUpdates () = 
         async {
-            do! Async.Sleep 5000
+            do! Async.Sleep 10000
             do! Async.SwitchToContext uiContext
 
             let current = Model.current()
@@ -57,12 +60,12 @@ let main _ =
     use _sub = Model.nameHistory |> Observable.subscribe (fun n -> printfn "Names in \"model\" [%d]: Recent [%s %s]" (List.length n) n.Head.First n.Head.Last)
 
     // Create our viewmodel
-    let vm, updates = VM.createMainViewModel Model.newNameStream
+    let vm = VM.createMainViewModel Model.newNameStream
 
     // Copy updates out of our vm into our model
     // This could easily track history, etc, if desired
-    use _sub2 = updates |> Signal.Subscription.create Model.add
+    use _sub2 = vm |> Observable.subscribe Model.add
 
     let window = Views.MainWindow().Root
     window.DataContext <- vm
-    App().Root.Run window
+    app.Run window

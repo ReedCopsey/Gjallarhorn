@@ -195,16 +195,25 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, filter : 'a -> bo
 
     member private this.Signal() = dependencies.Signal this |> ignore
 
-    member private this.UpdateAndGetValue () =
-        match valueProvider with
-        | None -> ()
-        | Some provider ->
-            let value = provider.Value
-            if (filter(value)) then
-                if not <| EqualityComparer<'a>.Default.Equals(v, value) then
-                    v <- value
-                    this.Signal()
-        v
+    member private this.UpdateAndSetValue forceSignal =
+        let updated =
+            match valueProvider with
+            | None -> false
+            | Some provider ->
+                let value = provider.Value                
+                if (filter(value)) then
+                    System.Diagnostics.Debug.WriteLine("Filtering: {0}: True", [| box value |])                    
+                    if not <| EqualityComparer<'a>.Default.Equals(v, value) then
+                        v <- value
+                        true
+                    else
+                        false
+                else
+                    System.Diagnostics.Debug.WriteLine("Filtering: {0}: False", [| box value |])                    
+                    false
+        if updated || forceSignal then
+            this.Signal()        
+
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()
@@ -223,12 +232,14 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, filter : 'a -> bo
         member __.Untrack dep = dependencies.Remove dep
 
     interface ISignal<'a> with
-        member this.Value with get() = this.UpdateAndGetValue()
+        member this.Value 
+            with get() = 
+                this.UpdateAndSetValue false
+                v
 
     interface IDependent with
-        member this.RequestRefresh _ = 
-            this.UpdateAndGetValue()
-            |> ignore
+        member this.RequestRefresh _ = this.UpdateAndSetValue true
+            
         member __.HasDependencies with get() = dependencies.HasDependencies
                 
     interface IDisposable with

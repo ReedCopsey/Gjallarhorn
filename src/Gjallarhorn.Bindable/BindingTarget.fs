@@ -71,6 +71,7 @@ type BindingTargetBase<'b>() as self =
         raisePropertyChanged <| getPropertyNameFromExpression expr
 
     let updateErrors name (result : ValidationResult) =
+        System.Diagnostics.Debug.WriteLine("UpdateErrors: {0}:{1}", [| box name ; box (Validation.isValid result) |])
         match errors.ContainsKey(name), result with
         | false, Valid -> 
             ()        
@@ -137,16 +138,18 @@ type BindingTargetBase<'b>() as self =
         member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
 
         member this.Bind<'a> name signal = 
+            // make sure validation checks happen before edits are pushed
+            match signal with
+            | :? Validation.IValidatedSignal<'a> as validator ->
+                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
+            | _ -> ()
+
             let editSource = Mutable.create signal.Value
             Signal.Subscription.copyTo editSource signal
             |> disposables.Add 
 
             bt().TrackObservable name signal
             this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
-            match signal with
-            | :? Validation.IValidatedSignal<'a> as validator ->
-                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
-            | _ -> ()
 
             editSource :> ISignal<'a>
 
@@ -183,7 +186,7 @@ type BindingTargetBase<'b>() as self =
 
         member __.TrackValidator name current validator =
             validator
-            |> Observable.subscribe (fun result -> updateErrors name result)
+            |> Signal.Subscription.create (fun result -> updateErrors name result)
             |> disposables.Add
 
             updateErrors name current 
@@ -212,17 +215,26 @@ type BindingTargetBase<'b>() as self =
 
 /// Functions to work with binding targets     
 module Bind =
-    let mutable private creationFunction : System.Type -> IBindingTarget = (fun _ -> failwith "Platform targets not installed")
+    let mutable private createBindingTargetFunction : unit -> obj = (fun _ -> failwith "Platform targets not installed")
+    let mutable private createBindingSubjectFunction : System.Type -> obj = (fun _ -> failwith "Platform targets not installed")
 
     module Internal =
-        let installCreationFunction f = creationFunction <- f
+        let installCreationFunction fBT fBS = 
+            createBindingTargetFunction <- fBT
+            createBindingSubjectFunction <- fBS
 
     /// Create a binding target for the installed platform
-    let create () =
-        creationFunction typeof<System.Object>
-      
-    let edit name signal (target : IBindingTarget) =
-        target.Bind name signal
+    let createTarget () =
+        createBindingTargetFunction () :?> IBindingTarget
+
+    /// Create a binding subject for the installed platform
+    let createSubject<'a> () =
+        (createBindingSubjectFunction typeof<'a>) :?> IBindingSubject<'a>
+
+    /// Add a signal as an editor with validation, bound to a specific name
+    let edit name validator signal (target : IBindingTarget) =
+        target.Edit name validator signal
+
     /// Add a watched signal (one way property) to a binding target by name
     let watch name signal (target : IBindingTarget) =
         target.Watch name signal        
@@ -269,7 +281,7 @@ module Bind =
                 source
 
     /// Create and bind a binding target using a computational expression
-    let binding = Builder.Binding(create)
+    let binding = Builder.Binding(createTarget)
 
     /// Add bindings to an existing binding target using a computational expression
     let extend target = Builder.Binding((fun _ -> target))
