@@ -193,6 +193,7 @@ module Signal =
             |> ignore
         let dependencies = Dependencies.create [| valueProvider ; v |] self
 
+        /// TODO: Make this work like a map, but with the validated signal returning an anonymous type that does everything on the fly
 
         member private this.Signal() = dependencies.Signal this
 
