@@ -181,14 +181,18 @@ module Signal =
     type internal ValidatorMappingSignal<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : ISignal<'a>) as self =
         let v = Mutable.create valueProvider.Value
 
-        let dependencies = Dependencies.create [| valueProvider ; v |] self
-
         let validateCurrent value =
             value
             |> validate 
             |> validator
             |> Validation.result
         let validationResult = Mutable.create (validateCurrent v.Value)
+
+        do
+            valueProvider.Subscribe (fun _ -> self.UpdateAndSetValue())
+            |> ignore
+        let dependencies = Dependencies.create [| valueProvider ; v |] self
+
 
         member private this.Signal() = dependencies.Signal this
 
@@ -203,9 +207,30 @@ module Signal =
             GC.SuppressFinalize this        
 
         interface IValidatedSignal<'a> with
-            member __.ValidationResult with get() = validationResult :> ISignal<_>
+            member this.ValidationResult 
+                with get() = 
+                    { 
+                        new ISignal<ValidationResult> with
+                            member __.Value 
+                                with get() = 
+                                    this.UpdateAndSetValue()
+                                    validationResult.Value
+                        interface IObservable<ValidationResult> with
+                            member __.Subscribe obs = validationResult.Subscribe obs
+                        interface IDependent with
+                            member __.RequestRefresh v = 
+                                this.UpdateAndSetValue()
+                                validationResult.RequestRefresh v
+                            member __.HasDependencies = validationResult.HasDependencies
+                        interface ITracksDependents with
+                            member __.Track dep = validationResult.Track dep
+                            member __.Untrack dep = validationResult.Untrack dep
+                    }
 
-            member __.IsValid = isValid validationResult.Value
+            member this.IsValid 
+                with get() = 
+                    this.UpdateAndSetValue()
+                    isValid validationResult.Value
 
         interface IObservable<'a> with
             member __.Subscribe obs = 
@@ -226,7 +251,7 @@ module Signal =
                     v.Value
 
         interface IDependent with
-            member this.RequestRefresh _ = this.Signal()
+            member this.RequestRefresh _ = this.UpdateAndSetValue()
             member __.HasDependencies with get() = dependencies.HasDependencies
 
         interface IDisposable with

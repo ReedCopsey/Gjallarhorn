@@ -179,6 +179,10 @@ type BindingTargetBase<'b>() as self =
             disposables.Add(snd tuple)
             fst tuple
 
+        member __.ObservableToSignal<'a> (initial : 'a) obs =
+            Signal.Subscription.fromObservable initial obs
+            |> bt().AddDisposable2            
+
         member __.TrackObservable name observable =
             observable
             |> Observable.subscribe (fun _ -> raisePropertyChanged name)
