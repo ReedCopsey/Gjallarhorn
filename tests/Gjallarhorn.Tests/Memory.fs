@@ -81,25 +81,27 @@ module Memory =
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
     let ``View\cache allows source to be garbage collected`` start finish =
         let mutable value = Some(Mutable.create start)
+        // Note: Piping this instead of doing Some(...) causes this test to fail in *debug* builds
+        // From what I can tell, the F# compiler keeps the steps in piping on the stack, which doesn't 
+        // allow it to get cleaned up.  (Works in release either way)
+        let mutable view = Some(Signal.map id value.Value)                        
+     
+        let cached = view.Value |> Signal.cache
 
-        let mutable view = 
-            value.Value
-            |> Signal.map id
- 
-        let viewWr = WeakReference(view)
         let valueWr = WeakReference(value.Value)
+        let viewWr = WeakReference(view.Value)
 
-        view <- view |> Signal.cache
-    
         value.Value.Value <- finish
-
+        view <- None    
         value <- None
 
         GC.Collect()
+        GC.WaitForPendingFinalizers()
 
-        Assert.AreEqual(box finish, view.Value)
-        Assert.AreEqual(false, valueWr.IsAlive)
-        Assert.AreEqual(false, viewWr.IsAlive)
+        Assert.IsFalse(valueWr.IsAlive)
+        Assert.IsFalse(viewWr.IsAlive)
+
+        Assert.AreEqual(box finish, cached.Value)
 
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
     let ``View\cache allows source and view to be garbage collected`` start _ finish finalView =
@@ -116,8 +118,6 @@ module Memory =
         view <- None
         value <- None
 
-        GC.Collect()
-        GC.WaitForPendingFinalizers()
         GC.Collect()
 
         Assert.AreEqual(false, wrValue.IsAlive)

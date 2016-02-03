@@ -1,9 +1,10 @@
 ﻿namespace ViewModels
 
 open System
+open System.Threading
+
 open Gjallarhorn
 open Gjallarhorn.Bindable
-
 open Gjallarhorn.Validation
 
 type NameModel = { First : string ; Last : string }
@@ -51,7 +52,11 @@ module VM =
         match pushAutomatically with
         | true ->
             // To push automatically, we output the signal whenever it's valid as an observable
+            // Note that we reschedule it to guarantee that all validation is completed before
+            // the final signal is sent through.  This isn't a problem with the command approach,
+            // but guarantees our validation to always be up to date before it's queried in the filter
             name'
+            |> Signal.observeOn SynchronizationContext.Current
             |> Signal.filter (fun _ -> subject.IsValid)
             |> subject.OutputObservable
         | false ->

@@ -51,6 +51,8 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
         |> Signal.Subscription.create (fun _ -> self.RaiseCanExecuteChanged())    
         |> disposeTracker.Add
 
+    override this.Finalize() = (this :> IDisposable).Dispose()
+
     member this.RaiseCanExecuteChanged() =
         canExecuteChanged.Trigger(this, EventArgs.Empty)
 
@@ -68,19 +70,19 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
     interface ITrackingCommand<'a> 
     
     interface IObservable<'a> with
-        member __.Subscribe obs = 
-            dependencies.Add obs
+        member this.Subscribe obs = 
+            dependencies.Add (obs,this)
             { 
                 new IDisposable with
-                    member __.Dispose() = dependencies.Remove obs
+                    member __.Dispose() = dependencies.Remove (obs,this)
             }
 
     interface ITracksDependents with
-        member __.Track dep = dependencies.Add dep
-        member __.Untrack dep = dependencies.Remove dep
+        member this.Track dep = dependencies.Add (dep,this)
+        member this.Untrack dep = dependencies.Remove (dep,this)
 
     interface IDependent with
-        member __.RequestRefresh _ = ()
+        member __.RequestRefresh () = ()
         member __.HasDependencies = dependencies.HasDependencies
 
     interface ISignal<'a> with
@@ -97,7 +99,9 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
             this.HandleExecute(param)
 
     interface IDisposable with
-        member __.Dispose() = disposeTracker.Dispose()
+        member this.Dispose() = 
+            disposeTracker.Dispose()
+            GC.SuppressFinalize this
 
 /// Reports whether a command is executed, including the timestamp of the most recent execution
 type CommandState =

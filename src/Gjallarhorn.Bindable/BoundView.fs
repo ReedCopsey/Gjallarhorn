@@ -33,6 +33,9 @@ type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
     let subscription = 
         source.PropertyChanged.Subscribe handler
 
+    override this.Finalize() =
+        (this :> System.IDisposable).Dispose()
+
     // TODO: Change to use dependencies without SM?
     interface System.IObservable<'a> with
         member __.Subscribe obs = value.Subscribe obs
@@ -42,7 +45,7 @@ type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
         member __.Untrack dep = value.Untrack dep
 
     interface IDependent with
-        member __.RequestRefresh v = value.RequestRefresh v
+        member __.RequestRefresh () = value.RequestRefresh ()
         member __.HasDependencies with get() = value.HasDependencies
     interface ISignal<'a> with
         member __.Value with get() = value.Value
@@ -50,4 +53,5 @@ type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
     interface System.IDisposable with
         member this.Dispose() =
             subscription.Dispose()            
+            System.GC.SuppressFinalize this
             

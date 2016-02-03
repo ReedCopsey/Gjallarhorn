@@ -34,18 +34,18 @@ type ExecutionTracker() as self =
         handle
 
     interface System.IObservable<bool> with
-        member __.Subscribe obs = 
-            dependencies.Add obs
+        member this.Subscribe obs = 
+            dependencies.Add (obs,this)
             { 
                 new System.IDisposable with
-                    member __.Dispose() = dependencies.Remove obs
+                    member __.Dispose() = dependencies.Remove (obs,this)
             }
     interface ITracksDependents with
-        member __.Track dep = dependencies.Add dep
-        member __.Untrack dep = dependencies.Remove dep
+        member this.Track dep = dependencies.Add (dep,this)
+        member this.Untrack dep = dependencies.Remove (dep,this)
 
     interface IDependent with
-        member __.RequestRefresh _ = ()
+        member __.RequestRefresh () = ()
         member __.HasDependencies = dependencies.HasDependencies
 
     interface ISignal<bool> with
@@ -71,7 +71,6 @@ type BindingTargetBase<'b>() as self =
         raisePropertyChanged <| getPropertyNameFromExpression expr
 
     let updateErrors name (result : ValidationResult) =
-        System.Diagnostics.Debug.WriteLine("UpdateErrors: {0}:{1}", [| box name ; box (Validation.isValid result) |])
         match errors.ContainsKey(name), result with
         | false, Valid -> 
             ()        

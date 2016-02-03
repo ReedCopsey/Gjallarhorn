@@ -20,7 +20,7 @@ and
     /// A type which depends on a signal
     [<AllowNullLiteral>] IDependent =    
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
-    abstract member RequestRefresh : ISignal<'a> -> unit
+    abstract member RequestRefresh : unit -> unit
 
     /// Queries whether other dependencies are registered to this dependent
     abstract member HasDependencies : bool with get

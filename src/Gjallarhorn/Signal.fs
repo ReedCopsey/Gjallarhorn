@@ -6,6 +6,7 @@ open Gjallarhorn.Internal
 open Gjallarhorn.Validation
 
 open System
+open System.Collections.Generic
 
 /// Provides mechanisms for working with signals
 module Signal =
@@ -17,7 +18,7 @@ module Signal =
             new ISignal<'a> with
                 member __.Value = value
             interface IDependent with
-                member __.RequestRefresh _ = ()
+                member __.RequestRefresh () = ()
                 member __.HasDependencies with get() = false
             interface ITracksDependents with
                 member __.Track _ = ()
@@ -49,14 +50,13 @@ module Signal =
                         override this.Finalize() =
                             (this :?> IDisposable).Dispose()
                     interface IDependent with
-                        member __.RequestRefresh _ =
+                        member __.RequestRefresh () =
                             f(provider.Value)
                         member __.HasDependencies with get() = true
                     
                     interface IDisposable with
                         member this.Dispose() = 
-                            tracker.Untrack dependent
-                            GC.SuppressFinalize this
+                            tracker.Untrack dependent                            
                 }
             tracker.Track dependent
             dependent :?> IDisposable
@@ -178,86 +178,104 @@ module Signal =
     let either (a : ISignal<bool>) (b : ISignal<bool>) =
         map2 (fun a b -> a || b) a b
 
+    /// Creates a signal that schedules on a synchronization context
+    let observeOn ctx (signal : ISignal<'a>) =
+        new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
+                
     type internal ValidatorMappingSignal<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : ISignal<'a>) as self =
-        let v = Mutable.create valueProvider.Value
+        let dependencies = Dependencies.create [| valueProvider |] self
+        let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
+        let mutable valueProvider = Some(valueProvider)
 
         let validateCurrent value =
             value
             |> validate 
             |> validator
             |> Validation.result
-        let validationResult = Mutable.create (validateCurrent v.Value)
 
-        do
-            valueProvider.Subscribe (fun _ -> self.UpdateAndSetValue())
-            |> ignore
-        let dependencies = Dependencies.create [| valueProvider ; v |] self
+        let mutable lastValue = valueProvider.Value.Value
+        let mutable lastVaidation = validateCurrent lastValue
 
-        /// TODO: Make this work like a map, but with the validated signal returning an anonymous type that does everything on the fly
 
-        member private this.Signal() = dependencies.Signal this
+        member private this.Signal signalValidation signalValue = 
+            if signalValidation then validationDeps.Signal (this :> IValidatedSignal<'a>).ValidationResult
+            if signalValue then dependencies.Signal this
 
-        member private this.UpdateAndSetValue () =
-            let signal = false = System.Collections.Generic.EqualityComparer<_>.Default.Equals(v.Value, valueProvider.Value)
-            validationResult.Value <- validateCurrent valueProvider.Value
-            v.Value <- valueProvider.Value
-            if signal then this.Signal()
+        member private this.UpdateAndGetValue () =
+            let value () = DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
+            let value = value()
+            let signalValue, signalValidation =
+                if false = EqualityComparer<_>.Default.Equals(lastValue, value) then
+                    lastValue <- value
+                    
+                    let valid = validateCurrent value
+                    let signalV = valid <> lastVaidation
+                    lastVaidation <- valid
+                    true, signalV
+                else 
+                    false, false            
+            this.Signal signalValidation signalValue
+
+            lastValue
 
         override this.Finalize() =
-            (this :> IDisposable).Dispose()
-            GC.SuppressFinalize this        
+            (this :> IDisposable).Dispose()            
+
+        interface IObservable<'a> with
+            member this.Subscribe (obs : IObserver<'a>) : IDisposable = 
+                dependencies.Add (obs,this)
+                { 
+                    new IDisposable with
+                        member __.Dispose() = dependencies.Remove (obs,this)
+                }
 
         interface IValidatedSignal<'a> with
             member this.ValidationResult 
                 with get() = 
-                    { 
-                        new ISignal<ValidationResult> with
-                            member __.Value 
-                                with get() = 
-                                    this.UpdateAndSetValue()
-                                    validationResult.Value
-                        interface IObservable<ValidationResult> with
-                            member __.Subscribe obs = validationResult.Subscribe obs
-                        interface IDependent with
-                            member __.RequestRefresh v = 
-                                this.UpdateAndSetValue()
-                                validationResult.RequestRefresh v
-                            member __.HasDependencies = validationResult.HasDependencies
-                        interface ITracksDependents with
-                            member __.Track dep = validationResult.Track dep
-                            member __.Untrack dep = validationResult.Untrack dep
-                    }
+                    let rec result =
+                        { 
+                            new ISignal<ValidationResult> with
+                                member __.Value 
+                                    with get() = validateCurrent (self.UpdateAndGetValue())
+                            interface IObservable<ValidationResult> with
+                                member __.Subscribe obs = 
+                                    validationDeps.Add (obs,result)
+                                    {
+                                        new IDisposable with
+                                            member __.Dispose() = validationDeps.Remove (obs,result)
+                                    }
+
+                            interface IDependent with
+                                member __.RequestRefresh () = this.UpdateAndGetValue() |> ignore
+                                member __.HasDependencies = dependencies.HasDependencies || validationDeps.HasDependencies
+                            interface ITracksDependents with
+                                member __.Track dep = validationDeps.Add (dep,result)
+                                member __.Untrack dep = validationDeps.Remove (dep,result)
+                        }
+                    result
 
             member this.IsValid 
-                with get() = 
-                    this.UpdateAndSetValue()
-                    isValid validationResult.Value
-
-        interface IObservable<'a> with
-            member __.Subscribe obs = 
-                dependencies.Add obs
-                { 
-                    new IDisposable with
-                        member __.Dispose() = dependencies.Remove obs
-                }
+                with get() = isValid (validateCurrent (this.UpdateAndGetValue()))
 
         interface ITracksDependents with
-            member __.Track dep = dependencies.Add dep
-            member __.Untrack dep = dependencies.Remove dep
+            member this.Track dep = dependencies.Add (dep,this)
+            member this.Untrack dep = dependencies.Remove (dep,this)
 
         interface ISignal<'a> with
             member this.Value 
-                with get() = 
-                    this.UpdateAndSetValue()
-                    v.Value
+                with get() = this.UpdateAndGetValue()                    
 
         interface IDependent with
-            member this.RequestRefresh _ = this.UpdateAndSetValue()
-            member __.HasDependencies with get() = dependencies.HasDependencies
+            member this.RequestRefresh () = this.UpdateAndGetValue() |> ignore
+            member __.HasDependencies with get() = dependencies.HasDependencies || validationDeps.HasDependencies
 
         interface IDisposable with
-            member __.Dispose() =
-                dependencies.RemoveAll()
+            member this.Dispose() =
+                DisposeHelpers.dispose valueProvider false this
+                valueProvider <- None
+                validationDeps.RemoveAll (this :> IValidatedSignal<'a>).ValidationResult
+                dependencies.RemoveAll this
+                GC.SuppressFinalize this
 
     /// Validates a signal with a validation chain
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (signal : ISignal<'a>) =
