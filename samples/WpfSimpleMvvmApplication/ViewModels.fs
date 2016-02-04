@@ -1,7 +1,6 @@
 ﻿namespace ViewModels
 
 open System
-open System.Threading
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
@@ -37,31 +36,41 @@ module VM =
         // As the user types, this constantly updates
         let name' = Signal.map2 (fun f l -> {First = f; Last = l}) first last
 
+        // Create a "toggle" which we can use to toggle whether to push automatically to the backend
+        let pushAutomatically = Mutable.create false        
+        
+        // Bind it directly and push changes back to the input mutable
+        subject.BindDirect "PushAutomatically" pushAutomatically
+        
+        let pushManually = Signal.not pushAutomatically
+
         // Create a command that will only execute if
-        // 1) We're valid and 2) our name has changed from the input
+        // 1) We're valid, 2) we're not pusing automatically, and 3) our name has changed from the input
         let canExecute = 
             Signal.notEqual source name'
+            |> Signal.both pushManually
             |> Signal.both subject.Valid
         let okCommand = subject.CommandChecked "OkCommand" canExecute
 
-        // Change the following to automatically push back all changes to 
-        // ourself without requiring the button click
-        let pushAutomatically = false
-        match pushAutomatically with
-        | true ->
+        let automaticUpdates =
             // To push automatically, we output the signal whenever it's valid as an observable
             // Note that we use FilterValid to guarantee that all validation is completed before
             // the final signal is sent through.  This isn't a problem with the command approach,
             // but guarantees our validation to always be up to date before it's queried in the filter
             name'
             |> subject.FilterValid
-            |> subject.OutputObservable
-        | false ->
+            |> Signal.filterBy pushAutomatically
+        // Command-triggered updates
+        let commandUpdates =
             // In this case, we can use our command to map the right value out when it's clicked
-            // Since the command already is only enabled when we're valid, we don't need a filter here
+            // Since the command already is only enabled when we're valid, we don't need a validity filter here
             okCommand
+            |> Signal.filterBy pushManually 
             |> Signal.map (fun _ -> name'.Value)
-            |> subject.OutputObservable
+
+        // Combine our automatic and manual updates into one signal, and push them to the backing observable
+        Signal.combine automaticUpdates commandUpdates
+        |> subject.OutputObservable
 
         // Return the binding subject for use as a View Model
         subject

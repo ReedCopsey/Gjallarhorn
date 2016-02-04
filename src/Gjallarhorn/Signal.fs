@@ -18,7 +18,7 @@ module Signal =
             new ISignal<'a> with
                 member __.Value = value
             interface IDependent with
-                member __.RequestRefresh () = ()
+                member __.RequestRefresh _ = ()
                 member __.HasDependencies with get() = false
             interface ITracksDependents with
                 member __.Track _ = ()
@@ -50,7 +50,7 @@ module Signal =
                         override this.Finalize() =
                             (this :?> IDisposable).Dispose()
                     interface IDependent with
-                        member __.RequestRefresh () =
+                        member __.RequestRefresh _ =
                             f(provider.Value)
                         member __.HasDependencies with get() = true
                     
@@ -150,12 +150,20 @@ module Signal =
         let signal = new FilteredSignal<'a>(provider, predicate, false)
         signal :> ISignal<'a>
 
+    /// Filters the signal by using a separate bool signal
+    let filterBy condition input =
+        new IfSignal<_>(input, condition) :> ISignal<_>
+
     /// Need a description
     let choose (predicate : 'a -> 'b option) (provider : ISignal<'a>) =        
         let map = new MappingSignal<'a,'b option>(provider, predicate, false)
         let filter = new FilteredSignal<'b option>(map, (fun v -> v <> None), true)
         let signal = new MappingSignal<'b option, 'b>(filter, (fun opt -> opt.Value), true)
         signal :> ISignal<'b>
+
+    /// Combines two signals into a single signal.  The value from the second signal is used as the initial value of the result
+    let combine a b =
+        new CombineSignal<_>(a, b) :> ISignal<_>
 
     /// Creates a signal on two values that is true if both inputs are equal
     let equal a b =
@@ -245,7 +253,7 @@ module Signal =
                                     }
 
                             interface IDependent with
-                                member __.RequestRefresh () = this.UpdateAndGetValue() |> ignore
+                                member __.RequestRefresh _ = this.UpdateAndGetValue() |> ignore
                                 member __.HasDependencies = dependencies.HasDependencies || validationDeps.HasDependencies
                             interface ITracksDependents with
                                 member __.Track dep = validationDeps.Add (dep,result)
@@ -265,7 +273,7 @@ module Signal =
                 with get() = this.UpdateAndGetValue()                    
 
         interface IDependent with
-            member this.RequestRefresh () = this.UpdateAndGetValue() |> ignore
+            member this.RequestRefresh _ = this.UpdateAndGetValue() |> ignore
             member __.HasDependencies with get() = dependencies.HasDependencies || validationDeps.HasDependencies
 
         interface IDisposable with

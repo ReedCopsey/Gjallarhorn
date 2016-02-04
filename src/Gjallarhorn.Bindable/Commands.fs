@@ -82,7 +82,7 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
         member this.Untrack dep = dependencies.Remove (dep,this)
 
     interface IDependent with
-        member __.RequestRefresh () = ()
+        member __.RequestRefresh _ = ()
         member __.HasDependencies = dependencies.HasDependencies
 
     interface ISignal<'a> with

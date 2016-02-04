@@ -84,7 +84,7 @@ type internal Mutable<'a>(value : 'a) =
         member this.Track dep = this.Dependencies.Add (dep,this)
         member this.Untrack dep = this.Dependencies.Remove (dep,this)
     interface IDependent with
-        member __.RequestRefresh () = ()
+        member __.RequestRefresh _ = ()
         member this.HasDependencies with get() = this.Dependencies.HasDependencies
     interface ISignal<'a> with
         member __.Value with get() = v
@@ -129,7 +129,7 @@ type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 
         member this.Value with get() = this.UpdateAndGetValue ()
 
     interface IDependent with
-        member this.RequestRefresh () =             
+        member this.RequestRefresh _ =             
             this.UpdateAndGetValue ()
             |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
@@ -188,7 +188,7 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
-        member this.RequestRefresh () =
+        member this.RequestRefresh _ =
             this.UpdateAndGetValue()
             |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies
@@ -199,6 +199,117 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
             DisposeHelpers.dispose valueProvider2 false this
             valueProvider1 <- None
             valueProvider2 <- None
+            dependencies.RemoveAll this
+            GC.SuppressFinalize this
+
+type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) as self =
+    let dependencies = Dependencies.create [| valueProvider1 ; valueProvider2 |] self
+
+    let mutable lastValue = valueProvider2.Value
+    let mutable valueProvider1 = Some(valueProvider1)
+    let mutable valueProvider2 = Some(valueProvider2)
+
+    member private this.Signal() = dependencies.Signal this |> ignore
+
+    member private this.UpdateAndGetValue (updated : obj) =
+        let value () = 
+            if obj.ReferenceEquals(updated, valueProvider1.Value) then
+                DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
+            else
+                DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)            
+        if (valueProvider1.IsSome) then
+            let value = value()
+            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                lastValue <- value
+                this.Signal()
+        lastValue
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()        
+
+    interface IObservable<'a> with
+        member this.Subscribe obs = 
+            dependencies.Add (obs,this)
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove (obs,this)
+            }
+
+    interface ITracksDependents with
+        member this.Track dep = dependencies.Add (dep,this)
+        member this.Untrack dep = dependencies.Remove (dep,this)
+
+    interface ISignal<'a> with
+        member this.Value with get() = this.UpdateAndGetValue()
+
+    interface IDependent with
+        member this.RequestRefresh updated =
+            this.UpdateAndGetValue updated
+            |> ignore
+        member __.HasDependencies with get() = dependencies.HasDependencies
+
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose valueProvider1 false this
+            DisposeHelpers.dispose valueProvider2 false this
+            valueProvider1 <- None
+            valueProvider2 <- None
+            dependencies.RemoveAll this
+            GC.SuppressFinalize this
+
+type internal IfSignal<'a>(valueProvider : ISignal<'a>, conditionProvider : ISignal<bool>) as self =
+    let dependencies = Dependencies.create [| valueProvider ; conditionProvider |] self
+
+    let mutable lastValue = valueProvider.Value
+    let mutable valueProvider = Some(valueProvider)
+    let mutable conditionProvider = Some(conditionProvider)
+
+    member private this.Signal() = dependencies.Signal this |> ignore
+
+    member private this.UpdateAndGetValue (updated : obj) =
+        let value () = 
+            let condition = DisposeHelpers.getValue conditionProvider (fun _ -> this.GetType().FullName)            
+            if condition then
+                DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
+            else
+                lastValue
+                
+        let value = value()
+        if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            lastValue <- value
+            this.Signal()
+        lastValue
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()        
+
+    interface IObservable<'a> with
+        member this.Subscribe obs = 
+            dependencies.Add (obs,this)
+            { 
+                new IDisposable with
+                    member __.Dispose() = dependencies.Remove (obs,this)
+            }
+
+    interface ITracksDependents with
+        member this.Track dep = dependencies.Add (dep,this)
+        member this.Untrack dep = dependencies.Remove (dep,this)
+
+    interface ISignal<'a> with
+        member this.Value with get() = this.UpdateAndGetValue()
+
+    interface IDependent with
+        member this.RequestRefresh updated =
+            this.UpdateAndGetValue updated
+            |> ignore
+        member __.HasDependencies with get() = dependencies.HasDependencies
+
+    interface IDisposable with
+        member this.Dispose() =
+            DisposeHelpers.dispose valueProvider false this
+            DisposeHelpers.dispose conditionProvider false this
+            valueProvider <- None
+            conditionProvider <- None
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
@@ -251,7 +362,7 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, filter : 'a -> bo
                 v
 
     interface IDependent with
-        member this.RequestRefresh () = this.UpdateAndSetValue true
+        member this.RequestRefresh _ = this.UpdateAndSetValue true
             
         member __.HasDependencies with get() = dependencies.HasDependencies
                 
@@ -307,7 +418,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
         member this.Value with get() = this.UpdateAndGetValue()
 
     interface IDependent with
-        member this.RequestRefresh () =
+        member this.RequestRefresh _ =
             this.UpdateAndGetValue()
             |> ignore
         member __.HasDependencies with get() = dependencies.HasDependencies

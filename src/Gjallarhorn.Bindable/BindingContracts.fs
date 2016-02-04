@@ -48,6 +48,9 @@ type IBindingTarget =
     /// Add a binding target for a signal with a given name, and returns a signal of the user edits
     abstract Bind<'a> : string -> ISignal<'a> -> ISignal<'a>
 
+    /// Add a binding target for a mutable with a given name which directly pushes edits back to the mutable
+    abstract BindDirect<'a> : string -> IMutatable<'a> -> unit
+
     /// Add a binding target for a signal for editing with with a given name and validation, and returns a signal of the user edits
     abstract Edit<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'a> -> IValidatedSignal<'a>
 

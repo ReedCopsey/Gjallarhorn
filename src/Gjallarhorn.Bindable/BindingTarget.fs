@@ -49,7 +49,7 @@ type ExecutionTracker() as self =
         member this.Untrack dep = dependencies.Remove (dep,this)
 
     interface IDependent with
-        member __.RequestRefresh () = ()
+        member __.RequestRefresh _ = ()
         member __.HasDependencies = dependencies.HasDependencies
 
     interface ISignal<bool> with
@@ -140,6 +140,10 @@ type BindingTargetBase<'b>() as self =
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
         member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
+
+        member this.BindDirect<'a> name (mutatable : IMutatable<'a>) = 
+            bt().TrackObservable name mutatable 
+            this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
         member this.Bind<'a> name signal = 
             // make sure validation checks happen before edits are pushed
