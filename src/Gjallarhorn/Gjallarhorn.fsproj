@@ -49,6 +49,7 @@
     <Compile Include="CoreTypes.fs" />
     <Compile Include="Mutable.fs" />
     <Compile Include="Signal.fs" />
+    <Compile Include="Observable.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">12</MinimumVisualStudioVersion>

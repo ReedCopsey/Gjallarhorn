@@ -65,7 +65,7 @@ module VM =
             // In this case, we can use our command to map the right value out when it's clicked
             // Since the command already is only enabled when we're valid, we don't need a validity filter here
             okCommand
-            |> Signal.filterBy pushManually 
+            |> Observable.filterBy pushManually 
             |> Observable.map (fun _ -> name'.Value)
 
         // Combine our automatic and manual updates into one signal, and push them to the backing observable

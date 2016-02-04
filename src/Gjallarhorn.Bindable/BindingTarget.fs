@@ -185,7 +185,7 @@ type BindingTargetBase<'b>() as self =
         member this.FilterValid signal =
             signal
             |> Signal.observeOn uiCtx
-            |> Signal.filter (fun _ -> this.IsValid)
+            |> Observable.filter (fun _ -> this.IsValid)
 
         member this.Watch<'a> name (signal : ISignal<'a>) = 
             bt().TrackObservable name signal

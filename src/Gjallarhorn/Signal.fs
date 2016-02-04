@@ -144,20 +144,28 @@ module Signal =
     let map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 = 
         let f1, bc = lift f v1 v2 v3
         map9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
-
-    /// Filters the signal, so only values matching the predicate are cached and propogated onwards
-    let filter (predicate : 'a -> bool) (provider : ISignal<'a>) =
-        let signal = new FilteredSignalToObservable<'a>(provider, predicate, false)
-        signal :> IObservable<'a>
+    
+    /// Filters the signal, so only values matching the predicate are cached and propogated onwards. 
+    /// If the provider's value doesn't match the predicate, the resulting signal begins with the provided defaultValue.
+    let filter (predicate : 'a -> bool) defaultValue (provider : ISignal<'a>) =
+        match predicate(defaultValue) with
+        | true ->
+            let signal = new FilteredSignal<'a>(provider, defaultValue, predicate, false)
+            signal :> ISignal<'a>
+        | false ->
+            let exMsg = sprintf "predicate(%A) returns false. The provided defaultValue must return true with the provided predicate." defaultValue
+            raise <| ArgumentException(exMsg, "defaultValue")
 
     /// Filters the signal by using a separate bool signal
-    let filterBy condition input =
-        new IfSignal<_>(input, condition) :> IObservable<_>
+    /// If the condition's Value is initially false, the resulting signal begins with the provided defaultValue.
+    let filterBy condition defaultValue input =
+        new IfSignal<_>(input, defaultValue, condition) :> IObservable<_>
 
-    /// Need a description
-    let choose (predicate : 'a -> 'b option) (provider : ISignal<'a>) =        
-        let map = new MappingSignal<'a,'b option>(provider, predicate, false)
-        let filter = new FilteredSignalToObservable<'b option>(map, (fun v -> not(v.IsNone)), true) :> IObservable<'b option>
+    // TODO: Provide default - write custom ChooseSignal
+    /// Returns an observable which is the projection of the input signal using the given function. All observations which return
+    let choose (fn : 'a -> 'b option) (provider : ISignal<'a>) =        
+        let map = new MappingSignal<'a,'b option>(provider, fn, false)
+        let filter = new FilteredSignal<'b option>(map, None, (fun v -> not(v.IsNone)), true) :> IObservable<'b option>
         filter 
         |> Observable.map (fun opt -> opt.Value)
 

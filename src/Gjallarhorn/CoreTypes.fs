@@ -257,10 +257,15 @@ type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : I
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
-type internal IfSignal<'a>(valueProvider : ISignal<'a>, conditionProvider : ISignal<bool>) as self =
+type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) as self =
     let dependencies = Dependencies.create [| valueProvider ; conditionProvider |] self
 
-    let mutable lastValue = valueProvider.Value
+    let mutable lastValue = 
+        if conditionProvider.Value then
+            valueProvider.Value
+        else
+            initialValue
+
     let mutable valueProvider = Some(valueProvider)
     let mutable conditionProvider = Some(conditionProvider)
 
@@ -313,10 +318,14 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, conditionProvider : ISig
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
-type internal FilteredSignalToObservable<'a> (valueProvider : ISignal<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
+type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
 
-    let mutable v = valueProvider.Value
+    let mutable v = 
+        if filter(valueProvider.Value) then
+            valueProvider.Value
+        else
+            initialValue
 
     let mutable valueProvider = Some(valueProvider)    
 

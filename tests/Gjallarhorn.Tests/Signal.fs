@@ -119,9 +119,8 @@ let ``Signal\filter doesn't propogate inappropriate changes`` () =
     let view = Signal.map (fun i -> 10*i) v
 
     let filter = 
-        Signal.filter (fun i -> i < 100) view
-        |> Signal.Subscription.fromObservable view.Value
-        |> fst
+        view 
+        |> Signal.filter (fun i -> i < 100) view.Value
 
     Assert.AreEqual(10, filter.Value)
 
