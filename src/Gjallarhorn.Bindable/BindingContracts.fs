@@ -61,7 +61,7 @@ type IBindingTarget =
     abstract Watch<'a> : string -> ISignal<'a> -> unit
 
     /// Filter a signal to only output when we're valid
-    abstract FilterValid<'a> : ISignal<'a> -> ISignal<'a>
+    abstract FilterValid<'a> : ISignal<'a> -> IObservable<'a>
 
     /// Add a readonly binding target for a constant value with a given name
     abstract Constant<'a> : string -> 'a -> unit

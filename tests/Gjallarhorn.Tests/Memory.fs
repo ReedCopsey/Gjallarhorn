@@ -14,7 +14,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
     [<Test>]
-    let ``View\subscribe then GC removes tracking`` () =
+    let ``Signal\subscribe then GC removes tracking`` () =
         let value = Mutable.create 42
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
@@ -32,7 +32,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
     
     [<Test>]
-    let ``View\map doesn't cause tracking`` () =
+    let ``Signal\map doesn't cause tracking`` () =
         let value = Mutable.create 42
         let view = Signal.map (fun v -> v.ToString()) value
 
@@ -40,7 +40,7 @@ module Memory =
         Assert.AreEqual(false, view.HasDependencies)
 
     [<Test>]
-    let ``View\subscribe causes tracking`` () =
+    let ``Signal\subscribe causes tracking`` () =
         let value = Mutable.create 42
         let view = Signal.map (fun v -> v.ToString()) value
 
@@ -52,7 +52,7 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked view)
 
     [<Test>]
-    let ``View\subscribe disposal stops tracking`` () =
+    let ``Signal\subscribe disposal stops tracking`` () =
         let value = Mutable.create 42
         let view = Signal.map (fun v -> v.ToString()) value
 
@@ -79,7 +79,7 @@ module Memory =
         Assert.AreEqual(false, wr.IsAlive)
 
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
-    let ``View\cache allows source to be garbage collected`` start finish =
+    let ``Signal\cache allows source to be garbage collected`` start finish =
         let mutable value = Some(Mutable.create start)
         // Note: Piping this instead of doing Some(...) causes this test to fail in *debug* builds
         // From what I can tell, the F# compiler keeps the steps in piping on the stack, which doesn't 
@@ -104,7 +104,7 @@ module Memory =
         Assert.AreEqual(box finish, cached.Value)
 
     [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
-    let ``View\cache allows source and view to be garbage collected`` start _ finish finalView =
+    let ``Signal\cache allows source and view to be garbage collected`` start _ finish finalView =
         let mutable value = Some(Mutable.create start)
         let mutable view = Some(Signal.map (fun v -> v.ToString()) value.Value)
 

@@ -1,4 +1,4 @@
-module Gjallarhorn.Tests.View
+module Gjallarhorn.Tests.Signal
 
 open Gjallarhorn
 // open Gjallarhorn.View.Operators
@@ -7,13 +7,13 @@ open System
 open NUnit.Framework
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
-let ``View\constant constructs with proper value`` start =
+let ``Signal\constant constructs with proper value`` start =
     let value = Signal.constant start
 
     Assert.AreEqual(box start, value.Value)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
-let ``View\copyTo copies across proper values`` start finish =
+let ``Signal\copyTo copies across proper values`` start finish =
     let value = Mutable.create start
 
     let view = Mutable.create Unchecked.defaultof<'a>
@@ -31,7 +31,7 @@ let ``View\copyTo copies across proper values`` start finish =
     Assert.AreEqual(box finish, view.Value)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartToString")>]
-let ``View\map constructs from mutable`` start finish =
+let ``Signal\map constructs from mutable`` start finish =
     let value = Mutable.create start
     let view = 
         value 
@@ -40,7 +40,7 @@ let ``View\map constructs from mutable`` start finish =
     Assert.AreEqual(box view.Value, finish)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesPairToString")>]
-let ``View\map2 constructs from mutables`` start1 start2 finish =
+let ``Signal\map2 constructs from mutables`` start1 start2 finish =
     let v1 = Mutable.create start1
     let v2 = Mutable.create start2
     let map i j = i.ToString() + "," + j.ToString()
@@ -114,11 +114,14 @@ let ``Cached View updates with View`` start initialView finish finalView =
     Assert.AreEqual(backView.Value, finish)
 
 [<Test>]
-let ``View\filter doesn't propogate inappropriate changes`` () =
+let ``Signal\filter doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
     let view = Signal.map (fun i -> 10*i) v
 
-    let filter = Signal.filter (fun i -> i < 100) view
+    let filter = 
+        Signal.filter (fun i -> i < 100) view
+        |> Signal.Subscription.fromObservable view.Value
+        |> fst
 
     Assert.AreEqual(10, filter.Value)
 
@@ -129,11 +132,14 @@ let ``View\filter doesn't propogate inappropriate changes`` () =
     Assert.AreEqual(50, filter.Value)
 
 [<Test>]
-let ``View\choose doesn't propogate inappropriate changes`` () =
+let ``Signal\choose doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
     let view = Signal.map (fun i -> 10*i) v
 
-    let filter = Signal.choose (fun i -> if i < 100 then Some(i) else None) view
+    let filter = 
+        Signal.choose (fun i -> if i < 100 then Some(i) else None) view
+        |> Signal.Subscription.fromObservable view.Value
+        |> fst
 
     Assert.AreEqual(10, filter.Value)
 
@@ -144,7 +150,7 @@ let ``View\choose doesn't propogate inappropriate changes`` () =
     Assert.AreEqual(50, filter.Value)   
 
 [<Test>]
-let ``View\map3 propogates successfully`` () =
+let ``Signal\map3 propogates successfully`` () =
     let f = (fun a b c -> sprintf "%d,%d,%f" a b c)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -158,7 +164,7 @@ let ``View\map3 propogates successfully`` () =
     Assert.IsNotNull(sub)
 
 [<Test>]
-let ``View\map4 propogates successfully`` () =
+let ``Signal\map4 propogates successfully`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%f,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -170,7 +176,7 @@ let ``View\map4 propogates successfully`` () =
     Assert.AreEqual("1,2,3.000000,4", view.Value)
 
 [<Test>]
-let ``View\map5 propogates successfully`` () =
+let ``Signal\map5 propogates successfully`` () =
     let f = (fun a b c d e -> sprintf "%d,%d,%f,%d,%d" a b c d e)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -183,7 +189,7 @@ let ``View\map5 propogates successfully`` () =
     Assert.AreEqual("1,2,3.000000,4,5", view.Value)
 
 [<Test>]
-let ``View\map6 propogates successfully`` () =
+let ``Signal\map6 propogates successfully`` () =
     let f = (fun a b c d e f' -> sprintf "%d,%d,%f,%d,%d,%d" a b c d e f')
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -197,7 +203,7 @@ let ``View\map6 propogates successfully`` () =
     Assert.AreEqual("1,2,3.000000,4,5,6", view.Value)
 
 [<Test>]
-let ``View\map10 propogates successfully`` () =
+let ``Signal\map10 propogates successfully`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -215,7 +221,7 @@ let ``View\map10 propogates successfully`` () =
     Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
 
 [<Test>]
-let ``View\map10 notifies properly with input changes`` () =
+let ``Signal\map10 notifies properly with input changes`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -250,7 +256,7 @@ let ``View\map10 notifies properly with input changes`` () =
     Assert.IsNotNull(_disp)
 
 [<Test>]
-let ``View\map10 handles subscription tracking properly`` () =
+let ``Signal\map10 handles subscription tracking properly`` () =
     let f = (fun a b c d e f' g h i j -> sprintf "%d,%d,%f,%d,%d,%d,%f,%d,%d,%d" a b c d e f' g h i j)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -300,7 +306,7 @@ let ``View\map10 handles subscription tracking properly`` () =
 
 
 [<Test>]
-let ``View\map4 notifies properly with input changes`` () =
+let ``Signal\map4 notifies properly with input changes`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2
@@ -326,7 +332,7 @@ let ``View\map4 notifies properly with input changes`` () =
 
     Assert.IsNotNull(_disp)
 [<Test>]
-let ``View\map4 preserves tracking`` () =
+let ``Signal\map4 preserves tracking`` () =
     let f = (fun a b c d -> sprintf "%d,%d,%d,%d" a b c d)
     let v1 = Mutable.create 1
     let v2 = Mutable.create 2

@@ -147,19 +147,19 @@ module Signal =
 
     /// Filters the signal, so only values matching the predicate are cached and propogated onwards
     let filter (predicate : 'a -> bool) (provider : ISignal<'a>) =
-        let signal = new FilteredSignal<'a>(provider, predicate, false)
-        signal :> ISignal<'a>
+        let signal = new FilteredSignalToObservable<'a>(provider, predicate, false)
+        signal :> IObservable<'a>
 
     /// Filters the signal by using a separate bool signal
     let filterBy condition input =
-        new IfSignal<_>(input, condition) :> ISignal<_>
+        new IfSignal<_>(input, condition) :> IObservable<_>
 
     /// Need a description
     let choose (predicate : 'a -> 'b option) (provider : ISignal<'a>) =        
         let map = new MappingSignal<'a,'b option>(provider, predicate, false)
-        let filter = new FilteredSignal<'b option>(map, (fun v -> v <> None), true)
-        let signal = new MappingSignal<'b option, 'b>(filter, (fun opt -> opt.Value), true)
-        signal :> ISignal<'b>
+        let filter = new FilteredSignalToObservable<'b option>(map, (fun v -> not(v.IsNone)), true) :> IObservable<'b option>
+        filter 
+        |> Observable.map (fun opt -> opt.Value)
 
     /// Combines two signals into a single signal.  The value from the second signal is used as the initial value of the result
     let combine a b =

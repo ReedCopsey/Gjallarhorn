@@ -313,7 +313,7 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, conditionProvider : ISig
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
-type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
+type internal FilteredSignalToObservable<'a> (valueProvider : ISignal<'a>, filter : 'a -> bool, disposeProviderOnDispose : bool) as self =
     let dependencies = Dependencies.create [| valueProvider |] self
 
     let mutable v = valueProvider.Value

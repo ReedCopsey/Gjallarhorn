@@ -7,7 +7,7 @@ open Gjallarhorn.Validation
 open NUnit.Framework
 
 [<Test>]
-let ``View\validate works on value`` () =
+let ``Signal\validate works on value`` () =
     let value = Mutable.create 12
     
     let validate = Signal.validate (greaterThan 24 >> lessThan 64) value
@@ -21,7 +21,7 @@ let ``View\validate works on value`` () =
     validate.IsValid |> Assert.IsFalse
 
 [<Test>]
-let ``View\validate works on string`` () =
+let ``Signal\validate works on string`` () =
     let value = Mutable.create ""
     
     let validate = Signal.validate (notNullOrWhitespace >> noSpaces >> notEqual "Reed") value
@@ -44,7 +44,7 @@ let ``View\validate works on string`` () =
     validate.IsValid |> Assert.IsTrue
 
 [<Test>]
-let ``View\validate provides proper error messages`` () =
+let ``Signal\validate provides proper error messages`` () =
     let value = Mutable.create ""
     
     let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
@@ -69,7 +69,7 @@ let ``View\validate provides proper error messages`` () =
         Assert.Contains(box "Value cannot contain a space.", Seq.toArray(errors))
 
 [<Test>]
-let ``View\validate signals properly when value changes`` () =
+let ``Signal\validate signals properly when value changes`` () =
     let value = Mutable.create ""
     let validated = Signal.validate notNullOrWhitespace value
     
@@ -103,7 +103,7 @@ let ``View\validate signals properly when value changes`` () =
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
 [<Test>]
-let ``View\validate subscriptions last through GC collections`` () =
+let ``Signal\validate subscriptions last through GC collections`` () =
     let value = Mutable.create ""
     let validated = Signal.validate notNullOrWhitespace value
     
@@ -144,7 +144,7 @@ let ``View\validate subscriptions last through GC collections`` () =
     // Keep this alive for release testing
     Assert.IsNotNull(subscription)
 [<Test>]
-let ``View\validate provides proper error messages when fixed`` () =
+let ``Signal\validate provides proper error messages when fixed`` () =
     let value = Mutable.create ""
     let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
         

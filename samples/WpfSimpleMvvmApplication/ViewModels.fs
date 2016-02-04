@@ -59,17 +59,17 @@ module VM =
             // but guarantees our validation to always be up to date before it's queried in the filter
             name'
             |> subject.FilterValid
-            |> Signal.filterBy pushAutomatically
+            |> Observable.filter (fun _ -> pushAutomatically.Value)
         // Command-triggered updates
         let commandUpdates =
             // In this case, we can use our command to map the right value out when it's clicked
             // Since the command already is only enabled when we're valid, we don't need a validity filter here
             okCommand
             |> Signal.filterBy pushManually 
-            |> Signal.map (fun _ -> name'.Value)
+            |> Observable.map (fun _ -> name'.Value)
 
         // Combine our automatic and manual updates into one signal, and push them to the backing observable
-        Signal.combine automaticUpdates commandUpdates
+        Observable.merge automaticUpdates commandUpdates
         |> subject.OutputObservable
 
         // Return the binding subject for use as a View Model

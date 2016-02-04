@@ -67,7 +67,7 @@
     <Compile Include="Utilities.fs" />
     <Compile Include="Mutable.fs" />
     <Compile Include="Validate.fs" />
-    <Compile Include="View.fs" />
+    <Compile Include="Signal.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="Memory.fs" />
     <Content Include="App.config" />
