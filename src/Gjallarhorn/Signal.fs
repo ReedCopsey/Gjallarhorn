@@ -164,8 +164,7 @@ module Signal =
     /// Creates a signal on two values that is true if both inputs are not equal
     let notEqual a b =
         map2 (fun a b -> a <> b) a b
-    
-    
+       
     /// Creates a signal over a bool value that negates the input
     let not a =
         map (fun a -> not(a)) a

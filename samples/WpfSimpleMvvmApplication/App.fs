@@ -60,7 +60,7 @@ let main _ =
     use _sub = Model.nameHistory |> Observable.subscribe (fun n -> printfn "Names in \"model\" [%d]: Recent [%s %s]" (List.length n) n.Head.First n.Head.Last)
 
     // Create our viewmodel
-    let vm = VM.createMainViewModel Model.newNameStream
+    let vm = VM.createMainViewModel Model.newNameStream {First = "" ; Last = ""}
 
     // Copy updates out of our vm into our model
     // This could easily track history, etc, if desired

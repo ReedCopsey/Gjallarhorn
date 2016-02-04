@@ -3,8 +3,12 @@
 open Gjallarhorn
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
+
 open System.ComponentModel
 open System.Windows.Input
+
+open Microsoft.FSharp.Quotations
+open Microsoft.FSharp.Quotations.Patterns
 
 /// Type which tracks execution, allowing commands to disable as needed
 type ExecutionTracker() as self =
@@ -59,6 +63,7 @@ type BindingTargetBase<'b>() as self =
     let executionTracker = ExecutionTracker()
     let isValid = Mutable.create true
     let output = Mutable.create Unchecked.defaultof<'b>
+    let uiCtx = System.Threading.SynchronizationContext.Current
 
     let errors = System.Collections.Generic.Dictionary<string, string list>()
 
@@ -159,6 +164,24 @@ type BindingTargetBase<'b>() as self =
                 |> Signal.validate validation
             bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
             validated
+
+//            abstract EditMember<'a,'b> : Expr<'a> -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'b> -> IValidatedSignal<'a>
+        member this.EditMember expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
+            let pi = 
+                match expr with 
+                | PropertyGet(_, pi, _) ->
+                    pi
+                | _ -> failwith "Only quotations representing a lambda of a property getter can be used as an expression for EditMember"
+
+            let mapped =
+                signal
+                |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
+            (this :> IBindingTarget).Edit<'a> pi.Name validation mapped
+
+        member this.FilterValid signal =
+            signal
+            |> Signal.observeOn uiCtx
+            |> Signal.filter (fun _ -> this.IsValid)
 
         member this.Watch<'a> name (signal : ISignal<'a>) = 
             bt().TrackObservable name signal

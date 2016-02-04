@@ -4,6 +4,7 @@ open Gjallarhorn
 open Gjallarhorn.Validation
 
 open Microsoft.FSharp.Quotations
+open Microsoft.FSharp.Quotations.Patterns
 
 open System
 open System.ComponentModel
@@ -50,8 +51,14 @@ type IBindingTarget =
     /// Add a binding target for a signal for editing with with a given name and validation, and returns a signal of the user edits
     abstract Edit<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'a> -> IValidatedSignal<'a>
 
+    /// Add a binding target for a signal for editing with with a given expression representing a property getter, validation, and returns a signal of the user edits
+    abstract EditMember<'a,'b> : Expr<'a> -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'b> -> IValidatedSignal<'a>
+
     /// Add a readonly binding target for a signal with a given name
     abstract Watch<'a> : string -> ISignal<'a> -> unit
+
+    /// Filter a signal to only output when we're valid
+    abstract FilterValid<'a> : ISignal<'a> -> ISignal<'a>
 
     /// Add a readonly binding target for a constant value with a given name
     abstract Constant<'a> : string -> 'a -> unit
