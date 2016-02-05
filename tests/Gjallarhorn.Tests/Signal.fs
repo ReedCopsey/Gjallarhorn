@@ -135,10 +135,7 @@ let ``Signal\choose doesn't propogate inappropriate changes`` () =
     let v = Mutable.create 1
     let view = Signal.map (fun i -> 10*i) v
 
-    let filter = 
-        Signal.choose (fun i -> if i < 100 then Some(i) else None) view
-        |> Signal.Subscription.fromObservable view.Value
-        |> fst
+    let filter = Signal.choose (fun i -> if i < 100 then Some(i) else None) view.Value view
 
     Assert.AreEqual(10, filter.Value)
 

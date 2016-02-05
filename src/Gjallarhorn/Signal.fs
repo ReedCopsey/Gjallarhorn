@@ -161,13 +161,10 @@ module Signal =
     let filterBy condition defaultValue input =
         new IfSignal<_>(input, defaultValue, condition) :> IObservable<_>
 
-    // TODO: Provide default - write custom ChooseSignal
-    /// Returns an observable which is the projection of the input signal using the given function. All observations which return
-    let choose (fn : 'a -> 'b option) (provider : ISignal<'a>) =        
-        let map = new MappingSignal<'a,'b option>(provider, fn, false)
-        let filter = new FilteredSignal<'b option>(map, None, (fun v -> not(v.IsNone)), true) :> IObservable<'b option>
-        filter 
-        |> Observable.map (fun opt -> opt.Value)
+    /// Returns a signal which is the projection of the input signal using the given function. All observations which return Some
+    /// get mapped into the new value.  The defaultValue is used if the input signal's value returns None in the projection
+    let choose (fn : 'a -> 'b option) (defaultValue : 'b) (provider : ISignal<'a>) =        
+        new ChooseSignal<'a,'b>(provider, defaultValue, fn) :> ISignal<'b>        
 
     /// Combines two signals into a single signal.  The value from the second signal is used as the initial value of the result
     let combine a b =
