@@ -45,6 +45,23 @@
 </div>
 
 <!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-signal-subscription.html">Subscription</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
 
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
@@ -55,15 +72,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
+          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
             both a b
           </code>
-          <div class="tip" id="4">
+          <div class="tip" id="5">
             <strong>Signature:</strong> a:ISignal&lt;bool&gt; -&gt; b:ISignal&lt;bool&gt; -&gt; ISignal&lt;bool&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L172-172" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L186-186" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -75,15 +92,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
             cache provider
           </code>
-          <div class="tip" id="5">
+          <div class="tip" id="6">
             <strong>Signature:</strong> provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L39-39" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L40-40" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -95,39 +112,20 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            choose predicate provider
+          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+            choose fn defaultValue provider
           </code>
-          <div class="tip" id="6">
-            <strong>Signature:</strong> predicate:(&#39;a -&gt; &#39;b option) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
+          <div class="tip" id="7">
+            <strong>Signature:</strong> fn:(&#39;a -&gt; &#39;b option) -&gt; defaultValue:&#39;b -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L152-152" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L166-166" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Need a description</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            constant value
-          </code>
-          <div class="tip" id="7">
-            <strong>Signature:</strong> value:&#39;a -&gt; ISignal&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L14-14" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a signal over a constant, immutable value</p>
+          <p>Returns a signal which is the projection of the input signal using the given function. All observations which return Some
+get mapped into the new value.  The defaultValue is used if the input signal's value returns None in the projection</p>
 
 
         </td>
@@ -136,18 +134,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            copyStep target stepFunction provider
+            combine a b
           </code>
           <div class="tip" id="8">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'b, 'a          </div>
+            <strong>Signature:</strong> a:ISignal&lt;&#39;?47612&gt; -&gt; b:ISignal&lt;&#39;?47612&gt; -&gt; ISignal&lt;&#39;?47612&gt;<br />
+                          <strong>Type parameters:</strong> '?47612          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L76-76" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L170-170" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
+          <p>Combines two signals into a single signal.  The value from the second signal is used as the initial value of the result</p>
 
 
         </td>
@@ -156,18 +154,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            copyTo target provider
+            constant value
           </code>
           <div class="tip" id="9">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
+            <strong>Signature:</strong> value:&#39;a -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L71-71" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
+          <p>Create a signal over a constant, immutable value</p>
 
 
         </td>
@@ -183,7 +181,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L176-176" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L190-190" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -199,11 +197,11 @@
             equal a b
           </code>
           <div class="tip" id="11">
-            <strong>Signature:</strong> a:ISignal&lt;&#39;?47531&gt; -&gt; b:ISignal&lt;&#39;?47531&gt; -&gt; ISignal&lt;bool&gt;<br />
-                          <strong>Type parameters:</strong> '?47531          </div>
+            <strong>Signature:</strong> a:ISignal&lt;&#39;?47614&gt; -&gt; b:ISignal&lt;&#39;?47614&gt; -&gt; ISignal&lt;bool&gt;<br />
+                          <strong>Type parameters:</strong> '?47614          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L159-159" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L174-174" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -216,18 +214,19 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
-            filter predicate provider
+            filter predicate defaultValue provider
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
+            <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; defaultValue:&#39;a -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L147-147" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L150-150" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Filters the signal, so only values matching the predicate are cached and propogated onwards</p>
+          <p>Filters the signal, so only values matching the predicate are cached and propogated onwards.
+If the provider's value doesn't match the predicate, the resulting signal begins with the provided defaultValue.</p>
 
 
         </td>
@@ -236,14 +235,35 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
-            get signal
+            filterBy condition defaultValue input
           </code>
           <div class="tip" id="13">
+            <strong>Signature:</strong> condition:ISignal&lt;bool&gt; -&gt; defaultValue:&#39;?47607 -&gt; input:ISignal&lt;&#39;?47607&gt; -&gt; IObservable&lt;&#39;?47607&gt;<br />
+                          <strong>Type parameters:</strong> '?47607          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L161-161" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Filters the signal by using a separate bool signal
+If the condition's Value is initially false, the resulting signal begins with the provided defaultValue.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            get signal
+          </code>
+          <div class="tip" id="14">
             <strong>Signature:</strong> signal:ISignal&lt;&#39;a&gt; -&gt; &#39;a<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L83-83" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L85-85" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -255,15 +275,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
             iter f signal
           </code>
-          <div class="tip" id="14">
+          <div class="tip" id="15">
             <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L87-87" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L89-89" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -275,15 +295,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
             map mapping provider
           </code>
-          <div class="tip" id="15">
+          <div class="tip" id="16">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L91-91" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L93-93" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -295,15 +315,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
-            map10 f a b c d e f&#39; g h i j
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+            map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
           </code>
-          <div class="tip" id="16">
-            <strong>Signature:</strong> f:(&#39;?47514 -&gt; &#39;?47515 -&gt; &#39;?47516 -&gt; &#39;?47517 -&gt; &#39;?47518 -&gt; &#39;?47519 -&gt; &#39;?47520 -&gt; &#39;?47521 -&gt; &#39;?47522 -&gt; &#39;?47523 -&gt; &#39;?47524) -&gt; a:ISignal&lt;&#39;?47514&gt; -&gt; b:ISignal&lt;&#39;?47515&gt; -&gt; c:ISignal&lt;&#39;?47516&gt; -&gt; d:ISignal&lt;&#39;?47517&gt; -&gt; e:ISignal&lt;&#39;?47518&gt; -&gt; f&#39;:ISignal&lt;&#39;?47519&gt; -&gt; g:ISignal&lt;&#39;?47520&gt; -&gt; h:ISignal&lt;&#39;?47521&gt; -&gt; i:ISignal&lt;&#39;?47522&gt; -&gt; j:ISignal&lt;&#39;?47523&gt; -&gt; ISignal&lt;&#39;?47524&gt;<br />
-                          <strong>Type parameters:</strong> '?47514, '?47515, '?47516, '?47517, '?47518, '?47519, '?47520, '?47521, '?47522, '?47523, '?47524          </div>
+          <div class="tip" id="17">
+            <strong>Signature:</strong> f:(&#39;?47593 -&gt; &#39;?47594 -&gt; &#39;?47595 -&gt; &#39;?47596 -&gt; &#39;?47597 -&gt; &#39;?47598 -&gt; &#39;?47599 -&gt; &#39;?47600 -&gt; &#39;?47601 -&gt; &#39;?47602 -&gt; &#39;?47603) -&gt; v1:ISignal&lt;&#39;?47593&gt; -&gt; v2:ISignal&lt;&#39;?47594&gt; -&gt; v3:ISignal&lt;&#39;?47595&gt; -&gt; v4:ISignal&lt;&#39;?47596&gt; -&gt; v5:ISignal&lt;&#39;?47597&gt; -&gt; v6:ISignal&lt;&#39;?47598&gt; -&gt; v7:ISignal&lt;&#39;?47599&gt; -&gt; v8:ISignal&lt;&#39;?47600&gt; -&gt; v9:ISignal&lt;&#39;?47601&gt; -&gt; v10:ISignal&lt;&#39;?47602&gt; -&gt; ISignal&lt;&#39;?47603&gt;<br />
+                          <strong>Type parameters:</strong> '?47593, '?47594, '?47595, '?47596, '?47597, '?47598, '?47599, '?47600, '?47601, '?47602, '?47603          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L142-142" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L144-144" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -315,15 +335,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
             map2 mapping provider1 provider2
           </code>
-          <div class="tip" id="17">
+          <div class="tip" id="18">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:ISignal&lt;&#39;a&gt; -&gt; provider2:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L96-96" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L98-98" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -335,15 +355,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            map3 f a b c
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            map3 f v1 v2 v3
           </code>
-          <div class="tip" id="18">
-            <strong>Signature:</strong> f:(&#39;?47458 -&gt; &#39;?47459 -&gt; &#39;?47460 -&gt; &#39;?47461) -&gt; a:ISignal&lt;&#39;?47458&gt; -&gt; b:ISignal&lt;&#39;?47459&gt; -&gt; c:ISignal&lt;&#39;?47460&gt; -&gt; ISignal&lt;&#39;?47461&gt;<br />
-                          <strong>Type parameters:</strong> '?47458, '?47459, '?47460, '?47461          </div>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> f:(&#39;?47537 -&gt; &#39;?47538 -&gt; &#39;?47539 -&gt; &#39;?47540) -&gt; v1:ISignal&lt;&#39;?47537&gt; -&gt; v2:ISignal&lt;&#39;?47538&gt; -&gt; v3:ISignal&lt;&#39;?47539&gt; -&gt; ISignal&lt;&#39;?47540&gt;<br />
+                          <strong>Type parameters:</strong> '?47537, '?47538, '?47539, '?47540          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L107-107" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L109-109" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -355,15 +375,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            map4 f a b c d
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            map4 f v1 v2 v3 v4
           </code>
-          <div class="tip" id="19">
-            <strong>Signature:</strong> f:(&#39;?47463 -&gt; &#39;?47464 -&gt; &#39;?47465 -&gt; &#39;?47466 -&gt; &#39;?47467) -&gt; a:ISignal&lt;&#39;?47463&gt; -&gt; b:ISignal&lt;&#39;?47464&gt; -&gt; c:ISignal&lt;&#39;?47465&gt; -&gt; d:ISignal&lt;&#39;?47466&gt; -&gt; ISignal&lt;&#39;?47467&gt;<br />
-                          <strong>Type parameters:</strong> '?47463, '?47464, '?47465, '?47466, '?47467          </div>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> f:(&#39;?47542 -&gt; &#39;?47543 -&gt; &#39;?47544 -&gt; &#39;?47545 -&gt; &#39;?47546) -&gt; v1:ISignal&lt;&#39;?47542&gt; -&gt; v2:ISignal&lt;&#39;?47543&gt; -&gt; v3:ISignal&lt;&#39;?47544&gt; -&gt; v4:ISignal&lt;&#39;?47545&gt; -&gt; ISignal&lt;&#39;?47546&gt;<br />
+                          <strong>Type parameters:</strong> '?47542, '?47543, '?47544, '?47545, '?47546          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L112-112" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L114-114" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -375,15 +395,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            map5 f a b c d e
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            map5 f v1 v2 v3 v4 v5
           </code>
-          <div class="tip" id="20">
-            <strong>Signature:</strong> f:(&#39;?47469 -&gt; &#39;?47470 -&gt; &#39;?47471 -&gt; &#39;?47472 -&gt; &#39;?47473 -&gt; &#39;?47474) -&gt; a:ISignal&lt;&#39;?47469&gt; -&gt; b:ISignal&lt;&#39;?47470&gt; -&gt; c:ISignal&lt;&#39;?47471&gt; -&gt; d:ISignal&lt;&#39;?47472&gt; -&gt; e:ISignal&lt;&#39;?47473&gt; -&gt; ISignal&lt;&#39;?47474&gt;<br />
-                          <strong>Type parameters:</strong> '?47469, '?47470, '?47471, '?47472, '?47473, '?47474          </div>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> f:(&#39;?47548 -&gt; &#39;?47549 -&gt; &#39;?47550 -&gt; &#39;?47551 -&gt; &#39;?47552 -&gt; &#39;?47553) -&gt; v1:ISignal&lt;&#39;?47548&gt; -&gt; v2:ISignal&lt;&#39;?47549&gt; -&gt; v3:ISignal&lt;&#39;?47550&gt; -&gt; v4:ISignal&lt;&#39;?47551&gt; -&gt; v5:ISignal&lt;&#39;?47552&gt; -&gt; ISignal&lt;&#39;?47553&gt;<br />
+                          <strong>Type parameters:</strong> '?47548, '?47549, '?47550, '?47551, '?47552, '?47553          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L117-117" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L119-119" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -395,15 +415,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            map6 f a b c d e f&#39;
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            map6 f v1 v2 v3 v4 v5 v6
           </code>
-          <div class="tip" id="21">
-            <strong>Signature:</strong> f:(&#39;?47476 -&gt; &#39;?47477 -&gt; &#39;?47478 -&gt; &#39;?47479 -&gt; &#39;?47480 -&gt; &#39;?47481 -&gt; &#39;?47482) -&gt; a:ISignal&lt;&#39;?47476&gt; -&gt; b:ISignal&lt;&#39;?47477&gt; -&gt; c:ISignal&lt;&#39;?47478&gt; -&gt; d:ISignal&lt;&#39;?47479&gt; -&gt; e:ISignal&lt;&#39;?47480&gt; -&gt; f&#39;:ISignal&lt;&#39;?47481&gt; -&gt; ISignal&lt;&#39;?47482&gt;<br />
-                          <strong>Type parameters:</strong> '?47476, '?47477, '?47478, '?47479, '?47480, '?47481, '?47482          </div>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> f:(&#39;?47555 -&gt; &#39;?47556 -&gt; &#39;?47557 -&gt; &#39;?47558 -&gt; &#39;?47559 -&gt; &#39;?47560 -&gt; &#39;?47561) -&gt; v1:ISignal&lt;&#39;?47555&gt; -&gt; v2:ISignal&lt;&#39;?47556&gt; -&gt; v3:ISignal&lt;&#39;?47557&gt; -&gt; v4:ISignal&lt;&#39;?47558&gt; -&gt; v5:ISignal&lt;&#39;?47559&gt; -&gt; v6:ISignal&lt;&#39;?47560&gt; -&gt; ISignal&lt;&#39;?47561&gt;<br />
+                          <strong>Type parameters:</strong> '?47555, '?47556, '?47557, '?47558, '?47559, '?47560, '?47561          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L122-122" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L124-124" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -415,15 +435,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
-            map7 f a b c d e f&#39; g
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            map7 f v1 v2 v3 v4 v5 v6 v7
           </code>
-          <div class="tip" id="22">
-            <strong>Signature:</strong> f:(&#39;?47484 -&gt; &#39;?47485 -&gt; &#39;?47486 -&gt; &#39;?47487 -&gt; &#39;?47488 -&gt; &#39;?47489 -&gt; &#39;?47490 -&gt; &#39;?47491) -&gt; a:ISignal&lt;&#39;?47484&gt; -&gt; b:ISignal&lt;&#39;?47485&gt; -&gt; c:ISignal&lt;&#39;?47486&gt; -&gt; d:ISignal&lt;&#39;?47487&gt; -&gt; e:ISignal&lt;&#39;?47488&gt; -&gt; f&#39;:ISignal&lt;&#39;?47489&gt; -&gt; g:ISignal&lt;&#39;?47490&gt; -&gt; ISignal&lt;&#39;?47491&gt;<br />
-                          <strong>Type parameters:</strong> '?47484, '?47485, '?47486, '?47487, '?47488, '?47489, '?47490, '?47491          </div>
+          <div class="tip" id="23">
+            <strong>Signature:</strong> f:(&#39;?47563 -&gt; &#39;?47564 -&gt; &#39;?47565 -&gt; &#39;?47566 -&gt; &#39;?47567 -&gt; &#39;?47568 -&gt; &#39;?47569 -&gt; &#39;?47570) -&gt; v1:ISignal&lt;&#39;?47563&gt; -&gt; v2:ISignal&lt;&#39;?47564&gt; -&gt; v3:ISignal&lt;&#39;?47565&gt; -&gt; v4:ISignal&lt;&#39;?47566&gt; -&gt; v5:ISignal&lt;&#39;?47567&gt; -&gt; v6:ISignal&lt;&#39;?47568&gt; -&gt; v7:ISignal&lt;&#39;?47569&gt; -&gt; ISignal&lt;&#39;?47570&gt;<br />
+                          <strong>Type parameters:</strong> '?47563, '?47564, '?47565, '?47566, '?47567, '?47568, '?47569, '?47570          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L127-127" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L129-129" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -435,15 +455,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
-            map8 f a b c d e f&#39; g h
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+            map8 f v1 v2 v3 v4 v5 v6 v7 v8
           </code>
-          <div class="tip" id="23">
-            <strong>Signature:</strong> f:(&#39;?47493 -&gt; &#39;?47494 -&gt; &#39;?47495 -&gt; &#39;?47496 -&gt; &#39;?47497 -&gt; &#39;?47498 -&gt; &#39;?47499 -&gt; &#39;?47500 -&gt; &#39;?47501) -&gt; a:ISignal&lt;&#39;?47493&gt; -&gt; b:ISignal&lt;&#39;?47494&gt; -&gt; c:ISignal&lt;&#39;?47495&gt; -&gt; d:ISignal&lt;&#39;?47496&gt; -&gt; e:ISignal&lt;&#39;?47497&gt; -&gt; f&#39;:ISignal&lt;&#39;?47498&gt; -&gt; g:ISignal&lt;&#39;?47499&gt; -&gt; h:ISignal&lt;&#39;?47500&gt; -&gt; ISignal&lt;&#39;?47501&gt;<br />
-                          <strong>Type parameters:</strong> '?47493, '?47494, '?47495, '?47496, '?47497, '?47498, '?47499, '?47500, '?47501          </div>
+          <div class="tip" id="24">
+            <strong>Signature:</strong> f:(&#39;?47572 -&gt; &#39;?47573 -&gt; &#39;?47574 -&gt; &#39;?47575 -&gt; &#39;?47576 -&gt; &#39;?47577 -&gt; &#39;?47578 -&gt; &#39;?47579 -&gt; &#39;?47580) -&gt; v1:ISignal&lt;&#39;?47572&gt; -&gt; v2:ISignal&lt;&#39;?47573&gt; -&gt; v3:ISignal&lt;&#39;?47574&gt; -&gt; v4:ISignal&lt;&#39;?47575&gt; -&gt; v5:ISignal&lt;&#39;?47576&gt; -&gt; v6:ISignal&lt;&#39;?47577&gt; -&gt; v7:ISignal&lt;&#39;?47578&gt; -&gt; v8:ISignal&lt;&#39;?47579&gt; -&gt; ISignal&lt;&#39;?47580&gt;<br />
+                          <strong>Type parameters:</strong> '?47572, '?47573, '?47574, '?47575, '?47576, '?47577, '?47578, '?47579, '?47580          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L132-132" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L134-134" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -455,15 +475,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
-            map9 f a b c d e f&#39; g h i
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            map9 f v1 v2 v3 v4 v5 v6 v7 v8 v9
           </code>
-          <div class="tip" id="24">
-            <strong>Signature:</strong> f:(&#39;?47503 -&gt; &#39;?47504 -&gt; &#39;?47505 -&gt; &#39;?47506 -&gt; &#39;?47507 -&gt; &#39;?47508 -&gt; &#39;?47509 -&gt; &#39;?47510 -&gt; &#39;?47511 -&gt; &#39;?47512) -&gt; a:ISignal&lt;&#39;?47503&gt; -&gt; b:ISignal&lt;&#39;?47504&gt; -&gt; c:ISignal&lt;&#39;?47505&gt; -&gt; d:ISignal&lt;&#39;?47506&gt; -&gt; e:ISignal&lt;&#39;?47507&gt; -&gt; f&#39;:ISignal&lt;&#39;?47508&gt; -&gt; g:ISignal&lt;&#39;?47509&gt; -&gt; h:ISignal&lt;&#39;?47510&gt; -&gt; i:ISignal&lt;&#39;?47511&gt; -&gt; ISignal&lt;&#39;?47512&gt;<br />
-                          <strong>Type parameters:</strong> '?47503, '?47504, '?47505, '?47506, '?47507, '?47508, '?47509, '?47510, '?47511, '?47512          </div>
+          <div class="tip" id="25">
+            <strong>Signature:</strong> f:(&#39;?47582 -&gt; &#39;?47583 -&gt; &#39;?47584 -&gt; &#39;?47585 -&gt; &#39;?47586 -&gt; &#39;?47587 -&gt; &#39;?47588 -&gt; &#39;?47589 -&gt; &#39;?47590 -&gt; &#39;?47591) -&gt; v1:ISignal&lt;&#39;?47582&gt; -&gt; v2:ISignal&lt;&#39;?47583&gt; -&gt; v3:ISignal&lt;&#39;?47584&gt; -&gt; v4:ISignal&lt;&#39;?47585&gt; -&gt; v5:ISignal&lt;&#39;?47586&gt; -&gt; v6:ISignal&lt;&#39;?47587&gt; -&gt; v7:ISignal&lt;&#39;?47588&gt; -&gt; v8:ISignal&lt;&#39;?47589&gt; -&gt; v9:ISignal&lt;&#39;?47590&gt; -&gt; ISignal&lt;&#39;?47591&gt;<br />
+                          <strong>Type parameters:</strong> '?47582, '?47583, '?47584, '?47585, '?47586, '?47587, '?47588, '?47589, '?47590, '?47591          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L137-137" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L139-139" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -475,15 +495,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
             not a
           </code>
-          <div class="tip" id="25">
+          <div class="tip" id="26">
             <strong>Signature:</strong> a:ISignal&lt;bool&gt; -&gt; ISignal&lt;bool&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L168-168" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L182-182" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -495,15 +515,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
             notEqual a b
           </code>
-          <div class="tip" id="26">
-            <strong>Signature:</strong> a:ISignal&lt;&#39;?47533&gt; -&gt; b:ISignal&lt;&#39;?47533&gt; -&gt; ISignal&lt;bool&gt;<br />
-                          <strong>Type parameters:</strong> '?47533          </div>
+          <div class="tip" id="27">
+            <strong>Signature:</strong> a:ISignal&lt;&#39;?47616&gt; -&gt; b:ISignal&lt;&#39;?47616&gt; -&gt; ISignal&lt;bool&gt;<br />
+                          <strong>Type parameters:</strong> '?47616          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L163-163" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L178-178" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -515,40 +535,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
-            subscribe f provider
-          </code>
-          <div class="tip" id="27">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L50-50" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
           <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
-            subscribeFromObservable (...)
+            observeOn ctx signal
           </code>
           <div class="tip" id="28">
-            <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt; * IDisposable<br />
+            <strong>Signature:</strong> ctx:SynchronizationContext -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L44-44" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L194-194" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
-Returns signal and subscription handle</p>
+          <p>Creates a signal that schedules on a synchronization context</p>
 
 
         </td>
@@ -564,7 +563,7 @@ Returns signal and subscription handle</p>
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L225-225" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L282-282" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

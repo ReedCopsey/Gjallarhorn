@@ -84,15 +84,15 @@
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 13)" onmouseover="showTip(event, 'fs2', 13)" class="i">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="f">create</span> <span class="n">0</span>
 
-<span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="t">Signal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="f">subscribe</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="f">printfn</span> <span class="s">&quot;Value is now </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs2', 21)" onmouseover="showTip(event, 'fs2', 21)" class="i">m</span> 
+<span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="i">Signal</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs5', 17)" onmouseover="showTip(event, 'fs5', 17)" class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs2', 18)" onmouseover="showTip(event, 'fs2', 18)" class="i">m</span> 
 
 <span class="c">// After this is set, a print will occur</span>
 <span class="c">// Prints: &quot;Value is now 1&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 22)" onmouseover="showTip(event, 'fs2', 22)" class="i">m</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 23)" onmouseover="showTip(event, 'fs6', 23)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+<span onmouseout="hideTip(event, 'fs2', 19)" onmouseover="showTip(event, 'fs2', 19)" class="i">m</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 20)" onmouseover="showTip(event, 'fs6', 20)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
 
 <span class="c">// After this is set, a second print will occur with the new value</span>
 <span class="c">// Prints: &quot;Value is now 2&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 24)" onmouseover="showTip(event, 'fs2', 24)" class="i">m</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 25)" onmouseover="showTip(event, 'fs6', 25)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs2', 21)" onmouseover="showTip(event, 'fs2', 21)" class="i">m</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 22)" onmouseover="showTip(event, 'fs6', 22)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 </code></pre></td>
 </tr>
 </table>
@@ -105,8 +105,6 @@
 <div class="tip" id="fs5">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
 <div class="tip" id="fs6">property IMutatable.Value: int</div>
 <div class="tip" id="fs7">module Signal<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs8">val subscribe : f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; System.IDisposable<br /><br />Full name: Gjallarhorn.Signal.subscribe</div>
-<div class="tip" id="fs9">val currentValue : int</div>
 
         </div>
         <div class="span3">

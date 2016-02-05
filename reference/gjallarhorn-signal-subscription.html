@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeakRef - Gjallarhorn</title>
+    <title>Subscription - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,9 +35,10 @@
 
 
 
-<h1>WeakRef</h1>
+<h1>Subscription</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Internal</span><br />
+  <span>Namespace: Gjallarhorn</span><br />
+  <span>Parent Module: <a href="gjallarhorn-signal.html">Signal</a></span>
 </p>
 <div class="xmldoc">
 </div>
@@ -53,55 +54,82 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
-            execute f wr
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+            copyStep target stepFunction provider
           </code>
-          <div class="tip" id="75">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="30">
+            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
+                          <strong>Type parameters:</strong> 'b, 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L14-14" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L70-70" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
-            test f wr
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
+            copyTo target provider
           </code>
-          <div class="tip" id="76">
-            <strong>Signature:</strong> f:(&#39;a -&gt; bool) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool * bool<br />
+          <div class="tip" id="31">
+            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L65-65" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
-            toOption wr
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+            create f provider
           </code>
-          <div class="tip" id="77">
-            <strong>Signature:</strong> wr:WeakReference&lt;&#39;?47809&gt; -&gt; &#39;?47809 option<br />
-                          <strong>Type parameters:</strong> '?47809          </div>
+          <div class="tip" id="32">
+            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L9-9" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L45-45" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+            fromObservable initialValue observable
+          </code>
+          <div class="tip" id="33">
+            <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt; * IDisposable<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L78-78" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
+Returns signal and subscription handle</p>
+
+
         </td>
       </tr>
     </tbody>

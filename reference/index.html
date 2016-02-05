@@ -135,7 +135,15 @@
     <tbody>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-bindingtargetbase.html">BindingTargetBase</a>
+            <a href="gjallarhorn-bindable-basiccommand.html">BasicCommand</a>
+          </td>
+          <td class="xmldoc"><p>Simple Command implementation for ICommand and INotifyCommand</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-bindingtargetbase-1.html">BindingTargetBase<'b></a>
           </td>
           <td class="xmldoc"><p>Base class for binding targets, used by platform specific libraries to share implementation details</p>
 
@@ -146,6 +154,22 @@
             <a href="gjallarhorn-bindable-boundsignal-1.html">BoundSignal<'a></a>
           </td>
           <td class="xmldoc"><p>An ISignal<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the signal as needed</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-commandparameterstate-1.html">CommandParameterState<'a></a>
+          </td>
+          <td class="xmldoc"><p>Reports whether a paramterized command is executed, including the timestamp of the most recent execution</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-commandstate.html">CommandState</a>
+          </td>
+          <td class="xmldoc"><p>Reports whether a command is executed, including the timestamp of the most recent execution</p>
 
 </td>
         </tr>
@@ -167,6 +191,14 @@
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-bindable-ibindingsubject-1.html">IBindingSubject<'b></a>
+          </td>
+          <td class="xmldoc"><p>Interface used to manage a typed binding target which outputs changes via IObservable</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-bindable-ibindingtarget.html">IBindingTarget</a>
           </td>
           <td class="xmldoc"><p>Interface used to manage a binding target</p>
@@ -178,6 +210,31 @@
             <a href="gjallarhorn-bindable-itrackingcommand-1.html">ITrackingCommand<'a></a>
           </td>
           <td class="xmldoc"><p>An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-parametercommand-1.html">ParameterCommand<'a></a>
+          </td>
+          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
+Note that this will signal for each execution, whether or not the value has changed.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-signalcommand.html">SignalCommand</a>
+          </td>
+          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<CommandState>, where each execute passes DateTime.UtcNow on execution</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-signalparametercommand-1.html">SignalParameterCommand<'a></a>
+          </td>
+          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<DateTime>, where each execute passes DateTime.UtcNow on execution</p>
 
 </td>
         </tr>
@@ -193,6 +250,14 @@
             <a href="gjallarhorn-bindable-bind.html">Bind</a>
           </td>
           <td class="xmldoc"><p>Functions to work with binding targets</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-command.html">Command</a>
+          </td>
+          <td class="xmldoc"><p>Core module for creating and using ICommand implementations</p>
 
 </td>
         </tr>
@@ -234,23 +299,6 @@
         <tr>
           <td class="module-name">
             <a href="gjallarhorn-internal-weakref.html">WeakRef</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-    </tbody>
-  </table>
-
-    </div>
-  <h2>global Namespace</h2>
-    <div>
-      <table class="table table-bordered module-list">
-    <thead>
-      <tr><td>Module</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="module-name">
-            <a href="global-commands.html">Commands</a>
           </td>
           <td class="xmldoc"></td>
         </tr>

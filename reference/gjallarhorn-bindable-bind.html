@@ -47,26 +47,17 @@
 <!-- Render nested types and modules, if there are any -->
   <h2>Nested types and modules</h2>
   <div>
-      <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-bindable-bind-binding.html">Binding</a>
-          </td>
-          <td class="xmldoc"><p>A computational expression builder for a binding target</p>
-
-</td>
-        </tr>
-    </tbody>
-  </table>
-  <table class="table table-bordered module-list">
+      <table class="table table-bordered module-list">
     <thead>
       <tr><td>Module</td><td>Description</td></tr>
     </thead>
     <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-bind-builder.html">Builder</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
         <tr>
           <td class="module-name">
             <a href="gjallarhorn-bindable-bind-internal.html">Internal</a>
@@ -87,15 +78,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
             binding 
           </code>
-          <div class="tip" id="56">
+          <div class="tip" id="61">
             <strong>Signature:</strong> Binding<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L224-224" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L317-317" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -107,19 +98,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
             command name command target
           </code>
-          <div class="tip" id="57">
-            <strong>Signature:</strong> name:string -&gt; command:ICommand -&gt; target:&#39;?47938 -&gt; &#39;?47938<br />
-                          <strong>Type parameters:</strong> '?47938          </div>
+          <div class="tip" id="62">
+            <strong>Signature:</strong> name:string -&gt; command:ICommand -&gt; target:IBindingTarget -&gt; unit<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L199-199" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L280-280" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Add a command (one way property) to a binding target by name</p>
+          <p>Add an ICommand (one way property) to a binding target by name</p>
 
 
         </td>
@@ -127,33 +118,95 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
-            create ()
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+            constant name value target
           </code>
-          <div class="tip" id="58">
+          <div class="tip" id="63">
+            <strong>Signature:</strong> name:string -&gt; value:&#39;?48295 -&gt; target:IBindingTarget -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?48295          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L276-276" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a constant value (one way property) to a binding target by name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+            createSubject ()
+          </code>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> unit -&gt; IBindingSubject&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L264-264" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a binding subject for the installed platform</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            createTarget ()
+          </code>
+          <div class="tip" id="65">
             <strong>Signature:</strong> unit -&gt; IBindingTarget<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L190-190" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L260-260" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a binding target for the installed platform</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            edit name validator signal target
+          </code>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> name:string -&gt; validator:(ValidationCollector&lt;&#39;?48291&gt; -&gt; ValidationCollector&lt;&#39;?48291&gt;) -&gt; signal:ISignal&lt;&#39;?48291&gt; -&gt; target:IBindingTarget -&gt; IValidatedSignal&lt;&#39;?48291&gt;<br />
+                          <strong>Type parameters:</strong> '?48291          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L268-268" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a signal as an editor with validation, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
             extend target
           </code>
-          <div class="tip" id="59">
+          <div class="tip" id="67">
             <strong>Signature:</strong> target:IBindingTarget -&gt; Binding<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L227-227" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L320-320" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -165,15 +218,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
             watch name signal target
           </code>
-          <div class="tip" id="60">
-            <strong>Signature:</strong> name:string -&gt; signal:ISignal&lt;&#39;?47935&gt; -&gt; target:&#39;?47936 -&gt; &#39;?47936<br />
-                          <strong>Type parameters:</strong> '?47935, '?47936          </div>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> name:string -&gt; signal:ISignal&lt;&#39;?48293&gt; -&gt; target:IBindingTarget -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?48293          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L194-194" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L272-272" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
