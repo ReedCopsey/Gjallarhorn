@@ -161,6 +161,14 @@ type BindingTargetBase<'b>() as self =
 
             editSource :> ISignal<'a>
 
+        member this.EditDirect name validation mutatable =
+            bt().TrackObservable name mutatable
+            let validated =
+                mutatable
+                |> Signal.validate validation
+            bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+            this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
+
         member this.Edit name validation signal =
             let output = (this :> IBindingTarget).Bind name signal
             let validated =

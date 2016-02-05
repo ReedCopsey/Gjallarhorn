@@ -57,6 +57,9 @@ type IBindingTarget =
     /// Add a binding target for a signal for editing with with a given expression representing a property getter, validation, and returns a signal of the user edits
     abstract EditMember<'a,'b> : Expr<'a> -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'b> -> IValidatedSignal<'a>
 
+    /// Add a binding target for a mutable for editing with with a given name and validation which directly pushes edits back to the mutable
+    abstract EditDirect<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> IMutatable<'a> -> unit
+
     /// Add a readonly binding target for a signal with a given name
     abstract Watch<'a> : string -> ISignal<'a> -> unit
 
