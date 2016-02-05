@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>BindingTargetBase<'b> - Gjallarhorn</title>
+    <title>SignalBase<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,12 +35,12 @@
 
 
 
-<h1>BindingTargetBase<'b></h1>
+<h1>SignalBase<'a></h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Namespace: Gjallarhorn</span><br />
 </p>
 <div class="xmldoc">
-<p>Base class for binding targets, used by platform specific libraries to share implementation details</p>
+<p>Base class which simplifies implementation of standard signals</p>
 
 </div>
   <h3>Constructors</h3>
@@ -52,15 +52,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
-            new()
+          <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
+            new(dependencies)
           </code>
-          <div class="tip" id="114">
-            <strong>Signature:</strong> unit -&gt; BindingTargetBase&lt;&#39;b&gt;<br />
+          <div class="tip" id="99">
+            <strong>Signature:</strong> (dependencies:ITracksDependents array) -&gt; SignalBase&lt;&#39;a&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L15-15" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L94-94" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -79,123 +79,108 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
-            AddReadOnlyProperty(arg1 arg2)
+          <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
+            HasDependencies
           </code>
-          <div class="tip" id="115">
-            <strong>Signature:</strong> string -&gt; ((unit -&gt; &#39;a)) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L74-74" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
-            AddReadWriteProperty(arg1 arg2 arg3)
-          </code>
-          <div class="tip" id="116">
-            <strong>Signature:</strong> string -&gt; ((unit -&gt; &#39;a)) -&gt; ((&#39;a -&gt; unit)) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L75-75" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
-            Executing
-          </code>
-          <div class="tip" id="117">
-            <strong>Signature:</strong> ISignal&lt;bool&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L62-62" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>An ISignal<bool> that is set to true while tracked commands execute</p>
-
-
-              <p>CompiledName: <code>get_Executing</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
-            ExecutionTracker
-          </code>
-          <div class="tip" id="118">
-            <strong>Signature:</strong> ExecutionTracker<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L59-59" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Used by commanding to track executing operations</p>
-
-
-              <p>CompiledName: <code>get_ExecutionTracker</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '119', 119)" onmouseover="showTip(event, '119', 119)">
-            IsValid
-          </code>
-          <div class="tip" id="119">
+          <div class="tip" id="100">
             <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L68-68" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L109-109" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>True when the current value is valid.  Can be used in bindings</p>
+          <p>Default implementations work off single set of dependenices</p>
 
 
-              <p>CompiledName: <code>get_IsValid</code></p>
+              <p>CompiledName: <code>get_HasDependencies</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '120', 120)" onmouseover="showTip(event, '120', 120)">
-            Valid
+          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
+            OnDisposing()
           </code>
-          <div class="tip" id="120">
-            <strong>Signature:</strong> ISignal&lt;bool&gt;<br />
+          <div class="tip" id="101">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingTarget.fs#L65-65" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L106-106" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>An ISignal<bool> used to track the current valid state</p>
+          <p>Called during the disposable process</p>
 
 
-              <p>CompiledName: <code>get_Valid</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
+            RequestRefresh(arg1)
+          </code>
+          <div class="tip" id="102">
+            <strong>Signature:</strong> obj -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L104-104" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Notifies us that we need to refresh our value</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
+            Signal()
+          </code>
+          <div class="tip" id="103">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L98-98" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Signals to dependencies that we have updated</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
+            Value
+          </code>
+          <div class="tip" id="104">
+            <strong>Signature:</strong> &#39;a<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L102-102" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Gets the current value</p>
+
+
+              <p>CompiledName: <code>get_Value</code></p>
         </td>
       </tr>
     </tbody>
