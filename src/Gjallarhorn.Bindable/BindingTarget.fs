@@ -38,12 +38,7 @@ type ExecutionTracker() as self =
         handle
 
     interface System.IObservable<bool> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new System.IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
         member this.Untrack dep = dependencies.Remove (dep,this)

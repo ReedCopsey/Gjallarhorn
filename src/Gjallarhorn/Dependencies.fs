@@ -39,13 +39,10 @@ type [<AllowNullLiteral>] IDependencyManager<'a> =
     abstract member Add : IDependent * ISignal<'a> -> unit
 
     /// Add a dependent observer to this signal explicitly
-    abstract member Add : System.IObserver<'a> * ISignal<'a> -> unit
+    abstract member Subscribe : System.IObserver<'a> * ISignal<'a> -> IDisposable
     
     /// Remove a dependent from this signal explicitly
     abstract member Remove : IDependent * ISignal<'a> -> unit
-
-    /// Remove a dependent observer from this signal explicitly
-    abstract member Remove : System.IObserver<'a> * ISignal<'a> -> unit
 
     /// Remove all dependencies from this signal
     abstract member RemoveAll : ISignal<'a> -> unit
@@ -130,7 +127,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         lock this.LockObj (fun _ ->
             depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |]
             this.UpdateUpstreamTracking source)
-    member this.Add (obs,source) =
+    member this.AddObserver (obs,source) =
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |]
             this.UpdateUpstreamTracking source)
@@ -141,7 +138,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
             depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
             this.UpdateUpstreamTracking source
             this.HasDependencies)
-    member this.Remove (obs, source) = 
+    member this.RemoveObserver (obs, source) = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
             this.UpdateUpstreamTracking source
@@ -165,9 +162,13 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
 
     interface IDependencyManager<'a> with
         member this.Add (dep: IDependent, source: ISignal<'a>) = this.Add (dep,source)
-        member this.Add (dep: IObserver<'a>, source: ISignal<'a>) = this.Add (dep,source)
+        member this.Subscribe (dep: IObserver<'a>, source: ISignal<'a>) =             
+            this.AddObserver (dep, source)
+            { 
+                new IDisposable with
+                    member __.Dispose() = this.RemoveObserver (dep, source) |> ignore
+            }        
         member this.Remove (dep: IDependent, source: ISignal<'a>) = ignore <| this.Remove (dep,source)
-        member this.Remove (dep: IObserver<'a>, source: ISignal<'a>) = ignore <| this.Remove (dep,source)
         member this.RemoveAll (source: ISignal<'a>) = this.RemoveAll source
         member this.Signal source = ignore <| this.Signal source
         member this.HasDependencies with get() = this.HasDependencies
@@ -201,21 +202,17 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
             dep.Add(target,source))
-    static member internal AddDependency (source : ISignal<'a>, target : IObserver<'a>) =
+    static member internal Subscribe (source : ISignal<'a>, target : IObserver<'a>) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
-            dep.Add(target,source))
+            dep.AddObserver (target, source)
+            { 
+                new IDisposable with
+                    member __.Dispose() = dep.RemoveObserver (target, source) |> ignore
+            })
 
     /// Removes a dependency tracked on a given source
     static member internal RemoveDependency (source : ISignal<'a>, target : IDependent) =
-        let removeDep () =
-            match tryGet source with
-            | true, dep ->
-                if not(dep.Remove(target,source)) then
-                    remove source
-            | false, _ -> ()
-        lock dependencies removeDep
-    static member internal RemoveDependency (source : ISignal<'a>, target : IObserver<'a>) =
         let removeDep () =
             match tryGet source with
             | true, dep ->
@@ -244,10 +241,9 @@ module Dependencies =
     let createRemote source =
         { new IDependencyManager<'a> with
             member __.Add (dep: IDependent, source: ISignal<'a>) : unit = SignalManager.AddDependency(source, dep)
-            member __.Add (obs: IObserver<'a> , source: ISignal<'a>) : unit = SignalManager.AddDependency(source, obs)
+            member __.Subscribe (obs: IObserver<'a> , source: ISignal<'a>) : IDisposable = SignalManager.Subscribe(source, obs)
 
             member __.Remove (dep: IDependent, source: ISignal<'a>) = SignalManager.RemoveDependency(source, dep)
-            member __.Remove (obs: IObserver<'a>, source: ISignal<'a>) = SignalManager.RemoveDependency(source, obs)
             member __.RemoveAll (source: ISignal<'a>) = SignalManager.RemoveAllDependencies source
 
             member __.HasDependencies with get() = SignalManager.IsTracked source

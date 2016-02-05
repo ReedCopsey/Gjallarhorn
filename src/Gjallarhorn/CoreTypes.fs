@@ -74,12 +74,7 @@ type internal Mutable<'a>(value : 'a) =
         this.Dependencies.RemoveAll this        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = 
-            this.Dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = this.Dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = this.Dependencies.Subscribe(obs,this)
     interface ITracksDependents with
         member this.Track dep = this.Dependencies.Add (dep,this)
         member this.Untrack dep = this.Dependencies.Remove (dep,this)
@@ -114,12 +109,7 @@ type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'b> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -173,12 +163,7 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'c> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -228,12 +213,7 @@ type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : I
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -289,12 +269,7 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionP
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -353,12 +328,7 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -417,12 +387,7 @@ type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'b> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)
@@ -475,12 +440,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
         (this :> IDisposable).Dispose()        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = 
-            dependencies.Add (obs,this)
-            { 
-                new IDisposable with
-                    member __.Dispose() = dependencies.Remove (obs,this)
-            }
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
 
     interface ITracksDependents with
         member this.Track dep = dependencies.Add (dep,this)

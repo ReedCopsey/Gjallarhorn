@@ -234,12 +234,7 @@ module Signal =
             (this :> IDisposable).Dispose()            
 
         interface IObservable<'a> with
-            member this.Subscribe (obs : IObserver<'a>) : IDisposable = 
-                dependencies.Add (obs,this)
-                { 
-                    new IDisposable with
-                        member __.Dispose() = dependencies.Remove (obs,this)
-                }
+            member this.Subscribe (obs : IObserver<'a>) : IDisposable = dependencies.Subscribe (obs,this)
 
         interface IValidatedSignal<'a> with
             member this.ValidationResult 
@@ -250,13 +245,7 @@ module Signal =
                                 member __.Value 
                                     with get() = validateCurrent (self.UpdateAndGetValue())
                             interface IObservable<ValidationResult> with
-                                member __.Subscribe obs = 
-                                    validationDeps.Add (obs,result)
-                                    {
-                                        new IDisposable with
-                                            member __.Dispose() = validationDeps.Remove (obs,result)
-                                    }
-
+                                member __.Subscribe obs = validationDeps.Subscribe (obs,result)
                             interface IDependent with
                                 member __.RequestRefresh _ = this.UpdateAndGetValue() |> ignore
                                 member __.HasDependencies = dependencies.HasDependencies || validationDeps.HasDependencies
