@@ -195,8 +195,10 @@ module Signal =
         new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
                 
     type internal ValidatorMappingSignal<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : ISignal<'a>) as self =
-        let dependencies = Dependencies.create [| valueProvider |] self
+        inherit SignalBase<'a>([| valueProvider |])
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
+
+        let mutable lastValue = valueProvider.Value
         let mutable valueProvider = Some(valueProvider)
 
         let validateCurrent value =
@@ -204,37 +206,42 @@ module Signal =
             |> validate 
             |> validator
             |> Validation.result
+        let mutable lastValidation = validateCurrent lastValue
+        
+        override __.HasDependencies 
+            with get() =
+                base.HasDependencies || validationDeps.HasDependencies
 
-        let mutable lastValue = valueProvider.Value.Value
-        let mutable lastVaidation = validateCurrent lastValue
+        // This requires custom signaling
+        member private this.ValidateSignal signalValidation signalValue = 
+            if signalValidation then 
+                validationDeps.Signal (this :> IValidatedSignal<'a>).ValidationResult
+            if signalValue then 
+                base.Signal()
 
-
-        member private this.Signal signalValidation signalValue = 
-            if signalValidation then validationDeps.Signal (this :> IValidatedSignal<'a>).ValidationResult
-            if signalValue then dependencies.Signal this
-
-        member private this.UpdateAndGetValue () =
-            let value () = DisposeHelpers.getValue valueProvider (fun _ -> self.GetType().FullName)
-            let value = value()
+        member private this.Update () =            
+            let value = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             let signalValue, signalValidation =
                 if false = EqualityComparer<_>.Default.Equals(lastValue, value) then
-                    lastValue <- value
-                    
+                    lastValue <- value                    
                     let valid = validateCurrent value
-                    let signalV = valid <> lastVaidation
-                    lastVaidation <- valid
+                    let signalV = valid <> lastValidation
+                    lastValidation <- valid
                     true, signalV
                 else 
                     false, false            
-            this.Signal signalValidation signalValue
+            this.ValidateSignal signalValidation signalValue            
 
-            lastValue
+        override this.Value 
+            with get() = 
+                this.Update()
+                lastValue
 
-        override this.Finalize() =
-            (this :> IDisposable).Dispose()            
+        override this.RequestRefresh _ = this.Update ()
 
-        interface IObservable<'a> with
-            member this.Subscribe (obs : IObserver<'a>) : IDisposable = dependencies.Subscribe (obs,this)
+        override this.OnDisposing () =
+            this |> DisposeHelpers.cleanup &valueProvider false 
+            validationDeps.RemoveAll (this :> IValidatedSignal<'a>).ValidationResult
 
         interface IValidatedSignal<'a> with
             member this.ValidationResult 
@@ -243,12 +250,14 @@ module Signal =
                         { 
                             new ISignal<ValidationResult> with
                                 member __.Value 
-                                    with get() = validateCurrent (self.UpdateAndGetValue())
+                                    with get() = 
+                                        self.Update()
+                                        lastValidation
                             interface IObservable<ValidationResult> with
                                 member __.Subscribe obs = validationDeps.Subscribe (obs,result)
                             interface IDependent with
-                                member __.RequestRefresh _ = this.UpdateAndGetValue() |> ignore
-                                member __.HasDependencies = dependencies.HasDependencies || validationDeps.HasDependencies
+                                member __.RequestRefresh _ = this.Update()
+                                member __.HasDependencies = this.HasDependencies
                             interface ITracksDependents with
                                 member __.Track dep = validationDeps.Add (dep,result)
                                 member __.Untrack dep = validationDeps.Remove (dep,result)
@@ -256,27 +265,9 @@ module Signal =
                     result
 
             member this.IsValid 
-                with get() = isValid (validateCurrent (this.UpdateAndGetValue()))
-
-        interface ITracksDependents with
-            member this.Track dep = dependencies.Add (dep,this)
-            member this.Untrack dep = dependencies.Remove (dep,this)
-
-        interface ISignal<'a> with
-            member this.Value 
-                with get() = this.UpdateAndGetValue()                    
-
-        interface IDependent with
-            member this.RequestRefresh _ = this.UpdateAndGetValue() |> ignore
-            member __.HasDependencies with get() = dependencies.HasDependencies || validationDeps.HasDependencies
-
-        interface IDisposable with
-            member this.Dispose() =
-                DisposeHelpers.dispose valueProvider false this
-                valueProvider <- None
-                validationDeps.RemoveAll (this :> IValidatedSignal<'a>).ValidationResult
-                dependencies.RemoveAll this
-                GC.SuppressFinalize this
+                with get() = 
+                    this.Update()
+                    isValid lastValidation
 
     /// Validates a signal with a validation chain
     let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (signal : ISignal<'a>) =

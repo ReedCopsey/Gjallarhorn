@@ -39,19 +39,16 @@ type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
 /// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
 /// Note that this will signal for each execution, whether or not the value has changed.
 type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as self =
+    inherit SignalBase<'a>([| |])
+
     let canExecuteChanged = new Event<EventHandler, EventArgs>()
-
     let disposeTracker = new CompositeDisposable()
-    let mutable value = initialValue
-
-    let dependencies = Dependencies.create [| |] self
+    let mutable lastValue = initialValue
 
     do
         allowExecute
         |> Signal.Subscription.create (fun _ -> self.RaiseCanExecuteChanged())    
-        |> disposeTracker.Add
-
-    override this.Finalize() = (this :> IDisposable).Dispose()
+        |> disposeTracker.Add    
 
     member this.RaiseCanExecuteChanged() =
         canExecuteChanged.Trigger(this, EventArgs.Empty)
@@ -62,42 +59,22 @@ type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as s
         let v = Utilities.downcastAndCreateOption param
         match v with
         | Some newVal ->
-            value <- newVal
-            dependencies.Signal this
+            lastValue <- newVal
+            this.Signal()
         | None ->
             ()
 
-    interface ITrackingCommand<'a> 
-    
-    interface IObservable<'a> with
-        member this.Subscribe obs = dependencies.Subscribe (obs,this)
-            
-    interface ITracksDependents with
-        member this.Track dep = dependencies.Add (dep,this)
-        member this.Untrack dep = dependencies.Remove (dep,this)
+    override __.Value with get() = lastValue
+    override __.RequestRefresh _ = ()
+    override __.OnDisposing () = disposeTracker.Dispose()
 
-    interface IDependent with
-        member __.RequestRefresh _ = ()
-        member __.HasDependencies = dependencies.HasDependencies
-
-    interface ISignal<'a> with
-        member __.Value with get() = value
-
+    interface ITrackingCommand<'a>     
     interface ICommand with
         [<CLIEvent>]
         member __.CanExecuteChanged = canExecuteChanged.Publish
-
-        member __.CanExecute(_ : obj) =
-            allowExecute.Value
-
-        member this.Execute(param : obj) =
-            this.HandleExecute(param)
-
-    interface IDisposable with
-        member this.Dispose() = 
-            disposeTracker.Dispose()
-            GC.SuppressFinalize this
-
+        member __.CanExecute (_ : obj) = allowExecute.Value
+        member this.Execute(param : obj) = this.HandleExecute(param)
+   
 /// Reports whether a command is executed, including the timestamp of the most recent execution
 type CommandState =
     /// The command is in an unexecuted state

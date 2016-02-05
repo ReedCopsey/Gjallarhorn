@@ -9,53 +9,13 @@ open System.Windows.Input
 
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
-
-/// Type which tracks execution, allowing commands to disable as needed
-type ExecutionTracker() as self =
-    let handles = ResizeArray<_>()
-
-    let dependencies = Dependencies.create [| |] self
-
-    member private this.Signal () = dependencies.Signal this
-     
-    member private this.AddHandle h =
-        lock handles (fun _ ->
-            handles.Add h
-            this.Signal()            
-        )
-    member private this.RemoveHandle h =
-        lock handles (fun _ ->
-            if handles.Remove h then this.Signal()            
-        )
-
-    member this.GetExecutionHandle () =
-        let rec handle = 
-            { new System.IDisposable with
-                member __.Dispose() =
-                    this.RemoveHandle handle
-            }
-        this.AddHandle handle
-        handle
-
-    interface System.IObservable<bool> with
-        member this.Subscribe obs = dependencies.Subscribe (obs,this)
-    interface ITracksDependents with
-        member this.Track dep = dependencies.Add (dep,this)
-        member this.Untrack dep = dependencies.Remove (dep,this)
-
-    interface IDependent with
-        member __.RequestRefresh _ = ()
-        member __.HasDependencies = dependencies.HasDependencies
-
-    interface ISignal<bool> with
-        member __.Value with get() = lock handles (fun _ -> handles.Count > 0)
         
 [<AbstractClass>]
 /// Base class for binding targets, used by platform specific libraries to share implementation details
 type BindingTargetBase<'b>() as self =
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
-    let executionTracker = ExecutionTracker()
+    let executionTracker = new ExecutionTracker()
     let isValid = Mutable.create true
     let output = Mutable.create Unchecked.defaultof<'b>
     let uiCtx = System.Threading.SynchronizationContext.Current
