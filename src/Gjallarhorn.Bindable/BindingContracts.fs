@@ -44,6 +44,12 @@ type IBindingTarget =
 
     /// Value used to notify signal that an asynchronous operation is executing
     abstract OperationExecuting : bool with get
+
+    /// Value used to notify the front end that we're idle
+    abstract Idle : bool with get
+
+    /// Value used to notify signal that an asynchronous operation is executing, as well as schedule that operations should execute
+    abstract IdleTracker : IdleTracker with get
     
     /// Add a binding target for a signal with a given name, and returns a signal of the user edits
     abstract Bind<'a> : string -> ISignal<'a> -> ISignal<'a>

@@ -15,22 +15,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>        
         <TextBlock Margin="3" Grid.Row="0" Grid.Column="0" Text="First:" />
-        <TextBox Margin="3" Grid.Row="0" Grid.Column="1" FontSize="16" Text="{Binding First, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Margin="3" Grid.Row="0" Grid.Column="1" FontSize="16" Text="{Binding First, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Idle}"/>
 
         <TextBlock Margin="3" Grid.Row="1" Grid.Column="0" Text="Last:" />
-        <TextBox Margin="3" Grid.Row="1" Grid.Column="1" FontSize="16" Text="{Binding Last, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Margin="3" Grid.Row="1" Grid.Column="1" FontSize="16" Text="{Binding Last, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Idle}"/>
 
         <TextBlock Margin="3" Grid.Row="2" Grid.Column="0" Text="Full Name:" />
         <TextBox Margin="3" Grid.Row="2" Grid.Column="1" IsReadOnly="true" IsTabStop="False" Foreground="Gray" FontSize="16" Text="{Binding Full, Mode=OneWay}"/>
-
+        
         <CheckBox Margin="3" Grid.Row="3" Grid.ColumnSpan="2" IsChecked="{Binding PushAutomatically}">Automatically Push Changes</CheckBox>
         
-        <Button Margin="3" Grid.Row="4" Grid.ColumnSpan="2" FontSize="16" IsDefault="True" Command="{Binding OkCommand}">Ok</Button>        
+        <Button Margin="3" Grid.Row="4" Grid.Column="0" FontSize="16" IsDefault="True" Command="{Binding OkCommand}">Ok</Button>
+        <Button Margin="3" Grid.Row="4" Grid.Column="1" FontSize="16" Command="{Binding AsyncCommand}">Do Async Op</Button>
     </Grid>
 </UserControl>

@@ -49,8 +49,32 @@ module VM =
         let canExecute = 
             Signal.notEqual source name'
             |> Signal.both pushManually
+            |> Signal.both subject.IdleTracker
             |> Signal.both subject.Valid
         let okCommand = subject.CommandChecked "OkCommand" canExecute
+        
+        // Demonstrate an "asynchronous command"
+        let asyncCommand = subject.CommandChecked "AsyncCommand" subject.IdleTracker    
+        // Create a mapping operation - we'll also add asynchronous subscriptions later
+        let asyncMapping _ = 
+            async {
+                do! Async.Sleep 100
+                printf "Running..."
+                for x in [1 .. 20] do
+                    do! Async.Sleep 100
+                    printf "."
+                
+                printfn "Done!"
+                return 1
+            }
+        
+        // We need to subscribe *something* to our command
+        // In this case, we map (async) then subscribe to the results
+        // Since we use "mapAsyncTracked", we disable both commands and editors while this is operating
+        asyncCommand
+        |> Signal.mapAsyncTracked asyncMapping 0 subject.IdleTracker
+        |> Signal.Subscription.create (fun nv -> printfn "Received %d from command result" nv)
+        |> subject.AddDisposable
 
         let automaticUpdates =
             // To push automatically, we output the signal whenever it's valid as an observable

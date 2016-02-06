@@ -13,12 +13,12 @@ open Microsoft.FSharp.Quotations.Patterns
 [<AbstractClass>]
 /// Base class for binding targets, used by platform specific libraries to share implementation details
 type BindingTargetBase<'b>() as self =
+    let uiCtx = System.Threading.SynchronizationContext.Current
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
-    let executionTracker = new ExecutionTracker()
+    let idleTracker = new IdleTracker(uiCtx)
     let isValid = Mutable.create true
     let output = Mutable.create Unchecked.defaultof<'b>
-    let uiCtx = System.Threading.SynchronizationContext.Current
 
     let errors = System.Collections.Generic.Dictionary<string, string list>()
 
@@ -53,13 +53,13 @@ type BindingTargetBase<'b>() as self =
         |> disposables.Add
 
         (self :> IBindingTarget).TrackObservable "IsValid" isValid
-        (self :> IBindingTarget).TrackObservable "OperationExecuting" executionTracker
+        (self :> IBindingTarget).TrackObservable "Idle" idleTracker
+        (self :> IBindingTarget).TrackObservable "OperationExecuting" idleTracker
 
     /// Used by commanding to track executing operations
-    member __.ExecutionTracker = executionTracker
-
-    /// An ISignal<bool> that is set to true while tracked commands execute
-    member __.Executing = executionTracker :> ISignal<bool>
+    member __.IdleTracker = idleTracker
+    member __.OperationExecuting with get() = not (idleTracker :> ISignal<bool>).Value
+    member __.Idle with get() = (idleTracker :> ISignal<bool>).Value
 
     /// An ISignal<bool> used to track the current valid state
     member __.Valid with get() = isValid :> ISignal<bool>
@@ -94,7 +94,9 @@ type BindingTargetBase<'b>() as self =
 
         member __.RaisePropertyChanged name = raisePropertyChanged name
         member __.RaisePropertyChanged expr = raisePropertyChangedExpr expr
-        member __.OperationExecuting with get() = (executionTracker :> ISignal<bool>).Value
+        member this.OperationExecuting with get() = this.OperationExecuting
+        member this.Idle with get() = this.Idle
+        member this.IdleTracker with get() = this.IdleTracker
 
         member this.BindDirect<'a> name (mutatable : IMutatable<'a>) = 
             bt().TrackObservable name mutatable 

@@ -12,30 +12,6 @@ type ITrackingCommand<'a> =
     inherit System.IDisposable
     inherit ISignal<'a>
     
-/// <summary>Extension of INotifyCommand with a public property to supply a CancellationToken.</summary>
-/// <remarks>This allows the command to change the token for subsequent usages if required</remarks>
-type IAsyncNotifyCommand<'a> =
-    inherit ITrackingCommand<'a>
-
-    abstract member CancellationToken : System.Threading.CancellationToken with get, set
-
-/// Simple Command implementation for ICommand and INotifyCommand
-type BasicCommand (execute : obj -> unit, canExecute : obj -> bool) =
-    let canExecuteChanged = new Event<EventHandler, EventArgs>()
-
-    member this.RaiseCanExecuteChanged() =
-        canExecuteChanged.Trigger(this, EventArgs.Empty)
-
-    interface ICommand with
-        [<CLIEvent>]
-        member __.CanExecuteChanged = canExecuteChanged.Publish
-
-        member __.CanExecute(param : obj) =
-            canExecute(param)
-
-        member __.Execute(param : obj) =
-            execute(param)
-    
 /// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
 /// Note that this will signal for each execution, whether or not the value has changed.
 type ParameterCommand<'a> (initialValue : 'a, allowExecute : ISignal<bool>) as self =
@@ -119,4 +95,5 @@ module Command =
             match state with
             | CommandState.Executed(time) -> f(time)
             | _ -> ()
+        
         Signal.Subscription.create f provider

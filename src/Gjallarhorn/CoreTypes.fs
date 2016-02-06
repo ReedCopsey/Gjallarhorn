@@ -355,7 +355,8 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
         |> ignore
     
 /// Type which tracks execution, used for tracked async operations
-type ExecutionTracker() =
+/// Signal with value of true when idle, false when executing
+type IdleTracker(ctx : System.Threading.SynchronizationContext) =
     inherit SignalBase<bool>([| |])
 
     let handles = ResizeArray<_>()
@@ -381,6 +382,49 @@ type ExecutionTracker() =
         this.AddHandle handle
         handle
 
-    override __.Value with get() = lock handles (fun _ -> handles.Count > 0)
+    member private __.SignalBase() = base.Signal()
+    override this.Signal() = ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.SignalBase()), null)
+
+    override __.Value with get() = lock handles (fun _ -> handles.Count = 0)
     override __.RequestRefresh _ = ()
     override __.OnDisposing () = ()
+
+type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) =
+    inherit SignalBase<'b>([| valueProvider |])
+
+    let mutable lastValue = initialValue
+
+    let mutable valueProvider = Some(valueProvider)    
+    let ctx = System.Threading.SynchronizationContext.Current
+
+    member private this.Update () =
+        let inputValue = 
+            DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
+
+        let exec =             
+            async {
+                use _execHandle = 
+                    match tracker with
+                    | None ->
+                        { new IDisposable with
+                            member __.Dispose() = ()
+                        }
+                    | Some tracker ->
+                        tracker.GetExecutionHandle()                
+                let! result = mapFn(inputValue)
+
+                if not <| EqualityComparer<_>.Default.Equals(lastValue, result) then    
+                    if (ctx <> null) then
+                        do! Async.SwitchToContext ctx
+                    lastValue <- result
+                    this.Signal ()    
+            }
+        
+        Async.Start(exec, defaultArg cancellationToken System.Threading.CancellationToken.None )    
+
+    override __.Value with get() = lastValue
+
+    override this.RequestRefresh _ = this.Update ()
+
+    override this.OnDisposing () =
+        this |> DisposeHelpers.cleanup &valueProvider false
