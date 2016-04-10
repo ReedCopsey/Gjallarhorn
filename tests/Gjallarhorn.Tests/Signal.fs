@@ -6,6 +6,17 @@ open Gjallarhorn
 open System
 open NUnit.Framework
 
+let mutable culture : System.Globalization.CultureInfo = null
+
+[<SetUp>]
+let setup () =
+    culture <- System.Threading.Thread.CurrentThread.CurrentCulture
+    System.Threading.Thread.CurrentThread.CurrentCulture <- System.Globalization.CultureInfo.InvariantCulture
+
+[<TearDown>]
+let teardown () =
+    System.Threading.Thread.CurrentThread.CurrentCulture <- culture
+
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStart")>]
 let ``Signal\constant constructs with proper value`` start =
     let value = Signal.constant start
