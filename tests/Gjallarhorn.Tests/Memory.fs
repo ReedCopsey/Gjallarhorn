@@ -7,6 +7,17 @@ open System
 open NUnit.Framework
 
 module Memory =
+    let mutable culture : System.Globalization.CultureInfo = null
+
+    [<SetUp>]
+    let setup () =
+        culture <- System.Threading.Thread.CurrentThread.CurrentCulture
+        System.Threading.Thread.CurrentThread.CurrentCulture <- System.Globalization.CultureInfo.InvariantCulture
+
+    [<TearDown>]
+    let teardown () =
+        System.Threading.Thread.CurrentThread.CurrentCulture <- culture
+
     [<Test>]
     let ``Mutable\create doesn't cause tracking`` () =
         let value = Mutable.create 42
