@@ -119,10 +119,12 @@ open System.Windows.Threading
 module Wpf =
     // Gets, and potentially installs, the WPF synchronization context
     let installAndGetSynchronizationContext () =
-        if SynchronizationContext.Current = null then
+        match SynchronizationContext.Current with
+        | null ->
             // Create our UI sync context, and install it:
             DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher)
             |> SynchronizationContext.SetSynchronizationContext
+        | _ -> ()
 
         SynchronizationContext.Current
 
@@ -132,7 +134,7 @@ module Wpf =
 
     /// Installs WPF targets for binding into Gjallarhorn
     let install installSynchronizationContext =        
-        Gjallarhorn.Bindable.Bind.Internal.installCreationFunction (fun _ -> creation typeof<obj>) creation
+        Gjallarhorn.Bindable.BindingTarget.Internal.installCreationFunction (fun _ -> creation typeof<obj>) creation
 
         match installSynchronizationContext with
         | true -> installAndGetSynchronizationContext ()

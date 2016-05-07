@@ -50,6 +50,25 @@ let ``Signal\map constructs from mutable`` start finish =
 
     Assert.AreEqual(box view.Value, finish)
 
+[<Test;ExpectedException>]
+let ``Signal\map with exception throws on construction`` () =
+    let value = Mutable.create 1
+    let view = 
+        value 
+        |> Signal.map (fun i -> failwith "Bad Case")     
+    ()
+
+[<Test;ExpectedException()>]
+let ``Signal\map with exception throws on subscription`` () =
+    let value = Mutable.create 1
+    let view = 
+        value 
+        |> Signal.map (fun i -> failwith "Bad Case")  
+    use _disp = 
+        view
+        |> Signal.Subscription.create ignore
+    ()
+
 [<Test;TestCaseSource(typeof<Utilities>,"CasesPairToString")>]
 let ``Signal\map2 constructs from mutables`` start1 start2 finish =
     let v1 = Mutable.create start1
