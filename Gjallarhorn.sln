@@ -52,8 +52,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gjallarhorn.ReferenceDocume
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfSimpleMvvmApplication", "samples\WpfSimpleMvvmApplication\WpfSimpleMvvmApplication.fsproj", "{6ED91D96-3519-4BA1-83EA-457FD5EDE893}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfSimpleApplication_CSharp", "samples\WpfSimpleApplication_CSharp\WpfSimpleApplication_CSharp.csproj", "{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,10 +86,6 @@ Global
 		{6ED91D96-3519-4BA1-83EA-457FD5EDE893}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ED91D96-3519-4BA1-83EA-457FD5EDE893}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ED91D96-3519-4BA1-83EA-457FD5EDE893}.Release|Any CPU.Build.0 = Release|Any CPU
-		{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +96,5 @@ Global
 		{E789C72A-5CFD-436B-8EF1-61AA2852A89F} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
 		{797AED1A-68E1-4110-A62C-917932166B24} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
 		{6ED91D96-3519-4BA1-83EA-457FD5EDE893} = {C844E206-BE5F-4335-B8F5-0472CF0A7369}
-		{129E089D-8DAD-4E2B-B6D5-0A4FA8D9EB2F} = {C844E206-BE5F-4335-B8F5-0472CF0A7369}
 	EndGlobalSection
 EndGlobal

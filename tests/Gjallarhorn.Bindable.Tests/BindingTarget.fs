@@ -6,7 +6,7 @@ open Gjallarhorn.Bindable.Wpf
 open Gjallarhorn.Validation
 open System.ComponentModel
 open NUnit.Framework
-open BindingTarget
+open Binding
 
 type TestBindingTarget<'b>() =
     inherit BindingTargetBase<'b>()
@@ -83,7 +83,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackObservable("Test", value)
+        ibt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
     
@@ -98,7 +98,7 @@ type BindingTarget() =
 
         let ibt = bt :> IBindingTarget
 
-        ibt.TrackObservable("Test", value)
+        ibt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
         value.Value <- 2
@@ -110,7 +110,7 @@ type BindingTarget() =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingTarget<obj>() :> IBindingTarget
-        dynamicVm.Bind ("Test", v2) |> ignore
+        dynamicVm.Bind "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
     
@@ -133,7 +133,7 @@ type BindingTarget() =
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
-            BindingTarget.binding {
+            Binding.binding {
                 watch "Full" full
             }
     
@@ -154,7 +154,7 @@ type BindingTarget() =
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = 
-            BindingTarget.binding {
+            Binding.binding {
                 watch "First" first
                 watch "Last" last
                 watch "Full" full
@@ -181,18 +181,18 @@ type BindingTarget() =
 
 
         use dynamicVm = 
-            BindingTarget.binding {
+            Binding.binding {
                 watch "Full" full
             }
 
         let first' = 
             first
             |> Signal.validate notNullOrWhitespace
-            |> BindingTarget.bind dynamicVm "First"
+            |> Binding.bind dynamicVm "First"
         let last' = 
             last
             |> Signal.validate notNullOrWhitespace
-            |> BindingTarget.bind dynamicVm "Last"
+            |> Binding.bind dynamicVm "Last"
             
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -215,7 +215,7 @@ type BindingTarget() =
             |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
 
         use dynamicVm = 
-            BindingTarget.binding {
+            Binding.binding {
                 watch "First" first
                 watch "Last" last
                 watch "Full" full

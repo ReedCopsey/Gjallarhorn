@@ -49,9 +49,9 @@ type BindingTargetBase<'b>() as self =
         errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
         |> disposables.Add
 
-        (self :> IBindingTarget).TrackObservable("IsValid", isValid)
-        (self :> IBindingTarget).TrackObservable("Idle", idleTracker)
-        (self :> IBindingTarget).TrackObservable("OperationExecuting", idleTracker)
+        (self :> IBindingTarget).TrackObservable "IsValid" isValid
+        (self :> IBindingTarget).TrackObservable "Idle" idleTracker
+        (self :> IBindingTarget).TrackObservable "OperationExecuting" idleTracker
 
     /// Used by commanding to track executing operations
     member __.IdleTracker = idleTracker
@@ -94,40 +94,40 @@ type BindingTargetBase<'b>() as self =
         member this.Idle with get() = this.Idle
         member this.IdleTracker with get() = this.IdleTracker
 
-        member this.BindDirect<'a> (name, mutatable : IMutatable<'a>) = 
-            bt().TrackObservable(name, mutatable)
+        member this.BindDirect<'a> name (mutatable : IMutatable<'a>) = 
+            bt().TrackObservable name mutatable
             this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
-        member this.Bind<'a> (name, signal) = 
+        member this.Bind<'a> name signal = 
             // make sure validation checks happen before edits are pushed
             match signal with
             | :? Validation.IValidatedSignal<'a> as validator ->
-                (bt()).TrackValidator(name, validator.ValidationResult.Value, validator.ValidationResult)
+                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
             | _ -> ()
 
             let editSource = Mutable.create signal.Value
             Signal.Subscription.copyTo editSource signal
             |> disposables.Add 
 
-            bt().TrackObservable(name, signal)
+            bt().TrackObservable name signal
             this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
 
             editSource :> ISignal<'a>
 
-        member this.EditDirect (name, validation, mutatable) =
-            bt().TrackObservable(name, mutatable)
+        member this.EditDirect name validation mutatable =
+            bt().TrackObservable name mutatable
             let validated =
                 mutatable
                 |> Signal.validate validation
-            bt().TrackValidator(name, validated.ValidationResult.Value, validated.ValidationResult)
+            bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
             this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
-        member this.Edit (name, validation, signal) =
-            let output = (this :> IBindingTarget).Bind (name, signal)
+        member this.Edit name validation signal =
+            let output = (this :> IBindingTarget).Bind name signal
             let validated =
                 output
                 |> Signal.validate validation
-            bt().TrackValidator(name, validated.ValidationResult.Value, validated.ValidationResult)
+            bt().TrackValidator name  validated.ValidationResult.Value  validated.ValidationResult
             validated
 
         member this.FilterValid signal =
@@ -135,15 +135,15 @@ type BindingTargetBase<'b>() as self =
             |> Signal.observeOn uiCtx
             |> Observable.filter (fun _ -> this.IsValid)
 
-        member this.Watch<'a> (name, signal : ISignal<'a>) = 
-            bt().TrackObservable(name, signal)
+        member this.Watch<'a> name (signal : ISignal<'a>) = 
+            bt().TrackObservable name signal
             this.AddReadOnlyProperty name (fun _ -> signal.Value)
             match signal with
             | :? Validation.IValidatedSignal<'a> as validator ->
-                (bt()).TrackValidator(name, validator.ValidationResult.Value, validator.ValidationResult)
+                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
             | _ -> ()
 
-        member this.Constant (name, value) = 
+        member this.Constant name value = 
             this.AddReadOnlyProperty name (fun _ -> value)
 
         member __.AddDisposable disposable = 
@@ -153,16 +153,16 @@ type BindingTargetBase<'b>() as self =
             disposables.Add(snd tuple)
             fst tuple
 
-        member __.ObservableToSignal<'a> (initial : 'a, obs: System.IObservable<'a>) =            
+        member __.ObservableToSignal<'a> (initial : 'a) (obs: System.IObservable<'a>) =            
             Signal.Subscription.fromObservable initial obs
             |> bt().AddDisposable2            
 
-        member __.TrackObservable(name, observable) =
+        member __.TrackObservable name observable =
             observable
             |> Observable.subscribe (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
-        member __.TrackValidator(name, current, validator) =
+        member __.TrackValidator name current validator =
             validator
             |> Signal.Subscription.create (fun result -> updateErrors name result)
             |> disposables.Add
@@ -172,13 +172,14 @@ type BindingTargetBase<'b>() as self =
         member __.Command name =
             let command = Command.createEnabled()
             disposables.Add command
-            bt().Constant (name, command)
+            bt().Constant name command
             command
 
-        member __.CommandChecked (name, canExecute) =
+
+        member __.CommandChecked name canExecute =
             let command = Command.create canExecute
             disposables.Add command
-            bt().Constant (name, command)
+            bt().Constant name command
             command
 
     interface IBindingSubject<'b> with
@@ -192,8 +193,8 @@ type BindingTargetBase<'b>() as self =
         member __.Dispose() = disposables.Dispose()
 
 /// Functions to work with binding targets     
-module BindingTarget =
-    module Internal =
+module Binding =
+    module Implementation =
         let mutable private createBindingTargetFunction : unit -> obj = (fun _ -> failwith "Platform targets not installed")
         let mutable private createBindingSubjectFunction : System.Type -> obj = (fun _ -> failwith "Platform targets not installed")
 
@@ -204,20 +205,23 @@ module BindingTarget =
         let getCreateBindingTargetFunction () = createBindingTargetFunction() :?> IBindingTarget
         let getCreateBindingSubjectFunction<'a> () = (createBindingSubjectFunction typeof<'a>) :?> IBindingSubject<'a>
 
-    /// Create a binding target for the installed platform
-    let create = Internal.getCreateBindingTargetFunction
+    /// Create a binding subject for the installed platform        
+    let createSubject () = Implementation.getCreateBindingSubjectFunction<_>()
+
+    /// Create a binding target for the installed platform        
+    let createTarget () = Implementation.getCreateBindingTargetFunction()
 
     /// Bind a signal to the binding target using the specified name
     let bind (target : IBindingTarget) name signal =
-        target.Bind (name, signal)
+        target.Bind name signal
 
     /// Add a signal as an editor with validation, bound to a specific name
     let edit (target : IBindingTarget) name validator signal =
-        target.Edit (name, validator, signal)
+        target.Edit name validator signal
 
     /// Add a mutable as an editor with validation, bound to a specific name
     let editDirect (target : IBindingTarget) name validator mutatable =
-        target.EditDirect (name, validator, mutatable)
+        target.EditDirect name validator mutatable
 
     /// Add a binding to a target for a signal for editing with with a given property expression and validation, and returns a signal of the user edits
     let editMember (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
@@ -230,15 +234,15 @@ module BindingTarget =
         let mapped =
             signal
             |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
-        target.Edit (pi.Name, validation, mapped)
+        target.Edit pi.Name validation mapped
 
     /// Add a watched signal (one way property) to a binding target by name
     let watch (target : IBindingTarget) name signal =
-        target.Watch (name, signal)
+        target.Watch name signal
 
     /// Add a constant value (one way property) to a binding target by name
     let constant name value (target : IBindingTarget) =
-        target.Constant (name, value)
+        target.Constant name value
 
     /// Add an ICommand (one way property) to a binding target by name
     let command name (command : ICommand) (target : IBindingTarget) =
@@ -278,13 +282,8 @@ module BindingTarget =
                 source
 
     /// Create and bind a binding target using a computational expression
-    let binding = Builder.Binding(create)
+    let binding = Builder.Binding(createTarget)
 
     /// Add bindings to an existing binding target using a computational expression
-    let extend target = Builder.Binding((fun _ -> target))
-
-/// Functions to work with binding targets     
-module BindingSubject =
-    /// Create a binding subject for the installed platform        
-    let create () = BindingTarget.Internal.getCreateBindingSubjectFunction<_>()
+    let extend (target : #IBindingTarget) = Builder.Binding((fun _ -> target :> IBindingTarget))
 

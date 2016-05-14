@@ -14,23 +14,22 @@ with
 module VM =
     let createMainViewModel (nameIn : IObservable<NameModel>) initialValue =
         // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
-        let subject = BindingSubject.create ()
+        let subject = Binding.createSubject ()
         
         // Map our incoming IObservable to a signal. If we didn't want to use an input IObservable, we could just use Signal.constant or Mutable.create
-        let source = subject.ObservableToSignal (initialValue, nameIn)
+        let source = subject.ObservableToSignal initialValue nameIn
+
+        // Partially apply to reduce typing below
+        let editOnSubject = Binding.editMember subject
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
-        let first = 
-            source 
-            |> BindingTarget.editMember subject <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
-        let last = 
-            source
-            |> BindingTarget.editMember subject <@ initialValue.Last @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
+        let first = source |> editOnSubject <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
+        let last  = source |> editOnSubject <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
                         
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
         Signal.map2 (fun f l -> f + " " + l) first last
         |> Signal.validate (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> BindingTarget.watch subject "Full"        
+        |> Binding.watch subject "Full"        
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
@@ -40,7 +39,7 @@ module VM =
         let pushAutomatically = Mutable.create false        
         
         // Bind it directly and push changes back to the input mutable
-        subject.BindDirect("PushAutomatically", pushAutomatically)
+        subject.BindDirect "PushAutomatically" pushAutomatically
         
         let pushManually = Signal.not pushAutomatically
 
@@ -51,10 +50,10 @@ module VM =
             |> Signal.both pushManually
             |> Signal.both subject.IdleTracker
             |> Signal.both subject.Valid
-        let okCommand = subject.CommandChecked("OkCommand", canExecute)
+        let okCommand = subject.CommandChecked "OkCommand" canExecute
         
         // Demonstrate an "asynchronous command"
-        let asyncCommand = subject.CommandChecked("AsyncCommand", subject.IdleTracker)
+        let asyncCommand = subject.CommandChecked "AsyncCommand" subject.IdleTracker
 
         // Create a mapping operation - we'll also add asynchronous subscriptions later
         let asyncMapping _ = 

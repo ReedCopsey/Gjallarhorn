@@ -134,7 +134,7 @@ module Wpf =
 
     /// Installs WPF targets for binding into Gjallarhorn
     let install installSynchronizationContext =        
-        Gjallarhorn.Bindable.BindingTarget.Internal.installCreationFunction (fun _ -> creation typeof<obj>) creation
+        Gjallarhorn.Bindable.Binding.Implementation.installCreationFunction (fun _ -> creation typeof<obj>) creation
 
         match installSynchronizationContext with
         | true -> installAndGetSynchronizationContext ()
