@@ -99,7 +99,7 @@ module Signal =
         let signal = new AsyncMappingSignal<'a,'b>(provider,initialValue, None, mapping)
         signal :> ISignal<'b>
 
-    /// Transforms a signal value asynchronously by using a specified mapping function. Execution status is reported through the specified ExecutionTracker
+    /// Transforms a signal value asynchronously by using a specified mapping function. Execution status is reported through the specified IdleTracker
     let mapAsyncTracked (mapping : 'a -> Async<'b>) initialValue tracker (provider : ISignal<'a>) =
         let signal = new AsyncMappingSignal<'a,'b>(provider, initialValue, Some(tracker), mapping)
         signal :> ISignal<'b>

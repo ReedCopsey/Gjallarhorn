@@ -5,6 +5,7 @@ open System
 open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
+open Gjallarhorn.Observable
 
 type NameModel = { First : string ; Last : string }
 with
@@ -72,8 +73,8 @@ module VM =
         // In this case, we map (async) then subscribe to the results
         // Since we use "mapAsyncTracked", we disable both commands and editors while this is operating
         asyncCommand
-        |> Signal.mapAsyncTracked asyncMapping 0 subject.IdleTracker
-        |> Signal.Subscription.create (fun nv -> printfn "Received %d from command result" nv)
+        |> Observable.mapAsyncTracked asyncMapping subject.IdleTracker
+        |> Observable.subscribe (fun nv -> printfn "Received %d from command result" nv)
         |> subject.AddDisposable
 
         let automaticUpdates =

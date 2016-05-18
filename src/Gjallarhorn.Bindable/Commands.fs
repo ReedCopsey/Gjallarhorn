@@ -10,7 +10,7 @@ open System.Windows.Input
 type ITrackingCommand<'a> =
     inherit ICommand 
     inherit System.IDisposable
-    inherit ISignal<'a>
+    inherit IObservable<'a>
     
 /// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
 /// Note that this will signal for each execution, whether or not the value has changed.
@@ -96,4 +96,4 @@ module Command =
             | CommandState.Executed(time) -> f(time)
             | _ -> ()
         
-        Signal.Subscription.create f provider
+        Observable.subscribe f provider

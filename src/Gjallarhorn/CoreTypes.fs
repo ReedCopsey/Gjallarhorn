@@ -428,3 +428,4 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
 
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider false
+
