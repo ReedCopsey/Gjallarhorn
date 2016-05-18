@@ -157,8 +157,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     /// Signals the dependencies with a given source, and returns true if there are still dependencies remaining
     member this.Signal (source : ISignal<'a>) = 
         lock this.LockObj (fun _ ->
-            signalAndUpdateDependencies source.Value
-            this.HasDependencies)
+            signalAndUpdateDependencies source.Value)
 
     interface IDependencyManager<'a> with
         member this.Add (dep: IDependent, source: ISignal<'a>) = this.Add (dep,source)
@@ -170,7 +169,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
             }        
         member this.Remove (dep: IDependent, source: ISignal<'a>) = ignore <| this.Remove (dep,source)
         member this.RemoveAll (source: ISignal<'a>) = this.RemoveAll source
-        member this.Signal source = ignore <| this.Signal source
+        member this.Signal source = this.Signal source
         member this.HasDependencies with get() = this.HasDependencies
 
 /// <summary>Manager of all dependency tracking.  Handles signaling of IDependent instances from any given source</summary>
@@ -191,11 +190,14 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
 
     /// Signals all dependencies tracked on a given source
     static member Signal (source : ISignal<'a>) =
-        lock dependencies (fun _ ->
-            let exists, dep = tryGet source
-            if exists then             
-                if not(dep.Signal(source)) then
-                    remove source)
+        // Lock to get the dependencies
+        let exists, dep = lock dependencies (fun _ -> tryGet source)
+
+        // If we have any, signal them
+        if exists then             
+            dep.Signal source         
+            // Lock to remove if they no longer exist   
+            lock dependencies (fun _ -> if (not dep.HasDependencies) then remove source)
     
     /// Adds dependency tracked on a given source
     static member internal AddDependency (source : ISignal<'a>, target : IDependent) =
