@@ -34,7 +34,7 @@ let main _ =
     let uiContext = Gjallarhorn.Wpf.install true
 
     // Create application (before other windows) - this allows application-wide sytles to exist when other objects are created
-    let app = App().Root
+    let app = App()
 
     // This simulates stuff happening outside of the GUI - 
     // Note that the UI updates every 5 seconds automatically
@@ -66,6 +66,6 @@ let main _ =
     // This could easily track history, etc, if desired
     use _sub2 = vm |> Observable.subscribe Model.add
 
-    let window = Views.MainWindow().Root
+    let window = Views.MainWindow()
     window.DataContext <- vm
     app.Run window
