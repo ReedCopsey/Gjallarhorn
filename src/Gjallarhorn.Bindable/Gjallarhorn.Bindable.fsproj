@@ -48,6 +48,8 @@
     <Compile Include="BindingContracts.fs" />
     <Compile Include="BoundView.fs" />
     <Compile Include="BindingTarget.fs" />
+    <Compile Include="BindingTargetUtilities.fs" />
+    <Compile Include="DefaultBindingTarget.fs" />
     <Compile Include="BindingTargetFactory.fs" />
   </ItemGroup>
   <ItemGroup>

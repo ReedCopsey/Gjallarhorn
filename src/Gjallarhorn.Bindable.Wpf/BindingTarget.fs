@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.Internal
 open System
 open System.Collections.Generic
 open System.ComponentModel
@@ -10,11 +11,6 @@ open System.Windows.Input
 
 [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Bindable.Tests")>]
 do ()
-
-type internal IValueHolder =
-    abstract member GetValue : unit -> obj
-    abstract member SetValue : obj -> unit
-    abstract member ReadOnly : bool
 
 type internal IPropertyBag =
     abstract member CustomProperties : Dictionary<string,PropertyDescriptor * IValueHolder>
@@ -27,27 +23,12 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
     let bt() =
         self :> IBindingTarget
 
-    let makePD name = BindingTargetPropertyDescriptor(name) :> PropertyDescriptor
-
-    let makeReadWriteIV getter setter = 
-        { 
-            new IValueHolder with 
-                member __.GetValue() = box <| getter()
-                member __.SetValue(v) = setter(unbox(v))
-                member __.ReadOnly = false    
-        }
-    let makeReadOnlyIV getValue = 
-        { 
-            new IValueHolder with 
-                member __.GetValue() = box <| getValue()
-                member __.SetValue(_) = ()
-                member __.ReadOnly = true
-        }
+    member private __.MakePD<'a> name = BindingTargetPropertyDescriptor<'a>(name) :> PropertyDescriptor
     
-    override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
-        customProps.Add(name, (makePD name, makeReadWriteIV getter setter))        
-    override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
-        customProps.Add(name, (makePD name, makeReadOnlyIV getter))   
+    override this.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+        customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readWrite getter setter))        
+    override this.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+        customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readOnly getter))   
 
     interface IPropertyBag with
         member __.CustomProperties = customProps
