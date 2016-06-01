@@ -54,6 +54,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfSimpleMvvmApplication", 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfAddTwoNumbers", "samples\WpfAddTwoNumbers\WpfAddTwoNumbers.fsproj", "{573766AB-608F-4E48-AC8A-670C9FAD8EBB}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gjallarhorn.Bindable.XamarinForms", "src\Gjallarhorn.Bindable.XamarinForms\Gjallarhorn.Bindable.XamarinForms.fsproj", "{FDECDC7A-70FE-4C5F-9A92-24EE28D8D3FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{573766AB-608F-4E48-AC8A-670C9FAD8EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{573766AB-608F-4E48-AC8A-670C9FAD8EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{573766AB-608F-4E48-AC8A-670C9FAD8EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDECDC7A-70FE-4C5F-9A92-24EE28D8D3FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDECDC7A-70FE-4C5F-9A92-24EE28D8D3FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDECDC7A-70FE-4C5F-9A92-24EE28D8D3FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDECDC7A-70FE-4C5F-9A92-24EE28D8D3FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

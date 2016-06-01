@@ -1,10 +1,19 @@
-﻿namespace Gjallarhorn.Bindable
+﻿namespace Gjallarhorn.Bindable.Xamarin
 
 open Gjallarhorn
+open Gjallarhorn.Bindable
+
+open System
 open System.Reflection
 
-// TODO: Create a default IReflectableType binding target for use with Xamarin Forms, Perspex, and other frameworks supporting IReflectableType
-type DefaultBindingTarget<'b>() =
+type DynamicParameterInfo(memberInfo, t, name) =
+    inherit ParameterInfo()
+
+    override __.ParameterType = t
+    override __.Member = memberInfo
+    override __.Name = name
+    
+type RefTypeBindingTarget<'b>() =
     inherit BindingTargetBase<'b>()
 
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
@@ -15,3 +24,4 @@ type DefaultBindingTarget<'b>() =
     interface IReflectableType with 
         member this.GetTypeInfo() =
             null
+
