@@ -4,8 +4,7 @@ open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
 
-let create () =
-    
+let create () =    
     // Create our binding target
     let target = Binding.createTarget ()
 
