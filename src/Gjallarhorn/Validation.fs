@@ -57,6 +57,10 @@ module Validation =
 
     [<AutoOpen>]
     module Validators =    
+        // Simple validator that does nothing
+        let noValidation input =
+            input
+
         // String validations
         let notNullOrWhitespace (str : ValidationCollector<string>) = 
             let validation value = if String.IsNullOrWhiteSpace(value) then Some "Value cannot be null or empty." else None            
