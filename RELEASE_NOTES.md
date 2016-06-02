@@ -6,3 +6,6 @@
 * Corrected potential blocking condition in SignalManager with Mutable.create
 * Converted commands to be IObservable<'a> but not ISignal<'a>.  This fits better with the conceptual notion of a command.
 
+#### 0.0.3-beta - June 1st 2016
+* Corrected issue where edit bindings were being created as typed ISignal<obj>, not ISignal<'a>
+
