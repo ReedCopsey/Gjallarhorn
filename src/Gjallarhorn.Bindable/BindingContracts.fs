@@ -54,10 +54,10 @@ type IBindingTarget =
     /// Add a binding target for a mutable with a given name which directly pushes edits back to the mutable
     abstract BindDirect<'a> : string -> IMutatable<'a> -> unit
 
-    /// Add a binding target for a signal for editing with with a given name and validation, and returns a signal of the user edits
+    /// Add a binding target for a signal for editing with a given name and validation, and returns a signal of the user edits
     abstract Edit<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'a> -> IValidatedSignal<'a>
 
-    /// Add a binding target for a mutable for editing with with a given name and validation which directly pushes edits back to the mutable
+    /// Add a binding target for a mutable for editing with a given name and validation which directly pushes edits back to the mutable
     abstract EditDirect<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> IMutatable<'a> -> unit
 
     /// Add a readonly binding target for a signal with a given name

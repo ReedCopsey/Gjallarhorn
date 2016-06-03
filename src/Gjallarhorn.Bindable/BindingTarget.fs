@@ -223,7 +223,7 @@ module Binding =
     let editDirect (target : IBindingTarget) name validator mutatable =
         target.EditDirect name validator mutatable
 
-    /// Add a binding to a target for a signal for editing with with a given property expression and validation, and returns a signal of the user edits
+    /// Add a binding to a target for a signal for editing with a given property expression and validation, and returns a signal of the user edits
     let editMember (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
         let pi = 
             match expr with 
