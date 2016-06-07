@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimpleDataEntry.Page1">
+  <StackLayout>
+    <Grid x:Name="Top">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Label Grid.Column="0" Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
+      <Button Grid.Column="1" Text="Increment" Command="{Binding Increment}"/>
+    </Grid>
+    <Grid x:Name="Bottom">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Label Grid.Column="0" Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
+      <Button Grid.Column="1" Text="Decrement" Command="{Binding Decrement}"/>
+    </Grid>
+  </StackLayout>
+</ContentPage>

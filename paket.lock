@@ -21,6 +21,34 @@ NUGET
     Octokit (0.19)
       Microsoft.Net.Http  - framework: net10, net11, net20, net30, net35, net40, net40-full
     SourceLink.Fake (1.1)
+    WPtoolkit (4.2013.8.16) - framework: wpv8.0
+    Xamarin.Android.Support.Animated.Vector.Drawable (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3)
+      Xamarin.Android.Support.Vector.Drawable (23.3)
+    Xamarin.Android.Support.Design (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3)
+      Xamarin.Android.Support.v7.AppCompat (23.3)
+      Xamarin.Android.Support.v7.RecyclerView (23.3)
+    Xamarin.Android.Support.v4 (23.3) - framework: monoandroid
+    Xamarin.Android.Support.v7.AppCompat (23.3) - framework: monoandroid
+      Xamarin.Android.Support.Animated.Vector.Drawable (23.3)
+      Xamarin.Android.Support.v4 (23.3)
+      Xamarin.Android.Support.Vector.Drawable (23.3)
+    Xamarin.Android.Support.v7.CardView (23.3) - framework: monoandroid
+    Xamarin.Android.Support.v7.MediaRouter (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3)
+      Xamarin.Android.Support.v7.AppCompat (23.3)
+    Xamarin.Android.Support.v7.RecyclerView (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3)
+    Xamarin.Android.Support.Vector.Drawable (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3)
+    Xamarin.Forms (2.2.0.45)
+      WPtoolkit (>= 4.2013.8.16) - framework: wpv8.0
+      Xamarin.Android.Support.Design (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v4 (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v7.AppCompat (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v7.CardView (23.3) - framework: monoandroid
+      Xamarin.Android.Support.v7.MediaRouter (23.3) - framework: monoandroid
 GITHUB
   remote: fsharp/FAKE
   specs:

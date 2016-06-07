@@ -10,5 +10,6 @@ module XamarinForms =
         System.Activator.CreateInstance(targetType) 
 
     /// Installs Xamarin Forms targets for binding into Gjallarhorn
-    let install installSynchronizationContext =        
+    [<CompiledName("Install")>]
+    let install () =        
         Gjallarhorn.Bindable.Binding.Implementation.installCreationFunction (fun _ -> creation typeof<obj>) creation
