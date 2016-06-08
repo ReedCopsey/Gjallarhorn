@@ -18,9 +18,10 @@ module VM =
         
         // Show our current value
         let currentValue = Mutable.create 0        
-        bt.Watch "Current" currentValue
+        let result = bt.Edit "Current" (Validation.Validators.lessThan 10) currentValue
 
         let incr = bt.Command "Increment"
+        
         incr.Subscribe(fun _ -> currentValue.Value <- currentValue.Value + 1)
         |> bt.AddDisposable
 
@@ -31,7 +32,16 @@ module VM =
         
         // Show our current value
         let currentValue = Mutable.create 100        
-        bt.Watch "Current" currentValue 
+        let currentEdit = Signal.map string currentValue
+        let out = bt.Edit "Current" Validation.Validators.noValidation currentEdit 
+        out 
+        |> Signal.Subscription.create (fun v -> 
+            match System.Int32.TryParse v with
+            | true, value -> currentValue.Value <- value
+            | _ -> ())
+        |> bt.AddDisposable
+        
+        bt.Watch "Current|Two" currentValue 
 
         bt.Command "Decrement"
         |> Observable.subscribe(fun _ -> currentValue.Value <- currentValue.Value - 1)

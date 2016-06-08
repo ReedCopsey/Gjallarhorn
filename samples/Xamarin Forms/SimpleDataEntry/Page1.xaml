@@ -8,16 +8,30 @@
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
       <Label Grid.Column="0" Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
       <Button Grid.Column="1" Text="Increment" Command="{Binding Increment}"/>
+      <ActivityIndicator Grid.Row="1" Grid.Column="0" Color="Green" IsRunning="{Binding IsValid}" />    
     </Grid>
-    <Grid x:Name="Bottom">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <Label Grid.Column="0" Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
-      <Button Grid.Column="1" Text="Decrement" Command="{Binding Decrement}"/>
-    </Grid>
+    <Frame OutlineColor="Silver">
+      <Grid x:Name="Bottom">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <Entry Grid.Row="0" Grid.Column="0" Text="{Binding Current}" Placeholder="Enter Value..." />
+
+        <Button Grid.Column="0" Grid.Row="1" Text="Decrement" Command="{Binding Decrement}"/>
+        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Current|Two, StringFormat='Current Value = {0:N0}'}" />
+      </Grid>
+    </Frame>
   </StackLayout>
 </ContentPage>

@@ -74,7 +74,7 @@ type DynPropertyInfo(owner, name, t, valueHolder : IValueHolder) as self =
 
 type DynTypeInfo (ownerType, getProp) =
     inherit TypeDelegator(ownerType)
-
+    
     override __.GetDeclaredProperty name = 
         match getProp name with
         | Some p -> p
@@ -83,7 +83,7 @@ type DynTypeInfo (ownerType, getProp) =
 type RefTypeBindingTarget<'b>() =
     inherit BindingTargetBase<'b>()
 
-    let ownerType = typeof<IBindingSubject<'b>>
+    let ownerType = typeof<BindingTargetBase<'b>>
     let properties = System.Collections.Generic.Dictionary<string, PropertyInfo>()
 
     let getProperty name =
