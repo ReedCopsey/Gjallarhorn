@@ -27,10 +27,11 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <Entry Grid.Row="0" Grid.Column="0" Text="{Binding Current}" Placeholder="Enter Value..." />
-
-        <Button Grid.Column="0" Grid.Row="1" Text="Decrement" Command="{Binding Decrement}"/>
-        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Current|Two, StringFormat='Current Value = {0:N0}'}" />
+        <Entry  Grid.Row="0" Grid.Column="0" Text="{Binding Current}" Placeholder="Enter Value..." />
+        <Button Grid.Row="0" Grid.Column="1" Text="Decrement" Command="{Binding Decrement}"/>
+        
+        <Label  Grid.Row="1" Grid.Column="0" Text="{Binding Current-IsValid, StringFormat='Valid?: {0}'}" />
+        <Label  Grid.Row="1" Grid.Column="1" Text="{Binding Current-Errors[0]}" TextColor="Red" />
       </Grid>
     </Frame>
   </StackLayout>

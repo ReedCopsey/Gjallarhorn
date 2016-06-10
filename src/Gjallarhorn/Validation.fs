@@ -140,6 +140,17 @@ module Validation =
     | Valid
     /// Value is invalid with a list of error messages
     | Invalid of errors : string list
+    with
+        static member ValidResultAsList = [ "" ]
+        member this.IsValidResult =
+            match this with
+            | Valid -> true
+            | _ -> false
+
+        member this.AsList () =
+            match this with
+            | Valid -> ValidationResult.ValidResultAsList
+            | Invalid(errors) -> errors
 
     /// Check to see if a result is in a valid state
     let isValid result =

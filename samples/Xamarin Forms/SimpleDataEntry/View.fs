@@ -33,7 +33,17 @@ module VM =
         // Show our current value
         let currentValue = Mutable.create 100        
         let currentEdit = Signal.map string currentValue
-        let out = bt.Edit "Current" Validation.Validators.noValidation currentEdit 
+        let valid =
+            Validation.custom (fun a ->
+                match System.Int32.TryParse a with
+                | false, _ -> Some "Could not convert to number" 
+                | true, v ->
+                    if v > 95 then 
+                        None 
+                    else 
+                        Some "Value must be >95" )            
+
+        let out = bt.Edit "Current" valid currentEdit 
         out 
         |> Signal.Subscription.create (fun v -> 
             match System.Int32.TryParse v with
@@ -41,7 +51,6 @@ module VM =
             | _ -> ())
         |> bt.AddDisposable
         
-        bt.Watch "Current|Two" currentValue 
 
         bt.Command "Decrement"
         |> Observable.subscribe(fun _ -> currentValue.Value <- currentValue.Value - 1)

@@ -26,6 +26,16 @@ type BindingTargetBase<'b>() as self =
 
     let raisePropertyChanged name =
         propertyChanged.Trigger(self, new PropertyChangedEventArgs(name))
+    
+    let getErrorsPropertyName propertyName =
+        propertyName + "-" + "Errors"
+    let getValidPropertyName propertyName =
+        propertyName + "-" + "IsValid"
+
+    let raiseErrorNotifications name =
+        errorsChanged.Trigger(self, DataErrorsChangedEventArgs(name))
+        propertyChanged.Trigger(self, PropertyChangedEventArgs(getErrorsPropertyName name))
+        propertyChanged.Trigger(self, PropertyChangedEventArgs(getValidPropertyName name))
 
     let updateErrors name (result : ValidationResult) =
         match errors.ContainsKey(name), result with
@@ -33,11 +43,11 @@ type BindingTargetBase<'b>() as self =
             ()        
         | _, Invalid(err) -> 
             errors.[name] <- err
-            errorsChanged.Trigger(self, DataErrorsChangedEventArgs(name))
+            raiseErrorNotifications name
             
         | true, Valid -> 
             errors.Remove(name) |> ignore
-            errorsChanged.Trigger(self, DataErrorsChangedEventArgs(name))
+            raiseErrorNotifications name
 
     let updateValidState() = 
         isValid.Value <- errors.Count = 0
@@ -162,10 +172,13 @@ type BindingTargetBase<'b>() as self =
             |> Observable.subscribe (fun _ -> raisePropertyChanged name)
             |> disposables.Add
 
-        member __.TrackValidator name current validator =
+        member this.TrackValidator name current validator =
             validator
             |> Signal.Subscription.create (fun result -> updateErrors name result)
             |> disposables.Add
+
+            this.AddReadOnlyProperty (getErrorsPropertyName name) (fun _ -> validator.Value.AsList() )
+            this.AddReadOnlyProperty (getValidPropertyName name) (fun _ -> validator.Value.IsValidResult )
 
             updateErrors name current 
 
