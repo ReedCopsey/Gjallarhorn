@@ -104,11 +104,11 @@ type BindingTargetBase<'b>() as self =
         member this.Idle with get() = this.Idle
         member this.IdleTracker with get() = this.IdleTracker
 
-        member this.BindDirect<'a> name (mutatable : IMutatable<'a>) = 
+        member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name) = 
             bt().TrackObservable name mutatable
             this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
-        member this.Bind<'a> name signal = 
+        member this.ToFromView<'a> (signal,name) = 
             // make sure validation checks happen before edits are pushed
             match signal with
             | :? Validation.IValidatedSignal<'a> as validator ->
@@ -124,7 +124,7 @@ type BindingTargetBase<'b>() as self =
 
             editSource :> ISignal<'a>
 
-        member this.EditDirect name validation mutatable =
+        member this.MutateToFromView (mutatable, name, validation) =
             bt().TrackObservable name mutatable
             let validated =
                 mutatable
@@ -132,20 +132,54 @@ type BindingTargetBase<'b>() as self =
             bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
             this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
-        member this.Edit name validation signal =
-            let output = (this :> IBindingTarget).Bind name signal
+        member this.MutateToFromView (mutatable, name, converter, validation) =
+            let converted = Mutable.create (converter mutatable.Value)
+            bt().TrackObservable name converted
+
+            // Handle changes from our input observable
+            mutatable
+            |> Signal.map converter
+            |> Signal.Subscription.copyTo converted
+            |> disposables.Add
+
+            // Do our validation
             let validated =
+                converted
+                |> Signal.validate validation
+            bt().TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+
+            // Copy back to the input when appropriate
+            validated.ValidationResult
+            |> Signal.Subscription.create(fun v -> 
+                if v.IsValidResult then 
+                    mutatable.Value <- validated.Value)
+            |> disposables.Add
+
+            this.AddReadWriteProperty name (fun _ -> converted.Value) (fun v -> converted.Value <- v)
+
+        member this.ToFromView (signal, name, conversion, validation) =
+            let converted = Signal.map conversion signal
+            let output = (this :> IBindingTarget).ToFromView (converted, name)
+            let valid =
                 output
                 |> Signal.validate validation
-            bt().TrackValidator name  validated.ValidationResult.Value  validated.ValidationResult
-            validated
+            bt().TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
+            valid 
+
+        member this.ToFromView (signal, name, validation) =
+            let output = (this :> IBindingTarget).ToFromView (signal, name)
+            let valid =
+                output
+                |> Signal.validate validation
+            bt().TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
+            valid 
 
         member this.FilterValid signal =
             signal
             |> Signal.observeOn uiCtx
             |> Observable.filter (fun _ -> this.IsValid)
 
-        member this.Watch<'a> name (signal : ISignal<'a>) = 
+        member this.ToView<'a> (signal : ISignal<'a>, name) = 
             bt().TrackObservable name signal
             this.AddReadOnlyProperty name (fun _ -> signal.Value)
             match signal with
@@ -226,15 +260,15 @@ module Binding =
 
     /// Bind a signal to the binding target using the specified name
     let bind (target : IBindingTarget) name signal =
-        target.Bind name signal
+        target.ToFromView (signal, name)
 
     /// Add a signal as an editor with validation, bound to a specific name
     let edit (target : IBindingTarget) name validator signal =
-        target.Edit name validator signal
+        target.ToFromView (signal, name, validator)
 
     /// Add a mutable as an editor with validation, bound to a specific name
     let editDirect (target : IBindingTarget) name validator mutatable =
-        target.EditDirect name validator mutatable
+        target.MutateToFromView (mutatable, name, validator)
 
     /// Add a binding to a target for a signal for editing with a given property expression and validation, and returns a signal of the user edits
     let editMember (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
@@ -247,11 +281,11 @@ module Binding =
         let mapped =
             signal
             |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
-        target.Edit pi.Name validation mapped
+        target.ToFromView (mapped, pi.Name, validation)
 
     /// Add a watched signal (one way property) to a binding target by name
-    let watch (target : IBindingTarget) name signal =
-        target.Watch name signal
+    let toView (target : IBindingTarget) name signal =
+        target.ToView(signal, name)
 
     /// Add a constant value (one way property) to a binding target by name
     let constant name value (target : IBindingTarget) =
@@ -263,7 +297,7 @@ module Binding =
 
     module Builder =
         let private builderWatch name signal (target : #IBindingTarget) =
-            watch target name signal
+            toView target name signal
             target
 
         let private builderConstant name value (target : #IBindingTarget) =

@@ -4,6 +4,7 @@ open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Bindable.Wpf
 open Gjallarhorn.Validation
+open Gjallarhorn.Validation.Validators
 open System.ComponentModel
 open NUnit.Framework
 open Binding
@@ -110,7 +111,7 @@ type BindingTarget() =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingTarget<obj>() :> IBindingTarget
-        dynamicVm.Bind "Test" v2 |> ignore
+        dynamicVm.ToFromView (v2, "Test") |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
     

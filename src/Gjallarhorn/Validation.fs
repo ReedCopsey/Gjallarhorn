@@ -40,7 +40,7 @@ module Validation =
             ValidationCollector.Invalid(value, [errorMessage], InvalidValidationStatus.Completed)
         | _ -> step
 
-    /// Create a custom validator using a predicate ('a -> bool) and an error message on failure. The error message can use {0} for a placeholder for the property name.
+    /// Create a custom validator using a custom function ('a -> string option) . The error message can use {0} for a placeholder for the property value. None indicates success.
     let custom (validator : 'a -> string option) (step : ValidationCollector<'a>) =        
         let success = 
             match step with            
@@ -54,8 +54,81 @@ module Validation =
         | Some error, ValidationCollector.Valid(value) -> ValidationCollector.Invalid(value, [String.Format(error, value)], InvalidValidationStatus.CollectingMessages)
         | Some error, ValidationCollector.Invalid(value, err, status) -> ValidationCollector.Invalid(value, err @ [String.Format(error, value)], status)
 
+    /// Create a custom converter validator using a function ('a -> Choice<'b,string>) and default value on conversion failure. Choice2of2 indicates a failure error message. The error message can use {0} for a placeholder for the property name.  Conversions always stop collecting on failure.
+    let customConverter (validator : 'a -> Choice<'b,string>) (defaultOnFailure: 'b) (step : ValidationCollector<'a>) =        
+        match step with            
+        | ValidationCollector.Invalid(value, err, InvalidValidationStatus.Completed) -> 
+            match validator value with
+            | Choice1Of2 newValue -> ValidationCollector.Invalid(newValue, err, InvalidValidationStatus.Completed)
+            | Choice2Of2 _ -> ValidationCollector.Invalid(defaultOnFailure, err, InvalidValidationStatus.Completed)
+        | ValidationCollector.Invalid(value, err, InvalidValidationStatus.CollectingMessages) -> 
+            match validator value with
+            | Choice1Of2 newValue -> ValidationCollector.Invalid(newValue, err, InvalidValidationStatus.Completed)
+            | Choice2Of2 error -> ValidationCollector.Invalid(defaultOnFailure, err @ [ error ], InvalidValidationStatus.Completed)
+        | ValidationCollector.Valid(value) -> 
+            match validator value with
+            | Choice1Of2 newValue -> ValidationCollector.Valid(newValue)
+            | Choice2Of2 error -> ValidationCollector.Invalid(defaultOnFailure, [ error ], InvalidValidationStatus.Completed)
 
-    [<AutoOpen>]
+    /// Library of validation converters which can be used to convert value representations as part of the validation process
+    module Converters =
+        /// An "id" style conversion which does nothing
+        let toSelf (input : ValidationCollector<'a>) = 
+            let convert (value : 'a) = Choice1Of2 (value)
+            let value =
+                match input with
+                | ValidationCollector.Valid v -> v
+                | ValidationCollector.Invalid (v,_,_) -> v
+            customConverter convert value input
+
+        /// Convert to a string representation using Object.ToString()
+        let toString (input : ValidationCollector<'a>) = 
+            let convert (value : 'a) = Choice1Of2 (value.ToString())
+            customConverter convert "" input
+
+        /// Convert between any two types, using System.Convert.ChangeType
+        let fromTo<'a,'b> (input : ValidationCollector<'a>) : ValidationCollector<'b> =
+            let convert (value : 'a) = 
+                try
+                    Choice1Of2 <| (System.Convert.ChangeType(box value, typeof<'b>) :?> 'b)
+                with
+                | _ -> 
+                    Choice2Of2 "Value could not be converted."
+
+            customConverter convert Unchecked.defaultof<'b> input
+
+        /// Convert from a string to an integer specifying culture information
+        let stringToInt32C style provider input = 
+            let convert (value : string) = 
+                match System.Int32.TryParse(value,style,provider) with
+                | false, _ -> Choice2Of2 "Value does not represent a valid number."
+                | true, v -> Choice1Of2 v
+            customConverter convert Unchecked.defaultof<int> input
+
+        /// Convert from a string to an integer
+        let stringToInt32 input = 
+            let convert (value : string) = 
+                match System.Int32.TryParse value with
+                | false, _ -> Choice2Of2 "Value does not represent a valid number."
+                | true, v -> Choice1Of2 v
+            customConverter convert Unchecked.defaultof<int> input
+
+        /// Convert from a string to a 64bit float
+        let stringToDouble input = 
+            let convert (value : string) = 
+                match System.Double.TryParse value with
+                | false, _ -> Choice2Of2 "Value does not represent a valid number."
+                | true, v -> Choice1Of2 v
+            customConverter convert Unchecked.defaultof<float> input
+
+        /// Convert from a string to a double specifying culture information
+        let stringToDoubleC style provider input = 
+            let convert (value : string) = 
+                match System.Double.TryParse(value,style,provider) with
+                | false, _ -> Choice2Of2 "Value does not represent a valid number."
+                | true, v -> Choice1Of2 v
+            customConverter convert Unchecked.defaultof<float> input
+
     module Validators =    
         // Simple validator that does nothing
         let noValidation input =

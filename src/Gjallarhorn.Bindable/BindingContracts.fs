@@ -9,6 +9,8 @@ open Microsoft.FSharp.Quotations.Patterns
 open System
 open System.ComponentModel
 
+type Validation<'a,'b> = (ValidationCollector<'a> -> ValidationCollector<'b>)
+
 /// Interface used to manage a binding target
 type IBindingTarget =
     inherit INotifyPropertyChanged
@@ -48,20 +50,26 @@ type IBindingTarget =
     /// Value used to notify signal that an asynchronous operation is executing, as well as schedule that operations should execute
     abstract IdleTracker : IdleTracker with get
     
-    /// Add a binding target for a signal with a given name, and returns a signal of the user edits
-    abstract Bind<'a> : string -> ISignal<'a> -> ISignal<'a>
+    /// Add a readonly binding target for a signal with a given name
+    abstract ToView<'a> : ISignal<'a> * string -> unit
 
-    /// Add a binding target for a mutable with a given name which directly pushes edits back to the mutable
-    abstract BindDirect<'a> : string -> IMutatable<'a> -> unit
+    /// Add a binding target for a signal with a given name, and returns a signal of the user edits
+    abstract ToFromView<'a> : ISignal<'a> * string -> ISignal<'a>
 
     /// Add a binding target for a signal for editing with a given name and validation, and returns a signal of the user edits
-    abstract Edit<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> ISignal<'a> -> IValidatedSignal<'a>
+    abstract ToFromView<'a,'b> : ISignal<'a> * string * Validation<'a,'b> -> IValidatedSignal<'b>
+
+    /// Add a binding target for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
+    abstract ToFromView<'a,'b> : ISignal<'a> * string * ('a -> 'b) * Validation<'b,'a> -> IValidatedSignal<'a>
+
+    /// Add a binding target for a mutable with a given name which directly pushes edits back to the mutable
+    abstract MutateToFromView<'a> : IMutatable<'a> * string -> unit
 
     /// Add a binding target for a mutable for editing with a given name and validation which directly pushes edits back to the mutable
-    abstract EditDirect<'a> : string -> (ValidationCollector<'a> -> ValidationCollector<'a>) -> IMutatable<'a> -> unit
+    abstract MutateToFromView<'a> : IMutatable<'a> * string * Validation<'a,'a> -> unit
 
-    /// Add a readonly binding target for a signal with a given name
-    abstract Watch<'a> : string -> ISignal<'a> -> unit
+    /// Add a binding target for a mutable for editing with a given name, converter, and validation which directly pushes edits back to the mutable
+    abstract MutateToFromView<'a,'b> : IMutatable<'a> * string * ('a -> 'b) * Validation<'b,'a> -> unit
 
     /// Filter a signal to only output when we're valid
     abstract FilterValid<'a> : ISignal<'a> -> IObservable<'a>

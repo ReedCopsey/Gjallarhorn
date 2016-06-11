@@ -5,6 +5,7 @@ open System
 open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
+open Gjallarhorn.Validation.Validators
 open Gjallarhorn.Observable
 
 type NameModel = { First : string ; Last : string }
@@ -30,7 +31,7 @@ module VM =
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
         Signal.map2 (fun f l -> f + " " + l) first last
         |> Signal.validate (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> Binding.watch subject "Full"        
+        |> Binding.toView subject "Full"        
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
@@ -40,7 +41,7 @@ module VM =
         let pushAutomatically = Mutable.create false        
         
         // Bind it directly and push changes back to the input mutable
-        subject.BindDirect "PushAutomatically" pushAutomatically
+        subject.MutateToFromView (pushAutomatically, "PushAutomatically")
         
         let pushManually = Signal.not pushAutomatically
 

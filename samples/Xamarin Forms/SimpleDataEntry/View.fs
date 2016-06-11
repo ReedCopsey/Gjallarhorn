@@ -5,6 +5,7 @@ open Xamarin.Forms.Xaml
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Validation
 
 type Page1() as this = 
     inherit Xamarin.Forms.ContentPage()
@@ -18,45 +19,33 @@ module VM =
         
         // Show our current value
         let currentValue = Mutable.create 0        
-        let result = bt.Edit "Current" (Validation.Validators.lessThan 10) currentValue
+        let result = bt.ToFromView(currentValue, "Current", Validators.lessThan 10) 
 
-        let incr = bt.Command "Increment"
-        
-        incr.Subscribe(fun _ -> currentValue.Value <- currentValue.Value + 1)
+        bt.Command "Increment"
+        |> Observable.subscribe (fun _ -> currentValue.Value <- currentValue.Value + 1)
         |> bt.AddDisposable
 
         bt
 
     let createBottom () = 
-        let bt = Binding.createTarget()        
+        let bind = Binding.createTarget()        
         
         // Show our current value
-        let currentValue = Mutable.create 100        
-        let currentEdit = Signal.map string currentValue
-        let valid =
-            Validation.custom (fun a ->
-                match System.Int32.TryParse a with
-                | false, _ -> Some "Could not convert to number" 
-                | true, v ->
-                    if v > 95 then 
-                        None 
-                    else 
-                        Some "Value must be >95" )            
+        let currentValue = Mutable.create 100                
+                        
+        bind.MutateToFromView (
+                    currentValue, 
+                    "Current", 
+                    string, 
+                    Converters.stringToInt32 >> Validators.greaterThan 90 >> Validators.lessOrEqualTo 95)
 
-        let out = bt.Edit "Current" valid currentEdit 
-        out 
-        |> Signal.Subscription.create (fun v -> 
-            match System.Int32.TryParse v with
-            | true, value -> currentValue.Value <- value
-            | _ -> ())
-        |> bt.AddDisposable
-        
-
-        bt.Command "Decrement"
+        bind.Command "Decrement"
         |> Observable.subscribe(fun _ -> currentValue.Value <- currentValue.Value - 1)
-        |> bt.AddDisposable
+        |> bind.AddDisposable
 
-        bt
+        bind.ToView(currentValue, "CurrentValue")
+
+        bind
 
 type App() as self =
     inherit Application()

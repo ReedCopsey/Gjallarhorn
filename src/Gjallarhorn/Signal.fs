@@ -204,20 +204,35 @@ module Signal =
     let observeOn ctx (signal : ISignal<'a>) =
         new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
                 
-    type internal ValidatorMappingSignal<'a>(validator : ValidationCollector<'a> -> ValidationCollector<'a>, valueProvider : ISignal<'a>) as self =
-        inherit SignalBase<'a>([| valueProvider |])
+    type internal ValidatorMappingSignal<'a,'b>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>, defaultValue) as self =
+        inherit SignalBase<'b>([| valueProvider |])
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
-        let mutable lastValue = valueProvider.Value
+        let validateCurrent value =
+            let validator = 
+                value
+                |> validate 
+                |> validator
+            match validator with
+            | ValidationCollector.Valid(v) -> v, validator |> Validation.result
+            | ValidationCollector.Invalid(v,_,_) -> v, validator |> Validation.result
+            
+        let mutable lastValidation = validateCurrent (valueProvider.Value)        
+        
+        let mutable lastInputValue = valueProvider.Value
+        let mutable lastValue = 
+            match lastValidation with
+            | v, ValidationResult.Valid -> v
+            | _, ValidationResult.Invalid(_) -> defaultValue
+
+        let updateLastValue () =
+            lastValue <- 
+                match lastValidation with
+                | v, ValidationResult.Valid -> v
+                | _, ValidationResult.Invalid(_) -> defaultValue
+
         let mutable valueProvider = Some(valueProvider)
 
-        let validateCurrent value =
-            value
-            |> validate 
-            |> validator
-            |> Validation.result
-        let mutable lastValidation = validateCurrent lastValue
-        
         override __.HasDependencies 
             with get() =
                 base.HasDependencies || validationDeps.HasDependencies
@@ -225,17 +240,18 @@ module Signal =
         // This requires custom signaling
         member private this.ValidateSignal signalValidation signalValue = 
             if signalValidation then 
-                validationDeps.Signal (this :> IValidatedSignal<'a>).ValidationResult
+                validationDeps.Signal (this :> IValidatedSignal<'b>).ValidationResult
             if signalValue then 
                 base.Signal()
 
         member private this.Update () =            
             let value = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             let signalValue, signalValidation =
-                if false = EqualityComparer<_>.Default.Equals(lastValue, value) then
-                    lastValue <- value                    
+                if Operators.not <| EqualityComparer<_>.Default.Equals(lastInputValue, value) then
+                    lastInputValue <- value
                     let valid = validateCurrent value
-                    let signalV = valid <> lastValidation
+                    lastValue <- fst valid
+                    let signalV = (snd valid) <> (snd lastValidation)
                     lastValidation <- valid
                     true, signalV
                 else 
@@ -243,7 +259,7 @@ module Signal =
             this.ValidateSignal signalValidation signalValue            
 
         override this.Value 
-            with get() = 
+            with get() : 'b = 
                 this.Update()
                 lastValue
 
@@ -251,9 +267,9 @@ module Signal =
 
         override this.OnDisposing () =
             this |> DisposeHelpers.cleanup &valueProvider false 
-            validationDeps.RemoveAll (this :> IValidatedSignal<'a>).ValidationResult
+            validationDeps.RemoveAll (this :> IValidatedSignal<'b>).ValidationResult
 
-        interface IValidatedSignal<'a> with
+        interface IValidatedSignal<'b> with
             member this.ValidationResult 
                 with get() = 
                     let rec result =
@@ -262,7 +278,7 @@ module Signal =
                                 member __.Value 
                                     with get() = 
                                         self.Update()
-                                        lastValidation
+                                        snd lastValidation
                             interface IObservable<ValidationResult> with
                                 member __.Subscribe obs = validationDeps.Subscribe (obs,result)
                             interface IDependent with
@@ -277,8 +293,9 @@ module Signal =
             member this.IsValid 
                 with get() = 
                     this.Update()
-                    isValid lastValidation
+                    isValid (snd lastValidation)
 
     /// Validates a signal with a validation chain
-    let validate<'a> (validator : ValidationCollector<'a> -> ValidationCollector<'a>) (signal : ISignal<'a>) =
-        new ValidatorMappingSignal<'a>(validator, signal) :> IValidatedSignal<'a>    
+    let validate<'a,'b> (validator : ValidationCollector<'a> -> ValidationCollector<'b>) (signal : ISignal<'a>) =
+        // TODO: Should we pass through defaults?
+        new ValidatorMappingSignal<'a,'b>(validator, signal, Unchecked.defaultof<'b>) :> IValidatedSignal<'b>    

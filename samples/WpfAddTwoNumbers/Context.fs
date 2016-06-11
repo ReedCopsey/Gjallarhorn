@@ -3,6 +3,7 @@
 open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
+open Gjallarhorn.Validation.Validators
 
 let create () =    
     // Create our binding target
@@ -20,7 +21,7 @@ let create () =
     let result = Signal.map2 (+) one two
     
     // Display the results bound as "Result"
-    target.Watch "Result" result
+    target.ToView (result, "Result")
 
     // Return the binding subject
     target

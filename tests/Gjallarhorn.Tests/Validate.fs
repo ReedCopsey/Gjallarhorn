@@ -3,6 +3,7 @@
 open Gjallarhorn
 
 open Gjallarhorn.Validation
+open Gjallarhorn.Validation.Validators
 
 open NUnit.Framework
 
