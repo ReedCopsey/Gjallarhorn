@@ -94,9 +94,23 @@ type internal Mutable<'a>(value : 'a) =
 type SignalBase<'a>(dependencies) as self =
     let dependencies = Dependencies.create dependencies self
 
+    // We have a signal guard in place to prevent stackoverflows.
+    // If a Signal isn't referentially transparent, it's possible that a signal
+    // can trigger the value to not match the last value, which in turn signals again,
+    // which forms infinite loops.  This is only a problem in practice if you build
+    // a mapping which uses randomization, but impacted a user. Guarding
+    // prevents a single signal from signaling their dependencies more than once in
+    // any signal change, effectively trampolining the notification to prevent multiple
+    // triggers from occurring
+    let mutable signalGuard = false
+
     /// Signals to dependencies that we have updated
     abstract member Signal : unit -> unit
-    default this.Signal() = dependencies.Signal this |> ignore
+    default this.Signal() = 
+        if not signalGuard then
+            signalGuard <- true
+            dependencies.Signal this |> ignore
+            signalGuard <- false
     
     /// Gets the current value
     abstract member Value : 'a with get
@@ -132,35 +146,19 @@ type SignalBase<'a>(dependencies) as self =
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
-type SignalGuard () =
-    let mutable signaling = false
-
-    member __.Signaling with get() = signaling
-    member __.Guard () =
-        signaling <- true
-        { 
-            new IDisposable with
-                member __.Dispose() = 
-                    signaling <- false
-        }
-
 type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
     inherit SignalBase<'b>([| valueProvider |])
     
     let mutable lastValue = mapping valueProvider.Value
     let mutable valueProvider = Some(valueProvider)
 
-    let guard = SignalGuard()
-
     member private this.Update () =
         let value = 
             DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             |> mapping
-        if (not guard.Signaling) then
-            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
-                lastValue <- value
-                use _guard = guard.Guard()
-                this.Signal()        
+        if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            lastValue <- value
+            this.Signal()        
 
     override this.Value 
         with get() = 
