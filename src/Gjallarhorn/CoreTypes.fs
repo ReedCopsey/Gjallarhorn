@@ -132,19 +132,35 @@ type SignalBase<'a>(dependencies) as self =
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
+type SignalGuard () =
+    let mutable signaling = false
+
+    member __.Signaling with get() = signaling
+    member __.Guard () =
+        signaling <- true
+        { 
+            new IDisposable with
+                member __.Dispose() = 
+                    signaling <- false
+        }
+
 type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
     inherit SignalBase<'b>([| valueProvider |])
     
     let mutable lastValue = mapping valueProvider.Value
     let mutable valueProvider = Some(valueProvider)
 
+    let guard = SignalGuard()
+
     member private this.Update () =
         let value = 
             DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             |> mapping
-        if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
-            lastValue <- value
-            this.Signal()        
+        if (not guard.Signaling) then
+            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                lastValue <- value
+                use _guard = guard.Guard()
+                this.Signal()        
 
     override this.Value 
         with get() = 
