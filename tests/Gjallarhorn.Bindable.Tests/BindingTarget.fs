@@ -76,7 +76,7 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\TrackView tracks a view change`` () =
+    member __.``BindingTarget\TrackObservable tracks a view change`` () =
         use bt = new TestBindingTarget<obj>()
 
         let value = Mutable.create 0
@@ -91,7 +91,7 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\TrackView ignores view changes with same value`` () =
+    member __.``BindingTarget\TrackObservable ignores view changes with same value`` () =
         use bt = new TestBindingTarget<obj>()
 
         let value = Mutable.create 0
@@ -107,7 +107,7 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\BindView raises property changed`` () =
+    member __.``BindingTarget\ToFromView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingTarget<obj>() :> IBindingTarget
@@ -128,15 +128,14 @@ type BindingTarget() =
         Assert.AreEqual(3, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\BindView tracks values properly`` () =
+    member __.``Binding\toView tracks values properly`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
-        use dynamicVm = 
-            Binding.binding {
-                watch "Full" full
-            }
+        use dynamicVm = Binding.createTarget ()
+        
+        Binding.toView dynamicVm "Full" full        
     
         let fullValue() = getProperty dynamicVm "Full"
 
@@ -149,17 +148,16 @@ type BindingTarget() =
         Assert.AreEqual("Foo Bar", fullValue())
 
     [<Test>]
-    member __.``BindingTarget\BindView raises property changed appropriately`` () =
+    member __.``Binding\toView raises property changed appropriately`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
-        use dynamicVm = 
-            Binding.binding {
-                watch "First" first
-                watch "Last" last
-                watch "Full" full
-            }
+        use dynamicVm = Binding.createTarget ()
+
+        Binding.toView dynamicVm "First" first 
+        Binding.toView dynamicVm "Last" last
+        Binding.toView dynamicVm "Full" full
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -174,26 +172,24 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Full"])
 
     [<Test>]
-    member __.``BindingTarget\Bind\edit with validator sets error state`` () =
+    member __.``Binding\toFromView with validator sets error state`` () =
         let first = Mutable.create ""
            
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
+        use dynamicVm = Binding.createTarget ()
 
-        use dynamicVm = 
-            Binding.binding {
-                watch "Full" full
-            }
+        Binding.toView dynamicVm "Full" full
 
         let first' = 
             first
             |> Signal.validate notNullOrWhitespace
-            |> Binding.bind dynamicVm "First"
+            |> Binding.toFromView dynamicVm "First"
         let last' = 
             last
             |> Signal.validate notNullOrWhitespace
-            |> Binding.bind dynamicVm "Last"
+            |> Binding.toFromView dynamicVm "Last"
             
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -207,7 +203,7 @@ type BindingTarget() =
         Assert.AreEqual(1, obs.["IsValid"])        
 
     [<Test>]
-    member __.``BindingTarget\Bind\watch with validator sets error state`` () =
+    member __.``Binding\toView with validator sets error state`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
 
@@ -215,12 +211,11 @@ type BindingTarget() =
             Signal.map2 (fun f l -> f + " " + l) first last
             |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
 
-        use dynamicVm = 
-            Binding.binding {
-                watch "First" first
-                watch "Last" last
-                watch "Full" full
-            }
+        use dynamicVm = Binding.createTarget ()
+
+        Binding.toView dynamicVm "First" first
+        Binding.toView dynamicVm "Last" last
+        Binding.toView dynamicVm "Full" full
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -235,7 +230,7 @@ type BindingTarget() =
         Assert.AreEqual(1, obs.["IsValid"])        
 
     [<Test>]
-    member __.``BindingTarget\Bind\watch puts proper errors into INotifyDataErrorInfo`` () =
+    member __.``Binding\toView puts proper errors into INotifyDataErrorInfo`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = 
@@ -244,13 +239,14 @@ type BindingTarget() =
 
         let sub1 = first.Subscribe(fun a -> ())
         let sub2 = last.Subscribe(fun a -> ())
-        use dynamicVm =
-            binding {            
-                watch "First" first
-                watch "Last" last            
-                watch "Full" full            
-                dispose [sub1 ; sub2]
-            }
+
+        use dynamicVm = Binding.createTarget ()
+
+        Binding.toView dynamicVm "First" first
+        Binding.toView dynamicVm "Last" last
+        Binding.toView dynamicVm "Full" full
+        dynamicVm.AddDisposable sub1
+        dynamicVm.AddDisposable sub2
 
         let obs = PropertyChangedObserver(dynamicVm)    
 

@@ -187,7 +187,19 @@ type BindingTargetBase<'b>() as self =
                 (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
             | _ -> ()
 
-        member this.Constant name value = 
+        member __.CommandFromView name =
+            let command = Command.createEnabled()
+            disposables.Add command
+            bt().ConstantToView (command, name)
+            command
+
+        member __.CommandCheckedFromView (canExecute, name) =
+            let command = Command.create canExecute
+            disposables.Add command
+            bt().ConstantToView (command, name)
+            command
+
+        member this.ConstantToView (value, name) = 
             this.AddReadOnlyProperty name (fun _ -> value)
 
         member __.AddDisposable disposable = 
@@ -215,19 +227,6 @@ type BindingTargetBase<'b>() as self =
             this.AddReadOnlyProperty (getValidPropertyName name) (fun _ -> validator.Value.IsValidResult )
 
             updateErrors name current 
-
-        member __.Command name =
-            let command = Command.createEnabled()
-            disposables.Add command
-            bt().Constant name command
-            command
-
-
-        member __.CommandChecked name canExecute =
-            let command = Command.create canExecute
-            disposables.Add command
-            bt().Constant name command
-            command
 
     interface IBindingSubject<'b> with
         member __.OutputValue value = output.Value <- value
@@ -259,19 +258,23 @@ module Binding =
     let createTarget () = Implementation.getCreateBindingTargetFunction()
 
     /// Bind a signal to the binding target using the specified name
-    let bind (target : IBindingTarget) name signal =
+    let toFromView (target : IBindingTarget) name signal =
         target.ToFromView (signal, name)
 
     /// Add a signal as an editor with validation, bound to a specific name
-    let edit (target : IBindingTarget) name validator signal =
+    let toFromViewValidated (target : IBindingTarget) name validator signal =
         target.ToFromView (signal, name, validator)
 
+    /// Add a mutable as an editor, bound to a specific name
+    let mutateToFromView (target : IBindingTarget) name mutatable =
+        target.MutateToFromView (mutatable, name)
+
     /// Add a mutable as an editor with validation, bound to a specific name
-    let editDirect (target : IBindingTarget) name validator mutatable =
+    let mutateToFromViewValidated (target : IBindingTarget) name validator mutatable =
         target.MutateToFromView (mutatable, name, validator)
 
     /// Add a binding to a target for a signal for editing with a given property expression and validation, and returns a signal of the user edits
-    let editMember (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
+    let memberToFromView (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
         let pi = 
             match expr with 
             | PropertyGet(_, pi, _) ->
@@ -288,49 +291,13 @@ module Binding =
         target.ToView(signal, name)
 
     /// Add a constant value (one way property) to a binding target by name
-    let constant name value (target : IBindingTarget) =
-        target.Constant name value
+    let constantToView name value (target : IBindingTarget) =
+        target.ConstantToView (value, name)
 
-    /// Add an ICommand (one way property) to a binding target by name
-    let command name (command : ICommand) (target : IBindingTarget) =
-        constant name command target
+    /// Creates an ICommand (one way property) to a binding target by name
+    let createCommand name (target : IBindingTarget) =
+        target.CommandFromView name
 
-    module Builder =
-        let private builderWatch name signal (target : #IBindingTarget) =
-            toView target name signal
-            target
-
-        let private builderConstant name value (target : #IBindingTarget) =
-            constant name value target
-            target
-
-        let private builderCommand name (command : ICommand) (target : #IBindingTarget) =
-            builderConstant name command target
-        
-        /// A computational expression builder for a binding target
-        type Binding(creator : unit -> IBindingTarget) =        
-            member __.Zero() = creator()
-            member __.Yield(()) = creator()
-            /// Add a watched signal (one way property) to a binding target by name
-            [<CustomOperation("watch", MaintainsVariableSpace = true)>]
-            member __.Watch (source : IBindingTarget, name, signal) = builderWatch name signal source                
-            /// Add a constant (one way property) to a binding target by name
-            [<CustomOperation("constant", MaintainsVariableSpace = true)>]
-            member __.Constant (source : IBindingTarget, name, comm) = builderConstant name comm source                
-            /// Add a command (one way property) to a binding target by name
-            [<CustomOperation("command", MaintainsVariableSpace = true)>]
-            member __.Command (source : IBindingTarget, name, comm) = builderCommand name comm source                
-
-            /// Dispose of an object when we're disposed
-            [<CustomOperation("dispose", MaintainsVariableSpace = true)>]
-            member __.Dispose (source : IBindingTarget, disposables : #seq<System.IDisposable>) = 
-                disposables
-                |> Seq.iter source.AddDisposable
-                source
-
-    /// Create and bind a binding target using a computational expression
-    let binding = Builder.Binding(createTarget)
-
-    /// Add bindings to an existing binding target using a computational expression
-    let extend (target : #IBindingTarget) = Builder.Binding((fun _ -> target :> IBindingTarget))
-
+    /// Creates a checked ICommand (one way property) to a binding target by name
+    let createCommandChecked name canExecute (target : IBindingTarget) =
+        target.CommandCheckedFromView (canExecute, name)

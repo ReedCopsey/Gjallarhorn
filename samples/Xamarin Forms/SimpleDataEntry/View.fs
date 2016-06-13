@@ -21,7 +21,7 @@ module VM =
         let currentValue = Mutable.create 0        
         let result = bt.ToFromView(currentValue, "Current", Validators.lessThan 10) 
 
-        bt.Command "Increment"
+        bt.CommandFromView "Increment"
         |> Observable.subscribe (fun _ -> currentValue.Value <- currentValue.Value + 1)
         |> bt.AddDisposable
 
@@ -31,17 +31,13 @@ module VM =
         let bind = Binding.createTarget()        
         
         // Show our current value
-        let currentValue = Mutable.create 100                
+        let currentValue = Mutable.create 91
                         
         bind.MutateToFromView (
                     currentValue, 
                     "Current", 
                     string, 
                     Converters.stringToInt32 >> Validators.greaterThan 90 >> Validators.lessOrEqualTo 95)
-
-        bind.Command "Decrement"
-        |> Observable.subscribe(fun _ -> currentValue.Value <- currentValue.Value - 1)
-        |> bind.AddDisposable
 
         bind.ToView(currentValue, "CurrentValue")
 

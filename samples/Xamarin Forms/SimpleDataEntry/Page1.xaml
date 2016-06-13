@@ -28,8 +28,7 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <Entry  Grid.Row="0" Grid.Column="0" Text="{Binding Current}" Placeholder="Enter Value..." />
-        <Button Grid.Row="0" Grid.Column="1" Text="Decrement" Command="{Binding Decrement}"/>
+        <Entry  Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Current}" Placeholder="Enter Value..." />        
         
         <Label  Grid.Row="1" Grid.Column="0" Text="{Binding Current-IsValid, StringFormat='Valid?: {0}'}" />
         <Label  Grid.Row="1" Grid.Column="1" Text="{Binding Current-Errors[0]}" TextColor="Red" />

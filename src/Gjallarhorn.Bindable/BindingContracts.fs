@@ -53,6 +53,15 @@ type IBindingTarget =
     /// Add a readonly binding target for a signal with a given name
     abstract ToView<'a> : ISignal<'a> * string -> unit
 
+    /// Add a readonly binding target for a constant value with a given name
+    abstract ConstantToView<'a> : 'a * string -> unit
+
+    /// Creates a new command given a binding name
+    abstract CommandFromView : string -> ITrackingCommand<CommandState>
+
+    /// Creates a new command given signal for tracking execution and a binding name 
+    abstract CommandCheckedFromView : ISignal<bool> * string -> ITrackingCommand<CommandState>
+
     /// Add a binding target for a signal with a given name, and returns a signal of the user edits
     abstract ToFromView<'a> : ISignal<'a> * string -> ISignal<'a>
 
@@ -73,15 +82,6 @@ type IBindingTarget =
 
     /// Filter a signal to only output when we're valid
     abstract FilterValid<'a> : ISignal<'a> -> IObservable<'a>
-
-    /// Add a readonly binding target for a constant value with a given name
-    abstract Constant<'a> : string -> 'a -> unit
-
-    /// Creates a new command given a binding name
-    abstract Command : string -> ITrackingCommand<CommandState>
-
-    /// Creates a new command given a binding name and signal for tracking execution
-    abstract CommandChecked : string -> ISignal<bool> -> ITrackingCommand<CommandState>
 
 /// Interface used to manage a typed binding target which outputs changes via IObservable
 type IBindingSubject<'b> =

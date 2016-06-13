@@ -14,8 +14,8 @@ let create () =
     let two = Mutable.create 0
 
     // Bind these directly (two-way)
-    Binding.editDirect target "Value1" noValidation one
-    Binding.editDirect target "Value2" noValidation two
+    Binding.mutateToFromView target "Value1" one
+    Binding.mutateToFromView target "Value2" two
 
     // Create a signal for our result
     let result = Signal.map2 (+) one two
