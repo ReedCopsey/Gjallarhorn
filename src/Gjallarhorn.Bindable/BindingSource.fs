@@ -11,8 +11,8 @@ open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
         
 [<AbstractClass>]
-/// Base class for binding targets, used by platform specific libraries to share implementation details
-type BindingTargetBase<'b>() as self =
+/// Base class for binding sources, used by platform specific libraries to share implementation details
+type BindingSourceBase<'b>() as self =
     let uiCtx = System.Threading.SynchronizationContext.Current
     let propertyChanged = new Event<_, _>()
     let errorsChanged = new Event<_, _>()
@@ -53,15 +53,15 @@ type BindingTargetBase<'b>() as self =
         isValid.Value <- errors.Count = 0
 
     let bt() =
-        self :> IBindingTarget
+        self :> IBindingSource
 
     do
         errorsChanged.Publish.Subscribe (fun _ -> updateValidState())
         |> disposables.Add
 
-        (self :> IBindingTarget).TrackObservable "IsValid" isValid
-        (self :> IBindingTarget).TrackObservable "Idle" idleTracker
-        (self :> IBindingTarget).TrackObservable "OperationExecuting" idleTracker
+        (self :> IBindingSource).TrackObservable "IsValid" isValid
+        (self :> IBindingSource).TrackObservable "Idle" idleTracker
+        (self :> IBindingSource).TrackObservable "OperationExecuting" idleTracker
 
     /// Used by commanding to track executing operations
     member __.IdleTracker = idleTracker
@@ -95,7 +95,7 @@ type BindingTargetBase<'b>() as self =
     interface System.IObservable<'b> with
         member __.Subscribe obs = output.Subscribe(obs)
 
-    interface IBindingTarget with
+    interface IBindingSource with
         member this.IsValid with get() = this.IsValid
         member this.Valid with get() = this.Valid
 
@@ -159,7 +159,7 @@ type BindingTargetBase<'b>() as self =
 
         member this.ToFromView (signal, name, conversion, validation) =
             let converted = Signal.map conversion signal
-            let output = (this :> IBindingTarget).ToFromView (converted, name)
+            let output = (this :> IBindingSource).ToFromView (converted, name)
             let valid =
                 output
                 |> Signal.validate validation
@@ -167,7 +167,7 @@ type BindingTargetBase<'b>() as self =
             valid 
 
         member this.ToFromView (signal, name, validation) =
-            let output = (this :> IBindingTarget).ToFromView (signal, name)
+            let output = (this :> IBindingSource).ToFromView (signal, name)
             let valid =
                 output
                 |> Signal.validate validation
@@ -228,7 +228,7 @@ type BindingTargetBase<'b>() as self =
 
             updateErrors name current 
 
-    interface IBindingSubject<'b> with
+    interface IObservableBindingSource<'b> with
         member __.OutputValue value = output.Value <- value
 
         member __.OutputObservable obs =
@@ -238,43 +238,48 @@ type BindingTargetBase<'b>() as self =
     interface System.IDisposable with
         member __.Dispose() = disposables.Dispose()
 
-/// Functions to work with binding targets     
+/// Functions to work with binding sources     
 module Binding =
+    /// Internal module used to manage the actual construction of binding sources
     module Implementation =
-        let mutable private createBindingTargetFunction : unit -> obj = (fun _ -> failwith "Platform targets not installed")
-        let mutable private createBindingSubjectFunction : System.Type -> obj = (fun _ -> failwith "Platform targets not installed")
+        let mutable private createBindingSourceFunction : unit -> obj = (fun _ -> failwith "Platform targets not installed")
+        let mutable private createObservableBindingFunction : System.Type -> obj = (fun _ -> failwith "Platform targets not installed")
 
-        let installCreationFunction fBT fBS = 
-            createBindingTargetFunction <- fBT
-            createBindingSubjectFunction <- fBS
+        /// Installs a platform specific binding source creation functions
+        let installCreationFunction fBS fOBS = 
+            createBindingSourceFunction <- fBS
+            createObservableBindingFunction <- fOBS
 
-        let getCreateBindingTargetFunction () = createBindingTargetFunction() :?> IBindingTarget
-        let getCreateBindingSubjectFunction<'a> () = (createBindingSubjectFunction typeof<'a>) :?> IBindingSubject<'a>
+        /// Retrieves the platform specific creation function 
+        let getCreateBindingSourceFunction () = createBindingSourceFunction() :?> IBindingSource
+        
+        /// Retrieves the platform specific creation function 
+        let getCreateObservableBindingSourceFunction<'a> () = (createObservableBindingFunction typeof<'a>) :?> IObservableBindingSource<'a>
 
     /// Create a binding subject for the installed platform        
-    let createSubject () = Implementation.getCreateBindingSubjectFunction<_>()
+    let createObservableSource () = Implementation.getCreateObservableBindingSourceFunction<_>()
 
-    /// Create a binding target for the installed platform        
-    let createTarget () = Implementation.getCreateBindingTargetFunction()
+    /// Create a binding source for the installed platform        
+    let createSource () = Implementation.getCreateBindingSourceFunction()
 
-    /// Bind a signal to the binding target using the specified name
-    let toFromView (target : IBindingTarget) name signal =
-        target.ToFromView (signal, name)
+    /// Bind a signal to the binding source using the specified name
+    let toFromView (source : IBindingSource) name signal =
+        source.ToFromView (signal, name)
 
     /// Add a signal as an editor with validation, bound to a specific name
-    let toFromViewValidated (target : IBindingTarget) name validator signal =
-        target.ToFromView (signal, name, validator)
+    let toFromViewValidated (source : IBindingSource) name validator signal =
+        source.ToFromView (signal, name, validator)
 
     /// Add a mutable as an editor, bound to a specific name
-    let mutateToFromView (target : IBindingTarget) name mutatable =
-        target.MutateToFromView (mutatable, name)
+    let mutateToFromView (source : IBindingSource) name mutatable =
+        source.MutateToFromView (mutatable, name)
 
     /// Add a mutable as an editor with validation, bound to a specific name
-    let mutateToFromViewValidated (target : IBindingTarget) name validator mutatable =
-        target.MutateToFromView (mutatable, name, validator)
+    let mutateToFromViewValidated (source : IBindingSource) name validator mutatable =
+        source.MutateToFromView (mutatable, name, validator)
 
-    /// Add a binding to a target for a signal for editing with a given property expression and validation, and returns a signal of the user edits
-    let memberToFromView (target : IBindingTarget) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
+    /// Add a binding to a source for a signal for editing with a given property expression and validation, and returns a signal of the user edits
+    let memberToFromView (source : IBindingSource) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
         let pi = 
             match expr with 
             | PropertyGet(_, pi, _) ->
@@ -284,20 +289,20 @@ module Binding =
         let mapped =
             signal
             |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
-        target.ToFromView (mapped, pi.Name, validation)
+        source.ToFromView (mapped, pi.Name, validation)
 
-    /// Add a watched signal (one way property) to a binding target by name
-    let toView (target : IBindingTarget) name signal =
-        target.ToView(signal, name)
+    /// Add a watched signal (one way property) to a binding source by name
+    let toView (source : IBindingSource) name signal =
+        source.ToView(signal, name)
 
-    /// Add a constant value (one way property) to a binding target by name
-    let constantToView name value (target : IBindingTarget) =
-        target.ConstantToView (value, name)
+    /// Add a constant value (one way property) to a binding source by name
+    let constantToView name value (source : IBindingSource) =
+        source.ConstantToView (value, name)
 
-    /// Creates an ICommand (one way property) to a binding target by name
-    let createCommand name (target : IBindingTarget) =
-        target.CommandFromView name
+    /// Creates an ICommand (one way property) to a binding source by name
+    let createCommand name (source : IBindingSource) =
+        source.CommandFromView name
 
-    /// Creates a checked ICommand (one way property) to a binding target by name
-    let createCommandChecked name canExecute (target : IBindingTarget) =
-        target.CommandCheckedFromView (canExecute, name)
+    /// Creates a checked ICommand (one way property) to a binding source by name
+    let createCommandChecked name canExecute (source : IBindingSource) =
+        source.CommandCheckedFromView (canExecute, name)

@@ -15,7 +15,7 @@ type Page1() as this =
 
 module VM =
     let createTop () = 
-        let bt = Binding.createTarget()        
+        let bt = Binding.createSource()        
         
         // Show our current value
         let currentValue = Mutable.create 0        
@@ -28,7 +28,7 @@ module VM =
         bt
 
     let createBottom () = 
-        let bind = Binding.createTarget()        
+        let bind = Binding.createSource()        
         
         // Show our current value
         let currentValue = Mutable.create 91

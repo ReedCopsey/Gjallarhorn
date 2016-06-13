@@ -81,9 +81,9 @@ type DynTypeInfo (ownerType, getProp) =
         | None -> base.GetDeclaredProperty(name)
     
 type RefTypeBindingTarget<'b>() =
-    inherit BindingTargetBase<'b>()
+    inherit BindingSourceBase<'b>()
 
-    let ownerType = typeof<BindingTargetBase<'b>>
+    let ownerType = typeof<BindingSourceBase<'b>>
     let properties = System.Collections.Generic.Dictionary<string, PropertyInfo>()
 
     let getProperty name =

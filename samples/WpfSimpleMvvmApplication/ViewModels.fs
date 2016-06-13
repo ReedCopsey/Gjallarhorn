@@ -15,20 +15,20 @@ with
 
 module VM =
     let createMainViewModel (nameIn : IObservable<NameModel>) initialValue =
-        // Create a binding target equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
-        let subject = Binding.createSubject ()
+        // Create an observable binding source equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
+        let bindingSource = Binding.createObservableSource ()
         
         // Map our incoming IObservable to a signal. If we didn't want to use an input IObservable, we could just use Signal.constant or Mutable.create
-        let source = subject.ObservableToSignal initialValue nameIn
+        let source = bindingSource.ObservableToSignal initialValue nameIn
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
-        let first = source |> Binding.memberToFromView subject <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
-        let last  = source |> Binding.memberToFromView subject <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
+        let first = source |> Binding.memberToFromView bindingSource <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
+        let last  = source |> Binding.memberToFromView bindingSource <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
                         
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
         Signal.map2 (fun f l -> f + " " + l) first last
         |> Signal.validate (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> Binding.toView subject "Full"        
+        |> Binding.toView bindingSource "Full"        
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
@@ -38,7 +38,7 @@ module VM =
         let pushAutomatically = Mutable.create false        
         
         // Bind it directly and push changes back to the input mutable
-        subject.MutateToFromView (pushAutomatically, "PushAutomatically")
+        bindingSource.MutateToFromView (pushAutomatically, "PushAutomatically")
         
         let pushManually = Signal.not pushAutomatically
 
@@ -47,12 +47,12 @@ module VM =
         let canExecute = 
             Signal.notEqual source name'
             |> Signal.both pushManually
-            |> Signal.both subject.IdleTracker
-            |> Signal.both subject.Valid
-        let okCommand = subject |> Binding.createCommandChecked "OkCommand" canExecute
+            |> Signal.both bindingSource.IdleTracker
+            |> Signal.both bindingSource.Valid
+        let okCommand = bindingSource |> Binding.createCommandChecked "OkCommand" canExecute
         
         // Demonstrate an "asynchronous command"
-        let asyncCommand = subject |> Binding.createCommandChecked "AsyncCommand" subject.IdleTracker
+        let asyncCommand = bindingSource |> Binding.createCommandChecked "AsyncCommand" bindingSource.IdleTracker
 
         // Create a mapping operation - we'll also add asynchronous subscriptions later
         let asyncMapping _ = 
@@ -71,9 +71,9 @@ module VM =
         // In this case, we map (async) then subscribe to the results
         // Since we use "mapAsyncTracked", we disable both commands and editors while this is operating
         asyncCommand
-        |> Observable.mapAsyncTracked asyncMapping subject.IdleTracker
+        |> Observable.mapAsyncTracked asyncMapping bindingSource.IdleTracker
         |> Observable.subscribe (fun nv -> printfn "Received %d from command result" nv)
-        |> subject.AddDisposable
+        |> bindingSource.AddDisposable
 
         let automaticUpdates =
             // To push automatically, we output the signal whenever it's valid as an observable
@@ -81,7 +81,7 @@ module VM =
             // the final signal is sent through.  This isn't a problem with the command approach,
             // but guarantees our validation to always be up to date before it's queried in the filter
             name'
-            |> subject.FilterValid
+            |> bindingSource.FilterValid
             |> Observable.filter (fun _ -> pushAutomatically.Value)
         // Command-triggered updates
         let commandUpdates =
@@ -93,8 +93,8 @@ module VM =
 
         // Combine our automatic and manual updates into one signal, and push them to the backing observable
         Observable.merge automaticUpdates commandUpdates
-        |> subject.OutputObservable
+        |> bindingSource.OutputObservable
 
-        // Return the binding subject for use as a View Model
-        subject
+        // Return the binding observable for use as a View Model
+        bindingSource
 

@@ -9,8 +9,8 @@ open System.ComponentModel
 open NUnit.Framework
 open Binding
 
-type TestBindingTarget<'b>() =
-    inherit BindingTargetBase<'b>()
+type TestBindingSource<'b>() =
+    inherit BindingSourceBase<'b>()
 
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         ()
@@ -35,18 +35,18 @@ type PropertyChangedObserver(o : INotifyPropertyChanged) =
             | false -> 0
 
 [<TestFixture>]
-type BindingTarget() =
+type BindingSource() =
 
 
-    let getProperty (target : obj) name =
-        let props = TypeDescriptor.GetProperties target
+    let getProperty (source : obj) name =
+        let props = TypeDescriptor.GetProperties source
         let prop = props.Find(name, false)
-        unbox <| prop.GetValue(target)
+        unbox <| prop.GetValue(source)
 
-    let setProperty (target : obj) name value =
-        let props = TypeDescriptor.GetProperties target
+    let setProperty (source : obj) name value =
+        let props = TypeDescriptor.GetProperties source
         let prop = props.Find(name, false)
-        prop.SetValue(target, box value)
+        prop.SetValue(source, box value)
 
     let fullNameValidation (value : string) = 
         match System.String.IsNullOrWhiteSpace(value) with
@@ -63,12 +63,12 @@ type BindingTarget() =
         Gjallarhorn.Wpf.install(false) |> ignore
 
     [<Test>]
-    member __.``BindingTarget raises property changed`` () =
-        use bt = new TestBindingTarget<obj>()
+    member __.``BindingSource raises property changed`` () =
+        use bt = new TestBindingSource<obj>()
 
         let obs = PropertyChangedObserver(bt)    
 
-        let ibt = bt :> IBindingTarget
+        let ibt = bt :> IBindingSource
 
         ibt.RaisePropertyChanged("Test")
         ibt.RaisePropertyChanged("Test")
@@ -76,13 +76,13 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\TrackObservable tracks a view change`` () =
-        use bt = new TestBindingTarget<obj>()
+    member __.``BindingSource\TrackObservable tracks a view change`` () =
+        use bt = new TestBindingSource<obj>()
 
         let value = Mutable.create 0
         let obs = PropertyChangedObserver(bt)    
 
-        let ibt = bt :> IBindingTarget
+        let ibt = bt :> IBindingSource
 
         ibt.TrackObservable "Test" value
         value.Value <- 1
@@ -91,13 +91,13 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\TrackObservable ignores view changes with same value`` () =
-        use bt = new TestBindingTarget<obj>()
+    member __.``BindingSource\TrackObservable ignores view changes with same value`` () =
+        use bt = new TestBindingSource<obj>()
 
         let value = Mutable.create 0
         let obs = PropertyChangedObserver(bt)    
 
-        let ibt = bt :> IBindingTarget
+        let ibt = bt :> IBindingSource
 
         ibt.TrackObservable "Test" value
         value.Value <- 1
@@ -107,10 +107,10 @@ type BindingTarget() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingTarget\ToFromView raises property changed`` () =
+    member __.``BindingSource\ToFromView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
-        use dynamicVm = new DesktopBindingTarget<obj>() :> IBindingTarget
+        use dynamicVm = new DesktopBindingSource<obj>() :> IBindingSource
         dynamicVm.ToFromView (v2, "Test") |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -133,7 +133,7 @@ type BindingTarget() =
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
-        use dynamicVm = Binding.createTarget ()
+        use dynamicVm = Binding.createSource ()
         
         Binding.toView dynamicVm "Full" full        
     
@@ -153,7 +153,7 @@ type BindingTarget() =
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
-        use dynamicVm = Binding.createTarget ()
+        use dynamicVm = Binding.createSource ()
 
         Binding.toView dynamicVm "First" first 
         Binding.toView dynamicVm "Last" last
@@ -178,7 +178,7 @@ type BindingTarget() =
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
-        use dynamicVm = Binding.createTarget ()
+        use dynamicVm = Binding.createSource ()
 
         Binding.toView dynamicVm "Full" full
 
@@ -211,7 +211,7 @@ type BindingTarget() =
             Signal.map2 (fun f l -> f + " " + l) first last
             |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
 
-        use dynamicVm = Binding.createTarget ()
+        use dynamicVm = Binding.createSource ()
 
         Binding.toView dynamicVm "First" first
         Binding.toView dynamicVm "Last" last
@@ -240,7 +240,7 @@ type BindingTarget() =
         let sub1 = first.Subscribe(fun a -> ())
         let sub2 = last.Subscribe(fun a -> ())
 
-        use dynamicVm = Binding.createTarget ()
+        use dynamicVm = Binding.createSource ()
 
         Binding.toView dynamicVm "First" first
         Binding.toView dynamicVm "Last" last

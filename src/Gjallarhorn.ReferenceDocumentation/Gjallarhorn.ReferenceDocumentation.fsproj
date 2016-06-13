@@ -75,7 +75,7 @@
     <Compile Include="..\Gjallarhorn.Bindable\BoundView.fs">
       <Link>BoundView.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn.Bindable\BindingTarget.fs">
+    <Compile Include="..\Gjallarhorn.Bindable\BindingSource.fs">
       <Link>BindingTarget.fs</Link>
     </Compile>
   </ItemGroup>

@@ -15,15 +15,15 @@ do ()
 type internal IPropertyBag =
     abstract member CustomProperties : Dictionary<string,PropertyDescriptor * IValueHolder>
 
-type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] internal DesktopBindingTarget<'b>() as self =
-    inherit BindingTargetBase<'b>()    
+type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] internal DesktopBindingSource<'b>() as self =
+    inherit BindingSourceBase<'b>()    
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
 
     let bt() =
-        self :> IBindingTarget
+        self :> IBindingSource
 
-    member private __.MakePD<'a> name = BindingTargetPropertyDescriptor<'a>(name) :> PropertyDescriptor
+    member private __.MakePD<'a> name = BindingSourcePropertyDescriptor<'a>(name) :> PropertyDescriptor
     
     override this.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readWrite getter setter))        
@@ -34,12 +34,12 @@ type [<TypeDescriptionProvider(typeof<BindingTargetTypeDescriptorProvider>)>] in
         member __.CustomProperties = customProps
 
 /// [omit]
-/// Internal type used to allow dynamic binding targets to be generated.        
-and BindingTargetTypeDescriptorProvider(parent) =
+/// Internal type used to allow dynamic binding sources to be generated.        
+and BindingSourceTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
 
     let mutable td = null, null
-    new() = BindingTargetTypeDescriptorProvider(TypeDescriptor.GetProvider(typedefof<DesktopBindingTarget<_>>))
+    new() = BindingSourceTypeDescriptorProvider(TypeDescriptor.GetProvider(typedefof<DesktopBindingSource<_>>))
 
     override __.GetTypeDescriptor(objType, inst) =
         match td with
@@ -47,11 +47,11 @@ and BindingTargetTypeDescriptorProvider(parent) =
             desc
         | _ ->
             let parent = base.GetTypeDescriptor(objType, inst)
-            let desc = BindingTargetTypeDescriptor(parent, inst :?> IPropertyBag) :> ICustomTypeDescriptor
+            let desc = BindingSourceTypeDescriptor(parent, inst :?> IPropertyBag) :> ICustomTypeDescriptor
             td <- desc, inst
             desc
 
-and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : IPropertyBag) =
+and [<AllowNullLiteral>] internal BindingSourceTypeDescriptor(parent, inst : IPropertyBag) =
     inherit CustomTypeDescriptor(parent)
 
     override __.GetProperties() =
@@ -65,7 +65,7 @@ and [<AllowNullLiteral>] internal BindingTargetTypeDescriptor(parent, inst : IPr
             |> Array.ofSeq
         PropertyDescriptorCollection(props)
 
-and internal BindingTargetPropertyDescriptor<'a>(name : string) =
+and internal BindingSourcePropertyDescriptor<'a>(name : string) =
     inherit PropertyDescriptor(name, [| |])
 
     override __.ComponentType = typeof<IPropertyBag>

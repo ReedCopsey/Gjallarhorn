@@ -17,8 +17,8 @@ module Wpf =
         SynchronizationContext.Current
 
     let private creation (typ : System.Type) =
-        let targetType = typedefof<Gjallarhorn.Bindable.Wpf.DesktopBindingTarget<_>>.MakeGenericType([|typ|])
-        System.Activator.CreateInstance(targetType) 
+        let sourceType = typedefof<Gjallarhorn.Bindable.Wpf.DesktopBindingSource<_>>.MakeGenericType([|typ|])
+        System.Activator.CreateInstance(sourceType) 
 
     /// Installs WPF targets for binding into Gjallarhorn
     let install installSynchronizationContext =        

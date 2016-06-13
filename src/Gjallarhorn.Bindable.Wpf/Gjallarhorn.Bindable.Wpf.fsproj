@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="DesktopBindingTarget.fs" />
+    <Compile Include="DesktopBindingSource.fs" />
     <Compile Include="Wpf.fs" />
   </ItemGroup>
   <ItemGroup>
