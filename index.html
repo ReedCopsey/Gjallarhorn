@@ -53,19 +53,19 @@
 <span class="l">14: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
 
 <span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">var1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">create</span> <span class="n">0</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">var2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="f">create</span> <span class="n">2</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs6', 8)" onmouseover="showTip(event, 'fs6', 8)" class="i">result</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="t">Signal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="f">map2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="i">a</span> <span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="i">b</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="i">a</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">b</span>) <span onmouseout="hideTip(event, 'fs2', 15)" onmouseover="showTip(event, 'fs2', 15)" class="i">var1</span> <span onmouseout="hideTip(event, 'fs5', 16)" onmouseover="showTip(event, 'fs5', 16)" class="i">var2</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">var1</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">var2</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">2</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">result</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">a</span> <span class="i">b</span> <span class="k">-&gt;</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>) <span onmouseout="hideTip(event, 'fs1', 4)" onmouseover="showTip(event, 'fs1', 4)" class="i">var1</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">var2</span>
 
-<span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="i">Signal</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span class="i">value</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 18)" onmouseover="showTip(event, 'fs11', 18)" class="i">printfn</span> <span class="s">&quot;The sum of our variables is %d&quot;</span> <span class="i">value</span>) <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="i">result</span>
+<span class="i">Signal</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span class="i">value</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs4', 6)" onmouseover="showTip(event, 'fs4', 6)" class="i">printfn</span> <span class="s">&quot;The sum of our variables is %d&quot;</span> <span class="i">value</span>) <span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="i">result</span>
 
 <span class="c">// Set first variable, which causes subscription to print</span>
-<span onmouseout="hideTip(event, 'fs2', 20)" onmouseover="showTip(event, 'fs2', 20)" class="i">var1</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 21)" onmouseover="showTip(event, 'fs12', 21)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">20</span>
+<span onmouseout="hideTip(event, 'fs1', 8)" onmouseover="showTip(event, 'fs1', 8)" class="i">var1</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">20</span>
 <span class="c">// Set first variable, which again causes subscription to print</span>
-<span onmouseout="hideTip(event, 'fs5', 22)" onmouseover="showTip(event, 'fs5', 22)" class="i">var2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 23)" onmouseover="showTip(event, 'fs12', 23)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">22</span>
+<span onmouseout="hideTip(event, 'fs2', 9)" onmouseover="showTip(event, 'fs2', 9)" class="i">var2</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">22</span>
 </code></pre></td>
 </tr>
 </table>
@@ -93,18 +93,10 @@ the project and submit pull requests.</p>
 redistribution for both commercial and non-commercial purposes. For more information see the
 <a href="https://github.com/ReedCopsey/Gjallarhorn/blob/master/LICENSE.txt">License file</a> in the GitHub repository.</p>
 
-<div class="tip" id="fs1">namespace Gjallarhorn</div>
-<div class="tip" id="fs2">val var1 : IMutatable&lt;int&gt;<br /><br />Full name: Index.var1</div>
-<div class="tip" id="fs3">module Mutable<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs4">val create : value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Mutable.create</div>
-<div class="tip" id="fs5">val var2 : IMutatable&lt;int&gt;<br /><br />Full name: Index.var2</div>
-<div class="tip" id="fs6">val result : ISignal&lt;int&gt;<br /><br />Full name: Index.result</div>
-<div class="tip" id="fs7">module Signal<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs8">val map2 : mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:ISignal&lt;&#39;a&gt; -&gt; provider2:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;c&gt;<br /><br />Full name: Gjallarhorn.Signal.map2</div>
-<div class="tip" id="fs9">val a : int</div>
-<div class="tip" id="fs10">val b : int</div>
-<div class="tip" id="fs11">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs12">property IMutatable.Value: int</div>
+<div class="tip" id="fs1">val var1 : obj<br /><br />Full name: Index.var1</div>
+<div class="tip" id="fs2">val var2 : obj<br /><br />Full name: Index.var2</div>
+<div class="tip" id="fs3">val result : obj<br /><br />Full name: Index.result</div>
+<div class="tip" id="fs4">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
 
         </div>
         <div class="span3">
