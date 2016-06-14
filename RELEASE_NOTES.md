@@ -9,3 +9,5 @@
 #### 0.0.3-beta - June 1st 2016
 * Corrected issue where edit bindings were being created as typed ISignal<obj>, not ISignal<'a>
 
+#### 0.0.4-beta - June 13th 2016
+* Overhauled binding API to make things more clear.
