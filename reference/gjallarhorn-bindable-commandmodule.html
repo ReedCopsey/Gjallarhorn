@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>BoundSignal<'a> - Gjallarhorn</title>
+    <title>Command - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,38 +35,61 @@
 
 
 
-<h1>BoundSignal<'a></h1>
+<h1>Command</h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
 <div class="xmldoc">
-<p>An ISignal<'a> bound to a named property on a source.
-This uses reflection, and INotifyPropertyChanged to update the signal as needed.</p>
+<p>Core module for creating and using ICommand implementations</p>
 
 </div>
-  <h3>Constructors</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
-            new(name, source)
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+            create enabledSource
           </code>
-          <div class="tip" id="115">
-            <strong>Signature:</strong> (name:string * source:INotifyPropertyChanged) -&gt; BoundSignal&lt;&#39;a&gt;<br />
+          <div class="tip" id="84">
+            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BoundSignal.fs#L10-10" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L79-79" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
-              <p>CompiledName: <code>.ctor</code></p>
+          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+            createEnabled ()
+          </code>
+          <div class="tip" id="85">
+            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L83-83" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a command which is always enabled</p>
+
+
         </td>
       </tr>
     </tbody>

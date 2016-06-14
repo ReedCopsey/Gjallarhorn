@@ -62,27 +62,27 @@ with built-in functions defining rules.</p>
 <span class="l">22: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
-<span class="k">open</span> <span class="i">Gjallarhorn</span>
-<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Validation</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">Gjallarhorn</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="i">Validation</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">input</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="i">input</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span>
 
 <span class="c">// Define a validation using function composition</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">v</span> <span class="o">=</span> 
-    <span class="i">validate</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="i">v</span> 
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="i">v</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="f">validate</span> <span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="i">v</span> 
     <span class="o">|&gt;</span> (<span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">noSpaces</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">hasLengthAtLeast</span> <span class="n">3</span>) 
-    <span class="o">|&gt;</span> <span class="i">result</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="f">result</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="i">testInput</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">input</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="i">testInput</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="i">input</span>
 
 <span class="c">// Prints: &quot;Foo&quot; validation result: Valid</span>
-<span onmouseout="hideTip(event, 'fs6', 9)" onmouseover="showTip(event, 'fs6', 9)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> validation result: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 10)" onmouseover="showTip(event, 'fs2', 10)" class="i">input</span> <span onmouseout="hideTip(event, 'fs5', 11)" onmouseover="showTip(event, 'fs5', 11)" class="i">testInput</span>
+<span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> validation result: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="i">input</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="i">testInput</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 12)" onmouseover="showTip(event, 'fs7', 12)" class="i">badinput</span> <span class="o">=</span> <span class="s">&quot; a&quot;</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="i">testBad</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs7', 15)" onmouseover="showTip(event, 'fs7', 15)" class="i">badinput</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 16)" onmouseover="showTip(event, 'fs10', 16)" class="i">badinput</span> <span class="o">=</span> <span class="s">&quot; a&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="i">testBad</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="f">isValid</span> <span onmouseout="hideTip(event, 'fs10', 19)" onmouseover="showTip(event, 'fs10', 19)" class="i">badinput</span>
 
 <span class="c">// Prints: &quot;Ba&quot; validation result: Invalid [&quot;Value cannot contain a space.&quot;; &quot;Value must be at least 3 characters long.&quot;]</span>
-<span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> validation result: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="i">badinput</span> <span onmouseout="hideTip(event, 'fs8', 18)" onmouseover="showTip(event, 'fs8', 18)" class="i">testBad</span>
+<span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> validation result: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="i">badinput</span> <span onmouseout="hideTip(event, 'fs11', 22)" onmouseover="showTip(event, 'fs11', 22)" class="i">testBad</span>
 </code></pre></td>
 </tr>
 </table>
@@ -108,21 +108,21 @@ don't want to continue collecting errors, and instead want to report a custom er
 <span class="l">14: </span>
 <span class="l">15: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="f">validateName</span> <span class="o">=</span> <span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">fixErrorsWithMessage</span> <span class="s">&quot;Please enter your name&quot;</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">hasLengthAtLeast</span> <span class="n">2</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 23)" onmouseover="showTip(event, 'fs12', 23)" class="f">validateName</span> <span class="o">=</span> <span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs13', 24)" onmouseover="showTip(event, 'fs13', 24)" class="f">fixErrorsWithMessage</span> <span class="s">&quot;Please enter your name&quot;</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">hasLengthAtLeast</span> <span class="n">2</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="f">isValidName</span> <span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="i">n</span> <span class="o">=</span> 
-    <span class="i">validate</span> <span onmouseout="hideTip(event, 'fs11', 22)" onmouseover="showTip(event, 'fs11', 22)" class="i">n</span> 
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs9', 23)" onmouseover="showTip(event, 'fs9', 23)" class="f">validateName</span>
-    <span class="o">|&gt;</span> <span class="i">Validation</span><span class="o">.</span><span class="i">result</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="f">isValidName</span> <span onmouseout="hideTip(event, 'fs15', 26)" onmouseover="showTip(event, 'fs15', 26)" class="i">n</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs6', 27)" onmouseover="showTip(event, 'fs6', 27)" class="f">validate</span> <span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="i">n</span> 
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs12', 29)" onmouseover="showTip(event, 'fs12', 29)" class="f">validateName</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs2', 30)" onmouseover="showTip(event, 'fs2', 30)" class="t">Validation</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="f">result</span>
 
 <span class="c">// Prints: Reed is valid?: Valid</span>
-<span onmouseout="hideTip(event, 'fs6', 24)" onmouseover="showTip(event, 'fs6', 24)" class="f">printfn</span> <span class="s">&quot;Reed is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="f">isValidName</span> <span class="s">&quot;Reed&quot;</span>)
+<span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="f">printfn</span> <span class="s">&quot;Reed is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs14', 33)" onmouseover="showTip(event, 'fs14', 33)" class="f">isValidName</span> <span class="s">&quot;Reed&quot;</span>)
 
 <span class="c">// Prints: An empty string is valid?: Invalid [&quot;Please enter your name&quot;]</span>
-<span onmouseout="hideTip(event, 'fs6', 26)" onmouseover="showTip(event, 'fs6', 26)" class="f">printfn</span> <span class="s">&quot;An empty string is valid?: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs10', 27)" onmouseover="showTip(event, 'fs10', 27)" class="f">isValidName</span> <span class="s">&quot;&quot;</span>)
+<span onmouseout="hideTip(event, 'fs9', 34)" onmouseover="showTip(event, 'fs9', 34)" class="f">printfn</span> <span class="s">&quot;An empty string is valid?: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs14', 35)" onmouseover="showTip(event, 'fs14', 35)" class="f">isValidName</span> <span class="s">&quot;&quot;</span>)
 
 <span class="c">// Prints: R is valid: Invalid [&quot;Value must be at least 2 characters long.&quot;]</span>
-<span onmouseout="hideTip(event, 'fs6', 28)" onmouseover="showTip(event, 'fs6', 28)" class="f">printfn</span> <span class="s">&quot;R is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs10', 29)" onmouseover="showTip(event, 'fs10', 29)" class="f">isValidName</span> <span class="s">&quot;R&quot;</span>)
+<span onmouseout="hideTip(event, 'fs9', 36)" onmouseover="showTip(event, 'fs9', 36)" class="f">printfn</span> <span class="s">&quot;R is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs14', 37)" onmouseover="showTip(event, 'fs14', 37)" class="f">isValidName</span> <span class="s">&quot;R&quot;</span>)
 </code></pre></td>
 </tr>
 </table>
@@ -146,42 +146,48 @@ the rule succeeds, when <code>Some</code>, the error is added to the invalid mes
 <span class="l">14: </span>
 <span class="l">15: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 30)" onmouseover="showTip(event, 'fs12', 30)" class="f">customRule</span> <span onmouseout="hideTip(event, 'fs13', 31)" onmouseover="showTip(event, 'fs13', 31)" class="i">name</span> <span class="o">=</span>
-    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs13', 32)" onmouseover="showTip(event, 'fs13', 32)" class="i">name</span> <span class="k">with</span>
-    | <span class="s">&quot;Reed&quot;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs14', 33)" onmouseover="showTip(event, 'fs14', 33)" class="p">Some</span> <span class="s">&quot;Reed is a poor choice of names!&quot;</span>
-    | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs15', 34)" onmouseover="showTip(event, 'fs15', 34)" class="p">None</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 38)" onmouseover="showTip(event, 'fs16', 38)" class="f">customRule</span> <span onmouseout="hideTip(event, 'fs17', 39)" onmouseover="showTip(event, 'fs17', 39)" class="i">name</span> <span class="o">=</span>
+    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">name</span> <span class="k">with</span>
+    | <span class="s">&quot;Reed&quot;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs18', 41)" onmouseover="showTip(event, 'fs18', 41)" class="p">Some</span> <span class="s">&quot;Reed is a poor choice of names!&quot;</span>
+    | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs19', 42)" onmouseover="showTip(event, 'fs19', 42)" class="p">None</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 35)" onmouseover="showTip(event, 'fs16', 35)" class="f">customValidation</span> <span onmouseout="hideTip(event, 'fs11', 36)" onmouseover="showTip(event, 'fs11', 36)" class="i">n</span> <span class="o">=</span> 
-    <span class="i">validate</span> <span onmouseout="hideTip(event, 'fs11', 37)" onmouseover="showTip(event, 'fs11', 37)" class="i">n</span> 
-    <span class="o">|&gt;</span> (<span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">custom</span> <span onmouseout="hideTip(event, 'fs12', 38)" onmouseover="showTip(event, 'fs12', 38)" class="i">customRule</span>)
-    <span class="o">|&gt;</span> <span class="i">Validation</span><span class="o">.</span><span class="i">result</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 43)" onmouseover="showTip(event, 'fs20', 43)" class="f">customValidation</span> <span onmouseout="hideTip(event, 'fs21', 44)" onmouseover="showTip(event, 'fs21', 44)" class="i">n</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs6', 45)" onmouseover="showTip(event, 'fs6', 45)" class="f">validate</span> <span onmouseout="hideTip(event, 'fs21', 46)" onmouseover="showTip(event, 'fs21', 46)" class="i">n</span> 
+    <span class="o">|&gt;</span> (<span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="f">custom</span> <span onmouseout="hideTip(event, 'fs16', 48)" onmouseover="showTip(event, 'fs16', 48)" class="f">customRule</span>)
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs2', 49)" onmouseover="showTip(event, 'fs2', 49)" class="t">Validation</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 50)" onmouseover="showTip(event, 'fs7', 50)" class="f">result</span>
 
 <span class="c">// Prints: Reed is valid: Invalid [&quot;Reed is a poor choice of names!&quot;]</span>
-<span onmouseout="hideTip(event, 'fs6', 39)" onmouseover="showTip(event, 'fs6', 39)" class="f">printfn</span> <span class="s">&quot;Reed is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs16', 40)" onmouseover="showTip(event, 'fs16', 40)" class="f">customValidation</span> <span class="s">&quot;Reed&quot;</span>)
+<span onmouseout="hideTip(event, 'fs9', 51)" onmouseover="showTip(event, 'fs9', 51)" class="f">printfn</span> <span class="s">&quot;Reed is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs20', 52)" onmouseover="showTip(event, 'fs20', 52)" class="f">customValidation</span> <span class="s">&quot;Reed&quot;</span>)
 
 <span class="c">// Prints: James is valid: Valid</span>
-<span onmouseout="hideTip(event, 'fs6', 41)" onmouseover="showTip(event, 'fs6', 41)" class="f">printfn</span> <span class="s">&quot;James is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs16', 42)" onmouseover="showTip(event, 'fs16', 42)" class="f">customValidation</span> <span class="s">&quot;James&quot;</span>)
+<span onmouseout="hideTip(event, 'fs9', 53)" onmouseover="showTip(event, 'fs9', 53)" class="f">printfn</span> <span class="s">&quot;James is valid: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs20', 54)" onmouseover="showTip(event, 'fs20', 54)" class="f">customValidation</span> <span class="s">&quot;James&quot;</span>)
 </code></pre></td>
 </tr>
 </table>
 <p>Now that we've seen how to do basic validation, we'll extend this into <a href="validate_types.html">Validating Views and Mutables</a></p>
 
-<div class="tip" id="fs1">module Validation</div>
-<div class="tip" id="fs2">val input : string<br /><br />Full name: Validation.input</div>
-<div class="tip" id="fs3">val isValid : v:&#39;a -&gt; &#39;b<br /><br />Full name: Validation.isValid</div>
-<div class="tip" id="fs4">val v : &#39;a</div>
-<div class="tip" id="fs5">val testInput : obj<br /><br />Full name: Validation.testInput</div>
-<div class="tip" id="fs6">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs7">val badinput : string<br /><br />Full name: Validation.badinput</div>
-<div class="tip" id="fs8">val testBad : obj<br /><br />Full name: Validation.testBad</div>
-<div class="tip" id="fs9">val validateName : (obj -&gt; obj)<br /><br />Full name: Validation.validateName</div>
-<div class="tip" id="fs10">val isValidName : n:&#39;a -&gt; &#39;b<br /><br />Full name: Validation.isValidName</div>
-<div class="tip" id="fs11">val n : &#39;a</div>
-<div class="tip" id="fs12">val customRule : name:string -&gt; string option<br /><br />Full name: Validation.customRule</div>
-<div class="tip" id="fs13">val name : string</div>
-<div class="tip" id="fs14">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
-<div class="tip" id="fs15">union case Option.None: Option&lt;&#39;T&gt;</div>
-<div class="tip" id="fs16">val customValidation : n:&#39;a -&gt; &#39;b<br /><br />Full name: Validation.customValidation</div>
+<div class="tip" id="fs1">namespace Gjallarhorn</div>
+<div class="tip" id="fs2">module Validation<br /><br />from Gjallarhorn</div>
+<div class="tip" id="fs3">val input : string<br /><br />Full name: Validation.input</div>
+<div class="tip" id="fs4">val isValid : v:&#39;a -&gt; ValidationResult<br /><br />Full name: Validation.isValid</div>
+<div class="tip" id="fs5">val v : &#39;a</div>
+<div class="tip" id="fs6">val validate : value:&#39;c -&gt; ValidationCollector&lt;&#39;c&gt;<br /><br />Full name: Gjallarhorn.Validation.validate</div>
+<div class="tip" id="fs7">val result : step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationResult<br /><br />Full name: Gjallarhorn.Validation.result</div>
+<div class="tip" id="fs8">val testInput : ValidationResult<br /><br />Full name: Validation.testInput</div>
+<div class="tip" id="fs9">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs10">val badinput : string<br /><br />Full name: Validation.badinput</div>
+<div class="tip" id="fs11">val testBad : ValidationResult<br /><br />Full name: Validation.testBad</div>
+<div class="tip" id="fs12">val validateName : (ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;obj&gt;)<br /><br />Full name: Validation.validateName</div>
+<div class="tip" id="fs13">val fixErrorsWithMessage : errorMessage:string -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Validation.fixErrorsWithMessage</div>
+<div class="tip" id="fs14">val isValidName : n:string -&gt; ValidationResult<br /><br />Full name: Validation.isValidName</div>
+<div class="tip" id="fs15">val n : string</div>
+<div class="tip" id="fs16">val customRule : name:string -&gt; string option<br /><br />Full name: Validation.customRule</div>
+<div class="tip" id="fs17">val name : string</div>
+<div class="tip" id="fs18">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs19">union case Option.None: Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs20">val customValidation : n:&#39;a -&gt; ValidationResult<br /><br />Full name: Validation.customValidation</div>
+<div class="tip" id="fs21">val n : &#39;a</div>
+<div class="tip" id="fs22">val custom : validator:(&#39;a -&gt; string option) -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Validation.custom</div>
 
         </div>
         <div class="span3">

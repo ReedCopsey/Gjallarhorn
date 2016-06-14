@@ -113,23 +113,8 @@
           <td class="type-name">
             <a href="gjallarhorn-bindable-boundsignal-1.html">BoundSignal<'a></a>
           </td>
-          <td class="xmldoc"><p>An ISignal<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the signal as needed</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-bindable-commandparameterstate-1.html">CommandParameterState<'a></a>
-          </td>
-          <td class="xmldoc"><p>Reports whether a paramterized command is executed, including the timestamp of the most recent execution</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-bindable-commandstate.html">CommandState</a>
-          </td>
-          <td class="xmldoc"><p>Reports whether a command is executed, including the timestamp of the most recent execution</p>
+          <td class="xmldoc"><p>An ISignal<'a> bound to a named property on a source.
+This uses reflection, and INotifyPropertyChanged to update the signal as needed.</p>
 
 </td>
         </tr>
@@ -159,31 +144,6 @@
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-parametercommand-1.html">ParameterCommand<'a></a>
-          </td>
-          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<'a> with the command parameter each time the command updates
-Note that this will signal for each execution, whether or not the value has changed.</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-bindable-signalcommand.html">SignalCommand</a>
-          </td>
-          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<CommandState>, where each execute passes DateTime.UtcNow on execution</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-bindable-signalparametercommand-1.html">SignalParameterCommand<'a></a>
-          </td>
-          <td class="xmldoc"><p>Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<DateTime>, where each execute passes DateTime.UtcNow on execution</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
             <a href="gjallarhorn-bindable-validation-2.html">Validation<'a, 'b></a>
           </td>
           <td class="xmldoc"></td>
@@ -205,7 +165,7 @@ Note that this will signal for each execution, whether or not the value has chan
         </tr>
         <tr>
           <td class="module-name">
-            <a href="gjallarhorn-bindable-command.html">Command</a>
+            <a href="gjallarhorn-bindable-commandmodule.html">Command</a>
           </td>
           <td class="xmldoc"><p>Core module for creating and using ICommand implementations</p>
 
