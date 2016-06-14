@@ -5,10 +5,9 @@ open Gjallarhorn.Internal
 open System.ComponentModel
 open System.Reflection
 
-/// An ISignal<'a> bound to a property on a source. This uses INotifyPropertyChanged to update the signal as needed
-type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
-    let value = Mutable.create initialValue        
-
+/// An ISignal<'a> bound to a named property on a source. 
+/// This uses reflection, and INotifyPropertyChanged to update the signal as needed.
+type BoundSignal<'a>(name, source : INotifyPropertyChanged) =
     let getValue () =
         let pi = source.GetType().GetRuntimeProperty(name)
         match pi with
@@ -16,6 +15,8 @@ type BoundSignal<'a>(name, initialValue, source : INotifyPropertyChanged) =
         | prop ->
             let v = prop.GetValue(source)
             downcastAndCreateOption(v)
+
+    let value = Mutable.create <| defaultArg (getValue()) Unchecked.defaultof<'a>
 
     let updateValue v =
         match v with 

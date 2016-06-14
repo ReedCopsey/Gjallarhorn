@@ -10,7 +10,7 @@ open Microsoft.FSharp.Quotations.Patterns
 open System
 open System.ComponentModel
 
-type Validation<'a,'b> = (ValidationCollector<'a> -> ValidationCollector<'b>)
+type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)
 
 /// Interface used to manage a binding source
 type IBindingSource =
@@ -58,10 +58,10 @@ type IBindingSource =
     abstract ConstantToView<'a> : 'a * string -> unit
 
     /// Creates a new command given a binding name
-    abstract CommandFromView : string -> ITrackingCommand<CommandState>
+    abstract CommandFromView : string -> ITrackingCommand<DateTime>
 
     /// Creates a new command given signal for tracking execution and a binding name 
-    abstract CommandCheckedFromView : ISignal<bool> * string -> ITrackingCommand<CommandState>
+    abstract CommandCheckedFromView : ISignal<bool> * string -> ITrackingCommand<DateTime>
 
     /// Add a binding source for a signal with a given name, and returns a signal of the user edits
     abstract ToFromView<'a> : ISignal<'a> * string -> ISignal<'a>
