@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IMutatable<'a> - Gjallarhorn</title>
+    <title>IDependent - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,12 +35,12 @@
 
 
 
-<h1>IMutatable<'a></h1>
+<h1>IDependent</h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
+  <span>Namespace: Gjallarhorn.Internal</span><br />
 </p>
 <div class="xmldoc">
-<p>Core interface for all mutatable types</p>
+<p>A type which depends on a signal</p>
 
 </div>
   <h3>Instance members</h3>
@@ -52,45 +52,44 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
-            Value()
+          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
+            HasDependencies
           </code>
-          <div class="tip" id="109">
-            <strong>Signature:</strong> unit -&gt; &#39;a<br />
+          <div class="tip" id="167">
+            <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L37-37" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L18-18" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The current value of the type</p>
+          <p>Queries whether other dependencies are registered to this dependent</p>
 
 
-              <p>CompiledName: <code>set_Value</code></p>
+              <p>CompiledName: <code>get_HasDependencies</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
-            Value()
+          <code onmouseout="hideTip(event, '168', 168)" onmouseover="showTip(event, '168', 168)">
+            RequestRefresh(arg1)
           </code>
-          <div class="tip" id="110">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+          <div class="tip" id="168">
+            <strong>Signature:</strong> obj -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L37-37" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The current value of the type</p>
+          <p>Signals the type that it should refresh its current value as one of it's dependencies has been updated</p>
 
 
-              <p>CompiledName: <code>get_Value</code></p>
         </td>
       </tr>
     </tbody>
