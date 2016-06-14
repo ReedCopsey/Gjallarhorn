@@ -257,7 +257,7 @@ module Binding =
         let getCreateObservableBindingSourceFunction<'a> () = (createObservableBindingFunction typeof<'a>) :?> IObservableBindingSource<'a>
 
     /// Create a binding subject for the installed platform        
-    let createObservableSource () = Implementation.getCreateObservableBindingSourceFunction<_>()
+    let createObservableSource<'a>() = Implementation.getCreateObservableBindingSourceFunction<'a>()
 
     /// Create a binding source for the installed platform        
     let createSource () = Implementation.getCreateBindingSourceFunction()

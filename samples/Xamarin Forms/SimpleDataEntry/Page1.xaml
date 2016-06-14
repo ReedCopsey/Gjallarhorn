@@ -3,21 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SimpleDataEntry.Page1">
   <StackLayout>
-    <Grid x:Name="Top">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
-      <Label Grid.Column="0" Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
-      <Button Grid.Column="1" Text="Increment" Command="{Binding Increment}"/>
-      <ActivityIndicator Grid.Row="1" Grid.Column="0" Color="Green" IsRunning="{Binding IsValid}" />    
-    </Grid>
     <Frame OutlineColor="Silver">
-      <Grid x:Name="Bottom">
+      <Grid x:Name="EditSource">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
@@ -28,12 +15,19 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <Entry  Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Current}" Placeholder="Enter Value..." />        
+        <Label  Grid.Row="0" Grid.ColumnSpan="2" Text="Enter value:" />
+        <Entry  Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Current}" Placeholder="Enter Value..." />        
         
-        <Label  Grid.Row="1" Grid.Column="0" Text="{Binding Current-IsValid, StringFormat='Valid?: {0}'}" />
-        <Label  Grid.Row="1" Grid.Column="1" Text="{Binding Current-Errors[0]}" TextColor="Red" />
-    
-        <Label  Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding CurrentValue, StringFormat='Mutable Value: {0}'}" TextColor="Green" />
+        <Label  Grid.Row="2" Grid.Column="0" Text="{Binding Current-IsValid, StringFormat='Valid?: {0}'}" />
+        <Label  Grid.Row="2" Grid.Column="1" Text="{Binding Current-Errors[0]}" TextColor="Red" />
+          </Grid>
+    </Frame>
+    <Frame OutlineColor="Silver">
+      <Grid x:Name="ResultsSource">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Text="{Binding Current, StringFormat='Current Value = {0:N0}'}" />
       </Grid>
     </Frame>
   </StackLayout>

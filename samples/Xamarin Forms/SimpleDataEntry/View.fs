@@ -1,5 +1,7 @@
 ﻿namespace SimpleDataEntry
 
+open System
+
 open Xamarin.Forms
 open Xamarin.Forms.Xaml
 
@@ -14,44 +16,57 @@ type Page1() as this =
         this.LoadFromXaml(typeof<Page1>) |> ignore
 
 module VM =
-    let createTop () = 
-        let bt = Binding.createSource()        
+    // Create a source that reports values coming from an observable
+    let createReportingSource (initialValue : int) (updateStream : IObservable<int>) = 
+        let source = Binding.createSource()                        
+
+        // Take our initial + observable and turn it into a signal
+        let current = source.ObservableToSignal initialValue updateStream
         
-        // Show our current value
-        let currentValue = Mutable.create 0        
-        let result = bt.ToFromView(currentValue, "Current", Validators.lessThan 10) 
+        // Output it to the view
+        source.ToView(current, "Current") 
 
-        bt.CommandFromView "Increment"
-        |> Observable.subscribe (fun _ -> currentValue.Value <- currentValue.Value + 1)
-        |> bt.AddDisposable
+        source
 
-        bt
-
-    let createBottom () = 
-        let bind = Binding.createSource()        
+    let createEditSource initialValue validation = 
+        let source = Binding.createObservableSource()        
         
-        // Show our current value
-        let currentValue = Mutable.create 91
-                        
-        bind.MutateToFromView (
-                    currentValue, 
-                    "Current", 
-                    string, 
-                    Converters.stringToInt32 >> Validators.greaterThan 90 >> Validators.lessOrEqualTo 95)
+        // Create a holder for current value
+        let currentValue = Mutable.create initialValue
 
-        bind.ToView(currentValue, "CurrentValue")
+        // Bind the value to the view, and return a new signal 
+        // of the validated input from user
+        source.ToFromView (
+                currentValue, 
+                "Current", 
+                string, // Convert to string on the fly 
+                Converters.stringToInt32 >> validation) // Back to int (for Xamarin), then validate
+        |> source.FilterValid // Remove invalid inputs
+        |> source.OutputObservable  // Pipe this as our output directly
 
-        bind
+        source
 
 type App() as self =
     inherit Application()
 
     let page = Page1()
-    let top = page.FindByName<Grid>("Top") 
-    let bottom = page.FindByName<Grid>("Bottom") 
+    let resultsSource = page.FindByName<Grid>("ResultsSource") 
+    let editSource = page.FindByName<Grid>("EditSource") 
+
+    // These are being set here, just to demonstrate "defining once" and passing through system
+    let initialValue = 12
+    let validation = Validators.greaterThan 10 >> Validators.lessOrEqualTo 25
+
     do 
-        top.BindingContext <- VM.createTop()
-        bottom.BindingContext <- VM.createBottom()
+        // Create our edit source
+        // results implements IObservable<int>
+        let results = VM.createEditSource initialValue validation
+        
+        // Set it as our binding context
+        editSource.BindingContext <- results
+
+        // Setup results binding context 
+        resultsSource.BindingContext <- VM.createReportingSource initialValue results
         self.MainPage <- page
 
     override __.OnStart() = ()
