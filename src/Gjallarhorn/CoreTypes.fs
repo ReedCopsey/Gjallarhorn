@@ -89,6 +89,13 @@ type internal Mutable<'a>(value : 'a) =
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
 
+namespace Gjallarhorn.Internal
+
+open System
+open System.Collections.Generic
+
+open Gjallarhorn
+
 [<AbstractClass>]       
 /// Base class which simplifies implementation of standard signals
 type SignalBase<'a>(dependencies) as self =
@@ -366,10 +373,14 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
         |> WeakRef.execute (fun v ->
             v.Untrack this                    
             handle.SetTarget(Unchecked.defaultof<ISignal<'a>>))
-        |> ignore
-    
+        |> ignore   
+
+namespace Gjallarhorn
+
+open Gjallarhorn.Internal
+
 /// Type which tracks execution, used for tracked async operations
-/// Signal with value of true when idle, false when executing
+/// Acts as a ISignal&lt;bool&gt; with value of true when idle, false when executing
 type IdleTracker(ctx : System.Threading.SynchronizationContext) =
     inherit SignalBase<bool>([| |])
 
@@ -402,6 +413,12 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
     override __.Value with get() = lock handles (fun _ -> handles.Count = 0)
     override __.RequestRefresh _ = ()
     override __.OnDisposing () = ()
+
+namespace Gjallarhorn.Internal
+
+open Gjallarhorn
+open System
+open System.Collections.Generic
 
 type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) =
     inherit SignalBase<'b>([| valueProvider |])
@@ -442,4 +459,3 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
 
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider false
-

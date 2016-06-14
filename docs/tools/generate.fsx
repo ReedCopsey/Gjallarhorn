@@ -9,7 +9,12 @@
 // for binaries output to root bin folder please add the filename only to the 
 // referenceBinaries list below in order to generate documentation for the binaries.
 // (This is the original behaviour of ProjectScaffold prior to multi project support)
-let referenceBinaries = [ "Gjallarhorn.ReferenceDocumentation.dll" ; "Gjallarhorn.Bindable.Wpf.dll" ]
+let referenceBinaries = [ 
+        "Gjallarhorn.ReferenceDocumentation/Gjallarhorn.ReferenceDocumentation.dll" 
+        "Gjallarhorn.Bindable.Wpf/Gjallarhorn.Bindable.Wpf.dll" 
+        "Gjallarhorn.Bindable.XamarinForms/Gjallarhorn.Bindable.XamarinForms.dll" 
+    ]
+
 // Web site location for the generated documentation
 let website = "/Gjallarhorn"
 

@@ -1,19 +1,11 @@
-namespace Gjallarhorn
+namespace Gjallarhorn.Internal
 
 [<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Tests")>]
 [<assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Gjallarhorn.Bindable")>]
 do ()
 
-/// Core interface for signals
-type ISignal<'a> =
-    inherit System.IObservable<'a>
-    inherit ITracksDependents
-    inherit IDependent
-
-    /// The current value of the type
-    abstract member Value : 'a with get
 /// Interface that allows a type to remotely add itself as a dependent
-and ITracksDependents =
+type ITracksDependents =
     abstract member Track : IDependent -> unit
     abstract member Untrack : IDependent -> unit
 and 
@@ -24,6 +16,17 @@ and
 
     /// Queries whether other dependencies are registered to this dependent
     abstract member HasDependencies : bool with get
+
+namespace Gjallarhorn
+
+/// Core interface for signals
+type ISignal<'a> =
+    inherit System.IObservable<'a>
+    inherit Internal.ITracksDependents
+    inherit Internal.IDependent
+
+    /// The current value of the type
+    abstract member Value : 'a with get
 
 
 /// Core interface for all mutatable types

@@ -1,6 +1,7 @@
 module Gjallarhorn.Tests.Signal
 
 open Gjallarhorn
+open Gjallarhorn.Internal
 // open Gjallarhorn.View.Operators
 
 open System

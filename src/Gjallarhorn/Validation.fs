@@ -4,6 +4,7 @@ open System
 open System.Text.RegularExpressions
 
 /// Basic validation support
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Validation =
 
     /// Used to track the status of invalid validations
