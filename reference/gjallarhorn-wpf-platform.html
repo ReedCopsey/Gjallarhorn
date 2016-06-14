@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IDependent - Gjallarhorn</title>
+    <title>Platform - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,61 +35,42 @@
 
 
 
-<h1>IDependent</h1>
+<h1>Platform</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Internal</span><br />
+  <span>Namespace: Gjallarhorn.Wpf</span><br />
 </p>
 <div class="xmldoc">
-<p>A type which depends on a signal</p>
+<p>Platform installation</p>
 
 </div>
-  <h3>Instance members</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '162', 162)" onmouseover="showTip(event, '162', 162)">
-            HasDependencies
+          <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
+            install installSynchronizationContext
           </code>
-          <div class="tip" id="162">
-            <strong>Signature:</strong> bool<br />
-              <strong>Modifiers:</strong> abstract<br />
+          <div class="tip" id="92">
+            <strong>Signature:</strong> installSynchronizationContext:bool -&gt; SynchronizationContext<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L18-18" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable.Wpf/Wpf.fs#L25-25" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Queries whether other dependencies are registered to this dependent</p>
+          <p>Installs WPF targets for binding into Gjallarhorn</p>
 
 
-              <p>CompiledName: <code>get_HasDependencies</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '163', 163)" onmouseover="showTip(event, '163', 163)">
-            RequestRefresh(arg1)
-          </code>
-          <div class="tip" id="163">
-            <strong>Signature:</strong> obj -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L15-15" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Signals the type that it should refresh its current value as one of it's dependencies has been updated</p>
-
-
+              <p>CompiledName: <code>Install</code></p>
         </td>
       </tr>
     </tbody>
