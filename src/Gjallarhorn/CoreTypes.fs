@@ -1,5 +1,6 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.Helpers
 
+open Gjallarhorn
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
 
@@ -57,6 +58,14 @@ module internal DisposeHelpers =
 
                 provider <- None
 
+namespace Gjallarhorn.Internal
+
+open System
+open System.Collections.Generic
+
+open Gjallarhorn
+open Gjallarhorn.Helpers
+
 // A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
 type internal Mutable<'a>(value : 'a) =
 
@@ -88,13 +97,6 @@ type internal Mutable<'a>(value : 'a) =
 
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
-
-namespace Gjallarhorn.Internal
-
-open System
-open System.Collections.Generic
-
-open Gjallarhorn
 
 [<AbstractClass>]       
 /// Base class which simplifies implementation of standard signals
@@ -375,7 +377,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
             handle.SetTarget(Unchecked.defaultof<ISignal<'a>>))
         |> ignore   
 
-namespace Gjallarhorn
+namespace Gjallarhorn.Helpers
 
 open Gjallarhorn.Internal
 
@@ -417,6 +419,7 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
 namespace Gjallarhorn.Internal
 
 open Gjallarhorn
+open Gjallarhorn.Helpers
 open System
 open System.Collections.Generic
 

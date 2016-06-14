@@ -1,12 +1,12 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.XamarinForms
 
 open System
 open System.Threading
 
 /// Platform installation
-module XamarinForms =
+module Platform =
     let private creation (typ : System.Type) =
-        let sourceType = typedefof<Gjallarhorn.Bindable.Xamarin.RefTypeBindingTarget<_>>.MakeGenericType([|typ|])
+        let sourceType = typedefof<Gjallarhorn.XamarinForms.RefTypeBindingTarget<_>>.MakeGenericType([|typ|])
         System.Activator.CreateInstance(sourceType) 
 
     /// Installs Xamarin Forms targets for binding into Gjallarhorn

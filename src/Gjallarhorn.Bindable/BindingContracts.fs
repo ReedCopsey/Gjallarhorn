@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
+open Gjallarhorn.Helpers
 open Gjallarhorn.Validation
 
 open Microsoft.FSharp.Quotations

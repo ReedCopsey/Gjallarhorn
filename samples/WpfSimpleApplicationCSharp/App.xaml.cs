@@ -15,7 +15,7 @@ namespace WpfSimpleApplicationCSharp
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Gjallarhorn.Wpf.Install(false);
+            Gjallarhorn.Wpf.Platform.Install(false);
             base.OnStartup(e);
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Gjallarhorn.Bindable.Wpf
+﻿namespace Gjallarhorn.Wpf
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
@@ -35,7 +35,7 @@ type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] in
 
 /// [omit]
 /// Internal type used to allow dynamic binding sources to be generated.        
-and BindingSourceTypeDescriptorProvider(parent) =
+and internal BindingSourceTypeDescriptorProvider(parent) =
     inherit TypeDescriptionProvider(parent)
 
     let mutable td = null, null

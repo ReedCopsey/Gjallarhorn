@@ -2,6 +2,7 @@
 
 #nowarn "40" "21"
 
+open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
 
@@ -9,6 +10,7 @@ open System
 open System.Collections.Generic
 
 /// Provides mechanisms for working with signals
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Signal =
     
     /// Create a signal over a constant, immutable value

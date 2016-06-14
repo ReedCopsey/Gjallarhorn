@@ -1,10 +1,10 @@
-﻿namespace Gjallarhorn
+﻿namespace Gjallarhorn.Wpf
 
 open System.Threading
 open System.Windows.Threading
 
 /// Platform installation
-module Wpf =
+module Platform =
     // Gets, and potentially installs, the WPF synchronization context
     let private installAndGetSynchronizationContext () =
         match SynchronizationContext.Current with
@@ -17,7 +17,7 @@ module Wpf =
         SynchronizationContext.Current
 
     let private creation (typ : System.Type) =
-        let sourceType = typedefof<Gjallarhorn.Bindable.Wpf.DesktopBindingSource<_>>.MakeGenericType([|typ|])
+        let sourceType = typedefof<Gjallarhorn.Wpf.DesktopBindingSource<_>>.MakeGenericType([|typ|])
         System.Activator.CreateInstance(sourceType) 
 
     /// Installs WPF targets for binding into Gjallarhorn

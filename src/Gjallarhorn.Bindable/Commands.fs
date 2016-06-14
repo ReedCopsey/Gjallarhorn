@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
+open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
 
 open System

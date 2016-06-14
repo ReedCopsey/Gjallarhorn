@@ -1,6 +1,9 @@
 ﻿namespace Gjallarhorn
 
+open Gjallarhorn.Internal
+
 /// Manages creation of mutable variables
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Mutable =
     
     [<CompiledName("Create")>]

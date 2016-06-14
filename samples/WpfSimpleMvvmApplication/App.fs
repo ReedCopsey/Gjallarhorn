@@ -31,7 +31,7 @@ module Model =
 let main _ = 
     // Install WPF Binding targets (and syncronizationContext
     // The context is only required here to allow our async workflow to put ourselves onto the UI thread properly
-    let uiContext = Gjallarhorn.Wpf.install true
+    let uiContext = Gjallarhorn.Wpf.Platform.install true
 
     // Create application (before other windows) - this allows application-wide sytles to exist when other objects are created
     let app = App()

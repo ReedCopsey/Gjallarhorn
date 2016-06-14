@@ -1,8 +1,8 @@
 ﻿namespace Gjallarhorn.Bindable.Tests
 
 open Gjallarhorn
+open Gjallarhorn.Wpf
 open Gjallarhorn.Bindable
-open Gjallarhorn.Bindable.Wpf
 open Gjallarhorn.Validation
 open Gjallarhorn.Validation.Validators
 open System.ComponentModel
@@ -60,7 +60,7 @@ type BindingSource() =
 
     [<TestFixtureSetUp>]
     member __.Initialize() =
-        Gjallarhorn.Wpf.install(false) |> ignore
+        Gjallarhorn.Wpf.Platform.install(false) |> ignore
 
     [<Test>]
     member __.``BindingSource raises property changed`` () =

@@ -1,4 +1,4 @@
-﻿namespace Gjallarhorn.Bindable.Xamarin
+﻿namespace Gjallarhorn.XamarinForms
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
@@ -7,14 +7,14 @@ open Gjallarhorn.Bindable.Internal
 open System
 open System.Reflection
 
-type DynParameterInfo(memberInfo, t, name) =
+type internal DynParameterInfo(memberInfo, t, name) =
     inherit ParameterInfo()
 
     override __.ParameterType = t
     override __.Member = memberInfo
     override __.Name = name
 
-type DynPropertyMethodInfo(pi:PropertyInfo, setter) =
+type internal DynPropertyMethodInfo(pi:PropertyInfo, setter) =
     inherit MethodInfo()
 
     override __.Name = pi.Name
@@ -46,7 +46,7 @@ type DynPropertyMethodInfo(pi:PropertyInfo, setter) =
 
 
 
-type DynPropertyInfo(owner, name, t, valueHolder : IValueHolder) as self =
+type internal DynPropertyInfo(owner, name, t, valueHolder : IValueHolder) as self =
     inherit PropertyInfo()
 
     let getter = DynPropertyMethodInfo(self, false) :> MethodInfo
@@ -72,7 +72,7 @@ type DynPropertyInfo(owner, name, t, valueHolder : IValueHolder) as self =
     override __.GetCustomAttributes (t, inh) = [| |]
     override __.IsDefined (t,i) = false
 
-type DynTypeInfo (ownerType, getProp) =
+type internal DynTypeInfo (ownerType, getProp) =
     inherit TypeDelegator(ownerType)
     
     override __.GetDeclaredProperty name = 
@@ -80,7 +80,7 @@ type DynTypeInfo (ownerType, getProp) =
         | Some p -> p
         | None -> base.GetDeclaredProperty(name)
     
-type RefTypeBindingTarget<'b>() =
+type internal RefTypeBindingTarget<'b>() =
     inherit BindingSourceBase<'b>()
 
     let ownerType = typeof<BindingSourceBase<'b>>

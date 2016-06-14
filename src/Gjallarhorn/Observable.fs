@@ -1,8 +1,11 @@
 ﻿namespace Gjallarhorn
 
+open Gjallarhorn.Helpers
+open Gjallarhorn.Internal
 open System
 
 /// Additional functions related to Observable for use with Gjallarhorn
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Observable =
     /// Filters the input observable by using a separate bool signal. The value of the signal is used as the filtering predicate
     let filterBy (condition : ISignal<bool>) input =

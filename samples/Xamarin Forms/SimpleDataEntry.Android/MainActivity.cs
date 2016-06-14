@@ -16,7 +16,7 @@ namespace SimpleDataEntry.Android
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            Gjallarhorn.XamarinForms.Install();
+            Gjallarhorn.XamarinForms.Platform.Install();
             LoadApplication(new SimpleDataEntry.App());
         }
     }
