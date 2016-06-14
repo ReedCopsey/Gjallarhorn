@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>ISignal<'a> - Gjallarhorn</title>
+    <title>IdleTracker - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,14 +35,42 @@
 
 
 
-<h1>ISignal<'a></h1>
+<h1>IdleTracker</h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
 </p>
 <div class="xmldoc">
-<p>Core interface for signals</p>
+<p>Type which tracks execution, used for tracked async operations
+Signal with value of true when idle, false when executing</p>
 
 </div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+            new(ctx)
+          </code>
+          <div class="tip" id="116">
+            <strong>Signature:</strong> ctx:SynchronizationContext -&gt; IdleTracker<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L373-373" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -52,23 +80,22 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
-            Value
+          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
+            GetExecutionHandle()
           </code>
-          <div class="tip" id="113">
-            <strong>Signature:</strong> &#39;a<br />
-              <strong>Modifiers:</strong> abstract<br />
+          <div class="tip" id="117">
+            <strong>Signature:</strong> unit -&gt; IDisposable<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L14-14" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L390-390" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The current value of the type</p>
+          <p>Gets an execution handle, which makes this as executing until the handle is disposed.
+Mutiple execution handles can be pulled simultaneously</p>
 
 
-              <p>CompiledName: <code>get_Value</code></p>
         </td>
       </tr>
     </tbody>
