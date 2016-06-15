@@ -16,7 +16,7 @@ type ITrackingCommand<'a> =
 /// Command type which uses an ISignal<bool> to track whether it can execute, and implements IObservable<'a> 
 /// with the command parameter each time the command updates.
 type internal ParameterCommand<'a> (allowExecute : ISignal<bool>) as self =
-    let source = Mutable Unchecked.defaultof<'a>
+    let source = Event<'a>()
     
     let canExecuteChanged = new Event<EventHandler, EventArgs>()
     let disposeTracker = new CompositeDisposable()
@@ -35,7 +35,7 @@ type internal ParameterCommand<'a> (allowExecute : ISignal<bool>) as self =
         let v = Utilities.downcastAndCreateOption param
         match v with
         | Some newVal ->
-            source.Value <- newVal
+            source.Trigger newVal
         | None ->
             ()
 
@@ -43,7 +43,7 @@ type internal ParameterCommand<'a> (allowExecute : ISignal<bool>) as self =
         member __.Dispose () = disposeTracker.Dispose()
 
     interface IObservable<'a> with
-        member this.Subscribe obs = (source :> IObservable<'a>).Subscribe obs
+        member this.Subscribe obs = source.Publish.Subscribe obs
 
     interface ITrackingCommand<'a>     
     interface ICommand with

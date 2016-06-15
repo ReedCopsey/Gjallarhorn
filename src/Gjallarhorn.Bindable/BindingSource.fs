@@ -89,7 +89,9 @@ type BindingSource() as self =
     member __.RaisePropertyChanged name = raisePropertyChanged name
     
     /// Map an initial value and observable to a signal, and track the subscription as part of this source's lifetime
-    abstract ObservableToSignal<'a> : 'a -> IObservable<'a> -> ISignal<'a>
+    member this.ObservableToSignal<'a> (initial : 'a) (obs: System.IObservable<'a>) =            
+        Signal.Subscription.fromObservable initial obs
+        |> this.AddDisposable2            
 
     /// Track changes on an observable to raise property changed events
     member this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
@@ -114,37 +116,107 @@ type BindingSource() as self =
         updateErrors name current 
 
     /// Add a readonly binding source for a signal with a given name
-    abstract ToView<'a> : ISignal<'a> * string -> unit
+    member this.ToView<'a> (signal : ISignal<'a> , name : string ) =    
+        this.TrackObservable name signal
+        this.AddReadOnlyProperty name (fun _ -> signal.Value)
 
-    /// Add a readonly binding source for a signal with a given name and validation
-    abstract ToView<'a> : ISignal<'a> * string * Validation<'a,'a> -> unit
+    /// Add a readonly binding source for a signal with a given name and validation    
+    member this.ToView<'a> (signal : ISignal<'a>, name : string, validation : Validation<'a,'a>) = 
+        this.TrackObservable name signal            
+        this.AddReadOnlyProperty name (fun _ -> signal.Value)
 
-    /// Add a readonly binding source for a constant value with a given name
-    abstract ConstantToView<'a> : 'a * string -> unit
+        let validated = Signal.validate validation signal
+        (this).TrackValidator name validated.ValidationResult.Value validated.ValidationResult            
+
+    /// Add a readonly binding source for a constant value with a given name    
+    member this.ConstantToView (value, name) = 
+        this.AddReadOnlyProperty name (fun _ -> value)
 
     /// Creates a new command given a binding name
-    abstract CommandFromView : string -> ITrackingCommand<DateTime>
+    member this.CommandFromView name =
+        let command = Command.createEnabled()
+        this.AddDisposable command
+        this.ConstantToView (command, name)
+        command
 
     /// Creates a new command given signal for tracking execution and a binding name 
-    abstract CommandCheckedFromView : ISignal<bool> * string -> ITrackingCommand<DateTime>
+    member this.CommandCheckedFromView (canExecute : ISignal<bool>, name) =
+        let command = Command.create canExecute
+        this.AddDisposable command
+        this.ConstantToView (command, name)
+        command
 
-    /// Add a binding source for a signal with a given name, and returns a signal of the user edits
-    abstract ToFromView<'a> : ISignal<'a> * string -> ISignal<'a>
+    /// Add a binding source for a signal with a given name, and returns a signal of the user edits    
+    member this.ToFromView<'a> (signal : ISignal<'a>, name : string) = 
+        let editSource = Mutable.create signal.Value
+        Signal.Subscription.copyTo editSource signal
+        |> this.AddDisposable
+
+        this.TrackObservable name signal
+        this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
+
+        editSource :> ISignal<'a>
 
     /// Add a binding source for a signal for editing with a given name and validation, and returns a signal of the user edits
-    abstract ToFromView<'a,'b> : ISignal<'a> * string * Validation<'a,'b> -> IValidatedSignal<'a, 'b>
-
+    member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string , validation : Validation<'a,'b>) = 
+        let output = this.ToFromView (signal, name)
+        let valid =
+            output
+            |> Signal.validate validation
+        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
+        valid 
+    
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
-    abstract ToFromView<'a,'b> : ISignal<'a> * string * ('a -> 'b) * Validation<'b,'a> -> IValidatedSignal<'b, 'a>
+    member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'a>) =
+        let converted = Signal.map conversion signal
+        let output = this.ToFromView (converted, name)
+        let valid =
+            output
+            |> Signal.validate validation
+        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
+        valid 
 
-    /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable
-    abstract MutateToFromView<'a> : IMutatable<'a> * string -> unit
+    /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
+    member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
+        this.TrackObservable name mutatable
+        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
     /// Add a binding source for a mutable for editing with a given name and validation which directly pushes edits back to the mutable
-    abstract MutateToFromView<'a> : IMutatable<'a> * string * Validation<'a,'a> -> unit
+    member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string, validation:Validation<'a,'a>) =
+        this.TrackObservable name mutatable
+        let validated =
+            mutatable
+            |> Signal.validate validation
+        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
     /// Add a binding source for a mutable for editing with a given name, converter, and validation which directly pushes edits back to the mutable
-    abstract MutateToFromView<'a,'b> : IMutatable<'a> * string * ('a -> 'b) * Validation<'b,'a> -> unit
+    member this.MutateToFromView<'a,'b> (mutatable:IMutatable<'a>, name, converter: ('a -> 'b), validation: Validation<'b,'a>) =
+        // Create an internal mutable to write into pre-validation
+        let converted = Mutable.create (converter mutatable.Value)
+        this.TrackObservable name converted
+
+        // Handle changes from our input observable, forcing into our converted value
+        mutatable
+        |> Signal.map converter
+        |> Signal.Subscription.copyTo converted
+        |> this.AddDisposable
+
+        // Do our validation
+        let validated =
+            converted
+            |> Signal.validate validation
+        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+
+        // Copy back to the input when appropriate
+        validated.ValidationResult
+        |> Signal.Subscription.create(fun v -> 
+            if v.IsValidResult then 
+                mutatable.Value <- Option.get validated.Value)
+        |> this.AddDisposable
+
+        // read and write into our converted value
+        this.AddReadWriteProperty name (fun _ -> converted.Value) (fun v -> converted.Value <- v)
 
     /// Filter a signal to only output when we're valid
     member this.FilterValid signal =
@@ -177,111 +249,18 @@ type BindingSource() as self =
         
 [<AbstractClass>]
 /// Base class for binding sources, used by platform specific libraries to share implementation details
-type ObservableBindingSource<'b>() as self =
+type ObservableBindingSource<'b>() =
     inherit BindingSource()
-
-    let output = Mutable.create Unchecked.defaultof<'b>
-
-    override this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name) = 
-        this.TrackObservable name mutatable
-        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
-
-    override this.ToFromView<'a> (signal,name) = 
-        let editSource = Mutable.create signal.Value
-        Signal.Subscription.copyTo editSource signal
-        |> this.AddDisposable
-
-        this.TrackObservable name signal
-        this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
-
-        editSource :> ISignal<'a>
-
-    override this.MutateToFromView (mutatable, name, validation) =
-        this.TrackObservable name mutatable
-        let validated =
-            mutatable
-            |> Signal.validate validation
-        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
-        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
-
-    override this.MutateToFromView (mutatable, name, converter, validation) =
-        let converted = Mutable.create (converter mutatable.Value)
-        this.TrackObservable name converted
-
-        // Handle changes from our input observable
-        mutatable
-        |> Signal.map converter
-        |> Signal.Subscription.copyTo converted
-        |> this.AddDisposable
-
-        // Do our validation
-        let validated =
-            converted
-            |> Signal.validate validation
-        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
-
-        // Copy back to the input when appropriate
-        validated.ValidationResult
-        |> Signal.Subscription.create(fun v -> 
-            if v.IsValidResult then 
-                mutatable.Value <- Option.get validated.Value)
-        |> this.AddDisposable
-
-        this.AddReadWriteProperty name (fun _ -> converted.Value) (fun v -> converted.Value <- v)
-
-    override this.ToFromView (signal, name, conversion, validation) =
-        let converted = Signal.map conversion signal
-        let output = this.ToFromView (converted, name)
-        let valid =
-            output
-            |> Signal.validate validation
-        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        valid 
-
-    override this.ToFromView (signal, name, validation) =
-        let output = this.ToFromView (signal, name)
-        let valid =
-            output
-            |> Signal.validate validation
-        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        valid 
-
-    override this.ToView<'a> (signal : ISignal<'a>, name) = 
-        this.TrackObservable name signal
-        this.AddReadOnlyProperty name (fun _ -> signal.Value)
-
-    override this.ToView (signal, name, validation) = 
-        this.TrackObservable name signal            
-        this.AddReadOnlyProperty name (fun _ -> signal.Value)
-
-        let validated = Signal.validate validation signal
-        (this).TrackValidator name validated.ValidationResult.Value validated.ValidationResult            
-
-    override this.CommandFromView name =
-        let command = Command.createEnabled()
-        this.AddDisposable command
-        this.ConstantToView (command, name)
-        command
-
-    override this.CommandCheckedFromView (canExecute, name) =
-        let command = Command.create canExecute
-        this.AddDisposable command
-        this.ConstantToView (command, name)
-        command
-
-    override this.ConstantToView (value, name) = 
-        this.AddReadOnlyProperty name (fun _ -> value)
-
-    override this.ObservableToSignal<'a> (initial : 'a) (obs: System.IObservable<'a>) =            
-        Signal.Subscription.fromObservable initial obs
-        |> this.AddDisposable2            
+    
+    // Use event as simple observable source
+    let output = Event<'b>()
 
     /// Outputs a value through it's observable implementation
-    member __.OutputValue value = output.Value <- value
+    member __.OutputValue value = output.Trigger value
 
     /// Outputs values by subscribing to changes on an observable
     member this.OutputObservable (obs : IObservable<'b>) =
-        let sub = obs.Subscribe(fun v -> output.Value <- v)
+        let sub = obs.Subscribe output.Trigger
         this.AddDisposable sub
 
     interface IObservableBindingSource<'b> with
@@ -289,4 +268,4 @@ type ObservableBindingSource<'b>() as self =
         member this.OutputObservable obs = this.OutputObservable obs
     
     interface System.IObservable<'b> with
-        member __.Subscribe obs = output.Subscribe(obs)
+        member __.Subscribe obs = output.Publish.Subscribe obs
