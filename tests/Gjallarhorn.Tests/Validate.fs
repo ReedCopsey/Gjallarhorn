@@ -51,20 +51,20 @@ let ``Signal\validate provides proper error messages`` () =
     let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
         
     match validate.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(2, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
     value.Value <- "Re"
     match validate.ValidationResult.Value with
-    | Valid -> ()
-    | Invalid(errors) -> Assert.Fail()
+    | ValidationResult.Valid -> ()
+    | ValidationResult.Invalid(errors) -> Assert.Fail()
 
     value.Value <- " "
     match validate.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(3, errors.Length)
         Assert.Contains(box "Value must be at least 2 characters long.", Seq.toArray(errors))
         Assert.Contains(box "Value cannot contain a space.", Seq.toArray(errors))
@@ -92,14 +92,14 @@ let ``Signal\validate signals properly when value changes`` () =
     Assert.AreEqual(2, states.Count)
 
     match states.[1] with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
     match validated.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
@@ -131,14 +131,14 @@ let ``Signal\validate subscriptions last through GC collections`` () =
     Assert.AreEqual(2, states.Count)
 
     match states.[1] with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
     match validated.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(1, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
@@ -150,20 +150,20 @@ let ``Signal\validate provides proper error messages when fixed`` () =
     let validate = Signal.validate (notNullOrWhitespace >> hasLengthAtLeast 2 >> noSpaces) value
         
     match validate.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(2, errors.Length)
         Assert.Contains(box "Value cannot be null or empty.", Seq.toArray(errors))
 
     value.Value <- "Re"
     match validate.ValidationResult.Value with
-    | Valid -> ()
-    | Invalid(errors) -> Assert.Fail()
+    | ValidationResult.Valid -> ()
+    | ValidationResult.Invalid(errors) -> Assert.Fail()
 
     value.Value <- " "
     match validate.ValidationResult.Value with
-    | Valid -> Assert.Fail()
-    | Invalid(errors) ->
+    | ValidationResult.Valid -> Assert.Fail()
+    | ValidationResult.Invalid(errors) ->
         Assert.AreEqual(3, errors.Length)
         Assert.Contains(box "Value must be at least 2 characters long.", Seq.toArray(errors))
         Assert.Contains(box "Value cannot contain a space.", Seq.toArray(errors))

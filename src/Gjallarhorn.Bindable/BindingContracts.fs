@@ -10,6 +10,15 @@ open Microsoft.FSharp.Quotations.Patterns
 open System
 open System.ComponentModel
 
+/// The output of validating an input signal
+type IUserOutput<'a, 'b> =            
+    inherit IObservable<'b>
+
+    /// The raw, unvalidated input
+    abstract member RawInput : ISignal<'a> with get
+
+    abstract member Output : IValidatedSignal<'a, 'b> with get
+
 type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)
 
 /// Interface used to manage a binding source
@@ -67,10 +76,10 @@ type IBindingSource =
     abstract ToFromView<'a> : ISignal<'a> * string -> ISignal<'a>
 
     /// Add a binding source for a signal for editing with a given name and validation, and returns a signal of the user edits
-    abstract ToFromView<'a,'b> : ISignal<'a> * string * Validation<'a,'b> -> IValidatedSignal<'b>
+    abstract ToFromView<'a,'b> : ISignal<'a> * string * Validation<'a,'b> -> IValidatedSignal<'a, 'b>
 
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
-    abstract ToFromView<'a,'b> : ISignal<'a> * string * ('a -> 'b) * Validation<'b,'a> -> IValidatedSignal<'a>
+    abstract ToFromView<'a,'b> : ISignal<'a> * string * ('a -> 'b) * Validation<'b,'a> -> IValidatedSignal<'b, 'a>
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable
     abstract MutateToFromView<'a> : IMutatable<'a> * string -> unit

@@ -22,8 +22,14 @@ module VM =
         let source = bindingSource.ObservableToSignal initialValue nameIn
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
-        let first = source |> Binding.memberToFromView bindingSource <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
-        let last  = source |> Binding.memberToFromView bindingSource <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
+        let first = 
+            source 
+            |> Binding.memberToFromView bindingSource <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
+            |> Signal.choose id initialValue.First
+        let last  = 
+            source 
+            |> Binding.memberToFromView bindingSource <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
+            |> Signal.choose id initialValue.Last
                         
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
         Signal.map2 (fun f l -> f + " " + l) first last

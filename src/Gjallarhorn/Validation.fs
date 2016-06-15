@@ -2,6 +2,41 @@
 
 open System
 open System.Text.RegularExpressions
+open System.Runtime.InteropServices
+
+/// Defines a validation result
+type ValidationResult =
+/// Value is valid
+| Valid
+/// Value is invalid with a list of error messages
+| Invalid of errors : string list
+with
+    static member private ValidResultAsList = [ "" ]
+
+    /// Check to see if we're in a valid state
+    member this.IsValidResult =
+        match this with
+        | Valid -> true
+        | _ -> false
+
+    /// Convert to a list of strings. If forceOutput is true, the list will have a single, empty
+    /// string in valid cases 
+    member this.ToList (forceOutput : bool) =
+        match this, forceOutput with
+        | Valid, true -> ValidationResult.ValidResultAsList
+        | Valid, false -> ValidationResult.ValidResultAsList
+        | Invalid(errors), _ -> errors
+        |> ResizeArray<_>
+
+/// The output of validating an input signal
+type IValidatedSignal<'a, 'b> =
+    inherit ISignal<'b option>
+                
+    /// The current validation status
+    abstract member ValidationResult : ISignal<ValidationResult> with get
+
+    /// Check to see if type is currently in a valid state
+    abstract member IsValid : bool with get        
 
 /// Basic validation support
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
@@ -42,7 +77,7 @@ module Validation =
         | _ -> step
 
     /// Create a custom validator using a custom function ('a -> string option) . The error message can use {0} for a placeholder for the property value. None indicates success.
-    let custom (validator : 'a -> string option) (step : ValidationCollector<'a>) =        
+    let validateWith (validator : 'a -> string option) (step : ValidationCollector<'a>) =        
         let success = 
             match step with            
             | ValidationCollector.Invalid(_, _, InvalidValidationStatus.Completed) -> None // Short circuit
@@ -138,27 +173,27 @@ module Validation =
         // String validations
         let notNullOrWhitespace (str : ValidationCollector<string>) = 
             let validation value = if String.IsNullOrWhiteSpace(value) then Some "Value cannot be null or empty." else None            
-            custom validation  str 
+            validateWith validation  str 
 
         let noSpaces (str : ValidationCollector<string>) = 
             let validation (value : string) = if not(String.IsNullOrEmpty(value)) && value.Contains(" ") then Some "Value cannot contain a space." else None
-            custom validation str
+            validateWith validation str
 
         let hasLength (length : int) (str : ValidationCollector<string>) = 
             let validation (value : string) = if (value = null && length <> 0 ) || value.Length <> length then Some ("Value must be " + length.ToString() + " characters long.") else None
-            custom validation str
+            validateWith validation str
 
         let hasLengthAtLeast (length : int) (str : ValidationCollector<string>) = 
             let validation (value : string) = if (value = null && length <> 0 ) || value.Length < length then Some ("Value must be at least " + length.ToString() + " characters long.") else None
-            custom validation str
+            validateWith validation str
 
         let hasLengthNoLongerThan (length : int) (str : ValidationCollector<string>) = 
             let validation (value : string) = if not(String.IsNullOrWhiteSpace(value)) && value.Length > length then Some ("Value must be no longer than " + length.ToString() + " characters long") else None
-            custom validation str
+            validateWith validation str
         
         let private matchesPatternInternal (pattern : string) (errorMsg : string) (str : ValidationCollector<string>) =
             let validation (value : string) = if not(String.IsNullOrWhiteSpace(value)) && Regex.IsMatch(value, pattern) then None else Some errorMsg
-            custom validation str
+            validateWith validation str
 
         let matchesPattern (pattern : string) str =
             matchesPatternInternal pattern ("Value must match following pattern: " + pattern) str
@@ -178,58 +213,41 @@ module Validation =
         // Generic validations
         let notEqual value step = 
             let validation v = if value = v then Some ("Value cannot equal " + value.ToString()) else None
-            custom validation step
+            validateWith validation step
 
         let greaterThan value step =
             let validation v = if v > value then None else Some ("Value must be greater than " + value.ToString())
-            custom validation step
+            validateWith validation step
 
         let greaterOrEqualTo value step =
             let validation v = if v >= value then None else Some ("Value must be greater than or equal to " + value.ToString())
-            custom validation step
+            validateWith validation step
 
         let lessThan value step =
             let validation v = if v < value then None else Some ("Value must be less than " + value.ToString())
-            custom validation step
+            validateWith validation step
 
         let lessOrEqualTo value step =
             let validation v = if v <= value then None else Some ("Value must be less than or equal to " + value.ToString())
-            custom validation step
+            validateWith validation step
 
         let isBetween lowerBound upperBound step =
             let validation v = if lowerBound <= v && v <= upperBound then None else Some ("Value must be between " + lowerBound.ToString() + " and " + upperBound.ToString())
-            custom validation step
+            validateWith validation step
     
         let containedWithin collection step =
             let validation value = if Option.isSome (Seq.tryFind ((=) value) collection) then None else Some ("{0} must be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection))
-            custom validation step
+            validateWith validation step
 
         let notContainedWithin collection step =
             let validation value = if Option.isNone (Seq.tryFind ((=) value) collection) then None else Some ("{0} cannot be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection))
-            custom validation step
+            validateWith validation step
 
-    /// Defines a validation result
-    type ValidationResult =
-    /// Value is valid
-    | Valid
-    /// Value is invalid with a list of error messages
-    | Invalid of errors : string list
-    with
-        static member ValidResultAsList = [ "" ]
-        member this.IsValidResult =
-            match this with
-            | Valid -> true
-            | _ -> false
-
-        member this.AsList () =
-            match this with
-            | Valid -> ValidationResult.ValidResultAsList
-            | Invalid(errors) -> errors
 
     /// Check to see if a result is in a valid state
     let isValid result =
         match result with 
-        | Valid -> true
+        | ValidationResult.Valid -> true
         | _ -> false
 
     /// Extracts the resulting errors from an invalid validation, or an empty list for success
@@ -242,16 +260,16 @@ module Validation =
     let resultWithError customErrorMessage (step : ValidationCollector<'a>) : ValidationResult =
         match step with
         | ValidationCollector.Valid(_) -> ValidationResult.Valid
-        | ValidationCollector.Invalid(_, _, _) -> ValidationResult.Invalid([customErrorMessage])
+        | ValidationCollector.Invalid(_) -> ValidationResult.Invalid([customErrorMessage])
 
 
-    /// Core interface for all validated signal types
-    type IValidatedSignal<'a> =
-        inherit ISignal<'a>
-    
-        /// The current validation status
-        abstract member ValidationResult : ISignal<ValidationResult> with get
-
-        /// Check to see if type is currently in a valid state
-        abstract member IsValid : bool with get
-
+//    /// Core interface for all validated signal types
+//    type IValidatedSignal<'a> =
+//        inherit ISignal<'a>
+//    
+//        /// The current validation status
+//        abstract member ValidationResult : ISignal<ValidationResult> with get
+//
+//        /// Check to see if type is currently in a valid state
+//        abstract member IsValid : bool with get
+//

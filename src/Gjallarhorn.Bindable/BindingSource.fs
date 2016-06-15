@@ -40,13 +40,13 @@ type BindingSourceBase<'b>() as self =
 
     let updateErrors name (result : ValidationResult) =
         match errors.ContainsKey(name), result with
-        | false, Valid -> 
+        | false, ValidationResult.Valid -> 
             ()        
-        | _, Invalid(err) -> 
+        | _, ValidationResult.Invalid(err) -> 
             errors.[name] <- err
             raiseErrorNotifications name
             
-        | true, Valid -> 
+        | true, ValidationResult.Valid -> 
             errors.Remove(name) |> ignore
             raiseErrorNotifications name
 
@@ -112,7 +112,7 @@ type BindingSourceBase<'b>() as self =
         member this.ToFromView<'a> (signal,name) = 
             // make sure validation checks happen before edits are pushed
             match signal with
-            | :? Validation.IValidatedSignal<'a> as validator ->
+            | :? IValidatedSignal<'a, 'a> as validator ->
                 (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
             | _ -> ()
 
@@ -153,7 +153,7 @@ type BindingSourceBase<'b>() as self =
             validated.ValidationResult
             |> Signal.Subscription.create(fun v -> 
                 if v.IsValidResult then 
-                    mutatable.Value <- validated.Value)
+                    mutatable.Value <- Option.get validated.Value)
             |> disposables.Add
 
             this.AddReadWriteProperty name (fun _ -> converted.Value) (fun v -> converted.Value <- v)
@@ -184,7 +184,7 @@ type BindingSourceBase<'b>() as self =
             bt().TrackObservable name signal
             this.AddReadOnlyProperty name (fun _ -> signal.Value)
             match signal with
-            | :? Validation.IValidatedSignal<'a> as validator ->
+            | :? IValidatedSignal<'a,'a> as validator ->
                 (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
             | _ -> ()
 
@@ -224,7 +224,7 @@ type BindingSourceBase<'b>() as self =
             |> Signal.Subscription.create (fun result -> updateErrors name result)
             |> disposables.Add
 
-            this.AddReadOnlyProperty (getErrorsPropertyName name) (fun _ -> validator.Value.AsList() )
+            this.AddReadOnlyProperty (getErrorsPropertyName name) (fun _ -> validator.Value.ToList(true) )
             this.AddReadOnlyProperty (getValidPropertyName name) (fun _ -> validator.Value.IsValidResult )
 
             updateErrors name current 
@@ -240,6 +240,7 @@ type BindingSourceBase<'b>() as self =
         member __.Dispose() = disposables.Dispose()
 
 /// Functions to work with binding sources     
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Binding =
     /// Internal module used to manage the actual construction of binding sources
     module Implementation =

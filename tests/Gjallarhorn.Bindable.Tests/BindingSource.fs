@@ -209,7 +209,7 @@ type BindingSource() =
 
         let full = 
             Signal.map2 (fun f l -> f + " " + l) first last
-            |> Signal.validate (notNullOrWhitespace >> (custom fullNameValidation))
+            |> Signal.validate (notNullOrWhitespace >> (validateWith fullNameValidation))
 
         use dynamicVm = Binding.createSource ()
 
@@ -235,7 +235,7 @@ type BindingSource() =
         let last = Mutable.create ""
         let full = 
             Signal.map2 (fun f l -> f + " " + l) first last
-            |> Signal.validate (notNullOrWhitespace >> fixErrors >> (custom fullNameValidation))
+            |> Signal.validate (notNullOrWhitespace >> fixErrors >> (validateWith fullNameValidation))
 
         let sub1 = first.Subscribe(fun a -> ())
         let sub2 = last.Subscribe(fun a -> ())
