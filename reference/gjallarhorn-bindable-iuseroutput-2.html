@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IBindingSource - Gjallarhorn</title>
+    <title>IUserOutput<'a, 'b> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,14 +35,64 @@
 
 
 
-<h1>IBindingSource</h1>
+<h1>IUserOutput<'a, 'b></h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
 <div class="xmldoc">
-<p>Interface used to manage a binding source</p>
+<p>The output of validating an input signal</p>
 
 </div>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
+            Output
+          </code>
+          <div class="tip" id="110">
+            <strong>Signature:</strong> IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L20-20" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Output</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+            RawInput
+          </code>
+          <div class="tip" id="111">
+            <strong>Signature:</strong> ISignal&lt;&#39;a&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingContracts.fs#L18-18" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The raw, unvalidated input</p>
+
+
+              <p>CompiledName: <code>get_RawInput</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

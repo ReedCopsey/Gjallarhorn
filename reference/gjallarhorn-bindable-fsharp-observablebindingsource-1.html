@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Command - Gjallarhorn</title>
+    <title>ObservableBindingSource<'b> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,39 +35,63 @@
 
 
 
-<h1>Command</h1>
+<h1>ObservableBindingSource<'b></h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Namespace: Gjallarhorn.Bindable.FSharp</span><br />
 </p>
 <div class="xmldoc">
-<p>Core module for creating and using ICommand implementations</p>
+<p>Base class for binding sources, used by platform specific libraries to share implementation details</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
-            create enabledSource
+          <code onmouseout="hideTip(event, '138', 138)" onmouseover="showTip(event, '138', 138)">
+            new()
           </code>
-          <div class="tip" id="85">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+          <div class="tip" id="138">
+            <strong>Signature:</strong> unit -&gt; ObservableBindingSource&lt;&#39;b&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L79-79" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L180-180" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '139', 139)" onmouseover="showTip(event, '139', 139)">
+            OutputObservable(obs)
+          </code>
+          <div class="tip" id="139">
+            <strong>Signature:</strong> obs:IObservable&lt;&#39;b&gt; -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L283-283" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Outputs values by subscribing to changes on an observable</p>
 
 
         </td>
@@ -75,19 +99,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
-            createEnabled ()
+          <code onmouseout="hideTip(event, '140', 140)" onmouseover="showTip(event, '140', 140)">
+            OutputValue(value)
           </code>
-          <div class="tip" id="86">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+          <div class="tip" id="140">
+            <strong>Signature:</strong> value:&#39;b -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L83-83" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L280-280" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command which is always enabled</p>
+          <p>Outputs a value through it's observable implementation</p>
 
 
         </td>

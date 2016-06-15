@@ -54,14 +54,6 @@
     <tbody>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-validationmodule-ivalidatedsignal-1.html">IValidatedSignal<'a></a>
-          </td>
-          <td class="xmldoc"><p>Core interface for all validated signal types</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
             <a href="gjallarhorn-validationmodule-invalidvalidationstatus.html">InvalidValidationStatus</a>
           </td>
           <td class="xmldoc"><p>Used to track the status of invalid validations</p>
@@ -73,14 +65,6 @@
             <a href="gjallarhorn-validationmodule-validationcollector-1.html">ValidationCollector<'a></a>
           </td>
           <td class="xmldoc"><p>Defines the Validation as being in one of three possible states</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="gjallarhorn-validationmodule-validationresult.html">ValidationResult</a>
-          </td>
-          <td class="xmldoc"><p>Defines a validation result</p>
 
 </td>
         </tr>
@@ -120,34 +104,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
-            custom validator step
-          </code>
-          <div class="tip" id="36">
-            <strong>Signature:</strong> validator:(&#39;a -&gt; string option) -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L45-45" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a custom validator using a custom function ('a -&gt; string option) . The error message can use {0} for a placeholder for the property value. None indicates success.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
             customConverter (...)
           </code>
-          <div class="tip" id="37">
+          <div class="tip" id="36">
             <strong>Signature:</strong> validator:(&#39;a -&gt; Choice&lt;&#39;b,string&gt;) -&gt; defaultOnFailure:&#39;b -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L59-59" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L94-94" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -159,15 +123,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
             fixErrors step
           </code>
-          <div class="tip" id="38">
+          <div class="tip" id="37">
             <strong>Signature:</strong> step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L28-28" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L63-63" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -179,15 +143,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
             fixErrorsWithMessage errorMessage step
           </code>
-          <div class="tip" id="39">
+          <div class="tip" id="38">
             <strong>Signature:</strong> errorMessage:string -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L37-37" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L72-72" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -200,15 +164,15 @@ Also supplies a custom error message to replace the existing</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             isValid result
           </code>
-          <div class="tip" id="40">
+          <div class="tip" id="39">
             <strong>Signature:</strong> result:ValidationResult -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L230-230" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L248-248" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -220,15 +184,15 @@ Also supplies a custom error message to replace the existing</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
             result step
           </code>
-          <div class="tip" id="41">
+          <div class="tip" id="40">
             <strong>Signature:</strong> step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationResult<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L236-236" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L254-254" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -240,15 +204,15 @@ Also supplies a custom error message to replace the existing</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
             resultWithError customErrorMessage step
           </code>
-          <div class="tip" id="42">
+          <div class="tip" id="41">
             <strong>Signature:</strong> customErrorMessage:string -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationResult<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L242-242" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L260-260" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -260,19 +224,39 @@ Also supplies a custom error message to replace the existing</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             validate value
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="42">
             <strong>Signature:</strong> value:&#39;c -&gt; ValidationCollector&lt;&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'c          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L25-25" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L60-60" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Begin a validation chain for a given property</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+            validateWith validator step
+          </code>
+          <div class="tip" id="43">
+            <strong>Signature:</strong> validator:(&#39;a -&gt; string option) -&gt; step:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L80-80" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a custom validator using a custom function ('a -&gt; string option) . The error message can use {0} for a placeholder for the property value. None indicates success.</p>
 
 
         </td>

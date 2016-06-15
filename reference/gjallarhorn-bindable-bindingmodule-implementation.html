@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Command - Gjallarhorn</title>
+    <title>Implementation - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,12 +35,13 @@
 
 
 
-<h1>Command</h1>
+<h1>Implementation</h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Parent Module: <a href="gjallarhorn-bindable-bindingmodule.html">Binding</a></span>
 </p>
 <div class="xmldoc">
-<p>Core module for creating and using ICommand implementations</p>
+<p>Internal module used to manage the actual construction of binding sources</p>
 
 </div>
 
@@ -55,19 +56,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
-            create enabledSource
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+            getCreateBindingSourceFunction ()
           </code>
-          <div class="tip" id="85">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+          <div class="tip" id="82">
+            <strong>Signature:</strong> unit -&gt; BindingSource<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L79-79" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L30-30" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+          <p>Retrieves the platform specific creation function</p>
 
 
         </td>
@@ -75,19 +76,39 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
-            createEnabled ()
+          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+            getCreateObservableBindingSourceFunction (...)
           </code>
-          <div class="tip" id="86">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="83">
+            <strong>Signature:</strong> unit -&gt; ObservableBindingSource&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L83-83" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L33-33" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command which is always enabled</p>
+          <p>Retrieves the platform specific creation function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+            installCreationFunction fBS fOBS
+          </code>
+          <div class="tip" id="84">
+            <strong>Signature:</strong> fBS:(unit -&gt; obj) -&gt; fOBS:(Type -&gt; obj) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Installs a platform specific binding source creation functions</p>
 
 
         </td>

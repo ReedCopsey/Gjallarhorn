@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IBindingSource - Gjallarhorn</title>
+    <title>IValidatedSignal<'a, 'b> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,14 +35,66 @@
 
 
 
-<h1>IBindingSource</h1>
+<h1>IValidatedSignal<'a, 'b></h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Namespace: Gjallarhorn</span><br />
 </p>
 <div class="xmldoc">
-<p>Interface used to manage a binding source</p>
+<p>The output of validating an input signal</p>
 
 </div>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
+            IsValid
+          </code>
+          <div class="tip" id="101">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L39-39" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Check to see if type is currently in a valid state</p>
+
+
+              <p>CompiledName: <code>get_IsValid</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
+            ValidationResult
+          </code>
+          <div class="tip" id="102">
+            <strong>Signature:</strong> ISignal&lt;ValidationResult&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L36-36" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The current validation status</p>
+
+
+              <p>CompiledName: <code>get_ValidationResult</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">
