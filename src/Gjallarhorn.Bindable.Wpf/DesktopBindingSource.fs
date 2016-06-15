@@ -26,8 +26,12 @@ type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] in
     member private __.MakePD<'a> name = BindingSourcePropertyDescriptor<'a>(name) :> PropertyDescriptor
     
     override this.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+        if customProps.ContainsKey name then
+            failwith <| sprintf "Property [%s] already exists on this binding source" name
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readWrite getter setter))        
     override this.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+        if customProps.ContainsKey name then
+            failwith <| sprintf "Property [%s] already exists on this binding source" name
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readOnly getter))   
 
     interface IPropertyBag with

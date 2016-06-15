@@ -183,10 +183,13 @@ type BindingSourceBase<'b>() as self =
         member this.ToView<'a> (signal : ISignal<'a>, name) = 
             bt().TrackObservable name signal
             this.AddReadOnlyProperty name (fun _ -> signal.Value)
-            match signal with
-            | :? IValidatedSignal<'a,'a> as validator ->
-                (bt()).TrackValidator name validator.ValidationResult.Value validator.ValidationResult
-            | _ -> ()
+
+        member this.ToView (signal, name, validation) = 
+            bt().TrackObservable name signal            
+            this.AddReadOnlyProperty name (fun _ -> signal.Value)
+
+            let validated = Signal.validate validation signal
+            (bt()).TrackValidator name validated.ValidationResult.Value validated.ValidationResult            
 
         member __.CommandFromView name =
             let command = Command.createEnabled()
@@ -296,6 +299,10 @@ module Binding =
     /// Add a watched signal (one way property) to a binding source by name
     let toView (source : IBindingSource) name signal =
         source.ToView(signal, name)
+
+    /// Add a watched signal (one way property) to a binding source by name with validation
+    let toViewValidated (source : IBindingSource) name validation signal =
+        source.ToView(signal, name, validation)
 
     /// Add a constant value (one way property) to a binding source by name
     let constantToView name value (source : IBindingSource) =

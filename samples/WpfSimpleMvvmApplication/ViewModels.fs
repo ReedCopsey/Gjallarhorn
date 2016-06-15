@@ -32,9 +32,8 @@ module VM =
             |> Signal.choose id initialValue.Last
                         
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
-        Signal.map2 (fun f l -> f + " " + l) first last
-        |> Signal.validate (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
-        |> Binding.toView bindingSource "Full"        
+        Signal.map2 (fun f l -> f + " " + l) first last        
+        |> Binding.toViewValidated bindingSource "Full" (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates

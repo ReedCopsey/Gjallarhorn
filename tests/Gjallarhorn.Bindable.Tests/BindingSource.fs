@@ -172,7 +172,7 @@ type BindingSource() =
         Assert.AreEqual(2, obs.["Full"])
 
     [<Test>]
-    member __.``Binding\toFromView with validator sets error state`` () =
+    member __.``Binding\toFromViewValidated sets error state`` () =
         let first = Mutable.create ""
            
         let last = Mutable.create ""
@@ -184,12 +184,10 @@ type BindingSource() =
 
         let first' = 
             first
-            |> Signal.validate notNullOrWhitespace
-            |> Binding.toFromView dynamicVm "First"
+            |> Binding.toFromViewValidated dynamicVm "First" notNullOrWhitespace 
         let last' = 
             last
-            |> Signal.validate notNullOrWhitespace
-            |> Binding.toFromView dynamicVm "Last"
+            |> Binding.toFromViewValidated dynamicVm "Last" notNullOrWhitespace
             
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -203,19 +201,17 @@ type BindingSource() =
         Assert.AreEqual(1, obs.["IsValid"])        
 
     [<Test>]
-    member __.``Binding\toView with validator sets error state`` () =
+    member __.``Binding\toViewValidated sets error state`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
 
-        let full = 
-            Signal.map2 (fun f l -> f + " " + l) first last
-            |> Signal.validate (notNullOrWhitespace >> (validateWith fullNameValidation))
+        let full = Signal.map2 (fun f l -> f + " " + l) first last            
 
         use dynamicVm = Binding.createSource ()
 
         Binding.toView dynamicVm "First" first
         Binding.toView dynamicVm "Last" last
-        Binding.toView dynamicVm "Full" full
+        Binding.toViewValidated dynamicVm "Full" (notNullOrWhitespace >> validateWith fullNameValidation) full
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -230,12 +226,10 @@ type BindingSource() =
         Assert.AreEqual(1, obs.["IsValid"])        
 
     [<Test>]
-    member __.``Binding\toView puts proper errors into INotifyDataErrorInfo`` () =
+    member __.``Binding\toViewValidated puts proper errors into INotifyDataErrorInfo`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
-        let full = 
-            Signal.map2 (fun f l -> f + " " + l) first last
-            |> Signal.validate (notNullOrWhitespace >> fixErrors >> (validateWith fullNameValidation))
+        let full = Signal.map2 (fun f l -> f + " " + l) first last            
 
         let sub1 = first.Subscribe(fun a -> ())
         let sub2 = last.Subscribe(fun a -> ())
@@ -244,7 +238,7 @@ type BindingSource() =
 
         Binding.toView dynamicVm "First" first
         Binding.toView dynamicVm "Last" last
-        Binding.toView dynamicVm "Full" full
+        Binding.toViewValidated dynamicVm "Full" (notNullOrWhitespace >> fixErrors >> validateWith fullNameValidation) full
         dynamicVm.AddDisposable sub1
         dynamicVm.AddDisposable sub2
 

@@ -94,11 +94,17 @@ type internal RefTypeBindingTarget<'b>() =
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         let vh = ValueHolder.readWrite getter setter
         let p = DynPropertyInfo(ownerType, name, typeof<'a>, vh)
+
+        if properties.ContainsKey name then
+            failwith <| sprintf "Property [%s] already exists on this binding source" name
         properties.Add(name, p)
 
     override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
         let vh = ValueHolder.readOnly getter 
         let p = DynPropertyInfo(ownerType, name, typeof<'a>, vh)
+
+        if properties.ContainsKey name then
+            failwith <| sprintf "Property [%s] already exists on this binding source" name
         properties.Add(name, p)
     
     interface IReflectableType with 

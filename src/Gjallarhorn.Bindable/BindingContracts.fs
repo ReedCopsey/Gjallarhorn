@@ -63,6 +63,9 @@ type IBindingSource =
     /// Add a readonly binding source for a signal with a given name
     abstract ToView<'a> : ISignal<'a> * string -> unit
 
+    /// Add a readonly binding source for a signal with a given name and validation
+    abstract ToView<'a> : ISignal<'a> * string * Validation<'a,'a> -> unit
+
     /// Add a readonly binding source for a constant value with a given name
     abstract ConstantToView<'a> : 'a * string -> unit
 
