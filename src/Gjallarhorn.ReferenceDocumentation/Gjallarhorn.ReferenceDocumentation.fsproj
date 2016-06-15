@@ -76,7 +76,10 @@
       <Link>BoundSignal.fs</Link>
     </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\BindingSource.fs">
-      <Link>BindingTarget.fs</Link>
+      <Link>BindingSource.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\Binding.fs">
+      <Link>Binding.fs</Link>
     </Compile>
   </ItemGroup>
   <PropertyGroup>

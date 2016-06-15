@@ -23,6 +23,8 @@ namespace WpfSimpleApplicationCSharp
         public MainWindow()
         {
             InitializeComponent();
+
+            this.DataContext = Context.CreateBindingSource();
         }
     }
 }

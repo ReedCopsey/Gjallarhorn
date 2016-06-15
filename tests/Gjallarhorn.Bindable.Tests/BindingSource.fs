@@ -3,6 +3,7 @@
 open Gjallarhorn
 open Gjallarhorn.Wpf
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Validation
 open Gjallarhorn.Validation.Validators
 open System.ComponentModel
@@ -10,7 +11,7 @@ open NUnit.Framework
 open Binding
 
 type TestBindingSource<'b>() =
-    inherit BindingSourceBase<'b>()
+    inherit ObservableBindingSource<'b>()
 
     override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
         ()
@@ -35,7 +36,7 @@ type PropertyChangedObserver(o : INotifyPropertyChanged) =
             | false -> 0
 
 [<TestFixture>]
-type BindingSource() =
+type BindingSourceTest() =
 
 
     let getProperty (source : obj) name =
@@ -64,27 +65,27 @@ type BindingSource() =
 
     [<Test>]
     member __.``BindingSource raises property changed`` () =
-        use bt = new TestBindingSource<obj>()
+        use tbt = new TestBindingSource<obj>()
 
-        let obs = PropertyChangedObserver(bt)    
+        let obs = PropertyChangedObserver(tbt)    
 
-        let ibt = bt :> IBindingSource
+        let bt = tbt :> BindingSource
 
-        ibt.RaisePropertyChanged("Test")
-        ibt.RaisePropertyChanged("Test")
+        bt.RaisePropertyChanged("Test")
+        bt.RaisePropertyChanged("Test")
     
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
     member __.``BindingSource\TrackObservable tracks a view change`` () =
-        use bt = new TestBindingSource<obj>()
+        use tbt = new TestBindingSource<obj>()
 
         let value = Mutable.create 0
-        let obs = PropertyChangedObserver(bt)    
+        let obs = PropertyChangedObserver(tbt)    
 
-        let ibt = bt :> IBindingSource
+        let bt = tbt :> BindingSource
 
-        ibt.TrackObservable "Test" value
+        bt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
     
@@ -92,14 +93,14 @@ type BindingSource() =
 
     [<Test>]
     member __.``BindingSource\TrackObservable ignores view changes with same value`` () =
-        use bt = new TestBindingSource<obj>()
+        use tbt = new TestBindingSource<obj>()
 
         let value = Mutable.create 0
-        let obs = PropertyChangedObserver(bt)    
+        let obs = PropertyChangedObserver(tbt)    
 
-        let ibt = bt :> IBindingSource
+        let bt = tbt :> BindingSource
 
-        ibt.TrackObservable "Test" value
+        bt.TrackObservable "Test" value
         value.Value <- 1
         value.Value <- 2
         value.Value <- 2
@@ -110,7 +111,7 @@ type BindingSource() =
     member __.``BindingSource\ToFromView raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
-        use dynamicVm = new DesktopBindingSource<obj>() :> IBindingSource
+        use dynamicVm = new DesktopBindingSource<obj>() :> BindingSource
         dynamicVm.ToFromView (v2, "Test") |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    

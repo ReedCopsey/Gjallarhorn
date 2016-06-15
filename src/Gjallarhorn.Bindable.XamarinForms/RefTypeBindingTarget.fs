@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Bindable.Internal
 
 open System
@@ -81,9 +82,9 @@ type internal DynTypeInfo (ownerType, getProp) =
         | None -> base.GetDeclaredProperty(name)
     
 type internal RefTypeBindingTarget<'b>() =
-    inherit BindingSourceBase<'b>()
+    inherit ObservableBindingSource<'b>()
 
-    let ownerType = typeof<BindingSourceBase<'b>>
+    let ownerType = typeof<ObservableBindingSource<'b>>
     let properties = System.Collections.Generic.Dictionary<string, PropertyInfo>()
 
     let getProperty name =

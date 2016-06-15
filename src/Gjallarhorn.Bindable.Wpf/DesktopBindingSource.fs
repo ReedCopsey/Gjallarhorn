@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Bindable.Internal
 open System
 open System.Collections.Generic
@@ -16,7 +17,7 @@ type internal IPropertyBag =
     abstract member CustomProperties : Dictionary<string,PropertyDescriptor * IValueHolder>
 
 type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] internal DesktopBindingSource<'b>() as self =
-    inherit BindingSourceBase<'b>()    
+    inherit ObservableBindingSource<'b>()    
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
 
