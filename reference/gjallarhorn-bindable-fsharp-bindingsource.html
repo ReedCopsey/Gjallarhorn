@@ -126,7 +126,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L175-175" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L247-247" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -145,7 +145,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L176-176" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L248-248" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -156,15 +156,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
-            CommandCheckedFromView(arg1, arg2)
+            CommandCheckedFromView(canExecute, name)
           </code>
           <div class="tip" id="117">
-            <strong>Signature:</strong> (ISignal&lt;bool&gt; * string) -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (canExecute:ISignal&lt;bool&gt; * name:string) -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L129-129" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L143-143" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -177,15 +176,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
-            CommandFromView(arg1)
+            CommandFromView(name)
           </code>
           <div class="tip" id="118">
-            <strong>Signature:</strong> string -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> name:string -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L126-126" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L136-136" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -198,15 +196,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '119', 119)" onmouseover="showTip(event, '119', 119)">
-            ConstantToView(arg1, arg2)
+            ConstantToView(value, name)
           </code>
           <div class="tip" id="119">
-            <strong>Signature:</strong> (&#39;a * string) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+            <strong>Signature:</strong> (value:&#39;b * name:string) -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L123-123" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L132-132" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -226,7 +223,7 @@
                           <strong>Type parameters:</strong> '?48124          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L150-150" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L222-222" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -302,15 +299,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
-            MutateToFromView(arg1, arg2, arg3, arg4)
+            MutateToFromView(...)
           </code>
           <div class="tip" id="124">
-            <strong>Signature:</strong> (IMutatable&lt;&#39;a&gt; * string * (&#39;a -&gt; &#39;b) * Validation&lt;&#39;b,&#39;a&gt;) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (mutatable:IMutatable&lt;&#39;a&gt; * name:string * converter:(&#39;a -&gt; &#39;b) * validation:Validation&lt;&#39;b,&#39;a&gt;) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L147-147" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L194-194" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -323,15 +319,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            MutateToFromView(arg1, arg2, arg3)
+            MutateToFromView(...)
           </code>
           <div class="tip" id="125">
-            <strong>Signature:</strong> (IMutatable&lt;&#39;a&gt; * string * Validation&lt;&#39;a,&#39;a&gt;) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (mutatable:IMutatable&lt;&#39;a&gt; * name:string * validation:Validation&lt;&#39;a,&#39;a&gt;) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L144-144" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L185-185" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -344,15 +339,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            MutateToFromView(arg1, arg2)
+            MutateToFromView(mutatable, name)
           </code>
           <div class="tip" id="126">
-            <strong>Signature:</strong> (IMutatable&lt;&#39;a&gt; * string) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (mutatable:IMutatable&lt;&#39;a&gt; * name:string) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L141-141" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L180-180" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -365,11 +359,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
-            ObservableToSignal(arg1 arg2)
+            ObservableToSignal(initial obs)
           </code>
           <div class="tip" id="127">
-            <strong>Signature:</strong> &#39;a -&gt; IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> initial:&#39;a -&gt; obs:IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
@@ -427,15 +420,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '130', 130)" onmouseover="showTip(event, '130', 130)">
-            ToFromView(arg1, arg2, arg3, arg4)
+            ToFromView(...)
           </code>
           <div class="tip" id="130">
-            <strong>Signature:</strong> (ISignal&lt;&#39;a&gt; * string * (&#39;a -&gt; &#39;b) * Validation&lt;&#39;b,&#39;a&gt;) -&gt; IValidatedSignal&lt;&#39;b,&#39;a&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (signal:ISignal&lt;&#39;a&gt; * name:string * conversion:(&#39;a -&gt; &#39;b) * validation:Validation&lt;&#39;b,&#39;a&gt;) -&gt; IValidatedSignal&lt;&#39;b,&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L138-138" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L170-170" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -448,15 +440,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '131', 131)" onmouseover="showTip(event, '131', 131)">
-            ToFromView(arg1, arg2, arg3)
+            ToFromView(signal, name, validation)
           </code>
           <div class="tip" id="131">
-            <strong>Signature:</strong> (ISignal&lt;&#39;a&gt; * string * Validation&lt;&#39;a,&#39;b&gt;) -&gt; IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (signal:ISignal&lt;&#39;a&gt; * name:string * validation:Validation&lt;&#39;a,&#39;b&gt;) -&gt; IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L135-135" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L161-161" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -469,15 +460,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '132', 132)" onmouseover="showTip(event, '132', 132)">
-            ToFromView(arg1, arg2)
+            ToFromView(signal, name)
           </code>
           <div class="tip" id="132">
-            <strong>Signature:</strong> (ISignal&lt;&#39;a&gt; * string) -&gt; ISignal&lt;&#39;a&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (signal:ISignal&lt;&#39;a&gt; * name:string) -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L132-132" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L150-150" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -490,15 +480,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '133', 133)" onmouseover="showTip(event, '133', 133)">
-            ToView(arg1, arg2, arg3)
+            ToView(signal, name, validation)
           </code>
           <div class="tip" id="133">
-            <strong>Signature:</strong> (ISignal&lt;&#39;a&gt; * string * Validation&lt;&#39;a,&#39;a&gt;) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (signal:ISignal&lt;&#39;a&gt; * name:string * validation:Validation&lt;&#39;a,&#39;a&gt;) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L120-120" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L124-124" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -511,15 +500,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '134', 134)" onmouseover="showTip(event, '134', 134)">
-            ToView(arg1, arg2)
+            ToView(signal, name)
           </code>
           <div class="tip" id="134">
-            <strong>Signature:</strong> (ISignal&lt;&#39;a&gt; * string) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (signal:ISignal&lt;&#39;a&gt; * name:string) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L117-117" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L119-119" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -539,7 +527,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L95-95" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L97-97" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -559,7 +547,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L106-106" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L108-108" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
