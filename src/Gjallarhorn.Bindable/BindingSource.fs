@@ -13,6 +13,18 @@ open System.Windows.Input
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
+/// Type to manage user output from validation
+type internal UserOutput<'a, 'b>(input : ISignal<'a>, validationResults : IValidatedSignal<'a, 'b>) =    
+    let output = 
+        validationResults
+        |> Observable.choose id
+
+    interface IObservable<'b> with
+        member __.Subscribe obs = output.Subscribe obs
+
+    interface IUserOutput<'a, 'b> with
+        member __.RawInput = input
+        member __.Output = validationResults
 
 [<AbstractClass>]
 type BindingSource() as self =
@@ -164,7 +176,7 @@ type BindingSource() as self =
             output
             |> Signal.validate validation
         this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        valid 
+        UserOutput(output, valid) :> IUserOutput<'a, 'b>
     
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
     member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'a>) =
@@ -174,7 +186,7 @@ type BindingSource() as self =
             output
             |> Signal.validate validation
         this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        valid 
+        UserOutput(output, valid) :> IUserOutput<'b, 'a>
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
@@ -183,12 +195,27 @@ type BindingSource() as self =
 
     /// Add a binding source for a mutable for editing with a given name and validation which directly pushes edits back to the mutable
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string, validation:Validation<'a,'a>) =
-        this.TrackObservable name mutatable
+        let copied = Mutable.create mutatable.Value
+        this.TrackObservable name copied
+
+        // Handle changes from our input observable, forcing into our copied value
+        mutatable
+        |> Signal.Subscription.copyTo copied
+        |> this.AddDisposable
+        
         let validated =
             mutatable
             |> Signal.validate validation
-        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
-        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
+
+        // Copy back to the input when appropriate
+        validated.ValidationResult
+        |> Signal.Subscription.create(fun v -> 
+            if v.IsValidResult then 
+                mutatable.Value <- Option.get validated.Value)
+        |> this.AddDisposable
+
+        // read and write into our converted value
+        this.AddReadWriteProperty name (fun _ -> copied.Value) (fun v -> copied.Value <- v)
 
     /// Add a binding source for a mutable for editing with a given name, converter, and validation which directly pushes edits back to the mutable
     member this.MutateToFromView<'a,'b> (mutatable:IMutatable<'a>, name, converter: ('a -> 'b), validation: Validation<'b,'a>) =

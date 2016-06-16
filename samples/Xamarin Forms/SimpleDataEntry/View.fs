@@ -41,7 +41,6 @@ module VM =
                 "Current", 
                 string, // Convert to string on the fly 
                 Converters.stringToInt32 >> validation) // Back to int (for Xamarin), then validate
-        |> Observable.choose id // Remove invalid inputs
         |> source.OutputObservable  // Pipe this as our output directly
 
         source

@@ -25,19 +25,18 @@ module VM =
         let first = 
             source 
             |> Binding.memberToFromView bindingSource <@ initialValue.First @> (notNullOrWhitespace >> noSpaces >> notEqual "Reed")
-            |> Signal.choose id initialValue.First
         let last  = 
             source 
             |> Binding.memberToFromView bindingSource <@ initialValue.Last  @> (notNullOrWhitespace >> fixErrors >> hasLengthAtLeast 3 >> noSpaces) 
-            |> Signal.choose id initialValue.Last
                         
         // Combine edits on properties into readonly properties to be validated as well, allowing for "entity level" validation or display
-        Signal.map2 (fun f l -> f + " " + l) first last        
+        Signal.map2 (fun f l -> f + " " + l) first.RawInput last.RawInput
         |> Binding.toViewValidated bindingSource "Full" (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
-        let name' = Signal.map2 (fun f l -> {First = f; Last = l}) first last
+        let name' = Signal.map2 (fun f l -> {First = f; Last = l}) first.RawInput last.RawInput
+            // TODO: Replace with UserOutput.map2 [to write]
 
         // Create a "toggle" which we can use to toggle whether to push automatically to the backend
         let pushAutomatically = Mutable.create false        
