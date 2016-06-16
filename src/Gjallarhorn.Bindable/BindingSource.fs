@@ -14,10 +14,22 @@ open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
 /// Type to manage user output from validation
-type internal UserOutput<'a, 'b>(input : ISignal<'a>, validationResults : IValidatedSignal<'a, 'b>) =    
+type internal UserOutput<'a, 'b>(input : ISignal<'a>, validationResults : IValidatedSignal<'a, 'b>, disposeTracker : CompositeDisposable) as self =    
     let output = 
         validationResults
         |> Observable.choose id
+
+    let update v =
+        match v with
+        | None -> ()
+        | Some newValue -> self.LastValidOutput <- v
+
+    do
+        validationResults
+        |> Observable.subscribe update
+        |> disposeTracker.Add
+
+    member val LastValidOutput : 'b option = validationResults.Value with get, set 
 
     interface IObservable<'b> with
         member __.Subscribe obs = output.Subscribe obs
@@ -176,7 +188,7 @@ type BindingSource() as self =
             output
             |> Signal.validate validation
         this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        UserOutput(output, valid) :> IUserOutput<'a, 'b>
+        UserOutput(output, valid, disposables) :> IUserOutput<'a, 'b>
     
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
     member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'a>) =
@@ -186,7 +198,7 @@ type BindingSource() as self =
             output
             |> Signal.validate validation
         this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        UserOutput(output, valid) :> IUserOutput<'b, 'a>
+        UserOutput(output, valid, disposables) :> IUserOutput<'b, 'a>
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
