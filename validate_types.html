@@ -61,24 +61,24 @@
 <span class="l">19: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">Gjallarhorn</span>
-<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">Gjallarhorn</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="i">Validation</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="i">source</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="f">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
 <span class="c">// Create a view on the mutable, validating it with 3 rules on the fly:</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="i">test</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs3', 9)" onmouseover="showTip(event, 'fs3', 9)" class="i">source</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">test</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">source</span>
 
 <span class="c">// Prints: Valid?: false</span>
-<span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs6', 11)" onmouseover="showTip(event, 'fs6', 11)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 <span class="c">// Prints: Valid?: true</span>
-<span onmouseout="hideTip(event, 'fs8', 14)" onmouseover="showTip(event, 'fs8', 14)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 17)" onmouseover="showTip(event, 'fs9', 17)" class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
+<span onmouseout="hideTip(event, 'fs1', 9)" onmouseover="showTip(event, 'fs1', 9)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
 <span class="c">// Prints: Validation: Invalid [&quot;Value cannot equal 3&quot;]</span>
-<span onmouseout="hideTip(event, 'fs8', 18)" onmouseover="showTip(event, 'fs8', 18)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="i">test</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 10)" onmouseover="showTip(event, 'fs3', 10)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 11)" onmouseover="showTip(event, 'fs2', 11)" class="i">test</span><span class="o">.</span><span class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -109,44 +109,37 @@ be filtered, and not propogated down to the source unless the data is valid:</p>
 <span class="l">22: </span>
 <span class="l">23: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="i">source</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="t">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 23)" onmouseover="showTip(event, 'fs5', 23)" class="f">create</span> <span class="n">0</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 12)" onmouseover="showTip(event, 'fs1', 12)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
 <span class="c">// This time, create a mutable with validation</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="i">editor</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 25)" onmouseover="showTip(event, 'fs4', 25)" class="i">Mutable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 26)" onmouseover="showTip(event, 'fs7', 26)" class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="i">source</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="i">editor</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs1', 14)" onmouseover="showTip(event, 'fs1', 14)" class="i">source</span>
 
 <span class="c">// Prints: Valid?: false</span>
-<span onmouseout="hideTip(event, 'fs8', 28)" onmouseover="showTip(event, 'fs8', 28)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 29)" onmouseover="showTip(event, 'fs11', 29)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 15)" onmouseover="showTip(event, 'fs3', 15)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 16)" onmouseover="showTip(event, 'fs4', 16)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs11', 30)" onmouseover="showTip(event, 'fs11', 30)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 <span class="c">// Prints: Valid?: true</span>
-<span onmouseout="hideTip(event, 'fs8', 31)" onmouseover="showTip(event, 'fs8', 31)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 32)" onmouseover="showTip(event, 'fs11', 32)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 18)" onmouseover="showTip(event, 'fs3', 18)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 19)" onmouseover="showTip(event, 'fs4', 19)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs11', 33)" onmouseover="showTip(event, 'fs11', 33)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
+<span onmouseout="hideTip(event, 'fs4', 20)" onmouseover="showTip(event, 'fs4', 20)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
 <span class="c">// Prints: Validation: Invalid [&quot;Value cannot equal 3&quot;]</span>
-<span onmouseout="hideTip(event, 'fs8', 34)" onmouseover="showTip(event, 'fs8', 34)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 35)" onmouseover="showTip(event, 'fs11', 35)" class="i">editor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 36)" onmouseover="showTip(event, 'fs10', 36)" class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="i">editor</span><span class="o">.</span><span class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
 
 <span class="c">// Note that we&#39;re currently not valid, but we set the editor.  Source will not have this change:</span>
 <span class="c">// Prints: Source = 2, Editor = 3</span>
-<span onmouseout="hideTip(event, 'fs8', 37)" onmouseover="showTip(event, 'fs8', 37)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs3', 38)" onmouseover="showTip(event, 'fs3', 38)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 39)" onmouseover="showTip(event, 'fs9', 39)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs11', 40)" onmouseover="showTip(event, 'fs11', 40)" class="i">editor</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 23)" onmouseover="showTip(event, 'fs3', 23)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 24)" onmouseover="showTip(event, 'fs1', 24)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 25)" onmouseover="showTip(event, 'fs4', 25)" class="i">editor</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">4</span>
+<span onmouseout="hideTip(event, 'fs4', 26)" onmouseover="showTip(event, 'fs4', 26)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">4</span>
 <span class="c">// Prints: Source = 4, Editor = 4 [true]</span>
-<span onmouseout="hideTip(event, 'fs8', 42)" onmouseover="showTip(event, 'fs8', 42)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s"> [</span><span class="pf">%b</span><span class="s">]&quot;</span> <span onmouseout="hideTip(event, 'fs3', 43)" onmouseover="showTip(event, 'fs3', 43)" class="i">source</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 44)" onmouseover="showTip(event, 'fs9', 44)" class="i">Value</span> <span onmouseout="hideTip(event, 'fs11', 45)" onmouseover="showTip(event, 'fs11', 45)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs11', 46)" onmouseover="showTip(event, 'fs11', 46)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s"> [</span><span class="pf">%b</span><span class="s">]&quot;</span> <span onmouseout="hideTip(event, 'fs1', 28)" onmouseover="showTip(event, 'fs1', 28)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 29)" onmouseover="showTip(event, 'fs4', 29)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 30)" onmouseover="showTip(event, 'fs4', 30)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
 </code></pre></td>
 </tr>
 </table>
 
-<div class="tip" id="fs1">namespace Gjallarhorn</div>
-<div class="tip" id="fs2">module Validation<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs3">val source : IMutatable&lt;int&gt;<br /><br />Full name: Validate_types.source</div>
-<div class="tip" id="fs4">module Mutable<br /><br />from Gjallarhorn</div>
-<div class="tip" id="fs5">val create : value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br /><br />Full name: Gjallarhorn.Mutable.create</div>
-<div class="tip" id="fs6">val test : obj<br /><br />Full name: Validate_types.test</div>
-<div class="tip" id="fs7">val validate : value:&#39;c -&gt; ValidationCollector&lt;&#39;c&gt;<br /><br />Full name: Gjallarhorn.Validation.validate</div>
-<div class="tip" id="fs8">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs9">property IMutatable.Value: int</div>
-<div class="tip" id="fs10"></div>
-<div class="tip" id="fs11">val editor : obj<br /><br />Full name: Validate_types.editor</div>
+<div class="tip" id="fs1">val source : obj<br /><br />Full name: Validate_types.source</div>
+<div class="tip" id="fs2">val test : obj<br /><br />Full name: Validate_types.test</div>
+<div class="tip" id="fs3">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs4">val editor : obj<br /><br />Full name: Validate_types.editor</div>
 
         </div>
         <div class="span3">

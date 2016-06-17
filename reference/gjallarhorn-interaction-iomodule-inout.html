@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>CompositeDisposable - Gjallarhorn</title>
+    <title>InOut - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,105 +35,92 @@
 
 
 
-<h1>CompositeDisposable</h1>
+<h1>InOut</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Helpers</span><br />
+  <span>Namespace: Gjallarhorn.Interaction</span><br />
+  <span>Parent Module: <a href="gjallarhorn-interaction-iomodule.html">IO</a></span>
 </p>
 <div class="xmldoc">
-<p>Type which allows tracking of multiple disposables at once</p>
-
 </div>
-  <h3>Constructors</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '153', 153)" onmouseover="showTip(event, '153', 153)">
-            new()
+          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
+            converted conversion signal
           </code>
-          <div class="tip" id="153">
-            <strong>Signature:</strong> unit -&gt; CompositeDisposable<br />
-                      </div>
+          <div class="tip" id="97">
+            <strong>Signature:</strong> conversion:(&#39;a -&gt; &#39;b) -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; InOut&lt;&#39;a,&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L11-11" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L68-68" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-              <p>CompiledName: <code>.ctor</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <h3>Instance members</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '154', 154)" onmouseover="showTip(event, '154', 154)">
-            Add(disposable)
-          </code>
-          <div class="tip" id="154">
-            <strong>Signature:</strong> disposable:IDisposable -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L19-19" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add a new disposable to this tracker</p>
-
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '155', 155)" onmouseover="showTip(event, '155', 155)">
-            Dispose()
+          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
+            convertedValidated (...)
           </code>
-          <div class="tip" id="155">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-                      </div>
+          <div class="tip" id="98">
+            <strong>Signature:</strong> conversion:(&#39;d -&gt; &#39;e) -&gt; validation:Validation&lt;&#39;e,&#39;f&gt; -&gt; signal:ISignal&lt;&#39;d&gt; -&gt; ValidatedInOut&lt;&#39;d,&#39;e,&#39;f&gt;<br />
+                          <strong>Type parameters:</strong> 'd, 'e, 'f          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L24-24" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L72-72" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Dispose all of our tracked disposables and remove them all</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
-            Remove(disposable)
+          <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
+            create signal
           </code>
-          <div class="tip" id="156">
-            <strong>Signature:</strong> disposable:IDisposable -&gt; bool<br />
-                      </div>
+          <div class="tip" id="99">
+            <strong>Signature:</strong> signal:ISignal&lt;&#39;a&gt; -&gt; InOut&lt;&#39;a,&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L66-66" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Remove a disposable from this tracker without disposing of it</p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
 
-
+          <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
+            validated validation signal
+          </code>
+          <div class="tip" id="100">
+            <strong>Signature:</strong> validation:Validation&lt;&#39;c,&#39;d&gt; -&gt; signal:ISignal&lt;&#39;c&gt; -&gt; ValidatedInOut&lt;&#39;c,&#39;c,&#39;d&gt;<br />
+                          <strong>Type parameters:</strong> 'c, 'd          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L70-70" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
         </td>
       </tr>
     </tbody>
