@@ -50,6 +50,7 @@
     <Compile Include="Mutable.fs" />
     <Compile Include="Signal.fs" />
     <Compile Include="Observable.fs" />
+    <Compile Include="IO.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">12</MinimumVisualStudioVersion>

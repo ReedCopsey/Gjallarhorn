@@ -63,6 +63,9 @@
     <Compile Include="..\Gjallarhorn\Signal.fs">
       <Link>Signal.fs</Link>
     </Compile>
+    <Compile Include="..\Gjallarhorn\IO.fs">
+      <Link>IO.fs</Link>
+    </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\Utilities.fs">
       <Link>Utilities.fs</Link>
     </Compile>

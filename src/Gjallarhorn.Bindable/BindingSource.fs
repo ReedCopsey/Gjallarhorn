@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Interaction
 open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
 open Gjallarhorn.Validation
@@ -114,18 +115,36 @@ type BindingSource() as self =
 
         updateErrors name validator.Value 
 
+    // Track an Input type
+    member private this.TrackInput name (input : Input<'a,'b>) =
+        this.TrackObservable name input.UpdateStream
+        this.AddReadOnlyProperty name input.GetValue
+        
+        // If we're validated input, handle adding our validation information as well
+        match input with
+        | :? ValidatedInput<'a, 'b> as v ->
+            this.TrackValidator name v.Validation.ValidationResult
+        | _ -> ()
+
+    // Track an InOut type
+    member private this.TrackInOut<'a,'b,'c> name (inout : InOut<'a,'b>) =
+        this.TrackObservable name inout.UpdateStream
+        this.AddReadWriteProperty name inout.GetValue inout.SetValue
+
+        match inout with
+        | :? ValidatedInOut<'a, 'b, 'c> as v ->
+            this.TrackValidator name v.Validation.ValidationResult
+        | _ -> ()
+
     /// Add a readonly binding source for a signal with a given name
     member this.ToView<'a> (signal : ISignal<'a> , name : string ) =    
-        this.TrackObservable name signal
-        this.AddReadOnlyProperty name (fun _ -> signal.Value)
+        IO.Input.create signal
+        |> this.TrackInput name
 
     /// Add a readonly binding source for a signal with a given name and validation    
     member this.ToView<'a> (signal : ISignal<'a>, name : string, validation : Validation<'a,'a>) = 
-        this.TrackObservable name signal            
-        this.AddReadOnlyProperty name (fun _ -> signal.Value)
-
-        let validated = Signal.validate validation signal
-        (this).TrackValidator name validated.ValidationResult            
+        IO.Input.validated validation signal
+        |> this.TrackInput name
 
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
@@ -147,33 +166,25 @@ type BindingSource() as self =
 
     /// Add a binding source for a signal with a given name, and returns a signal of the user edits    
     member this.ToFromView<'a> (signal : ISignal<'a>, name : string) = 
-        let editSource = Mutable.create signal.Value
-        Signal.Subscription.copyTo editSource signal
-        |> this.AddDisposable
+        let edit = IO.InOut.create signal
 
-        this.TrackObservable name signal
-        this.AddReadWriteProperty name (fun _ -> editSource.Value) (fun v -> editSource.Value <- v)
-
-        editSource :> ISignal<'a>
+        edit |> this.AddDisposable
+        edit |> this.TrackInOut<'a,'a,'a> name
+        edit.UpdateStream
 
     /// Add a binding source for a signal for editing with a given name and validation, and returns a signal of the user edits
     member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string , validation : Validation<'a,'b>) = 
-        let output = this.ToFromView (signal, name)
-        let valid =
-            output
-            |> Signal.validate validation
-        this.TrackValidator name valid.ValidationResult
-        valid
+        let edit = IO.InOut.validated validation signal
+        edit |> this.AddDisposable
+        edit |> this.TrackInOut<'a,'a,'b> name
+        edit.Output
     
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
-    member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'a>) =
-        let converted = Signal.map conversion signal
-        let output = this.ToFromView (converted, name)
-        let valid =
-            output
-            |> Signal.validate validation
-        this.TrackValidator name valid.ValidationResult
-        valid
+    member this.ToFromView<'a,'b,'c> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'c>) =
+        let edit = IO.InOut.convertedValidated conversion validation signal
+        edit |> this.AddDisposable
+        edit |> this.TrackInOut<'a,'b,'c> name
+        edit.Output
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
