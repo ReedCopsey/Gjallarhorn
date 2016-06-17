@@ -12,6 +12,12 @@ module Observable =
         input
         |> Observable.filter (fun _ -> condition.Value)
 
+    /// Filters out observables of options to only pass through
+    /// "Some" values
+    let filterSome (provider: IObservable<'a option>) =
+        provider
+        |> Observable.choose id
+
     /// Maps the input observable through an async workflow.
     let mapAsync (mapping : 'a -> Async<'b>) (provider : IObservable<'a>) =
         let evt = Event<_>()
@@ -41,3 +47,8 @@ module Observable =
                 return result               
             }
         mapAsync trackingMap provider
+
+    module Subscription =
+        /// Create a subscription to an observable which copies its value upon change into a mutable
+        let copyTo (target : IMutatable<'a>) (provider : IObservable<'a>) =            
+            provider.Subscribe(fun v -> target.Value <- v)

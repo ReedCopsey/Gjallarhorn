@@ -166,54 +166,54 @@ module Signal =
     /// Combines two signals of options, such as validation results, 
     /// using a specified mapping function
     /// If either is None, the result is None
-    let mapValidated2 (mapping : 'a -> 'b -> 'c) (provider1 : ISignal<'a option>) (provider2 : ISignal<'b option>) = 
+    let mapOption2 (mapping : 'a -> 'b -> 'c) (provider1 : ISignal<'a option>) (provider2 : ISignal<'b option>) = 
         map2 (optionMap2 mapping) provider1 provider2
 
     // Lift function for options
     let private liftO f a b c =
         let f' a bc = f a (fst bc) (snd bc)
-        let bc = mapValidated2 (fun b c -> b,c) b c
+        let bc = mapOption2 (fun b c -> b,c) b c
         f', bc
 
     /// Combines three signals of options using a specified mapping function
-    let mapValidated3 f v1 v2 v3 = 
+    let mapOption3 f v1 v2 v3 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated2 f1 v1 bc
+        mapOption2 f1 v1 bc
     
     /// Combines four signals of options using a specified mapping function
-    let mapValidated4 f v1 v2 v3 v4 = 
+    let mapOption4 f v1 v2 v3 v4 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated3 f1 v1 bc v4
+        mapOption3 f1 v1 bc v4
 
     /// Combines five signals of options using a specified mapping function
-    let mapValidated5 f v1 v2 v3 v4 v5 = 
+    let mapOption5 f v1 v2 v3 v4 v5 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated4 f1 v1 bc v4 v5
+        mapOption4 f1 v1 bc v4 v5
         
     /// Combines six signals of options using a specified mapping function
-    let mapValidated6 f v1 v2 v3 v4 v5 v6 = 
+    let mapOption6 f v1 v2 v3 v4 v5 v6 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated5 f1 v1 bc v4 v5 v6
+        mapOption5 f1 v1 bc v4 v5 v6
 
     /// Combines seven signals of options using a specified mapping function
-    let mapValidated7 f v1 v2 v3 v4 v5 v6 v7= 
+    let mapOption7 f v1 v2 v3 v4 v5 v6 v7= 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated6 f1 v1 bc v4 v5 v6 v7
+        mapOption6 f1 v1 bc v4 v5 v6 v7
 
     /// Combines eight signals of options using a specified mapping function
-    let mapValidated8 f v1 v2 v3 v4 v5 v6 v7 v8 = 
+    let mapOption8 f v1 v2 v3 v4 v5 v6 v7 v8 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated7 f1 v1 bc v4 v5 v6 v7 v8
+        mapOption7 f1 v1 bc v4 v5 v6 v7 v8
 
     /// Combines nine signals of options using a specified mapping function
-    let mapValidated9 f v1 v2 v3 v4 v5 v6 v7 v8 v9 = 
+    let mapOption9 f v1 v2 v3 v4 v5 v6 v7 v8 v9 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated8 f1 v1 bc v4 v5 v6 v7 v8 v9
+        mapOption8 f1 v1 bc v4 v5 v6 v7 v8 v9
 
     /// Combines ten signals of options using a specified mapping function
-    let mapValidated10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 = 
+    let mapOption10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 = 
         let f1, bc = liftO f v1 v2 v3
-        mapValidated9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
+        mapOption9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
         
     /// Filters the signal, so only values matching the predicate are cached and propogated onwards. 
     /// If the provider's value doesn't match the predicate, the resulting signal begins with the provided defaultValue.

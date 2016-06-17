@@ -15,11 +15,16 @@ with
 
 module VM =
     let createMainViewModel (nameIn : IObservable<NameModel>) initialValue =
-        // Create an observable binding source equivelent to https://github.com/fsprojects/FsXaml/blob/master/demos/WpfSimpleMvvmApplication/MainViewModel.fs
+        // Create an observable binding source
         let bindingSource = Binding.createObservableSource ()
         
-        // Map our incoming IObservable to a signal. If we didn't want to use an input IObservable, we could just use Signal.constant or Mutable.create
-        let source = bindingSource.ObservableToSignal initialValue nameIn
+        // This is optional, but lets us track changes easily
+        let source = Mutable.create initialValue
+
+        // Copy incoming changes from our input observable into our mutable
+        nameIn
+        |> Observable.Subscription.copyTo source
+        |> bindingSource.AddDisposable
 
         // Create the "properties" we want to bind to - this could be mutables, signals (for read-only), or commands
         let first = 
@@ -33,27 +38,31 @@ module VM =
         Signal.map2 (fun f l -> f + " " + l) first.RawInput last.RawInput
         |> Binding.toViewValidated bindingSource "Full" (notEqual "Ree Copsey" >> fixErrorsWithMessage "That is a poor choice of names")
 
-        // This is our "result" from the UI (includes invalid results)
-        // As the user types, this constantly updates
-        let name' = 
-            Signal.mapValidated2 (fun f l -> {First = f; Last = l}) first.Output last.Output
-            |> Signal.choose id source.Value
-            // TODO: Replace with UserOutput.map2 [to write]?
-            // Or should we leave mapValidated* in place?
+        // This is our "result" from the UI
+        // As the user types, this constantly updates whenever the output is valid and doesn't match the last known value
+        let userChanges = 
+            Signal.mapOption2 (fun f l -> {First = f; Last = l}) first.Output last.Output
+            |> Observable.filterSome
+            |> Observable.filter (fun v -> v <> source.Value)
+
+        // We're storing the last "good" name from the user. Initializes using input value
+        let lastGoodName = 
+            Signal.Subscription.fromObservable source.Value userChanges
+            |> bindingSource.AddDisposable2
 
         // Create a "toggle" which we can use to toggle whether to push automatically to the backend
-        let pushAutomatically = Mutable.create false        
-        
-        // Bind it directly and push changes back to the input mutable
+        // and bind it directly and push changes back to the input mutable
+        let pushAutomatically = Mutable.create false                
         bindingSource.MutateToFromView (pushAutomatically, "PushAutomatically")
         
-        let pushManually = Signal.not pushAutomatically
-
         // Create a command that will only execute if
-        // 1) We're valid, 2) we're not pusing automatically, and 3) our name has changed from the input
+        //    1) Our name has changed from the input
+        //    2) We're pushing manually
+        //    3) We're not executing an async operation currently, and
+        //    4) We're valid
         let canExecute = 
-            Signal.notEqual source name'
-            |> Signal.both pushManually
+            Signal.notEqual lastGoodName source
+            |> Signal.both (Signal.not pushAutomatically)
             |> Signal.both bindingSource.IdleTracker
             |> Signal.both bindingSource.Valid
         let okCommand = bindingSource |> Binding.createCommandChecked "OkCommand" canExecute
@@ -87,16 +96,15 @@ module VM =
             // Note that we use FilterValid to guarantee that all validation is completed before
             // the final signal is sent through.  This isn't a problem with the command approach,
             // but guarantees our validation to always be up to date before it's queried in the filter
-            name'
-            |> bindingSource.FilterValid
+            userChanges
             |> Observable.filter (fun _ -> pushAutomatically.Value)
         // Command-triggered updates
         let commandUpdates =
             // In this case, we can use our command to map the right value out when it's clicked
             // Since the command already is only enabled when we're valid, we don't need a validity filter here
             okCommand
-            |> Observable.filterBy pushManually 
-            |> Observable.map (fun _ -> name'.Value)
+            |> Observable.filterBy (Signal.not pushAutomatically)             
+            |> Observable.map (fun _ -> lastGoodName.Value)
 
         // Combine our automatic and manual updates into one signal, and push them to the backing observable
         Observable.merge automaticUpdates commandUpdates
