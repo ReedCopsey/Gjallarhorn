@@ -41,7 +41,7 @@ module Binding =
     let createSource () = Implementation.getCreateBindingSourceFunction()
 
     /// Bind a signal to the binding source using the specified name
-    let toFromView<'a> (source : BindingSource) name signal =
+    let toFromView<'a> (source : BindingSource) name (signal : ISignal<'a>) =
         let edit = IO.InOut.create signal
         edit |> source.AddDisposable
         edit |> source.TrackInOut<'a,'a,'a> name
@@ -62,12 +62,23 @@ module Binding =
         edit.Output
 
     /// Add a mutable as an editor, bound to a specific name
-    let mutateToFromView (source : BindingSource) name mutatable =
-        source.MutateToFromView (mutatable, name)
+    let mutateToFromView<'a> (source : BindingSource) name (mutatable : IMutatable<'a>) =
+        source.TrackObservable name mutatable
+        source.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
 
     /// Add a mutable as an editor with validation, bound to a specific name
-    let mutateToFromViewValidated (source : BindingSource) name validator mutatable =
-        source.MutateToFromView (mutatable, name, validator)
+    let mutateToFromViewValidated<'a> (source : BindingSource) name validator mutatable =
+        let edit = IO.MutableInOut.validated validator mutatable
+        edit |> source.TrackInOut<'a,'a,'a> name
+        edit |> source.AddDisposable
+        ()
+
+    /// Add a mutable as an editor with validation, bound to a specific name
+    let mutateToFromViewConverted<'a,'b> (source : BindingSource) name (converter : 'a -> 'b) (validator: Validation<'b,'a>) mutatable =
+        let edit = IO.MutableInOut.convertedValidated converter validator mutatable
+        edit |> source.TrackInOut<'a,'b,'a> name
+        edit |> source.AddDisposable
+        ()
 
     /// Add a binding to a source for a signal for editing with a given property expression and validation, and returns a signal of the user edits
     let memberToFromView<'a,'b> (source : BindingSource) (expr : Expr) (validation : Validation<'a,'a>) (signal : ISignal<'b>) =
@@ -98,8 +109,15 @@ module Binding =
 
     /// Creates an ICommand (one way property) to a binding source by name
     let createCommand name (source : BindingSource) =
-        source.CommandFromView name
+        let command = Command.createEnabled()
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command
 
     /// Creates a checked ICommand (one way property) to a binding source by name
     let createCommandChecked name canExecute (source : BindingSource) =
-        source.CommandCheckedFromView (canExecute, name)
+        let command = Command.create canExecute
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command    
+

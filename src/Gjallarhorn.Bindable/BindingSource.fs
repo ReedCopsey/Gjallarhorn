@@ -94,7 +94,7 @@ type BindingSource() as self =
         |> this.AddDisposable2            
 
     /// Track changes on an observable to raise property changed events
-    member internal this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
+    member this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
         observable
         |> Observable.subscribe (fun _ -> raisePropertyChanged name)
         |> this.AddDisposable
@@ -139,77 +139,6 @@ type BindingSource() as self =
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
         this.AddReadOnlyProperty name (fun _ -> value)
-
-    /// Creates a new command given a binding name
-    member this.CommandFromView name =
-        let command = Command.createEnabled()
-        this.AddDisposable command
-        this.ConstantToView (command, name)
-        command
-
-    /// Creates a new command given signal for tracking execution and a binding name 
-    member this.CommandCheckedFromView (canExecute : ISignal<bool>, name) =
-        let command = Command.create canExecute
-        this.AddDisposable command
-        this.ConstantToView (command, name)
-        command   
-
-    /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
-    member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
-        this.TrackObservable name mutatable
-        this.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
-
-    /// Add a binding source for a mutable for editing with a given name and validation which directly pushes edits back to the mutable
-    member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string, validation:Validation<'a,'a>) =
-        let copied = Mutable.create mutatable.Value
-        this.TrackObservable name copied
-
-        // Handle changes from our input observable, forcing into our copied value
-        mutatable
-        |> Signal.Subscription.copyTo copied
-        |> this.AddDisposable
-        
-        let validated =
-            mutatable
-            |> Signal.validate validation
-
-        // Copy back to the input when appropriate
-        validated.ValidationResult
-        |> Signal.Subscription.create(fun v -> 
-            if v.IsValidResult then 
-                mutatable.Value <- Option.get validated.Value)
-        |> this.AddDisposable
-
-        // read and write into our converted value
-        this.AddReadWriteProperty name (fun _ -> copied.Value) (fun v -> copied.Value <- v)
-
-    /// Add a binding source for a mutable for editing with a given name, converter, and validation which directly pushes edits back to the mutable
-    member this.MutateToFromView<'a,'b> (mutatable:IMutatable<'a>, name, converter: ('a -> 'b), validation: Validation<'b,'a>) =
-        // Create an internal mutable to write into pre-validation
-        let converted = Mutable.create (converter mutatable.Value)
-        this.TrackObservable name converted
-
-        // Handle changes from our input observable, forcing into our converted value
-        mutatable
-        |> Signal.map converter
-        |> Signal.Subscription.copyTo converted
-        |> this.AddDisposable
-
-        // Do our validation
-        let validated =
-            converted
-            |> Signal.validate validation
-        this.TrackValidator name validated.ValidationResult
-
-        // Copy back to the input when appropriate
-        validated.ValidationResult
-        |> Signal.Subscription.create(fun v -> 
-            if v.IsValidResult then 
-                mutatable.Value <- Option.get validated.Value)
-        |> this.AddDisposable
-
-        // read and write into our converted value
-        this.AddReadWriteProperty name (fun _ -> converted.Value) (fun v -> converted.Value <- v)
 
     /// Filter a signal to only output when we're valid
     member this.FilterValid signal =

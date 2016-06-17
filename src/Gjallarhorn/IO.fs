@@ -51,6 +51,23 @@ type ValidatedInOut<'a, 'b, 'c> (input : ISignal<'a>, conversion : 'a -> 'b, val
 
     member __.Validation = validation
 
+type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
+    inherit InOut<'a,'b>(input, conversion)
+
+    let validated = 
+        self.UpdateStream
+        |> Signal.validate validation
+
+    let subscription = 
+        validated.ValidationResult
+        |> Signal.Subscription.create(fun v ->
+            if v.IsValidResult then
+                input.Value <- Option.get validated.Value)
+
+    interface IDisposable with
+        member __.Dispose() =
+            subscription.Dispose()
+
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module IO =
     module Input =
@@ -71,3 +88,9 @@ module IO =
             new ValidatedInOut<_,_,_>(signal, id, validation)
         let convertedValidated conversion validation signal =
             new ValidatedInOut<_,_,_>(signal, conversion, validation)
+
+    module MutableInOut =
+        let validated<'a> validation mutatable = 
+            new MutatableInOut<'a,'a>(mutatable, id, validation)
+        let convertedValidated conversion validation mutatable =
+            new MutatableInOut<_,_>(mutatable, conversion, validation)

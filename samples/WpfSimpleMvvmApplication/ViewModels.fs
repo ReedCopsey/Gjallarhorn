@@ -53,7 +53,7 @@ module VM =
         // Create a "toggle" which we can use to toggle whether to push automatically to the backend
         // and bind it directly and push changes back to the input mutable
         let pushAutomatically = Mutable.create false                
-        bindingSource.MutateToFromView (pushAutomatically, "PushAutomatically")
+        pushAutomatically |> Binding.mutateToFromView bindingSource "PushAutomatically"
         
         // Create a command that will only execute if
         //    1) Our name has changed from the input
