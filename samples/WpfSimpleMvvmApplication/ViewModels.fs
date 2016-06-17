@@ -35,8 +35,11 @@ module VM =
 
         // This is our "result" from the UI (includes invalid results)
         // As the user types, this constantly updates
-        let name' = Signal.map2 (fun f l -> {First = f; Last = l}) first.RawInput last.RawInput
-            // TODO: Replace with UserOutput.map2 [to write]
+        let name' = 
+            Signal.mapValidated2 (fun f l -> {First = f; Last = l}) first.Output last.Output
+            |> Signal.choose id source.Value
+            // TODO: Replace with UserOutput.map2 [to write]?
+            // Or should we leave mapValidated* in place?
 
         // Create a "toggle" which we can use to toggle whether to push automatically to the backend
         let pushAutomatically = Mutable.create false        
