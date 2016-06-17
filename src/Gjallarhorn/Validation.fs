@@ -32,6 +32,9 @@ with
 type IValidatedSignal<'a, 'b> =
     inherit ISignal<'b option>
                 
+    /// The raw, unvalidated input
+    abstract member RawInput : ISignal<'a> with get
+
     /// The current validation status
     abstract member ValidationResult : ISignal<ValidationResult> with get
 

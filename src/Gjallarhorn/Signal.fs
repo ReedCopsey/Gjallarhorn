@@ -268,6 +268,8 @@ module Signal =
         inherit SignalBase<'b option>([| valueProvider |])
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
+        let rawInput = valueProvider
+
         let validateCurrent value =
             let validator = 
                 value
@@ -324,6 +326,7 @@ module Signal =
             validationDeps.RemoveAll (this :> IValidatedSignal<'a,'b>).ValidationResult
 
         interface IValidatedSignal<'a, 'b> with
+            member __.RawInput = rawInput
             member this.ValidationResult 
                 with get() = 
                     let rec result =

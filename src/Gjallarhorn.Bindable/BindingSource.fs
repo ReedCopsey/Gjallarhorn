@@ -13,27 +13,6 @@ open System.Windows.Input
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
-/// Type to manage user output from validation
-type internal UserOutput<'a, 'b>(input : ISignal<'a>, validationResults : IValidatedSignal<'a, 'b>, disposeTracker : CompositeDisposable) as self =    
-    interface ISignal<'b option> with
-        member __.Value with get() = validationResults.Value
-        
-    interface IObservable<'b option> with
-        member this.Subscribe obs = validationResults.Subscribe obs
-    interface ITracksDependents with
-        member this.Track dep = validationResults.Track dep
-        member this.Untrack dep = validationResults.Untrack dep
-    interface IDependent with
-        member __.RequestRefresh _ = ()
-        member this.HasDependencies with get() = validationResults.HasDependencies
-
-    interface IValidatedSignal<'a,'b> with
-        member __.IsValid = validationResults.IsValid
-        member __.ValidationResult = validationResults.ValidationResult
-
-    interface IUserOutput<'a, 'b> with
-        member __.RawInput = input
-
 [<AbstractClass>]
 type BindingSource() as self =
 
@@ -125,7 +104,7 @@ type BindingSource() as self =
         this.TrackObservable "OperationExecuting" idleTracker
 
     /// Track changes on an observable of validation results to raise proper validation events, initialized with a starting validation result
-    member this.TrackValidator (name : string) (current : ValidationResult) (validator : ISignal<ValidationResult>)=
+    member private this.TrackValidator (name : string) (validator : ISignal<ValidationResult>)=
         validator
         |> Signal.Subscription.create (fun result -> updateErrors name result)
         |> this.AddDisposable
@@ -133,7 +112,7 @@ type BindingSource() as self =
         this.AddReadOnlyProperty (getErrorsPropertyName name) (fun _ -> validator.Value.ToList(true) )
         this.AddReadOnlyProperty (getValidPropertyName name) (fun _ -> validator.Value.IsValidResult )
 
-        updateErrors name current 
+        updateErrors name validator.Value 
 
     /// Add a readonly binding source for a signal with a given name
     member this.ToView<'a> (signal : ISignal<'a> , name : string ) =    
@@ -146,7 +125,7 @@ type BindingSource() as self =
         this.AddReadOnlyProperty name (fun _ -> signal.Value)
 
         let validated = Signal.validate validation signal
-        (this).TrackValidator name validated.ValidationResult.Value validated.ValidationResult            
+        (this).TrackValidator name validated.ValidationResult            
 
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
@@ -183,8 +162,8 @@ type BindingSource() as self =
         let valid =
             output
             |> Signal.validate validation
-        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        UserOutput(output, valid, disposables) :> IUserOutput<'a, 'b>
+        this.TrackValidator name valid.ValidationResult
+        valid
     
     /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
     member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'a>) =
@@ -193,8 +172,8 @@ type BindingSource() as self =
         let valid =
             output
             |> Signal.validate validation
-        this.TrackValidator name  valid.ValidationResult.Value  valid.ValidationResult
-        UserOutput(output, valid, disposables) :> IUserOutput<'b, 'a>
+        this.TrackValidator name valid.ValidationResult
+        valid
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
@@ -241,7 +220,7 @@ type BindingSource() as self =
         let validated =
             converted
             |> Signal.validate validation
-        this.TrackValidator name validated.ValidationResult.Value validated.ValidationResult
+        this.TrackValidator name validated.ValidationResult
 
         // Copy back to the input when appropriate
         validated.ValidationResult
