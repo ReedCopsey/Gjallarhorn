@@ -112,7 +112,7 @@ type BindingSourceTest() =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingSource<obj>() :> BindingSource
-        dynamicVm.ToFromView (v2, "Test") |> ignore
+        Binding.toFromView dynamicVm "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
     

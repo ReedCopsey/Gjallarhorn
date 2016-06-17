@@ -21,7 +21,7 @@ let create () =
     let result = Signal.map2 (+) one two
     
     // Display the results bound as "Result"
-    source.ToView (result, "Result")
+    Binding.toView source "Result" result
 
     // Return the binding subject
     source

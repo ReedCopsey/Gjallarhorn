@@ -24,7 +24,7 @@ module VM =
         let current = source.ObservableToSignal initialValue updateStream
         
         // Output it to the view
-        source.ToView(current, "Current") 
+        Binding.toView source "Current" current
 
         source
 
@@ -36,11 +36,12 @@ module VM =
 
         // Bind the value to the view, and return a new signal 
         // of the validated input from user
-        source.ToFromView (
-                currentValue, 
-                "Current", 
-                string, // Convert to string on the fly 
-                Converters.stringToInt32 >> validation) // Back to int (for Xamarin), then validate
+        Binding.toFromViewConvertedValidated 
+            source 
+            "Current" 
+            string 
+            (Converters.stringToInt32 >> validation) // Back to int (for Xamarin), then validate
+            currentValue                
         |> Observable.filterSome // Pass through valid options
         |> source.OutputObservable  // Pipe this as our output directly
 

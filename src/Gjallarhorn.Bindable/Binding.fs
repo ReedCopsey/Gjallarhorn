@@ -3,8 +3,10 @@
 open Gjallarhorn
 open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
+open Gjallarhorn.Interaction
 open Gjallarhorn.Validation
 
+open Gjallarhorn.Bindable
 open Gjallarhorn.Bindable.FSharp
 
 open System.ComponentModel
@@ -39,11 +41,25 @@ module Binding =
     let createSource () = Implementation.getCreateBindingSourceFunction()
 
     /// Bind a signal to the binding source using the specified name
-    let toFromView (source : BindingSource) name signal =
-        source.ToFromView (signal, name)
+    let toFromView<'a> (source : BindingSource) name signal =
+        let edit = IO.InOut.create signal
+        edit |> source.AddDisposable
+        edit |> source.TrackInOut<'a,'a,'a> name
+        edit.UpdateStream
+
     /// Add a signal as an editor with validation, bound to a specific name
-    let toFromViewValidated (source : BindingSource) name validator signal =
-        source.ToFromView (signal, name, validator)
+    let toFromViewValidated<'a,'b> (source : BindingSource) name (validator : Validation<'a,'b>) signal =
+        let edit = IO.InOut.validated validator signal
+        edit |> source.AddDisposable
+        edit |> source.TrackInOut<'a,'a,'b> name
+        edit.Output
+
+    /// Add a signal as an editor with validation, bound to a specific name
+    let toFromViewConvertedValidated<'a,'b,'c> (source : BindingSource) name (converter : 'a -> 'b) (validator : Validation<'b,'c>) signal =
+        let edit = IO.InOut.convertedValidated converter validator signal
+        edit |> source.AddDisposable
+        edit |> source.TrackInOut<'a,'b,'c> name
+        edit.Output
 
     /// Add a mutable as an editor, bound to a specific name
     let mutateToFromView (source : BindingSource) name mutatable =
@@ -54,7 +70,7 @@ module Binding =
         source.MutateToFromView (mutatable, name, validator)
 
     /// Add a binding to a source for a signal for editing with a given property expression and validation, and returns a signal of the user edits
-    let memberToFromView (source : BindingSource) expr (validation : ValidationCollector<'a> -> ValidationCollector<'a>) signal =
+    let memberToFromView<'a,'b> (source : BindingSource) (expr : Expr) (validation : Validation<'a,'a>) (signal : ISignal<'b>) =
         let pi = 
             match expr with 
             | PropertyGet(_, pi, _) ->
@@ -64,15 +80,17 @@ module Binding =
         let mapped =
             signal
             |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
-        source.ToFromView (mapped, pi.Name, validation)
+        toFromViewValidated<'a,'a> source pi.Name validation mapped
 
     /// Add a watched signal (one way property) to a binding source by name
     let toView (source : BindingSource) name signal =
-        source.ToView(signal, name)
+        IO.Input.create signal
+        |> source.TrackInput name
 
     /// Add a watched signal (one way property) to a binding source by name with validation
     let toViewValidated (source : BindingSource) name validation signal =
-        source.ToView(signal, name, validation)
+        IO.Input.validated validation signal
+        |> source.TrackInput name
 
     /// Add a constant value (one way property) to a binding source by name
     let constantToView name value (source : BindingSource) =

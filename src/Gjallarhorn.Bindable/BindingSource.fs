@@ -94,7 +94,7 @@ type BindingSource() as self =
         |> this.AddDisposable2            
 
     /// Track changes on an observable to raise property changed events
-    member this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
+    member internal this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
         observable
         |> Observable.subscribe (fun _ -> raisePropertyChanged name)
         |> this.AddDisposable
@@ -116,7 +116,7 @@ type BindingSource() as self =
         updateErrors name validator.Value 
 
     // Track an Input type
-    member private this.TrackInput name (input : Input<'a,'b>) =
+    member this.TrackInput name (input : Input<'a,'b>) =
         this.TrackObservable name input.UpdateStream
         this.AddReadOnlyProperty name input.GetValue
         
@@ -127,7 +127,7 @@ type BindingSource() as self =
         | _ -> ()
 
     // Track an InOut type
-    member private this.TrackInOut<'a,'b,'c> name (inout : InOut<'a,'b>) =
+    member this.TrackInOut<'a,'b,'c> name (inout : InOut<'a,'b>) =
         this.TrackObservable name inout.UpdateStream
         this.AddReadWriteProperty name inout.GetValue inout.SetValue
 
@@ -135,16 +135,6 @@ type BindingSource() as self =
         | :? ValidatedInOut<'a, 'b, 'c> as v ->
             this.TrackValidator name v.Validation.ValidationResult
         | _ -> ()
-
-    /// Add a readonly binding source for a signal with a given name
-    member this.ToView<'a> (signal : ISignal<'a> , name : string ) =    
-        IO.Input.create signal
-        |> this.TrackInput name
-
-    /// Add a readonly binding source for a signal with a given name and validation    
-    member this.ToView<'a> (signal : ISignal<'a>, name : string, validation : Validation<'a,'a>) = 
-        IO.Input.validated validation signal
-        |> this.TrackInput name
 
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
@@ -162,29 +152,7 @@ type BindingSource() as self =
         let command = Command.create canExecute
         this.AddDisposable command
         this.ConstantToView (command, name)
-        command
-
-    /// Add a binding source for a signal with a given name, and returns a signal of the user edits    
-    member this.ToFromView<'a> (signal : ISignal<'a>, name : string) = 
-        let edit = IO.InOut.create signal
-
-        edit |> this.AddDisposable
-        edit |> this.TrackInOut<'a,'a,'a> name
-        edit.UpdateStream
-
-    /// Add a binding source for a signal for editing with a given name and validation, and returns a signal of the user edits
-    member this.ToFromView<'a,'b> (signal : ISignal<'a>, name : string , validation : Validation<'a,'b>) = 
-        let edit = IO.InOut.validated validation signal
-        edit |> this.AddDisposable
-        edit |> this.TrackInOut<'a,'a,'b> name
-        edit.Output
-    
-    /// Add a binding source for a signal for editing with a given name, conversion function, and validation, and returns a signal of the user edits
-    member this.ToFromView<'a,'b,'c> (signal : ISignal<'a>, name : string, conversion : ('a -> 'b), validation : Validation<'b,'c>) =
-        let edit = IO.InOut.convertedValidated conversion validation signal
-        edit |> this.AddDisposable
-        edit |> this.TrackInOut<'a,'b,'c> name
-        edit.Output
+        command   
 
     /// Add a binding source for a mutable with a given name which directly pushes edits back to the mutable    
     member this.MutateToFromView<'a> (mutatable : IMutatable<'a>, name:string) = 
