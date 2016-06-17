@@ -116,13 +116,13 @@ type BindingSource() as self =
         updateErrors name validator.Value 
 
     // Track an Input type
-    member this.TrackInput name (input : Input<'a,'b>) =
+    member this.TrackInput name (input : Report<'a,'b>) =
         this.TrackObservable name input.UpdateStream
         this.AddReadOnlyProperty name input.GetValue
         
         // If we're validated input, handle adding our validation information as well
         match input with
-        | :? ValidatedInput<'a, 'b> as v ->
+        | :? ValidatedReport<'a, 'b> as v ->
             this.TrackValidator name v.Validation.ValidationResult
         | _ -> ()
 
@@ -133,7 +133,7 @@ type BindingSource() as self =
 
         match inout with
         | :? ValidatedInOut<'a, 'b, 'c> as v ->
-            this.TrackValidator name v.Validation.ValidationResult
+            this.TrackValidator name v.Output.ValidationResult
         | _ -> ()
 
     /// Add a readonly binding source for a constant value with a given name    

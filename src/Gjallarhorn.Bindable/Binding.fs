@@ -95,12 +95,12 @@ module Binding =
 
     /// Add a watched signal (one way property) to a binding source by name
     let toView (source : BindingSource) name signal =
-        IO.Input.create signal
+        IO.Report.create signal
         |> source.TrackInput name
 
     /// Add a watched signal (one way property) to a binding source by name with validation
     let toViewValidated (source : BindingSource) name validation signal =
-        IO.Input.validated validation signal
+        IO.Report.validated validation signal
         |> source.TrackInput name
 
     /// Add a constant value (one way property) to a binding source by name
