@@ -41,7 +41,7 @@ module VM =
         // This is our "result" from the UI
         // As the user types, this constantly updates whenever the output is valid and doesn't match the last known value
         let userChanges = 
-            Signal.mapOption2 (fun f l -> {First = f; Last = l}) first.Output last.Output
+            Signal.mapOption2 (fun f l -> {First = f; Last = l}) first last
             |> Observable.filterSome
             |> Observable.filter (fun v -> v <> source.Value)
 

@@ -15,28 +15,24 @@ open Microsoft.FSharp.Quotations.Patterns
 
 /// Type to manage user output from validation
 type internal UserOutput<'a, 'b>(input : ISignal<'a>, validationResults : IValidatedSignal<'a, 'b>, disposeTracker : CompositeDisposable) as self =    
-    let output = 
-        validationResults
-        |> Observable.choose id
+    interface ISignal<'b option> with
+        member __.Value with get() = validationResults.Value
+        
+    interface IObservable<'b option> with
+        member this.Subscribe obs = validationResults.Subscribe obs
+    interface ITracksDependents with
+        member this.Track dep = validationResults.Track dep
+        member this.Untrack dep = validationResults.Untrack dep
+    interface IDependent with
+        member __.RequestRefresh _ = ()
+        member this.HasDependencies with get() = validationResults.HasDependencies
 
-    let update v =
-        match v with
-        | None -> ()
-        | Some newValue -> self.LastValidOutput <- v
-
-    do
-        validationResults
-        |> Observable.subscribe update
-        |> disposeTracker.Add
-
-    member val LastValidOutput : 'b option = validationResults.Value with get, set 
-
-    interface IObservable<'b> with
-        member __.Subscribe obs = output.Subscribe obs
+    interface IValidatedSignal<'a,'b> with
+        member __.IsValid = validationResults.IsValid
+        member __.ValidationResult = validationResults.ValidationResult
 
     interface IUserOutput<'a, 'b> with
         member __.RawInput = input
-        member __.Output = validationResults
 
 [<AbstractClass>]
 type BindingSource() as self =

@@ -10,14 +10,12 @@ open Microsoft.FSharp.Quotations.Patterns
 open System
 open System.ComponentModel
 
-/// The output of validating an input signal
+/// The output of validated user input
 type IUserOutput<'a, 'b> =            
-    inherit IObservable<'b>
+    inherit IValidatedSignal<'a, 'b>
 
     /// The raw, unvalidated input
     abstract member RawInput : ISignal<'a> with get
-
-    abstract member Output : IValidatedSignal<'a, 'b> with get
 
 type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)
 
