@@ -49,15 +49,17 @@ except that it always has a current value.</p>
 <span class="l">6: </span>
 <span class="l">7: </span>
 <span class="l">8: </span>
+<span class="l">9: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
 <span class="k">open</span> <span class="i">Gjallarhorn</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">System</span>
 
 <span class="c">// Create a signal over a constant value</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">s</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">constant</span> <span class="n">42</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">s</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">constant</span> <span class="n">42</span>
 
 <span class="c">// Prints &quot;Value = 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="f">printfn</span> <span class="s">&quot;Value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">printfn</span> <span class="s">&quot;Value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -79,17 +81,17 @@ which allows you to subscribe to changes on signals:</p>
 <span class="l">12: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
-<span class="i">Signal</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">m</span> 
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">m</span> 
 
 <span class="c">// After this is set, a print will occur</span>
 <span class="c">// Prints: &quot;Value is now 1&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+<span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
 
 <span class="c">// After this is set, a second print will occur with the new value</span>
 <span class="c">// Prints: &quot;Value is now 2&quot;</span>
-<span onmouseout="hideTip(event, 'fs3', 8)" onmouseover="showTip(event, 'fs3', 8)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs4', 9)" onmouseover="showTip(event, 'fs4', 9)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 </code></pre></td>
 </tr>
 </table>
@@ -124,33 +126,33 @@ which allows you to subscribe to changes on signals:</p>
 <span class="l">28: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable value</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 9)" onmouseover="showTip(event, 'fs4', 9)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
 <span class="c">// Create a filter on this</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="i">filtered</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">filter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs1', 11)" onmouseover="showTip(event, 'fs1', 11)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs1', 12)" onmouseover="showTip(event, 'fs1', 12)" class="i">s</span> <span class="o">&lt;</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="i">source</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs6', 11)" onmouseover="showTip(event, 'fs6', 11)" class="i">filtered</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">filter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs2', 12)" onmouseover="showTip(event, 'fs2', 12)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs2', 13)" onmouseover="showTip(event, 'fs2', 13)" class="i">s</span> <span class="o">&lt;</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="i">source</span>
 
 <span class="c">// Transform the filtered result:</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs6', 14)" onmouseover="showTip(event, 'fs6', 14)" class="i">final</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs1', 15)" onmouseover="showTip(event, 'fs1', 15)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="i">sprintf</span> <span class="s">&quot;Filtered value is %d&quot;</span> <span onmouseout="hideTip(event, 'fs1', 17)" onmouseover="showTip(event, 'fs1', 17)" class="i">s</span>) <span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="i">filtered</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 15)" onmouseover="showTip(event, 'fs7', 15)" class="i">final</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs2', 16)" onmouseover="showTip(event, 'fs2', 16)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="i">sprintf</span> <span class="s">&quot;Filtered value is %d&quot;</span> <span onmouseout="hideTip(event, 'fs2', 18)" onmouseover="showTip(event, 'fs2', 18)" class="i">s</span>) <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="i">filtered</span>
 
 <span class="c">// Subscribe to the final notifications:</span>
-<span class="i">Signal</span><span class="o">.</span><span class="i">subscribe</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs1', 19)" onmouseover="showTip(event, 'fs1', 19)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs2', 20)" onmouseover="showTip(event, 'fs2', 20)" class="i">printfn</span> <span class="s">&quot;%s&quot;</span> <span onmouseout="hideTip(event, 'fs1', 21)" onmouseover="showTip(event, 'fs1', 21)" class="i">s</span>) <span onmouseout="hideTip(event, 'fs6', 22)" onmouseover="showTip(event, 'fs6', 22)" class="i">final</span>
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs2', 20)" onmouseover="showTip(event, 'fs2', 20)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="i">printfn</span> <span class="s">&quot;%s&quot;</span> <span onmouseout="hideTip(event, 'fs2', 22)" onmouseover="showTip(event, 'fs2', 22)" class="i">s</span>) <span onmouseout="hideTip(event, 'fs7', 23)" onmouseover="showTip(event, 'fs7', 23)" class="i">final</span>
 
 <span class="c">// Now, let&#39;s set some values:</span>
 <span class="c">// Prints: &quot;Filtered value is 1&quot;</span>
-<span onmouseout="hideTip(event, 'fs4', 23)" onmouseover="showTip(event, 'fs4', 23)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+<span onmouseout="hideTip(event, 'fs5', 24)" onmouseover="showTip(event, 'fs5', 24)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
 
 <span class="c">// Prints: &quot;Filtered value is 3&quot;</span>
-<span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
+<span onmouseout="hideTip(event, 'fs5', 25)" onmouseover="showTip(event, 'fs5', 25)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
 
 <span class="c">// Does not output anything, as the filter&#39;s predicate fails</span>
-<span onmouseout="hideTip(event, 'fs4', 25)" onmouseover="showTip(event, 'fs4', 25)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
+<span onmouseout="hideTip(event, 'fs5', 26)" onmouseover="showTip(event, 'fs5', 26)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
 
 <span class="c">// Note that the filtered value retains its &quot;last good value&quot;</span>
 <span class="c">// Prints: &quot;Source = 42, filtered = 3&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 26)" onmouseover="showTip(event, 'fs2', 26)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, filtered = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 27)" onmouseover="showTip(event, 'fs4', 27)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="i">filtered</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, filtered = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs6', 29)" onmouseover="showTip(event, 'fs6', 29)" class="i">filtered</span><span class="o">.</span><span class="i">Value</span>
 
 <span class="c">// Prints: &quot;Filtered value is 2&quot;</span>
-<span onmouseout="hideTip(event, 'fs4', 29)" onmouseover="showTip(event, 'fs4', 29)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs5', 30)" onmouseover="showTip(event, 'fs5', 30)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 </code></pre></td>
 </tr>
 </table>
@@ -180,30 +182,30 @@ which allows you to subscribe to changes on signals:</p>
 <span class="l">23: </span>
 <span class="l">24: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 30)" onmouseover="showTip(event, 'fs8', 30)" class="i">a</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 31)" onmouseover="showTip(event, 'fs9', 31)" class="i">b</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 31)" onmouseover="showTip(event, 'fs9', 31)" class="i">a</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 32)" onmouseover="showTip(event, 'fs10', 32)" class="i">b</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 32)" onmouseover="showTip(event, 'fs10', 32)" class="i">v1</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs10', 33)" onmouseover="showTip(event, 'fs10', 33)" class="i">v1</span> <span class="i">v2</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs10', 34)" onmouseover="showTip(event, 'fs10', 34)" class="i">v1</span> <span class="o">+</span> <span class="i">v2</span>) <span onmouseout="hideTip(event, 'fs8', 35)" onmouseover="showTip(event, 'fs8', 35)" class="i">a</span> <span onmouseout="hideTip(event, 'fs9', 36)" onmouseover="showTip(event, 'fs9', 36)" class="i">b</span> 
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 33)" onmouseover="showTip(event, 'fs11', 33)" class="i">v1</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs11', 34)" onmouseover="showTip(event, 'fs11', 34)" class="i">v1</span> <span class="i">v2</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 35)" onmouseover="showTip(event, 'fs11', 35)" class="i">v1</span> <span class="o">+</span> <span class="i">v2</span>) <span onmouseout="hideTip(event, 'fs9', 36)" onmouseover="showTip(event, 'fs9', 36)" class="i">a</span> <span onmouseout="hideTip(event, 'fs10', 37)" onmouseover="showTip(event, 'fs10', 37)" class="i">b</span> 
 
-<span onmouseout="hideTip(event, 'fs8', 37)" onmouseover="showTip(event, 'fs8', 37)" class="i">a</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Foo&quot;</span>
-<span onmouseout="hideTip(event, 'fs9', 38)" onmouseover="showTip(event, 'fs9', 38)" class="i">b</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
+<span onmouseout="hideTip(event, 'fs9', 38)" onmouseover="showTip(event, 'fs9', 38)" class="i">a</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Foo&quot;</span>
+<span onmouseout="hideTip(event, 'fs10', 39)" onmouseover="showTip(event, 'fs10', 39)" class="i">b</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
 
 <span class="c">// Prints: &quot;v1.Value = FooBar&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 39)" onmouseover="showTip(event, 'fs2', 39)" class="f">printfn</span> <span class="s">&quot;v1.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs10', 40)" onmouseover="showTip(event, 'fs10', 40)" class="i">v1</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 40)" onmouseover="showTip(event, 'fs3', 40)" class="f">printfn</span> <span class="s">&quot;v1.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="i">v1</span><span class="o">.</span><span class="i">Value</span>
 
 <span class="c">// Mapping also works to combine many signals at once, including mixed types, up to 10 in an signal function</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="i">c</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 42)" onmouseover="showTip(event, 'fs12', 42)" class="i">d</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 42)" onmouseover="showTip(event, 'fs12', 42)" class="i">c</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 43)" onmouseover="showTip(event, 'fs13', 43)" class="i">d</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 43)" onmouseover="showTip(event, 'fs13', 43)" class="i">v2</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map4</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs10', 44)" onmouseover="showTip(event, 'fs10', 44)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs13', 45)" onmouseover="showTip(event, 'fs13', 45)" class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs7', 46)" onmouseover="showTip(event, 'fs7', 46)" class="i">sprintf</span> <span class="s">&quot;%s%s%s : %d&quot;</span> <span onmouseout="hideTip(event, 'fs10', 47)" onmouseover="showTip(event, 'fs10', 47)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs13', 48)" onmouseover="showTip(event, 'fs13', 48)" class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span>) <span onmouseout="hideTip(event, 'fs8', 49)" onmouseover="showTip(event, 'fs8', 49)" class="i">a</span> <span onmouseout="hideTip(event, 'fs9', 50)" onmouseover="showTip(event, 'fs9', 50)" class="i">b</span> <span onmouseout="hideTip(event, 'fs11', 51)" onmouseover="showTip(event, 'fs11', 51)" class="i">c</span> <span onmouseout="hideTip(event, 'fs12', 52)" onmouseover="showTip(event, 'fs12', 52)" class="i">d</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 44)" onmouseover="showTip(event, 'fs14', 44)" class="i">v2</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map4</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs11', 45)" onmouseover="showTip(event, 'fs11', 45)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs14', 46)" onmouseover="showTip(event, 'fs14', 46)" class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs8', 47)" onmouseover="showTip(event, 'fs8', 47)" class="i">sprintf</span> <span class="s">&quot;%s%s%s : %d&quot;</span> <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">v1</span> <span onmouseout="hideTip(event, 'fs14', 49)" onmouseover="showTip(event, 'fs14', 49)" class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span>) <span onmouseout="hideTip(event, 'fs9', 50)" onmouseover="showTip(event, 'fs9', 50)" class="i">a</span> <span onmouseout="hideTip(event, 'fs10', 51)" onmouseover="showTip(event, 'fs10', 51)" class="i">b</span> <span onmouseout="hideTip(event, 'fs12', 52)" onmouseover="showTip(event, 'fs12', 52)" class="i">c</span> <span onmouseout="hideTip(event, 'fs13', 53)" onmouseover="showTip(event, 'fs13', 53)" class="i">d</span>
 
 <span class="c">// Prints: &quot;v2.Value = FooBar : 0&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 53)" onmouseover="showTip(event, 'fs2', 53)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs13', 54)" onmouseover="showTip(event, 'fs13', 54)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 54)" onmouseover="showTip(event, 'fs3', 54)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs14', 55)" onmouseover="showTip(event, 'fs14', 55)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs11', 55)" onmouseover="showTip(event, 'fs11', 55)" class="i">c</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Baz&quot;</span>
-<span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="i">d</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
+<span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="i">c</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Baz&quot;</span>
+<span onmouseout="hideTip(event, 'fs13', 57)" onmouseover="showTip(event, 'fs13', 57)" class="i">d</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
 <span class="c">// Prints: &quot;v2.Value = FooBarBaz : 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 57)" onmouseover="showTip(event, 'fs2', 57)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs13', 58)" onmouseover="showTip(event, 'fs13', 58)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 58)" onmouseover="showTip(event, 'fs3', 58)" class="f">printfn</span> <span class="s">&quot;v2.Value = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs14', 59)" onmouseover="showTip(event, 'fs14', 59)" class="i">v2</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -235,59 +237,62 @@ notion of a value (represented in the <code>Value</code> property) which always 
 <span class="l">23: </span>
 <span class="l">24: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 59)" onmouseover="showTip(event, 'fs14', 59)" class="i">e</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 60)" onmouseover="showTip(event, 'fs15', 60)" class="t">Event</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs16', 61)" onmouseover="showTip(event, 'fs16', 61)" class="t">int</span><span class="o">&gt;</span>()
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs17', 62)" onmouseover="showTip(event, 'fs17', 62)" class="i">observable</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs14', 63)" onmouseover="showTip(event, 'fs14', 63)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 64)" onmouseover="showTip(event, 'fs18', 64)" class="i">Publish</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 60)" onmouseover="showTip(event, 'fs15', 60)" class="i">e</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs16', 61)" onmouseover="showTip(event, 'fs16', 61)" class="t">Event</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs17', 62)" onmouseover="showTip(event, 'fs17', 62)" class="t">int</span><span class="o">&gt;</span>()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 63)" onmouseover="showTip(event, 'fs18', 63)" class="i">observable</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 64)" onmouseover="showTip(event, 'fs15', 64)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 65)" onmouseover="showTip(event, 'fs19', 65)" class="i">Publish</span>
 
 <span class="c">// Subscribe to the observable, with &quot;0&quot; as the initial value (since we always need a &quot;current value&quot;)</span>
 <span class="c">// Note that this returns a tuple of an ISignal&lt;&#39;a&gt; and an IDisposable, which can be used to unsubscribe from the observable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 65)" onmouseover="showTip(event, 'fs1', 65)" class="i">s</span>, <span onmouseout="hideTip(event, 'fs19', 66)" onmouseover="showTip(event, 'fs19', 66)" class="i">disp</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">subscribeFromObservable</span> <span class="n">0</span> <span onmouseout="hideTip(event, 'fs17', 67)" onmouseover="showTip(event, 'fs17', 67)" class="i">observable</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 66)" onmouseover="showTip(event, 'fs20', 66)" class="i">s</span>, <span onmouseout="hideTip(event, 'fs21', 67)" onmouseover="showTip(event, 'fs21', 67)" class="i">disp</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">fromObservable</span> <span class="n">0</span> <span onmouseout="hideTip(event, 'fs18', 68)" onmouseover="showTip(event, 'fs18', 68)" class="i">observable</span>
 
 <span class="c">// Prints: &quot;Signal&#39;s value = 0&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 68)" onmouseover="showTip(event, 'fs2', 68)" class="f">printfn</span> <span class="s">&quot;Signal&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 69)" onmouseover="showTip(event, 'fs1', 69)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 69)" onmouseover="showTip(event, 'fs3', 69)" class="f">printfn</span> <span class="s">&quot;Signal&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs20', 70)" onmouseover="showTip(event, 'fs20', 70)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs14', 70)" onmouseover="showTip(event, 'fs14', 70)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 71)" onmouseover="showTip(event, 'fs20', 71)" class="f">Trigger</span> <span class="n">42</span>
+<span onmouseout="hideTip(event, 'fs15', 71)" onmouseover="showTip(event, 'fs15', 71)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 72)" onmouseover="showTip(event, 'fs22', 72)" class="f">Trigger</span> <span class="n">42</span>
 
 <span class="c">// Prints: &quot;Signal&#39;s value = 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 72)" onmouseover="showTip(event, 'fs2', 72)" class="f">printfn</span> <span class="s">&quot;Signal&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 73)" onmouseover="showTip(event, 'fs1', 73)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
+<span onmouseout="hideTip(event, 'fs3', 73)" onmouseover="showTip(event, 'fs3', 73)" class="f">printfn</span> <span class="s">&quot;Signal&#39;s value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs20', 74)" onmouseover="showTip(event, 'fs20', 74)" class="i">s</span><span class="o">.</span><span class="i">Value</span>
 
 <span class="c">// Convert back to an observable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 74)" onmouseover="showTip(event, 'fs21', 74)" class="i">obs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs1', 75)" onmouseover="showTip(event, 'fs1', 75)" class="i">s</span> <span class="o">:&gt;</span> <span class="i">IObservable</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs16', 76)" onmouseover="showTip(event, 'fs16', 76)" class="i">int</span><span class="o">&gt;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 75)" onmouseover="showTip(event, 'fs23', 75)" class="i">obs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 76)" onmouseover="showTip(event, 'fs20', 76)" class="i">s</span> <span class="o">:&gt;</span> <span onmouseout="hideTip(event, 'fs24', 77)" onmouseover="showTip(event, 'fs24', 77)" class="t">IObservable</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs17', 78)" onmouseover="showTip(event, 'fs17', 78)" class="t">int</span><span class="o">&gt;</span>
 
-<span onmouseout="hideTip(event, 'fs21', 77)" onmouseover="showTip(event, 'fs21', 77)" class="i">obs</span>
-<span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 78)" onmouseover="showTip(event, 'fs22', 78)" class="t">Observable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 79)" onmouseover="showTip(event, 'fs23', 79)" class="f">add</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs24', 80)" onmouseover="showTip(event, 'fs24', 80)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs2', 81)" onmouseover="showTip(event, 'fs2', 81)" class="f">printfn</span> <span class="s">&quot;New value of observable = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs24', 82)" onmouseover="showTip(event, 'fs24', 82)" class="i">s</span>)
+<span onmouseout="hideTip(event, 'fs23', 79)" onmouseover="showTip(event, 'fs23', 79)" class="i">obs</span>
+<span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs25', 80)" onmouseover="showTip(event, 'fs25', 80)" class="t">Observable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 81)" onmouseover="showTip(event, 'fs26', 81)" class="f">add</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs27', 82)" onmouseover="showTip(event, 'fs27', 82)" class="i">s</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs3', 83)" onmouseover="showTip(event, 'fs3', 83)" class="f">printfn</span> <span class="s">&quot;New value of observable = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs27', 84)" onmouseover="showTip(event, 'fs27', 84)" class="i">s</span>)
 
 <span class="c">// Prints: &quot;New value of observable = 54&quot;</span>
 <span class="c">// Note that this starts as an observable, maps through a Signal, and back to an observable for the notification!</span>
-<span onmouseout="hideTip(event, 'fs14', 83)" onmouseover="showTip(event, 'fs14', 83)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 84)" onmouseover="showTip(event, 'fs20', 84)" class="f">Trigger</span> <span class="n">54</span>
+<span onmouseout="hideTip(event, 'fs15', 85)" onmouseover="showTip(event, 'fs15', 85)" class="i">e</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 86)" onmouseover="showTip(event, 'fs22', 86)" class="f">Trigger</span> <span class="n">54</span>
 </code></pre></td>
 </tr>
 </table>
 <p>Now, let's move on to <a href="mutables.html">Mutables in Gjallarhorn</a>.</p>
 
-<div class="tip" id="fs1">val s : obj<br /><br />Full name: Signals.s</div>
-<div class="tip" id="fs2">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs3">val m : obj<br /><br />Full name: Signals.m</div>
-<div class="tip" id="fs4">val source : obj<br /><br />Full name: Signals.source</div>
-<div class="tip" id="fs5">val filtered : obj<br /><br />Full name: Signals.filtered</div>
-<div class="tip" id="fs6">val final : obj<br /><br />Full name: Signals.final</div>
-<div class="tip" id="fs7">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
-<div class="tip" id="fs8">val a : obj<br /><br />Full name: Signals.a</div>
-<div class="tip" id="fs9">val b : obj<br /><br />Full name: Signals.b</div>
-<div class="tip" id="fs10">val v1 : obj<br /><br />Full name: Signals.v1</div>
-<div class="tip" id="fs11">val c : obj<br /><br />Full name: Signals.c</div>
-<div class="tip" id="fs12">val d : obj<br /><br />Full name: Signals.d</div>
-<div class="tip" id="fs13">val v2 : obj<br /><br />Full name: Signals.v2</div>
-<div class="tip" id="fs14">val e : Event&lt;int&gt;<br /><br />Full name: Signals.e</div>
-<div class="tip" id="fs15">Multiple items<br />module Event<br /><br />from Microsoft.FSharp.Control<br /><br />--------------------<br />type Event&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;T&gt;<br />&#160;&#160;member Trigger : arg:&#39;T -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_&gt;<br /><br />--------------------<br />type Event&lt;&#39;Delegate,&#39;Args (requires delegate and &#39;Delegate :&gt; Delegate)&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;<br />&#160;&#160;member Trigger : sender:obj * args:&#39;Args -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;Delegate,&#39;Args&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;</div>
-<div class="tip" id="fs16">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs17">val observable : IEvent&lt;int&gt;<br /><br />Full name: Signals.observable</div>
-<div class="tip" id="fs18">property Event.Publish: IEvent&lt;int&gt;</div>
-<div class="tip" id="fs19">val disp : obj<br /><br />Full name: Signals.disp</div>
-<div class="tip" id="fs20">member Event.Trigger : arg:&#39;T -&gt; unit</div>
-<div class="tip" id="fs21">val obs : System.IObservable&lt;int&gt;<br /><br />Full name: Signals.obs</div>
-<div class="tip" id="fs22">module Observable<br /><br />from Microsoft.FSharp.Control</div>
-<div class="tip" id="fs23">val add : callback:(&#39;T -&gt; unit) -&gt; source:System.IObservable&lt;&#39;T&gt; -&gt; unit<br /><br />Full name: Microsoft.FSharp.Control.Observable.add</div>
-<div class="tip" id="fs24">val s : int</div>
+<div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">val s : obj<br /><br />Full name: Signals.s</div>
+<div class="tip" id="fs3">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs4">val m : obj<br /><br />Full name: Signals.m</div>
+<div class="tip" id="fs5">val source : obj<br /><br />Full name: Signals.source</div>
+<div class="tip" id="fs6">val filtered : obj<br /><br />Full name: Signals.filtered</div>
+<div class="tip" id="fs7">val final : obj<br /><br />Full name: Signals.final</div>
+<div class="tip" id="fs8">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
+<div class="tip" id="fs9">val a : obj<br /><br />Full name: Signals.a</div>
+<div class="tip" id="fs10">val b : obj<br /><br />Full name: Signals.b</div>
+<div class="tip" id="fs11">val v1 : obj<br /><br />Full name: Signals.v1</div>
+<div class="tip" id="fs12">val c : obj<br /><br />Full name: Signals.c</div>
+<div class="tip" id="fs13">val d : obj<br /><br />Full name: Signals.d</div>
+<div class="tip" id="fs14">val v2 : obj<br /><br />Full name: Signals.v2</div>
+<div class="tip" id="fs15">val e : Event&lt;int&gt;<br /><br />Full name: Signals.e</div>
+<div class="tip" id="fs16">Multiple items<br />module Event<br /><br />from Microsoft.FSharp.Control<br /><br />--------------------<br />type Event&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;T&gt;<br />&#160;&#160;member Trigger : arg:&#39;T -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_&gt;<br /><br />--------------------<br />type Event&lt;&#39;Delegate,&#39;Args (requires delegate and &#39;Delegate :&gt; Delegate)&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;<br />&#160;&#160;member Trigger : sender:obj * args:&#39;Args -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;Delegate,&#39;Args&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;</div>
+<div class="tip" id="fs17">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
+<div class="tip" id="fs18">val observable : IEvent&lt;int&gt;<br /><br />Full name: Signals.observable</div>
+<div class="tip" id="fs19">property Event.Publish: IEvent&lt;int&gt;</div>
+<div class="tip" id="fs20">val s : IObservable&lt;int&gt;<br /><br />Full name: Signals.s</div>
+<div class="tip" id="fs21">val disp : obj<br /><br />Full name: Signals.disp</div>
+<div class="tip" id="fs22">member Event.Trigger : arg:&#39;T -&gt; unit</div>
+<div class="tip" id="fs23">val obs : IObservable&lt;int&gt;<br /><br />Full name: Signals.obs</div>
+<div class="tip" id="fs24">type IObservable&lt;&#39;T&gt; =<br />&#160;&#160;member Subscribe : observer:IObserver&lt;&#39;T&gt; -&gt; IDisposable<br /><br />Full name: System.IObservable&lt;_&gt;</div>
+<div class="tip" id="fs25">module Observable<br /><br />from Microsoft.FSharp.Control</div>
+<div class="tip" id="fs26">val add : callback:(&#39;T -&gt; unit) -&gt; source:IObservable&lt;&#39;T&gt; -&gt; unit<br /><br />Full name: Microsoft.FSharp.Control.Observable.add</div>
+<div class="tip" id="fs27">val s : int</div>
 
         </div>
         <div class="span3">
