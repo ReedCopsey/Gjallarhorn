@@ -41,7 +41,7 @@ As all Mutables are also signals, the `Signal` module functionality still works:
 // Create a mutable variable
 let m = Mutable.create 0
 
-Signal.subscribe (fun currentValue -> printfn "Value is now %d" currentValue) m 
+Signal.Subscription.create (fun currentValue -> printfn "Value is now %d" currentValue) m 
 
 // After this is set, a print will occur
 // Prints: "Value is now 1"
