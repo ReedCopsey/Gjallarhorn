@@ -72,9 +72,6 @@
     <Compile Include="..\Gjallarhorn.Bindable\Commands.fs">
       <Link>Commands.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn.Bindable\BindingContracts.fs">
-      <Link>BindingContracts.fs</Link>
-    </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\BoundSignal.fs">
       <Link>BoundSignal.fs</Link>
     </Compile>

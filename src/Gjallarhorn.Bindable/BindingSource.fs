@@ -1,7 +1,6 @@
-﻿namespace Gjallarhorn.Bindable.FSharp
+﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
-open Gjallarhorn.Bindable
 open Gjallarhorn.Interaction
 open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
@@ -163,10 +162,11 @@ type BindingSource() as self =
     interface INotifyPropertyChanged with
         [<CLIEvent>]
         member __.PropertyChanged = propertyChanged.Publish
-
-    interface IBindingSource
-
+    
+    /// Adds a read only property, specified by name and getter, to the binding source
     abstract AddReadOnlyProperty<'a> : string -> (unit -> 'a) -> unit
+
+    /// Adds a read and write property, specified by name, getter, and setter, to the binding source
     abstract AddReadWriteProperty<'a> : string -> (unit -> 'a) -> ('a -> unit) -> unit
         
 [<AbstractClass>]
@@ -184,10 +184,6 @@ type ObservableBindingSource<'b>() =
     member this.OutputObservable (obs : IObservable<'b>) =
         let sub = obs.Subscribe output.Trigger
         this.AddDisposable sub
-
-    interface IObservableBindingSource<'b> with
-        member this.OutputValue value = this.OutputValue value
-        member this.OutputObservable obs = this.OutputObservable obs
     
     interface System.IObservable<'b> with
         member __.Subscribe obs = output.Publish.Subscribe obs

@@ -10,7 +10,7 @@ namespace WpfSimpleApplicationCSharp
 {
     internal static class Context
     {
-        public static IBindingSource CreateBindingSource()
+        public static BindingSource CreateBindingSource()
         {
             var source = BindingModule.createSource();
 

@@ -2,7 +2,6 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
-open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Bindable.Internal
 open System
 open System.Collections.Generic
@@ -20,9 +19,6 @@ type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] in
     inherit ObservableBindingSource<'b>()    
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
-
-    let bt() =
-        self :> IBindingSource
 
     member private __.MakePD<'a> name = BindingSourcePropertyDescriptor<'a>(name) :> PropertyDescriptor
     

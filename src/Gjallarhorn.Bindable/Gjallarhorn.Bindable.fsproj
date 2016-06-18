@@ -46,7 +46,6 @@
     <Compile Include="Utilities.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="BoundSignal.fs" />
-    <Compile Include="BindingContracts.fs" />
     <Compile Include="BindingSource.fs" />
     <Compile Include="Binding.fs" />
     <Compile Include="BindingSourceUtilities.fs" />

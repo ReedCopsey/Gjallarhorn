@@ -11,4 +11,4 @@ type BindingSourceFactory() as self =
     member __.Value with get() = source.Force();
 
     /// Implemented by subclasses to generate a binding source
-    abstract member Generate : unit -> IBindingSource
+    abstract member Generate : unit -> BindingSource

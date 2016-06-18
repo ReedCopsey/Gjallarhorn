@@ -2,7 +2,6 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
-open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Bindable.Internal
 
 open System

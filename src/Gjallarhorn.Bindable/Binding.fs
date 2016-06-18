@@ -7,7 +7,6 @@ open Gjallarhorn.Interaction
 open Gjallarhorn.Validation
 
 open Gjallarhorn.Bindable
-open Gjallarhorn.Bindable.FSharp
 
 open System.ComponentModel
 open System.Windows.Input
@@ -32,7 +31,7 @@ module Binding =
         let getCreateBindingSourceFunction () = createBindingSourceFunction() :?> BindingSource
         
         /// Retrieves the platform specific creation function 
-        let getCreateObservableBindingSourceFunction<'a> () = (createObservableBindingFunction typeof<'a>) :?> FSharp.ObservableBindingSource<'a>
+        let getCreateObservableBindingSourceFunction<'a> () = (createObservableBindingFunction typeof<'a>) :?> ObservableBindingSource<'a>
 
     /// Create a binding subject for the installed platform        
     let createObservableSource<'a>() = Implementation.getCreateObservableBindingSourceFunction<'a>()

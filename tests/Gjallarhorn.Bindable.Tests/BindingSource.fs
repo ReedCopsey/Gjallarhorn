@@ -3,7 +3,6 @@
 open Gjallarhorn
 open Gjallarhorn.Wpf
 open Gjallarhorn.Bindable
-open Gjallarhorn.Bindable.FSharp
 open Gjallarhorn.Validation
 open Gjallarhorn.Validation.Validators
 open System.ComponentModel
