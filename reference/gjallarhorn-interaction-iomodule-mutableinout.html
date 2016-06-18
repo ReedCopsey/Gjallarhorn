@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>ValidationResult - Gjallarhorn</title>
+    <title>MutableInOut - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,36 +35,40 @@
 
 
 
-<h1>ValidationResult</h1>
+<h1>MutableInOut</h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
+  <span>Namespace: Gjallarhorn.Interaction</span><br />
+  <span>Parent Module: <a href="gjallarhorn-interaction-iomodule.html">IO</a></span>
 </p>
 <div class="xmldoc">
-<p>Defines a validation result</p>
+<p>Creates input/output handles that directly mutate an input IMutatable</p>
 
 </div>
-  <h3>Union Cases</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Union Case</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            Invalid(errors)
+          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
+            convertedValidated (...)
           </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> string list<br />
-                      </div>
+          <div class="tip" id="102">
+            <strong>Signature:</strong> conversion:(&#39;c -&gt; &#39;d) -&gt; validation:Validation&lt;&#39;d,&#39;c&gt; -&gt; mutatable:IMutatable&lt;&#39;c&gt; -&gt; MutatableInOut&lt;&#39;c,&#39;d&gt;<br />
+                          <strong>Type parameters:</strong> 'c, 'd          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L12-12" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L118-118" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Value is invalid with a list of error messages</p>
+          <p>Create a simple input handle which pipes from the signal to conversion, user, validates to output, writes back to mutable</p>
 
 
         </td>
@@ -72,69 +76,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            Valid
+          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
+            validated validation mutatable
           </code>
-          <div class="tip" id="126">
-            <strong>Signature:</strong> <br />
-                      </div>
+          <div class="tip" id="103">
+            <strong>Signature:</strong> validation:Validation&lt;&#39;a,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; MutatableInOut&lt;&#39;a,&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L10-10" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L115-115" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Value is valid</p>
-
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <h3>Instance members</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
-            IsValidResult
-          </code>
-          <div class="tip" id="127">
-            <strong>Signature:</strong> bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L17-17" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Check to see if we're in a valid state</p>
-
-
-              <p>CompiledName: <code>get_IsValidResult</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '128', 128)" onmouseover="showTip(event, '128', 128)">
-            ToList(forceOutput)
-          </code>
-          <div class="tip" id="128">
-            <strong>Signature:</strong> forceOutput:bool -&gt; List&lt;string&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L24-24" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Convert to a list of strings. If forceOutput is true, the list will have a single, empty
-string in valid cases</p>
+          <p>Create a simple input handle which pipes from the signal to user, validates to output, writes back to mutable</p>
 
 
         </td>

@@ -40,6 +40,8 @@
   <span>Namespace: Gjallarhorn.Interaction</span><br />
 </p>
 <div class="xmldoc">
+<p>Used as an input and output mapping to report and fetch data from a user</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +52,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '159', 159)" onmouseover="showTip(event, '159', 159)">
+          <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
             new(input, conversion)
           </code>
-          <div class="tip" id="159">
+          <div class="tip" id="158">
             <strong>Signature:</strong> (input:ISignal&lt;&#39;a&gt; * conversion:(&#39;a -&gt; &#39;b)) -&gt; InOut&lt;&#39;a,&#39;b&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L28-28" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L34-34" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -77,55 +79,61 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '160', 160)" onmouseover="showTip(event, '160', 160)">
+          <code onmouseout="hideTip(event, '159', 159)" onmouseover="showTip(event, '159', 159)">
             GetValue()
           </code>
-          <div class="tip" id="160">
+          <div class="tip" id="159">
             <strong>Signature:</strong> unit -&gt; &#39;b<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L36-36" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L44-44" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Gets the current value</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '160', 160)" onmouseover="showTip(event, '160', 160)">
+            SetValue(v)
+          </code>
+          <div class="tip" id="160">
+            <strong>Signature:</strong> v:&#39;b -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L46-46" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Updates the value to the output stream</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '161', 161)" onmouseover="showTip(event, '161', 161)">
-            SetValue(v)
-          </code>
-          <div class="tip" id="161">
-            <strong>Signature:</strong> v:&#39;b -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L37-37" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '162', 162)" onmouseover="showTip(event, '162', 162)">
             UpdateStream
           </code>
-          <div class="tip" id="162">
+          <div class="tip" id="161">
             <strong>Signature:</strong> ISignal&lt;&#39;b&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L35-35" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Signal used as a notification mechanism for reporting</p>
+
+
               <p>CompiledName: <code>get_UpdateStream</code></p>
         </td>
       </tr>

@@ -41,6 +41,8 @@
   <span>Parent Module: <a href="gjallarhorn-interaction-iomodule.html">IO</a></span>
 </p>
 <div class="xmldoc">
+<p>Creates input/output handles</p>
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -54,73 +56,81 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
+          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
             converted conversion signal
           </code>
-          <div class="tip" id="97">
+          <div class="tip" id="98">
             <strong>Signature:</strong> conversion:(&#39;a -&gt; &#39;b) -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; InOut&lt;&#39;a,&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L68-68" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L104-104" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>Create a simple input handle which pipes from the signal to conversion, to user, to output</p>
 
-          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
-            convertedValidated (...)
-          </code>
-          <div class="tip" id="98">
-            <strong>Signature:</strong> conversion:(&#39;d -&gt; &#39;e) -&gt; validation:Validation&lt;&#39;e,&#39;f&gt; -&gt; signal:ISignal&lt;&#39;d&gt; -&gt; ValidatedInOut&lt;&#39;d,&#39;e,&#39;f&gt;<br />
-                          <strong>Type parameters:</strong> 'd, 'e, 'f          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L72-72" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
-            create signal
+            convertedValidated (...)
           </code>
           <div class="tip" id="99">
-            <strong>Signature:</strong> signal:ISignal&lt;&#39;a&gt; -&gt; InOut&lt;&#39;a,&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+            <strong>Signature:</strong> conversion:(&#39;d -&gt; &#39;e) -&gt; validation:Validation&lt;&#39;e,&#39;f&gt; -&gt; signal:ISignal&lt;&#39;d&gt; -&gt; ValidatedInOut&lt;&#39;d,&#39;e,&#39;f&gt;<br />
+                          <strong>Type parameters:</strong> 'd, 'e, 'f          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L66-66" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L110-110" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a simple input handle which pipes from the signal to conversion, to user, validates to output</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
-            validated validation signal
+            create signal
           </code>
           <div class="tip" id="100">
+            <strong>Signature:</strong> signal:ISignal&lt;&#39;a&gt; -&gt; InOut&lt;&#39;a,&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L101-101" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a simple input handle which pipes from the signal to user, to output</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
+            validated validation signal
+          </code>
+          <div class="tip" id="101">
             <strong>Signature:</strong> validation:Validation&lt;&#39;c,&#39;d&gt; -&gt; signal:ISignal&lt;&#39;c&gt; -&gt; ValidatedInOut&lt;&#39;c,&#39;c,&#39;d&gt;<br />
                           <strong>Type parameters:</strong> 'c, 'd          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L70-70" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L107-107" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Create a simple input handle which pipes from the signal to user, validates to output</p>
+
+
         </td>
       </tr>
     </tbody>
