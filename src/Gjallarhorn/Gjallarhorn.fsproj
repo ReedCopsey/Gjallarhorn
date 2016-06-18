@@ -51,6 +51,7 @@
     <Compile Include="Signal.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="IO.fs" />
+    <Compile Include="Linq.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">12</MinimumVisualStudioVersion>
