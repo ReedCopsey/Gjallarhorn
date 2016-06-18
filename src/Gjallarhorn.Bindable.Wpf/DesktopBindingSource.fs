@@ -15,18 +15,18 @@ do ()
 type internal IPropertyBag =
     abstract member CustomProperties : Dictionary<string,PropertyDescriptor * IValueHolder>
 
-type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] internal DesktopBindingSource<'b>() as self =
+type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] internal DesktopBindingSource<'b>() =
     inherit ObservableBindingSource<'b>()    
 
     let customProps = Dictionary<string, PropertyDescriptor * IValueHolder>()
 
     member private __.MakePD<'a> name = BindingSourcePropertyDescriptor<'a>(name) :> PropertyDescriptor
     
-    override this.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+    override this.AddReadWriteProperty<'a> (name, getter : Func<'a>, setter : Action<'a>) =
         if customProps.ContainsKey name then
             failwith <| sprintf "Property [%s] already exists on this binding source" name
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readWrite getter setter))        
-    override this.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+    override this.AddReadOnlyProperty<'a> (name, getter : Func<'a>) =
         if customProps.ContainsKey name then
             failwith <| sprintf "Property [%s] already exists on this binding source" name
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readOnly getter))   

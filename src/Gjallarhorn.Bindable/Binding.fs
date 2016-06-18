@@ -43,39 +43,39 @@ module Binding =
     let toFromView<'a> (source : BindingSource) name (signal : ISignal<'a>) =
         let edit = IO.InOut.create signal
         edit |> source.AddDisposable
-        edit |> source.TrackInOut<'a,'a,'a> name
+        source.TrackInOut<'a,'a,'a>(name, edit)
         edit.UpdateStream
 
     /// Add a signal as an editor with validation, bound to a specific name
     let toFromViewValidated<'a,'b> (source : BindingSource) name (validator : Validation<'a,'b>) signal =
         let edit = IO.InOut.validated validator signal
         edit |> source.AddDisposable
-        edit |> source.TrackInOut<'a,'a,'b> name
+        source.TrackInOut<'a,'a,'b> (name, edit)
         edit.Output
 
     /// Add a signal as an editor with validation, bound to a specific name
     let toFromViewConvertedValidated<'a,'b,'c> (source : BindingSource) name (converter : 'a -> 'b) (validator : Validation<'b,'c>) signal =
         let edit = IO.InOut.convertedValidated converter validator signal
         edit |> source.AddDisposable
-        edit |> source.TrackInOut<'a,'b,'c> name
+        source.TrackInOut<'a,'b,'c> (name, edit)
         edit.Output
 
     /// Add a mutable as an editor, bound to a specific name
     let mutateToFromView<'a> (source : BindingSource) name (mutatable : IMutatable<'a>) =
-        source.TrackObservable name mutatable
-        source.AddReadWriteProperty name (fun _ -> mutatable.Value) (fun v -> mutatable.Value <- v)
+        source.TrackObservable (name, mutatable)
+        source.AddReadWriteProperty (name, (fun _ -> mutatable.Value), fun v -> mutatable.Value <- v)
 
     /// Add a mutable as an editor with validation, bound to a specific name
     let mutateToFromViewValidated<'a> (source : BindingSource) name validator mutatable =
         let edit = IO.MutableInOut.validated validator mutatable
-        edit |> source.TrackInOut<'a,'a,'a> name
+        source.TrackInOut<'a,'a,'a> (name, edit)
         edit |> source.AddDisposable
         ()
 
     /// Add a mutable as an editor with validation, bound to a specific name
     let mutateToFromViewConverted<'a,'b> (source : BindingSource) name (converter : 'a -> 'b) (validator: Validation<'b,'a>) mutatable =
         let edit = IO.MutableInOut.convertedValidated converter validator mutatable
-        edit |> source.TrackInOut<'a,'b,'a> name
+        source.TrackInOut<'a,'b,'a> (name, edit)
         edit |> source.AddDisposable
         ()
 
@@ -94,13 +94,11 @@ module Binding =
 
     /// Add a watched signal (one way property) to a binding source by name
     let toView (source : BindingSource) name signal =
-        IO.Report.create signal
-        |> source.TrackInput name
-
+        source.TrackInput (name, IO.Report.create signal)
+        
     /// Add a watched signal (one way property) to a binding source by name with validation
     let toViewValidated (source : BindingSource) name validation signal =
-        IO.Report.validated validation signal
-        |> source.TrackInput name
+        source.TrackInput (name, IO.Report.validated validation signal)        
 
     /// Add a constant value (one way property) to a binding source by name
     let constantToView name value (source : BindingSource) =

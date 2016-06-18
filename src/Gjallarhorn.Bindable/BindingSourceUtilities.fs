@@ -9,17 +9,17 @@ type IValueHolder =
     abstract member ReadOnly : bool
 
 module ValueHolder =
-    let readWrite getter setter = 
+    let readWrite (getter : System.Func<'a>) (setter : System.Action<'a>) = 
         { 
             new IValueHolder with 
-                member __.GetValue() = box <| getter()
-                member __.SetValue(v) = setter(unbox(v))
+                member __.GetValue() = box <| getter.Invoke()
+                member __.SetValue(v) = setter.Invoke(unbox(v))
                 member __.ReadOnly = false    
         }
-    let readOnly getValue = 
+    let readOnly (getValue : System.Func<'a>) = 
         { 
             new IValueHolder with 
-                member __.GetValue() = box <| getValue()
+                member __.GetValue() = box <| getValue.Invoke()
                 member __.SetValue(_) = ()
                 member __.ReadOnly = true
         }    

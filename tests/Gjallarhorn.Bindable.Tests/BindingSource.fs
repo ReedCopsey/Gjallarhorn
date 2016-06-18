@@ -8,13 +8,14 @@ open Gjallarhorn.Validation.Validators
 open System.ComponentModel
 open NUnit.Framework
 open Binding
+open System
 
 type TestBindingSource<'b>() =
     inherit ObservableBindingSource<'b>()
 
-    override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+    override __.AddReadWriteProperty<'a> (name, getter : Func<'a>, setter : Action<'a>) =
         ()
-    override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+    override __.AddReadOnlyProperty<'a> (name, getter : Func<'a>) =
         ()
 type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()
@@ -84,7 +85,7 @@ type BindingSourceTest() =
 
         let bt = tbt :> BindingSource
 
-        bt.TrackObservable "Test" value
+        bt.TrackObservable("Test", value)
         value.Value <- 1
         value.Value <- 2
     
@@ -99,7 +100,7 @@ type BindingSourceTest() =
 
         let bt = tbt :> BindingSource
 
-        bt.TrackObservable "Test" value
+        bt.TrackObservable ("Test", value)
         value.Value <- 1
         value.Value <- 2
         value.Value <- 2

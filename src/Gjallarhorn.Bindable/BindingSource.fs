@@ -88,20 +88,20 @@ type BindingSource() as self =
     member __.RaisePropertyChanged name = raisePropertyChanged name
     
     /// Map an initial value and observable to a signal, and track the subscription as part of this source's lifetime
-    member this.ObservableToSignal<'a> (initial : 'a) (obs: System.IObservable<'a>) =            
+    member this.ObservableToSignal<'a> (initial : 'a, obs: System.IObservable<'a>) =            
         Signal.Subscription.fromObservable initial obs
         |> this.AddDisposable2            
 
     /// Track changes on an observable to raise property changed events
-    member this.TrackObservable<'a> (name : string) (observable : IObservable<'a>) =
+    member this.TrackObservable<'a> (name : string, observable : IObservable<'a>) =
         observable
         |> Observable.subscribe (fun _ -> raisePropertyChanged name)
         |> this.AddDisposable
 
     member private this.AddTracking () =
-        this.TrackObservable "IsValid" isValid
-        this.TrackObservable "Idle" idleTracker
-        this.TrackObservable "OperationExecuting" idleTracker
+        this.TrackObservable ("IsValid", isValid)
+        this.TrackObservable ("Idle", idleTracker)
+        this.TrackObservable ("OperationExecuting", idleTracker)
 
     /// Track changes on an observable of validation results to raise proper validation events, initialized with a starting validation result
     member private this.TrackValidator (name : string) (validator : ISignal<ValidationResult>)=
@@ -109,15 +109,15 @@ type BindingSource() as self =
         |> Signal.Subscription.create (fun result -> updateErrors name result)
         |> this.AddDisposable
 
-        this.AddReadOnlyProperty (getErrorsPropertyName name) (fun _ -> validator.Value.ToList(true) )
-        this.AddReadOnlyProperty (getValidPropertyName name) (fun _ -> validator.Value.IsValidResult )
+        this.AddReadOnlyProperty (getErrorsPropertyName name, fun _ -> validator.Value.ToList(true) )
+        this.AddReadOnlyProperty (getValidPropertyName name,fun _ -> validator.Value.IsValidResult )
 
         updateErrors name validator.Value 
 
     // Track an Input type
-    member this.TrackInput name (input : Report<'a,'b>) =
-        this.TrackObservable name input.UpdateStream
-        this.AddReadOnlyProperty name input.GetValue
+    member this.TrackInput (name, input : Report<'a,'b>) =
+        this.TrackObservable (name, input.UpdateStream)
+        this.AddReadOnlyProperty (name, Func<_>(input.GetValue))
         
         // If we're validated input, handle adding our validation information as well
         match input with
@@ -126,9 +126,9 @@ type BindingSource() as self =
         | _ -> ()
 
     // Track an InOut type
-    member this.TrackInOut<'a,'b,'c> name (inout : InOut<'a,'b>) =
-        this.TrackObservable name inout.UpdateStream
-        this.AddReadWriteProperty name inout.GetValue inout.SetValue
+    member this.TrackInOut<'a,'b,'c> (name, inout : InOut<'a,'b>) =
+        this.TrackObservable (name, inout.UpdateStream)
+        this.AddReadWriteProperty (name, Func<_>(inout.GetValue), Action<_>(inout.SetValue))
 
         match inout with
         | :? ValidatedInOut<'a, 'b, 'c> as v ->
@@ -137,7 +137,7 @@ type BindingSource() as self =
 
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
-        this.AddReadOnlyProperty name (fun _ -> value)
+        this.AddReadOnlyProperty(name, fun _ -> value)
 
     /// Filter a signal to only output when we're valid
     member this.FilterValid signal =
@@ -164,10 +164,10 @@ type BindingSource() as self =
         member __.PropertyChanged = propertyChanged.Publish
     
     /// Adds a read only property, specified by name and getter, to the binding source
-    abstract AddReadOnlyProperty<'a> : string -> (unit -> 'a) -> unit
+    abstract AddReadOnlyProperty<'a> : string * System.Func<'a> -> unit
 
     /// Adds a read and write property, specified by name, getter, and setter, to the binding source
-    abstract AddReadWriteProperty<'a> : string -> (unit -> 'a) -> ('a -> unit) -> unit
+    abstract AddReadWriteProperty<'a> : string * System.Func<'a> * System.Action<'a> -> unit
         
 [<AbstractClass>]
 /// Base class for binding sources, used by platform specific libraries to share implementation details

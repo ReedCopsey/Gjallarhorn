@@ -91,7 +91,7 @@ type internal RefTypeBindingTarget<'b>() =
         | false, _ -> None
         | true, v -> Some v
 
-    override __.AddReadWriteProperty<'a> name (getter : unit -> 'a) (setter : 'a -> unit) =
+    override __.AddReadWriteProperty<'a> (name, getter : Func<'a>, setter : Action<'a>) =
         let vh = ValueHolder.readWrite getter setter
         let p = DynPropertyInfo(ownerType, name, typeof<'a>, vh)
 
@@ -99,7 +99,7 @@ type internal RefTypeBindingTarget<'b>() =
             failwith <| sprintf "Property [%s] already exists on this binding source" name
         properties.Add(name, p)
 
-    override __.AddReadOnlyProperty<'a> name (getter : unit -> 'a) =
+    override __.AddReadOnlyProperty<'a> (name, getter : Func<'a>) =
         let vh = ValueHolder.readOnly getter 
         let p = DynPropertyInfo(ownerType, name, typeof<'a>, vh)
 
