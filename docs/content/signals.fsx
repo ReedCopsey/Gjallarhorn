@@ -22,6 +22,7 @@ The simplest signal can be created via `Signal.constant`:
 
 #r "Gjallarhorn.dll"
 open Gjallarhorn
+open System
 
 // Create a signal over a constant value
 let s = Signal.constant 42
@@ -43,7 +44,7 @@ which allows you to subscribe to changes on signals:
 // Create a mutable variable
 let m = Mutable.create 0
 
-Signal.subscribe (fun currentValue -> printfn "Value is now %d" currentValue) m 
+Signal.Subscription.create (fun currentValue -> printfn "Value is now %d" currentValue) m 
 
 // After this is set, a print will occur
 // Prints: "Value is now 1"
@@ -69,7 +70,7 @@ let filtered = Signal.filter (fun s -> s < 5) source
 let final = Signal.map (fun s -> sprintf "Filtered value is %d" s) filtered
 
 // Subscribe to the final notifications:
-Signal.subscribe (fun s -> printfn "%s" s) final
+Signal.Subscription.create (fun s -> printfn "%s" s) final
 
 // Now, let's set some values:
 // Prints: "Filtered value is 1"
@@ -133,7 +134,7 @@ let observable = e.Publish
 
 // Subscribe to the observable, with "0" as the initial value (since we always need a "current value")
 // Note that this returns a tuple of an ISignal<'a> and an IDisposable, which can be used to unsubscribe from the observable
-let s, disp = Signal.subscribeFromObservable 0 observable
+let s, disp = Signal.Subscription.fromObservable 0 observable
 
 // Prints: "Signal's value = 0"
 printfn "Signal's value = %d" s.Value

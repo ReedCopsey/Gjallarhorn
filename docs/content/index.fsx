@@ -24,7 +24,7 @@ let var1 = Mutable.create 0
 let var2 = Mutable.create 2
 let result = Signal.map2 (fun a b -> a + b) var1 var2
 
-Signal.subscribe (fun value -> printfn "The sum of our variables is %d" value) result
+Signal.Subscription.create (fun value -> printfn "The sum of our variables is %d" value) result
 
 // Set first variable, which causes subscription to print
 var1.Value <- 20

@@ -20,6 +20,7 @@ For example, we can validate a string:
 #r "Gjallarhorn.dll"
 open Gjallarhorn
 open Gjallarhorn.Validation
+open Gjallarhorn.Validation.Validators
 
 let input = "Foo"
 
@@ -75,7 +76,7 @@ printfn "R is valid: %A" (isValidName "R")
 Again, using `fixErrors` or `fixErrorsWithMessage` stops collecting more errors, as demonstrated above.  Even though an empty
 string would fail the `hasLengthAtLeast` rule, that error is not added to the list of invalid reasons.
 
-We can also do custom validation rules via the `custom` function.  This accepts a function which takes the value, and returns a `string option`. When `None`,
+We can also do custom validation rules via the `validateWith` function.  This accepts a function which takes the value, and returns a `string option`. When `None`,
 the rule succeeds, when `Some`, the error is added to the invalid message list:
 
 *)
@@ -87,7 +88,7 @@ let customRule name =
 
 let customValidation n = 
     validate n 
-    |> (notNullOrWhitespace >> custom customRule)
+    |> (notNullOrWhitespace >> validateWith customRule)
     |> Validation.result
 
 // Prints: Reed is valid: Invalid ["Reed is a poor choice of names!"]
