@@ -67,7 +67,7 @@ open Gjallarhorn
 open Gjallarhorn.Helpers
 
 // A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
-type internal Mutable<'a>(value : 'a) =
+type Mutable<'a>(value : 'a) =
 
     let mutable v = value
 

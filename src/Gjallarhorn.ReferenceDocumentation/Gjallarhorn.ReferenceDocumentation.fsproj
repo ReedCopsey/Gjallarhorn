@@ -66,6 +66,9 @@
     <Compile Include="..\Gjallarhorn\IO.fs">
       <Link>IO.fs</Link>
     </Compile>
+    <Compile Include="..\Gjallarhorn\Linq.fs">
+      <Link>Linq.fs</Link>
+    </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\Utilities.fs">
       <Link>Utilities.fs</Link>
     </Compile>

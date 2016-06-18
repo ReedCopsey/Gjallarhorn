@@ -28,9 +28,19 @@ namespace Gjallarhorn.Linq.Tests
         }
 
         [Test]
+        public void CanConstructMutables()
+        {
+            var value = Mutable.Create(42);
+            var value2 = Mutable.Create("Foo");
+
+            Assert.AreEqual(42, value.Value);
+            Assert.AreEqual("Foo", value2.Value);
+        }
+
+        [Test]
         public void SelectWorksOffSignal()
         {
-            var value = MutableModule.Create(42);
+            var value = Mutable.Create(42);
             var mapped = value.Select(v => (v + 2).ToString());
 
             Assert.AreEqual(42, value.Value);

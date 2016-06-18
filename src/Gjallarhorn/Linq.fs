@@ -8,6 +8,11 @@ open Gjallarhorn.Validation
 open System
 open System.Runtime.CompilerServices
 
+[<AbstractClass;Sealed>]
+type Mutable() =
+    static member Create<'a> (value : 'a) =
+        Mutable<'a>(value) :> IMutatable<'a>
+
 [<AbstractClass;Sealed;Extension>]
 type SignalExtensions() =
 
