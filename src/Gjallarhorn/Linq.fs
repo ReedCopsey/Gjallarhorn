@@ -50,6 +50,12 @@ type SignalExtensions() =
         Signal.Subscription.copyTo target this
 
     [<Extension>]
+    /// Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function
+    static member SubscribeAndUpdate<'a,'b>(this : ISignal<'a>, target : IMutatable<'b>, stepFunction : Func<'b,'a,'b>) =
+        let f b a = stepFunction.Invoke(b,a)
+        Signal.Subscription.copyStep target f this
+
+    [<Extension>]
     static member Select<'a,'b> (this:ISignal<'a>, mapper:Func<'a,'b>) =
         this
         |> Signal.map mapper.Invoke 

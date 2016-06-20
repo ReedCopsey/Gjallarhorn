@@ -72,7 +72,7 @@ namespace Gjallarhorn.Linq.Tests
                 value.Value = 5;
                 Assert.AreEqual(15, sum);
             }
-
+            
             // Shouldn't impact value
             value.Value = 20;
             Assert.AreEqual(15, sum);            
@@ -96,6 +96,26 @@ namespace Gjallarhorn.Linq.Tests
             // Shouldn't impact value
             value.Value = 20;
             Assert.AreEqual(15, current.Value);
+        }
+
+        [Test]
+        public void SubscribeAndUpdateTracksSignalChanges()
+        {
+            var sum = Mutable.Create(0);
+
+            var value = Mutable.Create(0);
+
+            using (var _ = value.SubscribeAndUpdate(sum, (o,v) => o + v))
+            {
+                value.Value = 10;
+                Assert.AreEqual(10, sum.Value);
+                value.Value = 5;
+                Assert.AreEqual(15, sum.Value);
+            }
+
+            // Shouldn't impact value
+            value.Value = 20;
+            Assert.AreEqual(15, sum.Value);
         }
 
         [Test]
