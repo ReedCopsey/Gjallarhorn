@@ -51,7 +51,7 @@ module internal DisposeHelpers =
             match provider with
             | None -> ()
             | Some(v) ->
-                ((box v) :?> ITracksDependents).Untrack self
+                v.Untrack self
                 
                 if disposeProviderOnDispose then
                     disposeIfDisposable v
@@ -156,7 +156,7 @@ type SignalBase<'a>(dependencies) as self =
             GC.SuppressFinalize this
 
 type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
-    inherit SignalBase<'b>([| valueProvider :?> ITracksDependents |])
+    inherit SignalBase<'b>([| valueProvider |])
     
     let mutable lastValue = mapping valueProvider.Value
     let mutable valueProvider = Some(valueProvider)
@@ -186,7 +186,7 @@ type internal ObserveOnSignal<'a>(valueProvider : ISignal<'a>, ctx : System.Thre
     override this.Signal() = ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.SignalBase()), null)
 
 type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
-    inherit SignalBase<'c>([| valueProvider1 :?> ITracksDependents; valueProvider2 :?> ITracksDependents|])
+    inherit SignalBase<'c>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = mapping valueProvider1.Value valueProvider2.Value
     let mutable valueProvider1 = Some(valueProvider1)
@@ -213,7 +213,7 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         this |> DisposeHelpers.cleanup &valueProvider2 false 
 
 type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
-    inherit SignalBase<'a>([| valueProvider1 :?> ITracksDependents; valueProvider2 :?> ITracksDependents|])
+    inherit SignalBase<'a>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = valueProvider2.Value
     let mutable valueProvider1 = Some(valueProvider1)
@@ -239,7 +239,7 @@ type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : I
         this |> DisposeHelpers.cleanup &valueProvider2 false 
 
 type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) =
-    inherit SignalBase<'a>([| valueProvider :?> ITracksDependents; conditionProvider :?> ITracksDependents|])
+    inherit SignalBase<'a>([| valueProvider ; conditionProvider |])
 
     let mutable lastValue = if conditionProvider.Value then valueProvider.Value else initialValue
 
@@ -269,7 +269,7 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionP
         this |> DisposeHelpers.cleanup &conditionProvider false
 
 type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
-    inherit SignalBase<'a>([| valueProvider :?> ITracksDependents |])
+    inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = if filter(valueProvider.Value) then valueProvider.Value else initialValue
 
@@ -302,7 +302,7 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a
         this |> DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose 
                         
 type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
-    inherit SignalBase<'b>([| valueProvider :?> ITracksDependents |])
+    inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = 
         match filter(valueProvider.Value) with
@@ -341,7 +341,7 @@ type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b
         this |> DisposeHelpers.cleanup &valueProvider false
 
 type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
-    inherit SignalBase<'a>([| valueProvider :?> ITracksDependents |])
+    inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = valueProvider.Value
 
@@ -349,7 +349,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
     // target is GCed
     // Note: Tracking does not hold a strong reference, so disposal is not necessary still
     do 
-        (valueProvider :?> ITracksDependents).Track self
+        valueProvider.Track self
 
     // Only store a weak reference to our provider
     let handle = WeakReference<_>(valueProvider)
@@ -373,7 +373,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
     override this.OnDisposing () =
         handle
         |> WeakRef.execute (fun v ->
-            (v :?> ITracksDependents).Untrack this                    
+            v.Untrack this                    
             handle.SetTarget(Unchecked.defaultof<ISignal<'a>>))
         |> ignore   
 
@@ -424,7 +424,7 @@ open System
 open System.Collections.Generic
 
 type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) =
-    inherit SignalBase<'b>([| valueProvider :?> ITracksDependents |])
+    inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = initialValue
 

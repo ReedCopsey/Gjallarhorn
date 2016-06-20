@@ -160,15 +160,15 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
             signalAndUpdateDependencies source.Value)
 
     interface IDependencyManager<'a> with
-        member this.Add (dep: IDependent, source: ISignal<'a>) = this.Add (dep,source :?> IDependent)
+        member this.Add (dep: IDependent, source: ISignal<'a>) = this.Add (dep, source)
         member this.Subscribe (dep: IObserver<'a>, source: ISignal<'a>) =             
-            this.AddObserver (dep, source :?> IDependent)
+            this.AddObserver (dep, source)
             { 
                 new IDisposable with
-                    member __.Dispose() = this.RemoveObserver (dep, source :?> IDependent) |> ignore
+                    member __.Dispose() = this.RemoveObserver (dep, source) |> ignore
             }        
-        member this.Remove (dep: IDependent, source: ISignal<'a>) = ignore <| this.Remove (dep, source:?> IDependent)
-        member this.RemoveAll (source: ISignal<'a>) = this.RemoveAll (source:?> IDependent)
+        member this.Remove (dep: IDependent, source: ISignal<'a>) = ignore <| this.Remove (dep, source)
+        member this.RemoveAll (source: ISignal<'a>) = this.RemoveAll (source)
         member this.Signal source = this.Signal source
         member this.HasDependencies with get() = this.HasDependencies
 
@@ -203,14 +203,14 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
     static member internal AddDependency (source : ISignal<'a>, target : IDependent) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
-            dep.Add(target,source :?> IDependent))
+            dep.Add(target, source))
     static member internal Subscribe (source : ISignal<'a>, target : IObserver<'a>) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
-            dep.AddObserver (target, source :?> IDependent)
+            dep.AddObserver (target, source)
             { 
                 new IDisposable with
-                    member __.Dispose() = dep.RemoveObserver (target, source :?> IDependent) |> ignore
+                    member __.Dispose() = dep.RemoveObserver (target, source) |> ignore
             })
 
     /// Removes a dependency tracked on a given source
@@ -218,7 +218,7 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
         let removeDep () =
             match tryGet source with
             | true, dep ->
-                if not(dep.Remove(target,source :?> IDependent)) then
+                if not(dep.Remove(target, source)) then
                     remove source
             | false, _ -> ()
         lock dependencies removeDep

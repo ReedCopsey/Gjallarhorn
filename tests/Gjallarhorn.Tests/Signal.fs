@@ -296,17 +296,17 @@ let ``Signal\map10 handles subscription tracking properly`` () =
     let v9 = Mutable.create 9
     let v10 = Mutable.create 10
 
-    let depChecks = [| 
-        v1 :?> IDependent ; 
-        v2 :?> IDependent ; 
-        v3 :?> IDependent ; 
-        v4 :?> IDependent ; 
-        v5 :?> IDependent ; 
-        v6 :?> IDependent ; 
-        v7 :?> IDependent ; 
-        v8 :?> IDependent ; 
-        v9 :?> IDependent ; 
-        v10 :?> IDependent |]
+    let depChecks : Internal.IDependent [] = [| 
+        v1 ; 
+        v2 ; 
+        v3 ; 
+        v4 ; 
+        v5 ; 
+        v6 ; 
+        v7 ; 
+        v8 ; 
+        v9 ; 
+        v10 |]
 
     let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
 

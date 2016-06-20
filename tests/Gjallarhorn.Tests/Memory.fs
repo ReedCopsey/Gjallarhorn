@@ -47,8 +47,8 @@ module Memory =
         let value = Mutable.create 42
         let view = Signal.map (fun v -> v.ToString()) value
 
-        Assert.AreEqual(false,(value :?> IDependent).HasDependencies)
-        Assert.AreEqual(false, (view :?> IDependent).HasDependencies)
+        Assert.AreEqual(false, value.HasDependencies)
+        Assert.AreEqual(false, view.HasDependencies)
 
     [<Test>]
     let ``Signal\subscribe causes tracking`` () =

@@ -45,7 +45,7 @@ module Signal =
     module Subscription =
         /// Create a subscription to the changes of a signal which calls the provided function upon each change
         let create (f : 'a -> unit) (provider : ISignal<'a>) = 
-            let tracker = provider :?> ITracksDependents
+            let tracker = provider
             let rec dependent =
                 {
                     new obj() with
@@ -265,8 +265,8 @@ module Signal =
         new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
                 
     type internal ValidatorMappingSignal<'a,'b>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
-        inherit SignalBase<'b option>([| valueProvider :?> ITracksDependents |])
-        let validationDeps = Dependencies.create [| valueProvider :?> ITracksDependents |] (constant ValidationResult.Valid)
+        inherit SignalBase<'b option>([| valueProvider |])
+        let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
         let rawInput = valueProvider
 
