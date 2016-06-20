@@ -32,7 +32,7 @@ namespace Gjallarhorn.Linq.Tests
         {
             var value = Mutable.Create(42);
             var value2 = Mutable.Create("Foo");
-
+                        
             Assert.AreEqual(42, value.Value);
             Assert.AreEqual("Foo", value2.Value);
         }
@@ -84,9 +84,9 @@ namespace Gjallarhorn.Linq.Tests
             var current = Mutable.Create(0);
 
             var value = Mutable.Create(0);
-
+            
             using (var _ = value.CopyTo(current))
-            {
+            {                
                 value.Value = 10;
                 Assert.AreEqual(10, current.Value);
                 value.Value = 15;

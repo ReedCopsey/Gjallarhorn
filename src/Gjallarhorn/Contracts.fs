@@ -20,10 +20,18 @@ and
 namespace Gjallarhorn
 
 /// Core interface for signals
+/// <remarks>
+/// All signals must also inherit Internal.IDependent and Internal.ITracksDependents.
+/// </remarks>
 type ISignal<'a> =
     inherit System.IObservable<'a>
+    #if DEBUG
+    // Debug only to force impelmentation in debug, but 
+    // prevent these from showing up in C# intellisense, 
+    // improving end-user usability 
     inherit Internal.ITracksDependents
     inherit Internal.IDependent
+    #endif
 
     /// The current value of the type
     abstract member Value : 'a with get

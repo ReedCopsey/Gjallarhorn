@@ -42,12 +42,12 @@ type BoundSignal<'a>(name, source : INotifyPropertyChanged) =
         member __.Subscribe obs = value.Subscribe obs
 
     interface ITracksDependents with
-        member __.Track dep = value.Track dep
-        member __.Untrack dep = value.Untrack dep
+        member __.Track dep = (value :?> ITracksDependents).Track dep
+        member __.Untrack dep = (value :?> ITracksDependents).Untrack dep
 
     interface IDependent with
-        member __.RequestRefresh sub = value.RequestRefresh sub
-        member __.HasDependencies with get() = value.HasDependencies
+        member __.RequestRefresh sub = (value :?> IDependent).RequestRefresh sub
+        member __.HasDependencies with get() = (value :?> IDependent).HasDependencies
     interface ISignal<'a> with
         member __.Value with get() = value.Value
         
