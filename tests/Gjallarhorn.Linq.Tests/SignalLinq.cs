@@ -38,6 +38,67 @@ namespace Gjallarhorn.Linq.Tests
         }
 
         [Test]
+        public void MutableUpdateWorks()
+        {
+            var value = Mutable.Create(0);
+
+            Mutable.Update(value, o => o + 1);
+            Mutable.Update(value, o => o - 3);
+
+            Assert.AreEqual(-2, value.Value);
+        }
+
+        [Test]
+        public void MutableUpdateWorksWithCollection()
+        {
+            var value = Mutable.Create(new List<int> { 42, 54 });
+
+            Mutable.Update(value, (o => o.Concat(new[] {21, 15}).ToList()));
+
+            CollectionAssert.AreEqual(new[] {42,54,21,15}, value.Value);
+        }
+
+        [Test]
+        public void CanSubscribeToSignalChanges()
+        {
+            int sum = 0;
+
+            var value = Mutable.Create(0);
+
+            using (var _ = value.Subscribe(v => sum += v))
+            {
+                value.Value = 10;
+                Assert.AreEqual(10, sum);
+                value.Value = 5;
+                Assert.AreEqual(15, sum);
+            }
+
+            // Shouldn't impact value
+            value.Value = 20;
+            Assert.AreEqual(15, sum);            
+        }
+
+        [Test]
+        public void CopyToTracksSignalChanges()
+        {
+            var current = Mutable.Create(0);
+
+            var value = Mutable.Create(0);
+
+            using (var _ = value.CopyTo(current))
+            {
+                value.Value = 10;
+                Assert.AreEqual(10, current.Value);
+                value.Value = 15;
+                Assert.AreEqual(15, current.Value);
+            }
+
+            // Shouldn't impact value
+            value.Value = 20;
+            Assert.AreEqual(15, current.Value);
+        }
+
+        [Test]
         public void SelectWorksOffSignal()
         {
             var value = Mutable.Create(42);
