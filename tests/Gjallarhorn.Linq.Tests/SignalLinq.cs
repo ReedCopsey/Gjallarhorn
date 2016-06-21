@@ -153,7 +153,7 @@ namespace Gjallarhorn.Linq.Tests
         }
 
         [Test]
-        public async Task SelectAsyncTracksPropertly()
+        public async Task SelectAsyncTracksProperly()
         {
             var tracker = new IdleTracker(System.Threading.SynchronizationContext.Current);
 
