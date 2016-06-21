@@ -64,11 +64,6 @@ type BindingSource() as self =
     member __.AddDisposable disposable = 
         disposables.Add(disposable)
 
-    /// Adds a disposable to track from the second element of a tuple, and returns the first element.  Used with Signal subscription functions.
-    member __.AddDisposable2<'a> (tuple : 'a * System.IDisposable) = 
-        disposables.Add(snd tuple)
-        fst tuple
-
     /// Value used to notify signal that an asynchronous operation is executing, as well as schedule that operations should execute    
     member __.IdleTracker = idleTracker
 
@@ -150,6 +145,10 @@ type BindingSource() as self =
 
         [<CLIEvent>]
         member __.ErrorsChanged = errorsChanged.Publish
+
+    interface Helpers.ICompositeDisposable with
+        member __.Add d = disposables.Add d
+        member __.Remove d = disposables.Remove d
 
     interface System.IDisposable with
         member __.Dispose() = disposables.Dispose()

@@ -7,6 +7,12 @@ open Gjallarhorn.Validation
 open System
 open System.Collections.Generic
 
+type ICompositeDisposable =
+    inherit IDisposable
+
+    abstract member Add : IDisposable -> unit
+    abstract member Remove : IDisposable -> unit
+
 /// Type which allows tracking of multiple disposables at once
 type CompositeDisposable() =
     let disposables = ResizeArray<_>()
@@ -18,13 +24,17 @@ type CompositeDisposable() =
     /// Add a new disposable to this tracker
     member __.Add (disposable : IDisposable) = disposables.Add(disposable)
     /// Remove a disposable from this tracker without disposing of it
-    member __.Remove (disposable : IDisposable) = disposables.Remove(disposable)
+    member __.Remove (disposable : IDisposable) = disposables.Remove(disposable) |> ignore
 
     /// Dispose all of our tracked disposables and remove them all 
     member __.Dispose() =
         disposables
         |> Seq.iter (fun d -> d.Dispose())
         disposables.Clear()
+
+    interface ICompositeDisposable with
+        member this.Add d = this.Add d
+        member this.Remove d = this.Remove d 
 
     interface IDisposable with
         /// Dispose all of our tracked disposables and remove them all 
