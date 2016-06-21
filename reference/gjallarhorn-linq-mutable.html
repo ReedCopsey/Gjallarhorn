@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeakRef - Gjallarhorn</title>
+    <title>Mutable - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,73 +35,85 @@
 
 
 
-<h1>WeakRef</h1>
+<h1>Mutable</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Internal</span><br />
+  <span>Namespace: Gjallarhorn.Linq</span><br />
 </p>
 <div class="xmldoc">
+<p>Functions for working with Mutables from C#</p>
+
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
-            execute f wr
+          <code onmouseout="hideTip(event, '187', 187)" onmouseover="showTip(event, '187', 187)">
+            new()
           </code>
-          <div class="tip" id="110">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="187">
+            <strong>Signature:</strong> unit -&gt; Mutable<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L14-14" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '188', 188)" onmouseover="showTip(event, '188', 188)">
+            Create(value)
+          </code>
+          <div class="tip" id="188">
+            <strong>Signature:</strong> value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L17-17" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a mutable given an initial value</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
-            test f wr
+          <code onmouseout="hideTip(event, '189', 189)" onmouseover="showTip(event, '189', 189)">
+            Update(original, steppingFunction)
           </code>
-          <div class="tip" id="111">
-            <strong>Signature:</strong> f:(&#39;a -&gt; bool) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool * bool<br />
+          <div class="tip" id="189">
+            <strong>Signature:</strong> (original:IMutatable&lt;&#39;a&gt; * steppingFunction:Func&lt;&#39;a,&#39;a&gt;) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L21-21" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>Update a mutable given a stepping function</p>
 
-          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
-            toOption wr
-          </code>
-          <div class="tip" id="112">
-            <strong>Signature:</strong> wr:WeakReference&lt;&#39;?48078&gt; -&gt; &#39;?48078 option<br />
-                          <strong>Type parameters:</strong> '?48078          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L9-9" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
+
         </td>
       </tr>
     </tbody>

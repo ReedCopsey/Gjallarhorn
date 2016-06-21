@@ -54,10 +54,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             copyStep target stepFunction provider
           </code>
-          <div class="tip" id="41">
+          <div class="tip" id="42">
             <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
                           <strong>Type parameters:</strong> 'b, 'a          </div>
         </td>
@@ -74,10 +74,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
             copyTo target provider
           </code>
-          <div class="tip" id="42">
+          <div class="tip" id="43">
             <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -94,10 +94,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
             create f provider
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="44">
             <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -107,27 +107,6 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
-            fromObservable initialValue observable
-          </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt; * IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L80-80" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
-Returns signal and subscription handle</p>
 
 
         </td>

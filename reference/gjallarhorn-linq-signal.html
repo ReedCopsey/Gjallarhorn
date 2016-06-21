@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Signal - Gjallarhorn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Signal</h1>
+<p>
+  <span>Namespace: Gjallarhorn.Linq</span><br />
+</p>
+<div class="xmldoc">
+<p>Functions for working with Signals from C#</p>
+
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '192', 192)" onmouseover="showTip(event, '192', 192)">
+            new()
+          </code>
+          <div class="tip" id="192">
+            <strong>Signature:</strong> unit -&gt; Signal<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L26-26" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '193', 193)" onmouseover="showTip(event, '193', 193)">
+            Combine(...)
+          </code>
+          <div class="tip" id="193">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47623&gt; * signal2:ISignal&lt;&#39;?47624&gt; * signal3:ISignal&lt;&#39;?47625&gt; * signal4:ISignal&lt;&#39;?47626&gt; * signal5:ISignal&lt;&#39;?47627&gt; * signal6:ISignal&lt;&#39;?47628&gt; * signal7:ISignal&lt;&#39;?47629&gt; * signal8:ISignal&lt;&#39;?47630&gt; * signal9:ISignal&lt;&#39;?47631&gt; * signal10:ISignal&lt;&#39;?47632&gt; * mapping:Func&lt;&#39;?47623,&#39;?47624,&#39;?47625,&#39;?47626,&#39;?47627,&#39;?47628,&#39;?47629,&#39;?47630,&#39;?47631,&#39;?47632,&#39;?47633&gt;) -&gt; ISignal&lt;&#39;?47633&gt;<br />
+                          <strong>Type parameters:</strong> '?47623, '?47624, '?47625, '?47626, '?47627, '?47628, '?47629, '?47630, '?47631, '?47632, '?47633          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L64-64" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '194', 194)" onmouseover="showTip(event, '194', 194)">
+            Combine(...)
+          </code>
+          <div class="tip" id="194">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47612&gt; * signal2:ISignal&lt;&#39;?47613&gt; * signal3:ISignal&lt;&#39;?47614&gt; * signal4:ISignal&lt;&#39;?47615&gt; * signal5:ISignal&lt;&#39;?47616&gt; * signal6:ISignal&lt;&#39;?47617&gt; * signal7:ISignal&lt;&#39;?47618&gt; * signal8:ISignal&lt;&#39;?47619&gt; * signal9:ISignal&lt;&#39;?47620&gt; * mapping:Func&lt;&#39;?47612,&#39;?47613,&#39;?47614,&#39;?47615,&#39;?47616,&#39;?47617,&#39;?47618,&#39;?47619,&#39;?47620,&#39;?47621&gt;) -&gt; ISignal&lt;&#39;?47621&gt;<br />
+                          <strong>Type parameters:</strong> '?47612, '?47613, '?47614, '?47615, '?47616, '?47617, '?47618, '?47619, '?47620, '?47621          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L60-60" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '195', 195)" onmouseover="showTip(event, '195', 195)">
+            Combine(...)
+          </code>
+          <div class="tip" id="195">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47602&gt; * signal2:ISignal&lt;&#39;?47603&gt; * signal3:ISignal&lt;&#39;?47604&gt; * signal4:ISignal&lt;&#39;?47605&gt; * signal5:ISignal&lt;&#39;?47606&gt; * signal6:ISignal&lt;&#39;?47607&gt; * signal7:ISignal&lt;&#39;?47608&gt; * signal8:ISignal&lt;&#39;?47609&gt; * mapping:Func&lt;&#39;?47602,&#39;?47603,&#39;?47604,&#39;?47605,&#39;?47606,&#39;?47607,&#39;?47608,&#39;?47609,&#39;?47610&gt;) -&gt; ISignal&lt;&#39;?47610&gt;<br />
+                          <strong>Type parameters:</strong> '?47602, '?47603, '?47604, '?47605, '?47606, '?47607, '?47608, '?47609, '?47610          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L56-56" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '196', 196)" onmouseover="showTip(event, '196', 196)">
+            Combine(...)
+          </code>
+          <div class="tip" id="196">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47593&gt; * signal2:ISignal&lt;&#39;?47594&gt; * signal3:ISignal&lt;&#39;?47595&gt; * signal4:ISignal&lt;&#39;?47596&gt; * signal5:ISignal&lt;&#39;?47597&gt; * signal6:ISignal&lt;&#39;?47598&gt; * signal7:ISignal&lt;&#39;?47599&gt; * mapping:Func&lt;&#39;?47593,&#39;?47594,&#39;?47595,&#39;?47596,&#39;?47597,&#39;?47598,&#39;?47599,&#39;?47600&gt;) -&gt; ISignal&lt;&#39;?47600&gt;<br />
+                          <strong>Type parameters:</strong> '?47593, '?47594, '?47595, '?47596, '?47597, '?47598, '?47599, '?47600          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L52-52" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '197', 197)" onmouseover="showTip(event, '197', 197)">
+            Combine(...)
+          </code>
+          <div class="tip" id="197">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47585&gt; * signal2:ISignal&lt;&#39;?47586&gt; * signal3:ISignal&lt;&#39;?47587&gt; * signal4:ISignal&lt;&#39;?47588&gt; * signal5:ISignal&lt;&#39;?47589&gt; * signal6:ISignal&lt;&#39;?47590&gt; * mapping:Func&lt;&#39;?47585,&#39;?47586,&#39;?47587,&#39;?47588,&#39;?47589,&#39;?47590,&#39;?47591&gt;) -&gt; ISignal&lt;&#39;?47591&gt;<br />
+                          <strong>Type parameters:</strong> '?47585, '?47586, '?47587, '?47588, '?47589, '?47590, '?47591          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '198', 198)" onmouseover="showTip(event, '198', 198)">
+            Combine(...)
+          </code>
+          <div class="tip" id="198">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47578&gt; * signal2:ISignal&lt;&#39;?47579&gt; * signal3:ISignal&lt;&#39;?47580&gt; * signal4:ISignal&lt;&#39;?47581&gt; * signal5:ISignal&lt;&#39;?47582&gt; * mapping:Func&lt;&#39;?47578,&#39;?47579,&#39;?47580,&#39;?47581,&#39;?47582,&#39;?47583&gt;) -&gt; ISignal&lt;&#39;?47583&gt;<br />
+                          <strong>Type parameters:</strong> '?47578, '?47579, '?47580, '?47581, '?47582, '?47583          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L44-44" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '199', 199)" onmouseover="showTip(event, '199', 199)">
+            Combine(...)
+          </code>
+          <div class="tip" id="199">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47572&gt; * signal2:ISignal&lt;&#39;?47573&gt; * signal3:ISignal&lt;&#39;?47574&gt; * signal4:ISignal&lt;&#39;?47575&gt; * mapping:Func&lt;&#39;?47572,&#39;?47573,&#39;?47574,&#39;?47575,&#39;?47576&gt;) -&gt; ISignal&lt;&#39;?47576&gt;<br />
+                          <strong>Type parameters:</strong> '?47572, '?47573, '?47574, '?47575, '?47576          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L40-40" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '200', 200)" onmouseover="showTip(event, '200', 200)">
+            Combine(...)
+          </code>
+          <div class="tip" id="200">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47567&gt; * signal2:ISignal&lt;&#39;?47568&gt; * signal3:ISignal&lt;&#39;?47569&gt; * mapping:Func&lt;&#39;?47567,&#39;?47568,&#39;?47569,&#39;?47570&gt;) -&gt; ISignal&lt;&#39;?47570&gt;<br />
+                          <strong>Type parameters:</strong> '?47567, '?47568, '?47569, '?47570          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L36-36" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '201', 201)" onmouseover="showTip(event, '201', 201)">
+            Combine(signal1, signal2, mapping)
+          </code>
+          <div class="tip" id="201">
+            <strong>Signature:</strong> (signal1:ISignal&lt;&#39;?47563&gt; * signal2:ISignal&lt;&#39;?47564&gt; * mapping:Func&lt;&#39;?47563,&#39;?47564,&#39;?47565&gt;) -&gt; ISignal&lt;&#39;?47565&gt;<br />
+                          <strong>Type parameters:</strong> '?47563, '?47564, '?47565          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L32-32" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Combines signals using a specified mapping function</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '202', 202)" onmouseover="showTip(event, '202', 202)">
+            FromConstant(value)
+          </code>
+          <div class="tip" id="202">
+            <strong>Signature:</strong> value:&#39;a -&gt; ISignal&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Linq.fs#L28-28" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a signal (which never notifies) given a constant value</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

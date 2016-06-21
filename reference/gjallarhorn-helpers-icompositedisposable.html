@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeakRef - Gjallarhorn</title>
+    <title>ICompositeDisposable - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,33 +35,31 @@
 
 
 
-<h1>WeakRef</h1>
+<h1>ICompositeDisposable</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Internal</span><br />
+  <span>Namespace: Gjallarhorn.Helpers</span><br />
 </p>
 <div class="xmldoc">
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Instance member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
-            execute f wr
+          <code onmouseout="hideTip(event, '152', 152)" onmouseover="showTip(event, '152', 152)">
+            Add(arg1)
           </code>
-          <div class="tip" id="110">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="152">
+            <strong>Signature:</strong> IDisposable -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L14-14" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L37-37" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -71,33 +69,16 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
-            test f wr
+          <code onmouseout="hideTip(event, '153', 153)" onmouseover="showTip(event, '153', 153)">
+            Remove(arg1)
           </code>
-          <div class="tip" id="111">
-            <strong>Signature:</strong> f:(&#39;a -&gt; bool) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool * bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="153">
+            <strong>Signature:</strong> IDisposable -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L21-21" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
-            toOption wr
-          </code>
-          <div class="tip" id="112">
-            <strong>Signature:</strong> wr:WeakReference&lt;&#39;?48078&gt; -&gt; &#39;?48078 option<br />
-                          <strong>Type parameters:</strong> '?48078          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L9-9" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L38-38" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

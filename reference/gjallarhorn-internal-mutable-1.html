@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeakRef - Gjallarhorn</title>
+    <title>Mutable<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,73 +35,81 @@
 
 
 
-<h1>WeakRef</h1>
+<h1>Mutable<'a></h1>
 <p>
   <span>Namespace: Gjallarhorn.Internal</span><br />
 </p>
 <div class="xmldoc">
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
-            execute f wr
+          <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
+            new(value)
           </code>
-          <div class="tip" id="110">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="178">
+            <strong>Signature:</strong> value:&#39;a -&gt; Mutable&lt;&#39;a&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L14-14" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L104-104" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
+            Value()
+          </code>
+          <div class="tip" id="179">
+            <strong>Signature:</strong> unit -&gt; &#39;a<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L113-113" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>set_Value</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
-            test f wr
+          <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
+            Value()
           </code>
-          <div class="tip" id="111">
-            <strong>Signature:</strong> f:(&#39;a -&gt; bool) -&gt; wr:WeakReference&lt;&#39;a&gt; -&gt; bool * bool<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="180">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/CoreTypes.fs#L112-112" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
-            toOption wr
-          </code>
-          <div class="tip" id="112">
-            <strong>Signature:</strong> wr:WeakReference&lt;&#39;?48078&gt; -&gt; &#39;?48078 option<br />
-                          <strong>Type parameters:</strong> '?48078          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Dependencies.fs#L9-9" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
+              <p>CompiledName: <code>get_Value</code></p>
         </td>
       </tr>
     </tbody>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Validating Views and Mutables
+    <title>Validating Signals
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="Framework for managing mutable data with change notification and live views"/>
@@ -33,58 +33,15 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1><a name="Validating-Views-and-Mutables" class="anchor" href="#Validating-Views-and-Mutables">Validating Views and Mutables</a></h1>
-<p>Views and Mutables in Gjallarhorn also provide a mechanism to filter based on validation rules.</p>
-<p>A review of the <a href="validation.html">basics of validation in Gjallarhorn</a> prior to reading this section will be beneficial.</p>
-<p>The validation engine in Gjallarhorn can be used to validate Views and Mutables directly.</p>
-<p><code>View.validate</code> allows you to filter a view into an <code>IValidatedView&lt;'a&gt;</code>, which provides two new properties:
-- <code>ValidationResult</code>: a <code>IView&lt;ValidationResult&gt;</code> with details of the validation of the current value of the view
-- <code>IsValid</code>: a boolean of whether the current view's value is valid</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
-<span class="l">18: </span>
-<span class="l">19: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
-<span class="k">open</span> <span class="i">Gjallarhorn</span>
-<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span>
-
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
-
-<span class="c">// Create a view on the mutable, validating it with 3 rules on the fly:</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">test</span> <span class="o">=</span> <span class="i">View</span><span class="o">.</span><span class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">source</span>
-
-<span class="c">// Prints: Valid?: false</span>
-<span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
-
-<span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
-<span class="c">// Prints: Valid?: true</span>
-<span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
-
-<span onmouseout="hideTip(event, 'fs1', 9)" onmouseover="showTip(event, 'fs1', 9)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
-<span class="c">// Prints: Validation: Invalid [&quot;Value cannot equal 3&quot;]</span>
-<span onmouseout="hideTip(event, 'fs3', 10)" onmouseover="showTip(event, 'fs3', 10)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 11)" onmouseover="showTip(event, 'fs2', 11)" class="i">test</span><span class="o">.</span><span class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
-</code></pre></td>
-</tr>
-</table>
-<p>We can validate Mutables directly in a similar manner.  With a validated Mutable, represented
-as the <code>IValidatedMutatable&lt;'a&gt;</code> type, any changes set into the mutable will automatically
-be filtered, and not propogated down to the source unless the data is valid:</p>
+<h1><a name="Validating-Signals" class="anchor" href="#Validating-Signals">Validating Signals</a></h1>
+<p>Signals in Gjallarhorn also provide a mechanism to filter based on validation rules.
+A review of the <a href="validation.html">basics of validation in Gjallarhorn</a> prior to reading this section will be beneficial.</p>
+<p><code>Signal.validate</code> allows you to filter a Signal into an <code>IValidatedSignal&lt;'a,'b&gt;</code>, which provides the following new properties:</p>
+<ul>
+<li><p><code>ValidationResult</code>: a <code>ISignal&lt;ValidationResult&gt;</code> with details of the validation of the current value of the view</p></li>
+<li><p><code>IsValid</code>: a boolean of whether the current view's value is valid</p></li>
+<li><p><code>RawInput</code>: a <code>ISignal&lt;'a&gt;</code> with the raw, unvalidated input</p></li>
+</ul>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -108,30 +65,32 @@ be filtered, and not propogated down to the source unless the data is valid:</p>
 <span class="l">21: </span>
 <span class="l">22: </span>
 <span class="l">23: </span>
+<span class="l">24: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 12)" onmouseover="showTip(event, 'fs1', 12)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
 
-<span class="c">// This time, create a mutable with validation</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="i">editor</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs1', 14)" onmouseover="showTip(event, 'fs1', 14)" class="i">source</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
+
+<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span><span class="o">.</span><span class="i">Validators</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="c">// Create a Signal on the mutable, validating it with 3 rules on the fly:</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">test</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">validate</span> (<span class="i">notEqual</span> <span class="n">3</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">greaterThan</span> <span class="n">1</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">lessThan</span> <span class="n">5</span>) <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">source</span>
 
 <span class="c">// Prints: Valid?: false</span>
-<span onmouseout="hideTip(event, 'fs3', 15)" onmouseover="showTip(event, 'fs3', 15)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 16)" onmouseover="showTip(event, 'fs4', 16)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 <span class="c">// Prints: Valid?: true</span>
-<span onmouseout="hideTip(event, 'fs3', 18)" onmouseover="showTip(event, 'fs3', 18)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 19)" onmouseover="showTip(event, 'fs4', 19)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="f">printfn</span> <span class="s">&quot;Valid?: </span><span class="pf">%b</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">test</span><span class="o">.</span><span class="i">IsValid</span>
 
-<span onmouseout="hideTip(event, 'fs4', 20)" onmouseover="showTip(event, 'fs4', 20)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
+<span onmouseout="hideTip(event, 'fs1', 9)" onmouseover="showTip(event, 'fs1', 9)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
 <span class="c">// Prints: Validation: Invalid [&quot;Value cannot equal 3&quot;]</span>
-<span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="i">editor</span><span class="o">.</span><span class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
-
-<span class="c">// Note that we&#39;re currently not valid, but we set the editor.  Source will not have this change:</span>
-<span class="c">// Prints: Source = 2, Editor = 3</span>
-<span onmouseout="hideTip(event, 'fs3', 23)" onmouseover="showTip(event, 'fs3', 23)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 24)" onmouseover="showTip(event, 'fs1', 24)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 25)" onmouseover="showTip(event, 'fs4', 25)" class="i">editor</span><span class="o">.</span><span class="i">Value</span>
-
-<span onmouseout="hideTip(event, 'fs4', 26)" onmouseover="showTip(event, 'fs4', 26)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">4</span>
-<span class="c">// Prints: Source = 4, Editor = 4 [true]</span>
-<span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="f">printfn</span> <span class="s">&quot;Source = </span><span class="pf">%d</span><span class="s">, Editor = </span><span class="pf">%d</span><span class="s"> [</span><span class="pf">%b</span><span class="s">]&quot;</span> <span onmouseout="hideTip(event, 'fs1', 28)" onmouseover="showTip(event, 'fs1', 28)" class="i">source</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 29)" onmouseover="showTip(event, 'fs4', 29)" class="i">editor</span><span class="o">.</span><span class="i">Value</span> <span onmouseout="hideTip(event, 'fs4', 30)" onmouseover="showTip(event, 'fs4', 30)" class="i">editor</span><span class="o">.</span><span class="i">IsValid</span>
+<span onmouseout="hideTip(event, 'fs3', 10)" onmouseover="showTip(event, 'fs3', 10)" class="f">printfn</span> <span class="s">&quot;Validation: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 11)" onmouseover="showTip(event, 'fs2', 11)" class="i">test</span><span class="o">.</span><span class="i">ValidationResult</span><span class="o">.</span><span class="i">Value</span>
+<span class="c">// Prints: Raw (unvalidated) input: 3</span>
+<span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="f">printfn</span> <span class="s">&quot;Raw (unvalidated) input: </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs2', 13)" onmouseover="showTip(event, 'fs2', 13)" class="i">test</span><span class="o">.</span><span class="i">RawInput</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -139,7 +98,6 @@ be filtered, and not propogated down to the source unless the data is valid:</p>
 <div class="tip" id="fs1">val source : obj<br /><br />Full name: Validate_types.source</div>
 <div class="tip" id="fs2">val test : obj<br /><br />Full name: Validate_types.test</div>
 <div class="tip" id="fs3">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs4">val editor : obj<br /><br />Full name: Validate_types.editor</div>
 
         </div>
         <div class="span3">

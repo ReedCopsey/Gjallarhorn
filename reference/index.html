@@ -55,7 +55,10 @@
           <td class="type-name">
             <a href="gjallarhorn-isignal-1.html">ISignal<'a></a>
           </td>
-          <td class="xmldoc"><p>Core interface for signals</p>
+          <td class="xmldoc"><p>Core interface for signals
+<remarks>
+All signals must also inherit Internal.IDependent and Internal.ITracksDependents.
+</remarks></p>
 
 </td>
         </tr>
@@ -192,6 +195,12 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-helpers-icompositedisposable.html">ICompositeDisposable</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-helpers-idletracker.html">IdleTracker</a>
           </td>
           <td class="xmldoc"><p>Type which tracks execution, used for tracked async operations
@@ -308,6 +317,12 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-internal-mutable-1.html">Mutable<'a></a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-internal-signalbase-1.html">SignalBase<'a></a>
           </td>
           <td class="xmldoc"><p>Base class which simplifies implementation of standard signals</p>
@@ -334,6 +349,49 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
             <a href="gjallarhorn-internal-weakref.html">WeakRef</a>
           </td>
           <td class="xmldoc"></td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Linq Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-mutable.html">Mutable</a>
+          </td>
+          <td class="xmldoc"><p>Functions for working with Mutables from C#</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-observableextensions.html">ObservableExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extension methods for working with Observables from C# using a LINQ inspired API</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-signal.html">Signal</a>
+          </td>
+          <td class="xmldoc"><p>Functions for working with Signals from C#</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-signalextensions.html">SignalExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extension methods for working with Signals from C# using a LINQ inspired API</p>
+
+</td>
         </tr>
     </tbody>
   </table>
