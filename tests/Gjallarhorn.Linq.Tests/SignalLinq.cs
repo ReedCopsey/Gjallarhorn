@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using Gjallarhorn;
 using Gjallarhorn.Linq;
+using Gjallarhorn.Helpers;
 
 namespace Gjallarhorn.Linq.Tests
 {
@@ -126,6 +127,59 @@ namespace Gjallarhorn.Linq.Tests
 
             Assert.AreEqual(42, value.Value);
             Assert.AreEqual("44", mapped.Value);
+        }
+        
+        [Test]
+        public async Task SelectAsyncWorksOffSignal()
+        {
+            var value = Mutable.Create(0);
+
+            var mapped = value.SelectAsync(
+                2, 
+                async v => {
+                    await Task.Delay(20);
+                    return v + 2;
+                });
+
+            value.Value = 2;
+            Assert.AreEqual(2, value.Value);
+            // Mapped should be 2 immediately after setting
+            Assert.AreEqual(2, mapped.Value);
+
+            // Mapped should get updated async while this blocks
+            await Task.Delay(50);
+            Assert.AreEqual(2, value.Value);
+            Assert.AreEqual(4, mapped.Value);
+        }
+
+        [Test]
+        public async Task SelectAsyncTracksPropertly()
+        {
+            var tracker = new IdleTracker(System.Threading.SynchronizationContext.Current);
+
+            var value = Mutable.Create(0);
+
+            var mapped = value.SelectAsync(
+                2,
+                tracker,
+                async v => {
+                    await Task.Delay(30);
+                    return v + 2;
+                });
+
+            Assert.IsTrue(tracker.Value);
+            value.Value = 2;
+
+            Assert.AreEqual(2, value.Value);
+            // Mapped should be 2 immediately after setting
+            Assert.AreEqual(2, mapped.Value);
+            Assert.IsFalse(tracker.Value);
+
+            // Mapped should get updated async while this blocks
+            await Task.Delay(50);
+            Assert.IsTrue(tracker.Value);
+            Assert.AreEqual(2, value.Value);
+            Assert.AreEqual(4, mapped.Value);
         }
 
         [Test]

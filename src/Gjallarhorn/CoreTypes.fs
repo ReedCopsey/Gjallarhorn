@@ -410,7 +410,10 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
         handle
 
     member private __.SignalBase() = base.Signal()
-    override this.Signal() = ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.SignalBase()), null)
+    override this.Signal() = 
+        match ctx with
+        | null -> this.SignalBase()
+        | _ -> ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.SignalBase()), null)
 
     override __.Value with get() = lock handles (fun _ -> handles.Count = 0)
     override __.RequestRefresh _ = ()
@@ -423,10 +426,15 @@ open Gjallarhorn.Helpers
 open System
 open System.Collections.Generic
 
-type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) =
+type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as self =
     inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = initialValue
+
+    do
+        // We need to subscribe to changes immediately here,
+        // Since this acts like a cache
+        (valueProvider :> Internal.ITracksDependents).Track self
 
     let mutable valueProvider = Some(valueProvider)    
     let ctx = System.Threading.SynchronizationContext.Current
@@ -437,24 +445,25 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
 
         let exec =             
             async {
-                use _execHandle = 
-                    match tracker with
-                    | None ->
-                        { new IDisposable with
-                            member __.Dispose() = ()
-                        }
-                    | Some tracker ->
-                        tracker.GetExecutionHandle()                
+                let _execHandle = 
+                    tracker 
+                    |> Option.map (fun t -> t.GetExecutionHandle()) 
+                let releaseHandle () =
+                    _execHandle |> Option.iter (fun h -> h.Dispose())
+                    
                 let! result = mapFn(inputValue)
 
                 if not <| EqualityComparer<_>.Default.Equals(lastValue, result) then    
                     if (ctx <> null) then
                         do! Async.SwitchToContext ctx
+                    releaseHandle()
                     lastValue <- result
                     this.Signal ()    
+                else
+                    releaseHandle()
             }
         
-        Async.Start(exec, defaultArg cancellationToken System.Threading.CancellationToken.None )    
+        Async.StartImmediate(exec, defaultArg cancellationToken System.Threading.CancellationToken.None )
 
     override __.Value with get() = lastValue
 
