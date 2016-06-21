@@ -9,6 +9,7 @@ It is designed and written in F#, and has the following goals:
 * Provide a functional API for working with the resulting data
 * Integrating with other reactive systems, such as FSharp.Control.Reactive
 * Adapt easily to INotifyPropertyChanged and similar mechanisms for notification of changes
+* Provide basis for UI related architectural patterns and frameworks 
 
-Documentation: http://ReedCopsey.github.io/Gjallarhorn
+Documentation at: [http://ReedCopsey.github.io/Gjallarhorn](http://ReedCopsey.github.io/Gjallarhorn)
 
