@@ -72,24 +72,28 @@ let ``Signal\fromObservable tracks changes in values`` start finish =
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
 let ``Signal\fromObservable will allow observable to GC when signal GCs`` start finish =
-    let mutable evt = Some (Event<_>())
+    let mutable obs = Some (Mutable.create start)
     
-    let wr = WeakReference(evt.Value)
-    let mutable signal = Some(Signal.fromObservable start evt.Value.Publish)
+    let wr = WeakReference(obs.Value)
+    let mutable signal = Some(Signal.fromObservable start obs.Value)
     Assert.AreEqual(box start, signal.Value.Value)
 
-    evt.Value.Trigger finish
+    obs.Value.Value <- finish
     Assert.AreEqual(box finish, signal.Value.Value)    
 
-    evt <- None
+    obs <- None
 
     GC.Collect()
     // Check that we're alive
     Assert.IsTrue(wr.IsAlive)
     
+    // Required to keep optimizer from cleaning us up :)
+    GC.KeepAlive(signal.Value)
     signal <- None
     GC.Collect()
     Assert.IsFalse(wr.IsAlive)
+
+    GC.KeepAlive(obs)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
 let ``Signal\fromObservable will allow observable to GC on Dispose`` start finish =
