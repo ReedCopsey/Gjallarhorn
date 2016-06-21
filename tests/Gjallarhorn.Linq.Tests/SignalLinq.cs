@@ -269,5 +269,20 @@ namespace Gjallarhorn.Linq.Tests
             Assert.AreEqual(55, value.Value);
             Assert.AreEqual("Bar55", mapped.Value);
         }
+
+        [Test]
+        public void ObservableToSignalPropogatesChanges()
+        {
+            var value = Mutable.Create(42);
+            IObservable<int> obs = value;
+
+            var signal = obs.ToSignal(0);
+            Assert.AreEqual(42, value.Value);
+            Assert.AreEqual(0, signal.Value);
+
+            value.Value = 24;
+            Assert.AreEqual(24, value.Value);
+            Assert.AreEqual(24, signal.Value);
+        }
     }
 }

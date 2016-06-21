@@ -96,3 +96,11 @@ type SignalExtensions() =
     static member SelectMany<'a,'b,'c>(this:ISignal<'a>, mapper:Func<'a,ISignal<'b>>, selector:Func<'a,'b,'c>) : ISignal<'c> =
         let b' = mapper.Invoke(this.Value)
         Signal.map2 (fun a b -> selector.Invoke(a,b)) this b'
+
+/// Extension methods for working with Observables from C# using a LINQ inspired API    
+[<AbstractClass;Sealed;Extension>]
+type ObservableExtensions() =
+    [<Extension>]
+    /// Convert from an observable and an initial value to a signal
+    static member ToSignal<'a>(this:IObservable<'a>, initialValue:'a) =
+        Signal.fromObservable initialValue this
