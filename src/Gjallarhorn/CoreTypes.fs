@@ -155,6 +155,83 @@ type SignalBase<'a>(dependencies) as self =
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
+#nowarn "40"
+
+/// Type to wrap in observable into a signal.
+type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialValue) as self =
+    let dependencies = Dependencies.create [| |] self
+    let mutable lastValue = initialValue
+
+    // Wrap this in an option so we can stop referencing it on disposal
+    let mutable valueProvider = Some valueProvider
+
+    // Create a weak subscription to the observable to update us.
+    // This is used until we get a subscriber that tracks us, in which case we switch to a strong
+    // subscription
+    static let subscribeWeak (t: ObservableToSignal<'a>) (obs : IObservable<'a>) =
+        let reference = WeakReference(t)
+        let onNext (target : ObservableToSignal<'a>) value =
+            if not target.HasDependencies then // Only update if there isn't a "strong" subscriber
+                target.UpdateValue value
+        let rec sub : IDisposable =
+            obs.Subscribe ( fun v ->
+                let target = reference.Target
+                match target with
+                | null -> sub.Dispose()
+                | t -> 
+                    onNext (unbox t) v)
+        sub    
+
+    let weakSubscription = subscribeWeak self valueProvider.Value    
+    let mutable signalGuard = false
+
+    /// Signals to dependencies that we have updated
+    member this.Signal () = 
+        if not signalGuard then
+            signalGuard <- true
+            dependencies.Signal this |> ignore
+            signalGuard <- false
+    
+    member private this.UpdateValue v = 
+        if not <| EqualityComparer<'a>.Default.Equals(lastValue, v) then
+            lastValue <- v
+            this.Signal()
+
+    /// Gets the current value
+    member __.Value with get () = lastValue
+
+    /// Notifies us that we need to refresh our value
+    member __.RequestRefresh _ = ()
+
+    /// Default implementations work off single set of dependenices
+    member __.HasDependencies with get() = dependencies.HasDependencies
+
+    override this.Finalize() =
+        (this :> IDisposable).Dispose()        
+
+    interface ISignal<'a> with
+        member this.Value with get() = this.Value
+
+    interface IDependent with
+        member this.RequestRefresh obj = this.RequestRefresh obj
+        member this.HasDependencies with get() = this.HasDependencies
+
+    interface IObservable<'a> with
+        member this.Subscribe obs = dependencies.Subscribe (obs,this)
+
+    interface ITracksDependents with
+        member this.Track dep = 
+            dependencies.Add (dep,this)            
+        member this.Untrack dep = 
+            dependencies.Remove (dep,this)            
+
+    interface IDisposable with
+        member this.Dispose () =            
+            dependencies.RemoveAll this
+            weakSubscription.Dispose()            
+            valueProvider <- None
+            GC.SuppressFinalize this
+
 type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
     inherit SignalBase<'b>([| valueProvider |])
     

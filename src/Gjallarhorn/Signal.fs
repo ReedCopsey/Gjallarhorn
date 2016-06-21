@@ -75,13 +75,9 @@ module Signal =
             update()        
             create (fun _ -> update()) provider
 
-        /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.
-        /// Returns signal and subscription handle
-        let fromObservable initialValue (observable : IObservable<'a>) =
-            let value = Mutable.create initialValue        
-            let disposable = observable.Subscribe (fun v -> value.Value <- v)        
-            value :> ISignal<'a> , disposable
-
+    /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.    
+    let fromObservable initialValue (observable : IObservable<'a>) =
+        new ObservableToSignal<'a>(observable, initialValue) :> ISignal<'a> 
         
     /// Gets the current value associated with the signal
     let get (signal : ISignal<'a>) = 

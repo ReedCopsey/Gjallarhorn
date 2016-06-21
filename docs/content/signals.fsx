@@ -133,8 +133,7 @@ let e = Event<int>()
 let observable = e.Publish
 
 // Subscribe to the observable, with "0" as the initial value (since we always need a "current value")
-// Note that this returns a tuple of an ISignal<'a> and an IDisposable, which can be used to unsubscribe from the observable
-let s, disp = Signal.Subscription.fromObservable 0 observable
+let s = Signal.fromObservable 0 observable
 
 // Prints: "Signal's value = 0"
 printfn "Signal's value = %d" s.Value

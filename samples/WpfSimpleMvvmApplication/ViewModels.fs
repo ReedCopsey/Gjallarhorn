@@ -46,9 +46,7 @@ module VM =
             |> Observable.filter (fun v -> v <> source.Value)
 
         // We're storing the last "good" name from the user. Initializes using input value
-        let lastGoodName = 
-            Signal.Subscription.fromObservable source.Value userChanges
-            |> bindingSource.AddDisposable2
+        let lastGoodName = Signal.fromObservable source.Value userChanges            
 
         // Create a "toggle" which we can use to toggle whether to push automatically to the backend
         // and bind it directly and push changes back to the input mutable

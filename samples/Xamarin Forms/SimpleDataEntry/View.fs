@@ -21,7 +21,7 @@ module VM =
         let source = Binding.createSource()                        
 
         // Take our initial + observable and turn it into a signal
-        let current = source.ObservableToSignal(initialValue, updateStream)
+        let current = Signal.fromObservable initialValue updateStream
         
         // Output it to the view
         Binding.toView source "Current" current

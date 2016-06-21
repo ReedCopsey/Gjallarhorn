@@ -87,11 +87,6 @@ type BindingSource() as self =
     /// Trigger the PropertyChanged event for a specific property
     member __.RaisePropertyChanged name = raisePropertyChanged name
     
-    /// Map an initial value and observable to a signal, and track the subscription as part of this source's lifetime
-    member this.ObservableToSignal<'a> (initial : 'a, obs: System.IObservable<'a>) =            
-        Signal.Subscription.fromObservable initial obs
-        |> this.AddDisposable2            
-
     /// Track changes on an observable to raise property changed events
     member this.TrackObservable<'a> (name : string, observable : IObservable<'a>) =
         observable
