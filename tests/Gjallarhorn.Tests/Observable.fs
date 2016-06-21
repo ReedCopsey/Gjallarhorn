@@ -60,7 +60,7 @@ let ``Signal\fromObservable initializes properly`` start =
     Assert.AreEqual(box start, signal.Value)    
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
-let ``Signal\Subscription\fromObservable tracks changes in values`` start finish =
+let ``Signal\fromObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish
 
@@ -69,3 +69,47 @@ let ``Signal\Subscription\fromObservable tracks changes in values`` start finish
 
     evt.Trigger finish
     Assert.AreEqual(box finish, signal.Value)    
+
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``Signal\fromObservable will allow observable to GC when signal GCs`` start finish =
+    let mutable evt = Some (Event<_>())
+    
+    let wr = WeakReference(evt.Value)
+    let mutable signal = Some(Signal.fromObservable start evt.Value.Publish)
+    Assert.AreEqual(box start, signal.Value.Value)
+
+    evt.Value.Trigger finish
+    Assert.AreEqual(box finish, signal.Value.Value)    
+
+    evt <- None
+
+    GC.Collect()
+    // Check that we're alive
+    Assert.IsTrue(wr.IsAlive)
+    
+    signal <- None
+    GC.Collect()
+    Assert.IsFalse(wr.IsAlive)
+
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``Signal\fromObservable will allow observable to GC on Dispose`` start finish =
+    let mutable evt = Some (Event<_>())
+    
+    let wr = WeakReference(evt.Value)
+    let signal = Signal.fromObservable start evt.Value.Publish
+    Assert.AreEqual(box start, signal.Value)
+
+    evt.Value.Trigger finish
+    Assert.AreEqual(box finish, signal.Value)    
+
+    evt <- None
+
+    GC.Collect()
+    // Check that we're alive
+    Assert.IsTrue(wr.IsAlive)
+    
+    // Dispose of us
+    (box signal :?> IDisposable).Dispose()
+    GC.Collect()
+    Assert.IsFalse(wr.IsAlive)
+

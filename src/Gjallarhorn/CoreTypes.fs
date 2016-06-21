@@ -165,8 +165,6 @@ type SignalBase<'a>(dependencies) as self =
             dependencies.RemoveAll this
             GC.SuppressFinalize this
 
-#nowarn "40"
-
 /// Type to wrap in observable into a signal.
 type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialValue) as self =
     let dependencies = Dependencies.create [| |] self
@@ -180,20 +178,22 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
     // subscription
     static let subscribeWeak (t: ObservableToSignal<'a>) (obs : IObservable<'a>) =
         let reference = WeakReference(t)
-        let onNext (target : ObservableToSignal<'a>) value =
-            if not target.HasDependencies then // Only update if there isn't a "strong" subscriber
-                target.UpdateValue value
-        let rec sub : IDisposable =
+        let mutable sub : IDisposable = null
+        sub <-
             obs.Subscribe ( fun v ->
                 let target = reference.Target
                 match target with
                 | null -> sub.Dispose()
                 | t -> 
-                    onNext (unbox t) v)
+                    ObservableToSignal.SubscriptionOnNext (unbox t) v )
         sub    
 
-    let weakSubscription = subscribeWeak self valueProvider.Value    
+    let mutable weakSubscription = subscribeWeak self valueProvider.Value    
     let mutable signalGuard = false
+
+    static member SubscriptionOnNext (target : ObservableToSignal<'a>) value =
+        if not target.HasDependencies then // Only update if there isn't a "strong" subscriber
+            target.UpdateValue value
 
     /// Signals to dependencies that we have updated
     member this.Signal () = 
@@ -239,6 +239,7 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
         member this.Dispose () =            
             dependencies.RemoveAll this
             weakSubscription.Dispose()            
+            weakSubscription <- null
             valueProvider <- None
             GC.SuppressFinalize this
 
