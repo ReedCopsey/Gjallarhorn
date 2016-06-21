@@ -82,7 +82,7 @@ let ``Signal\map2 constructs from mutables`` start1 start2 finish =
 
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
-let ``View updates with mutable`` start initialView finish finalView =
+let ``Signal updates with mutable`` start initialView finish finalView =
   let result = Mutable.create start
   let view = Signal.map (fun i -> i.ToString()) result
 
@@ -92,7 +92,7 @@ let ``View updates with mutable`` start initialView finish finalView =
   Assert.AreEqual(view.Value, finalView)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesPairStartEndToStringPairs")>]
-let ``View2 updates from mutables`` start1 start2 startResult finish1 finish2 finishResult =
+let ``Signal\map2 updates from mutables`` start1 start2 startResult finish1 finish2 finishResult =
     let v1 = Mutable.create start1
     let v2 = Mutable.create start2
     let view = Signal.map2 (fun i j -> i.ToString() + "," + j.ToString()) v1 v2
@@ -106,7 +106,7 @@ let ``View2 updates from mutables`` start1 start2 startResult finish1 finish2 fi
 
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEndToStringPairs")>]
-let ``View updates with view`` start initialView finish finalView =
+let ``Signal updates with signal`` start initialView finish finalView =
     // Create a mutable value
     let result = Mutable.create start
     

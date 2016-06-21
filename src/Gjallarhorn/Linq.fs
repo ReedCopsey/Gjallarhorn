@@ -28,6 +28,42 @@ type Signal() =
     static member FromConstant<'a> (value : 'a) =
         Signal.constant value
 
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, mapping:Func<_,_,_>) =
+        Signal.map2 (mapping.ToFSharpFunc()) signal1 signal2
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, mapping:Func<_,_,_,_>) =
+        Signal.map3 (mapping.ToFSharpFunc()) signal1 signal2 signal3
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, mapping:Func<_,_,_,_,_>) =
+        Signal.map4 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, mapping:Func<_,_,_,_,_,_>) =
+        Signal.map5 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, signal6, mapping:Func<_,_,_,_,_,_,_>) =
+        Signal.map6 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5 signal6
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, signal6, signal7, mapping:Func<_,_,_,_,_,_,_,_>) =
+        Signal.map7 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5 signal6 signal7
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, signal6, signal7, signal8, mapping:Func<_,_,_,_,_,_,_,_,_>) =
+        Signal.map8 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5 signal6 signal7 signal8
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, signal6, signal7, signal8, signal9, mapping:Func<_,_,_,_,_,_,_,_,_,_>) =
+        Signal.map9 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5 signal6 signal7 signal8 signal9
+
+    /// Combines signals using a specified mapping function
+    static member Combine (signal1, signal2, signal3, signal4, signal5, signal6, signal7, signal8, signal9, signal10, mapping:Func<_,_,_,_,_,_,_,_,_,_,_>) =
+        Signal.map10 (mapping.ToFSharpFunc()) signal1 signal2 signal3 signal4 signal5 signal6 signal7 signal8 signal9 signal10
+
 /// Extension methods for working with Signals from C# using a LINQ inspired API    
 [<AbstractClass;Sealed;Extension>]
 type SignalExtensions() =
@@ -53,7 +89,7 @@ type SignalExtensions() =
     [<Extension>]
     /// Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function
     static member SubscribeAndUpdate<'a,'b>(this : ISignal<'a>, target : IMutatable<'b>, stepFunction : Func<'b,'a,'b>) =
-        let f b a = stepFunction.Invoke(b,a)
+        let f = stepFunction.ToFSharpFunc()
         Signal.Subscription.copyStep target f this
 
     // TODO: port fromObservable
@@ -62,7 +98,7 @@ type SignalExtensions() =
     /// Perform a mapping from one signal to another
     static member Select<'a,'b> (this:ISignal<'a>, mapper:Func<'a,'b>) =
         this
-        |> Signal.map mapper.Invoke 
+        |> Signal.map (mapper.ToFSharpFunc())
 
     [<Extension>]
     /// Perform an asynchronous mapping from one signal to another

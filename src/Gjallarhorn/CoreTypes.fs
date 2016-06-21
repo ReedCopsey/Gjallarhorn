@@ -6,6 +6,30 @@ open Gjallarhorn.Validation
 
 open System
 open System.Collections.Generic
+open System.Runtime.CompilerServices
+
+[<Extension>]
+type internal FSharpFuncExtensions = 
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b> (func:System.Func<'a,'b>) = fun a -> func.Invoke(a)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c> (func:System.Func<'a,'b,'c>) = fun a b -> func.Invoke(a,b)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d> (func:System.Func<'a,'b,'c,'d>) = fun a b c -> func.Invoke(a,b,c)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e> (func:System.Func<'a,'b,'c,'d,'e>) = fun a b c d -> func.Invoke(a,b,c,d)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f> (func:System.Func<'a,'b,'c,'d,'e,'f>) = fun a b c d e -> func.Invoke(a,b,c,d,e)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g> (func:System.Func<'a,'b,'c,'d,'e,'f,'g>) = fun a b c d e f -> func.Invoke(a,b,c,d,e,f)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g,'h> (func:System.Func<'a,'b,'c,'d,'e,'f,'g,'h>) = fun a b c d e f g -> func.Invoke(a,b,c,d,e,f,g)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g,'h,'i> (func:System.Func<'a,'b,'c,'d,'e,'f,'g,'h,'i>) = fun a b c d e f g h -> func.Invoke(a,b,c,d,e,f,g,h)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j> (func:System.Func<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j>) = fun a b c d e f g h i -> func.Invoke(a,b,c,d,e,f,g,h,i)
+    [<Extension>] 
+    static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k> (func:System.Func<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k>) = fun a b c d e f g h i j -> func.Invoke(a,b,c,d,e,f,g,h,i,j)
 
 type ICompositeDisposable =
     inherit IDisposable

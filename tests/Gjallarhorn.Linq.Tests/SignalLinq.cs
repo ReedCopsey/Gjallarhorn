@@ -284,5 +284,27 @@ namespace Gjallarhorn.Linq.Tests
             Assert.AreEqual(24, value.Value);
             Assert.AreEqual(24, signal.Value);
         }
+
+        [Test]
+        public void SignalCombinePropogatesSuccessfully()
+        {
+            var v1 = Mutable.Create(1);
+            var v2 = Mutable.Create(2L);
+            var v3 = Mutable.Create(3.0);
+            var v4 = Mutable.Create("4");
+            var v5 = Mutable.Create(5);
+            
+            var signal = Signal.Combine(
+                            v1, 
+                            v2, 
+                            v3, 
+                            v4, 
+                            v5, 
+                            (a, b, c, d, e) => $"{a},{b},{c:N6},{d},{e}" );
+
+            Assert.AreEqual("1,2,3.000000,4,5", signal.Value);
+            v3.Value = 8;
+            Assert.AreEqual("1,2,8.000000,4,5", signal.Value);
+        }
     }
 }
