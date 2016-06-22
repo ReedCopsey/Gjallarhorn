@@ -41,7 +41,3 @@ type App() as self =
 
     do         
         self.MainPage <- page
-
-    override __.OnStart() = ()
-    override __.OnSleep() = ()
-    override __.OnResume() = ()
