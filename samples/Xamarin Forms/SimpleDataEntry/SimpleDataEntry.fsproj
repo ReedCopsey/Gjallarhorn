@@ -44,6 +44,7 @@
     <EmbeddedResource Include="Editor.xaml" />
     <EmbeddedResource Include="Reporter.xaml" />
     <EmbeddedResource Include="Page1.xaml" />
+    <Compile Include="BindingContexts.fs" />
     <Compile Include="View.fs" />
   </ItemGroup>
   <ItemGroup>
