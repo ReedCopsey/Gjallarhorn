@@ -161,6 +161,49 @@ type SignalExtensions() =
         this
         |> Signal.filterBy filter this.Value
 
+    [<Extension>]
+    /// Merges two signals into a single signal.  The value from the second signal is used as the initial value of the result
+    static member Merge<'a> (this:ISignal<'a>, other:ISignal<'a>) =
+        this
+        |> Signal.merge other
+
+    [<Extension>]
+    /// Creates a signal on two values that is true if both inputs are equal
+    static member Equal<'a when 'a : equality> (this:ISignal<'a>, other:ISignal<'a>) =
+        this
+        |> Signal.equal other
+
+    [<Extension>]
+    /// Creates a signal on two values that is true if both inputs are not equal
+    static member NotEqual<'a when 'a : equality> (this:ISignal<'a>, other:ISignal<'a>) =
+        this
+        |> Signal.notEqual other
+
+    [<Extension>]
+    /// Creates a signal over a bool value that negates the input
+    static member Not (this:ISignal<bool>) =
+        this
+        |> Signal.not
+
+    [<Extension>]
+    /// Creates a signal on two bools that is true if both inputs are true
+    static member And (this:ISignal<bool>, other:ISignal<bool>) =
+        this
+        |> Signal.both other
+
+    [<Extension>]
+    /// Creates a signal on two bools that is true if either input is true
+    static member Or (this:ISignal<bool>, other:ISignal<bool>) =
+        this
+        |> Signal.either other
+
+    [<Extension>]
+    /// Creates a signal that schedules on a synchronization context
+    static member ObserveOn<'a> (this:ISignal<'a>, context) =
+        this
+        |> Signal.observeOn context
+
+
 /// Extension methods for working with Observables from C# using a LINQ inspired API    
 [<AbstractClass;Sealed;Extension>]
 type ObservableExtensions() =
