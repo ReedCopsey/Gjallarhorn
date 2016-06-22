@@ -147,6 +147,20 @@ type SignalExtensions() =
         this
         |> Signal.filter (filter.ToFSharpFunc()) defaultValue
 
+    [<Extension>]
+    /// Filters the signal by using a separate bool signal
+    /// If the condition's Value is initially false, the resulting signal begins with the provided defaultValue.
+    static member When<'a> (this:ISignal<'a>, filter:ISignal<bool>, defaultValue) =
+        this
+        |> Signal.filterBy filter defaultValue
+
+    [<Extension>]
+    /// Filters the signal by using a separate bool signal
+    /// The resulting signal always begins with the input value.
+    static member When<'a> (this:ISignal<'a>, filter:ISignal<bool>) =
+        this
+        |> Signal.filterBy filter this.Value
+
 /// Extension methods for working with Observables from C# using a LINQ inspired API    
 [<AbstractClass;Sealed;Extension>]
 type ObservableExtensions() =

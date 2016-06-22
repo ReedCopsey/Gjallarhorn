@@ -225,7 +225,7 @@ module Signal =
     /// Filters the signal by using a separate bool signal
     /// If the condition's Value is initially false, the resulting signal begins with the provided defaultValue.
     let filterBy condition defaultValue input =
-        new IfSignal<_>(input, defaultValue, condition) :> IObservable<_>
+        new IfSignal<_>(input, defaultValue, condition) :> ISignal<_>
 
     /// Returns a signal which is the projection of the input signal using the given function. All observations which return Some
     /// get mapped into the new value.  The defaultValue is used if the input signal's value returns None in the projection

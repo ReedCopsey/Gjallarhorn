@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -326,6 +327,30 @@ namespace Gjallarhorn.Linq.Tests
             m.Value = 7;
             Assert.AreEqual(70, s.Value);
             Assert.AreEqual(70, s2.Value);
+        }
+
+        [Test]
+        public void SignalWhenFiltersProperly()
+        {
+            var guard = Mutable.Create(true);
+
+            var input = Mutable.Create(0);
+
+            var output = input.When(guard);
+
+            Assert.AreEqual(0, output.Value);
+
+            input.Value = 1;
+            Assert.AreEqual(1, output.Value);
+
+            // Set guard to false will prevent updates
+            guard.Value = false;
+            input.Value = 2;
+            Assert.AreEqual(1, output.Value);
+
+            // Set guard to true will update
+            guard.Value = true;
+            Assert.AreEqual(2, output.Value);
         }
     }
 }
