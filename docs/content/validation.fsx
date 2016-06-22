@@ -99,7 +99,7 @@ printfn "James is valid: %A" (customValidation "James")
 
 (**
 
-Now that we've seen how to do basic validation, we'll extend this into [Validating Views and Mutables](validate_types.html)
+Now that we've seen how to do basic validation, we'll extend this into [Validating Signals](validate_types.html)
 
 *)
 
