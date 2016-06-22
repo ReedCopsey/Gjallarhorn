@@ -9,6 +9,19 @@ open Gjallarhorn
 open Gjallarhorn.Bindable
 open Gjallarhorn.Validation
 
+type Editor() as this =
+    inherit Xamarin.Forms.Frame()
+
+    do
+        this.LoadFromXaml(typeof<Editor>) |> ignore
+
+type Reporter() as this =
+    inherit Xamarin.Forms.Frame()
+
+    do
+        this.LoadFromXaml(typeof<Reporter>) |> ignore
+
+
 type Page1() as this = 
     inherit Xamarin.Forms.ContentPage()
     
@@ -51,23 +64,28 @@ type App() as self =
     inherit Application()
 
     let page = Page1()
-    let resultsSource = page.FindByName<Grid>("ResultsSource") 
-    let editSource = page.FindByName<Grid>("EditSource") 
 
     // These are being set here, just to demonstrate "defining once" and passing through system
     let initialValue = 12
     let validation = Validators.greaterThan 10 >> Validators.lessOrEqualTo 25
 
     do 
+        let context = Binding.createSource()
+
         // Create our edit source
         // results implements IObservable<int>
         let results = VM.createEditSource initialValue validation
-        
-        // Set it as our binding context
-        editSource.BindingContext <- results
 
-        // Setup results binding context 
-        resultsSource.BindingContext <- VM.createReportingSource initialValue results
+        // Create our reporting target
+        let reporting = VM.createReportingSource initialValue results
+
+        // Set it as our binding context
+        context |> Binding.constantToView "EditSource" results
+        
+        // Setup property for results
+        context |> Binding.constantToView "ResultsSource" reporting
+        
+        page.BindingContext <- context
         self.MainPage <- page
 
     override __.OnStart() = ()

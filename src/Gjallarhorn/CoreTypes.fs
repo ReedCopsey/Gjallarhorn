@@ -216,8 +216,7 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
     let mutable signalGuard = false
 
     static member SubscriptionOnNext (target : ObservableToSignal<'a>) value =
-        if not target.HasDependencies then // Only update if there isn't a "strong" subscriber
-            target.UpdateValue value
+        target.UpdateValue value
 
     /// Signals to dependencies that we have updated
     member this.Signal () = 

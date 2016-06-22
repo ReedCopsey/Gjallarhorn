@@ -41,6 +41,8 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.Portable.FSharp.Targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <EmbeddedResource Include="Editor.xaml" />
+    <EmbeddedResource Include="Reporter.xaml" />
     <EmbeddedResource Include="Page1.xaml" />
     <Compile Include="View.fs" />
   </ItemGroup>
