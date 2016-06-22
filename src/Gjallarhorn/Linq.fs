@@ -133,6 +133,20 @@ type SignalExtensions() =
         let b' = mapper.Invoke(this.Value)
         Signal.map2 (fun a b -> selector.Invoke(a,b)) this b'
 
+    [<Extension>]
+    /// Perform a filter from one signal to another based on a predicate.
+    /// This will raise an exception if the input value does not match the predicate when created.
+    static member Where<'a> (this:ISignal<'a>, filter:Func<'a,bool>) =
+        this
+        |> Signal.filter (filter.ToFSharpFunc()) this.Value
+
+    [<Extension>]
+    /// Perform a filter from one signal to another based on a predicate.
+    /// The defaultValue is used to initialize the output signal if the input doesn't match the predicate
+    static member Where<'a> (this:ISignal<'a>, filter:Func<'a,bool>, defaultValue) =
+        this
+        |> Signal.filter (filter.ToFSharpFunc()) defaultValue
+
 /// Extension methods for working with Observables from C# using a LINQ inspired API    
 [<AbstractClass;Sealed;Extension>]
 type ObservableExtensions() =

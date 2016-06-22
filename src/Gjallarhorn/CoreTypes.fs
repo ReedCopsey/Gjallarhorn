@@ -324,7 +324,7 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         this |> DisposeHelpers.cleanup &valueProvider1 false
         this |> DisposeHelpers.cleanup &valueProvider2 false 
 
-type internal CombineSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
+type internal MergeSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
     inherit SignalBase<'a>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = valueProvider2.Value

@@ -232,9 +232,9 @@ module Signal =
     let choose (fn : 'a -> 'b option) (defaultValue : 'b) (provider : ISignal<'a>) =        
         new ChooseSignal<'a,'b>(provider, defaultValue, fn) :> ISignal<'b>        
 
-    /// Combines two signals into a single signal.  The value from the second signal is used as the initial value of the result
-    let combine a b =
-        new CombineSignal<_>(a, b) :> ISignal<_>
+    /// Merges two signals into a single signal.  The value from the second signal is used as the initial value of the result
+    let merge a b =
+        new MergeSignal<_>(a, b) :> ISignal<_>
 
     /// Creates a signal on two values that is true if both inputs are equal
     let equal a b =

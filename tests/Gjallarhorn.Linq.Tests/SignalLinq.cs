@@ -306,5 +306,26 @@ namespace Gjallarhorn.Linq.Tests
             v3.Value = 8;
             Assert.AreEqual("1,2,8.000000,4,5", signal.Value);
         }
+
+        [Test]
+
+        public void SignalWherePropogatesCorrectly()
+        {
+            var m = Mutable.Create(1);
+            var s = m.Select(v => 10 * v).Where(v => v < 100);
+            var s2 = m.Select(v => 10 * v).Where(v => v > 50, 55);
+
+            Assert.AreEqual(10, s.Value);
+            Assert.AreEqual(55, s2.Value);
+            m.Value = 5;
+            Assert.AreEqual(50, s.Value);
+            Assert.AreEqual(55, s2.Value);
+            m.Value = 25;
+            Assert.AreEqual(50, s.Value);
+            Assert.AreEqual(250, s2.Value);
+            m.Value = 7;
+            Assert.AreEqual(70, s.Value);
+            Assert.AreEqual(70, s2.Value);
+        }
     }
 }
