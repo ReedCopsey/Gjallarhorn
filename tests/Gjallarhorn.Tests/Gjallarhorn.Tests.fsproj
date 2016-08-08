@@ -70,7 +70,7 @@
     <Compile Include="Signal.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="Memory.fs" />
-    <Content Include="App.config" />
+    <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

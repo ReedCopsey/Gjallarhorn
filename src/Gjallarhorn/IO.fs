@@ -59,6 +59,29 @@ type ValidatedInOut<'a, 'b, 'c> (input : ISignal<'a>, conversion : 'a -> 'b, val
 
     /// The validated output data from the user interaction
     member this.Output = validation
+
+/// Used as an output mapping to fetch data from a user
+type Out<'a> (initialValue : 'a) =    
+    let editSource = Mutable.create initialValue
+    
+    /// Signal used as a notification mechanism for reporting
+    member __.UpdateStream = editSource :> ISignal<_>
+    /// Gets the current value
+    member __.GetValue () = editSource.Value
+    /// Updates the value to the output stream
+    member __.SetValue v = editSource.Value <- v
+
+/// Used as an output mapping with validation to fetch data from a user
+type ValidatedOut<'a, 'b> (initialValue : 'a, validation : Validation<'a, 'b>) as self =
+    inherit Out<'a>(initialValue)    
+
+    let validation = 
+        self.UpdateStream
+        |> Signal.validate validation
+
+    /// The validated output data from the user interaction
+    member this.Output = validation
+    
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
 type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
