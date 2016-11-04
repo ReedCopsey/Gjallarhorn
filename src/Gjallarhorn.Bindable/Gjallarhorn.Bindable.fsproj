@@ -50,6 +50,7 @@
     <Compile Include="Binding.fs" />
     <Compile Include="BindingSourceUtilities.fs" />
     <Compile Include="BindingSourceFactory.fs" />
+    <Compile Include="Framework.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gjallarhorn\Gjallarhorn.fsproj">

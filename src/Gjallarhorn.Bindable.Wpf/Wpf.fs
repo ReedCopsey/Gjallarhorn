@@ -28,3 +28,23 @@ module Platform =
         match installSynchronizationContext with
         | true -> installAndGetSynchronizationContext ()
         | false -> SynchronizationContext.Current
+
+module Framework =
+    open Gjallarhorn
+    open Gjallarhorn.Bindable
+    open System
+    open System.Windows
+
+    type ApplicationInfo<'Model,'Message> = 
+        { 
+            Model : 'Model 
+            Update : 'Message -> 'Model -> 'Model
+            Binding : ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
+            View : Window
+        }
+
+    let application<'Model,'Message> (applicationInfo : ApplicationInfo<'Model,'Message>) =
+        let view' dataContext = 
+            applicationInfo.View.DataContext <- dataContext
+            Application().Run(applicationInfo.View)
+        Gjallarhorn.Bindable.CoreFramework.application applicationInfo.Model applicationInfo.Update applicationInfo.Binding view'

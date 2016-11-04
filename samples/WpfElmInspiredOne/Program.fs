@@ -1,29 +1,28 @@
 ﻿open System
-
 open FsXaml
 open Gjallarhorn
 open Gjallarhorn.Bindable
-open System.Windows
 
-// -------- Model ----------
+// ----------------------------------     Model     ---------------------------------- 
 // Model is a simple integer for counter
 type Model = int
 let initModel i : Model = i
 
-// -------- Update ----------
+// ----------------------------------    Update     ---------------------------------- 
+// We define a union type for each possible message
 type Msg = 
     | Increment 
     | Decrement
 
+// Create a function that updates the model given a message
 let update msg (model : Model) =
     match msg with
     | Increment -> model + 1
     | Decrement -> model - 1
 
-// -------- View ----------
-let viewContext (model : ISignal<Model>) =    
-    let source = Binding.createObservableSource()
-
+// ----------------------------------    Binding    ---------------------------------- 
+// Create a function that binds a model to a source, and outputs messages
+let bindToSource source (model : ISignal<Model>) =    
     // Create a property to display our current value    
     Binding.toView source "Current" model
 
@@ -32,29 +31,17 @@ let viewContext (model : ISignal<Model>) =
         Binding.createMessage "Increment" Increment source
         Binding.createMessage "Decrement" Decrement source
     ]
-    |> source.OutputObservables 
 
-    source
-
+// Note that here down is Platform specific 
+// ----------------------------------     View      ---------------------------------- 
+// Our platform specific view type
 type MainWin = XAML<"MainWindow.xaml">
 
+// ----------------------------------  Application  ---------------------------------- 
 [<STAThread>]
 [<EntryPoint>]
-let main _ =     
+let main _ =         
     // Install the WPF platform bindings
-    Gjallarhorn.Wpf.Platform.install true |> ignore
-
-    // We'll hold our state as a mutable, but anything that could be converted to a signal would work
-    let state = Mutable.create <| initModel 5
-
-    // Map our state directly into the view context - this gives us something that can be data bound
-    let viewContext = viewContext state
-
-    // The context is also IObservable<Msg> in this case, so handle messages coming from the view, and update...
-    use _sub = viewContext.Subscribe (fun msg -> state.Value <- update msg state.Value)
-
-    // Create our window, set the data context, and run
-    let win = MainWin(DataContext = viewContext)
-
-    // Create and run our application
-    Application().Run win
+    Wpf.Platform.install true |> ignore
+    // Run the basic application framework
+    Wpf.Framework.application { Model = initModel 5 ; Update = update ; Binding = bindToSource ; View = MainWin() }
