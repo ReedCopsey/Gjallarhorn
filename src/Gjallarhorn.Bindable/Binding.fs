@@ -118,3 +118,17 @@ module Binding =
         source.ConstantToView (command, name)
         command    
 
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    let createMessage name message (source : BindingSource) =
+        let command = Command.createEnabled()
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command |> Observable.map (fun _ -> message)
+
+    /// Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message
+    let createMessageChecked name canExecute message (source : BindingSource) =
+        let command = Command.create canExecute
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command |> Observable.map (fun _ -> message)
+

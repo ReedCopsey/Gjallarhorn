@@ -178,6 +178,13 @@ type ObservableBindingSource<'b>() =
     member this.OutputObservable (obs : IObservable<'b>) =
         let sub = obs.Subscribe output.Trigger
         this.AddDisposable sub
+
+    /// Outputs values by subscribing to changes on a list of observables
+    member this.OutputObservables (obs : IObservable<'b> list) =
+        obs
+        |> List.iter (fun o ->
+            let sub = o.Subscribe output.Trigger
+            this.AddDisposable sub)
     
     interface System.IObservable<'b> with
         member __.Subscribe obs = output.Publish.Subscribe obs
