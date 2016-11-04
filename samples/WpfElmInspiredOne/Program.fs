@@ -41,7 +41,5 @@ type MainWin = XAML<"MainWindow.xaml">
 [<STAThread>]
 [<EntryPoint>]
 let main _ =         
-    // Install the WPF platform bindings
-    Wpf.Platform.install true |> ignore
-    // Run the basic application framework
-    Wpf.Framework.application { Model = initModel 5 ; Update = update ; Binding = bindToSource ; View = MainWin() }
+    // Run using the basic application framework
+    Wpf.Framework.runApplication { Model = initModel 5 ; Update = update ; Binding = bindToSource ; View = MainWin() }

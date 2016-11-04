@@ -43,8 +43,10 @@ module Framework =
             View : Window
         }
 
-    let application<'Model,'Message> (applicationInfo : ApplicationInfo<'Model,'Message>) =
+    let runApplication<'Model,'Message> (applicationInfo : ApplicationInfo<'Model,'Message>) =
         let view' dataContext = 
             applicationInfo.View.DataContext <- dataContext
             Application().Run(applicationInfo.View)
+
+        Platform.install true |> ignore
         Gjallarhorn.Bindable.CoreFramework.application applicationInfo.Model applicationInfo.Update applicationInfo.Binding view'
