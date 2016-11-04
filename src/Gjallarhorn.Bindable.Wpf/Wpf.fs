@@ -35,18 +35,21 @@ module Framework =
     open System
     open System.Windows
 
-    type ApplicationInfo<'Model,'Message> = 
+    type WpfApplicationInfo<'Model,'Message> = 
         { 
-            Model : 'Model 
-            Update : 'Message -> 'Model -> 'Model
-            Binding : ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
+            Core : Framework.ApplicationCore<'Model, 'Message>
             View : Window
         }
+        with
+            member this.ToApplicationSpecification render : Framework.ApplicationSpecification<'Model,'Message> = 
+                { Core = { Model = this.Core.Model ; Update = this.Core.Update ; Binding = this.Core.Binding } ; Render = render }            
 
-    let runApplication<'Model,'Message> (applicationInfo : ApplicationInfo<'Model,'Message>) =
-        let view' dataContext = 
+    let fromInfoAndWindow core window = { Core = core ; View = window }
+
+    let runApplication<'Model,'Message> (applicationInfo : WpfApplicationInfo<'Model,'Message>) =
+        let render dataContext = 
             applicationInfo.View.DataContext <- dataContext
             Application().Run(applicationInfo.View)
 
         Platform.install true |> ignore
-        Gjallarhorn.Bindable.CoreFramework.application applicationInfo.Model applicationInfo.Update applicationInfo.Binding view'
+        Gjallarhorn.Bindable.Framework.application (applicationInfo.ToApplicationSpecification render) 
