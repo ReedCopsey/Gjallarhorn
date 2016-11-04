@@ -31,52 +31,79 @@ module Memory =
         Assert.AreEqual(false, SignalManager.IsTracked value)
 
         let test() =
-            let view = Signal.Subscription.create (fun _ ->()) value
+            use _view = Signal.Subscription.create (fun _ ->()) value
+            Assert.AreEqual(true, SignalManager.IsTracked value)
+            // purposely don't dispose
+            let view2 = Signal.Subscription.create (fun _ ->()) value 
             Assert.AreEqual(true, SignalManager.IsTracked value)
 
         test()
 
         GC.Collect()
         GC.WaitForPendingFinalizers()
-        // GC.Collect()
 
         Assert.AreEqual(false, SignalManager.IsTracked value)
     
     [<Test>]
-    let ``Signal\map doesn't cause tracking`` () =
-        let value = Mutable.create 42
-        let view = Signal.map (fun v -> v.ToString()) value
-
-        Assert.AreEqual(false, value.HasDependencies)
-        Assert.AreEqual(false, view.HasDependencies)
-
-    [<Test>]
     let ``Signal\subscribe causes tracking`` () =
         let value = Mutable.create 42
-        let view = Signal.map (fun v -> v.ToString()) value
-
         Assert.AreEqual(false, SignalManager.IsTracked value)
-        Assert.AreEqual(false, SignalManager.IsTracked view)
 
-        let sub = Signal.Subscription.create ignore view
+        let view = Signal.map (fun v -> v.ToString()) value
         Assert.AreEqual(true, SignalManager.IsTracked value)
         Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(false, view.HasDependencies)
+
+        use _sub = Signal.Subscription.create ignore view
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(true, view.HasDependencies)
+
+    [<Test>]
+    let ``Signal\subscribe repeatedly updates tracking`` () =
+        let value = Mutable.create 42
+        Assert.AreEqual(false, SignalManager.IsTracked value)
+
+        let view = Signal.map (fun v -> v.ToString()) value
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(false, view.HasDependencies)
+
+        do
+            use _sub = Signal.Subscription.create ignore view
+            Assert.AreEqual(true, SignalManager.IsTracked value)
+            Assert.AreEqual(false, SignalManager.IsTracked view)
+            Assert.AreEqual(true, view.HasDependencies)
+
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(false, view.HasDependencies)
+
+        do
+            use _sub = Signal.Subscription.create ignore view
+            Assert.AreEqual(true, SignalManager.IsTracked value)
+            Assert.AreEqual(false, SignalManager.IsTracked view)
+            Assert.AreEqual(true, view.HasDependencies)
+
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(false, view.HasDependencies)
 
     [<Test>]
     let ``Signal\subscribe disposal stops tracking`` () =
         let value = Mutable.create 42
         let view = Signal.map (fun v -> v.ToString()) value
 
-        Assert.AreEqual(false, SignalManager.IsTracked value)
-        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, view.HasDependencies)
 
         let sub = Signal.Subscription.create ignore view
         Assert.AreEqual(true, SignalManager.IsTracked value)
-        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(true, view.HasDependencies)
 
         sub.Dispose()
-        Assert.AreEqual(false, SignalManager.IsTracked value)
-        Assert.AreEqual(false, SignalManager.IsTracked view)
+        Assert.AreEqual(true, SignalManager.IsTracked value)
+        Assert.AreEqual(false, view.HasDependencies)
 
     [<Test>]
     let ``Source doesn't prevent view from being garbage collected`` () =

@@ -20,7 +20,7 @@ module Signal =
             new ISignal<'a> with
                 member __.Value = value
             interface IDependent with
-                member __.RequestRefresh _ = ()
+                member __.UpdateDirtyFlag _ = ()
                 member __.HasDependencies with get() = false
             interface ITracksDependents with
                 member __.Track _ = ()
@@ -52,7 +52,8 @@ module Signal =
                         override this.Finalize() =
                             (this :?> IDisposable).Dispose()
                     interface IDependent with
-                        member __.RequestRefresh _ =
+                        member __.UpdateDirtyFlag _ =
+                            // Subscriptions force a recompute when dirty
                             f(provider.Value)
                         member __.HasDependencies with get() = true
                     
@@ -290,13 +291,13 @@ module Signal =
                 base.HasDependencies || validationDeps.HasDependencies
 
         // This requires custom signaling
-        member private this.ValidateSignal signalValidation signalValue = 
+        member private this.ValidateSignal signalValidation signalValue source = 
             if signalValidation then 
-                validationDeps.Signal (this :> IValidatedSignal<'a,'b>).ValidationResult
+                validationDeps.MarkDirty (this :> IValidatedSignal<'a,'b>).ValidationResult
             if signalValue then 
-                base.Signal()
+                base.MarkDirty source
 
-        member private this.Update () =            
+        member private this.Update source =            
             let value = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             let signalValue, signalValidation =
                 if Operators.not <| EqualityComparer<_>.Default.Equals(lastInputValue, value) then
@@ -308,14 +309,11 @@ module Signal =
                     true, signalV
                 else 
                     false, false            
-            this.ValidateSignal signalValidation signalValue            
+            this.ValidateSignal signalValidation signalValue source
 
-        override this.Value 
-            with get() : 'b option = 
-                this.Update()
-                lastValue
+        override __.UpdateAndGetCurrentValue _ = lastValue
 
-        override this.RequestRefresh _ = this.Update ()
+        override this.MarkDirty source = this.Update source
 
         override this.OnDisposing () =
             this |> DisposeHelpers.cleanup &valueProvider false 
@@ -335,7 +333,7 @@ module Signal =
                             interface IObservable<ValidationResult> with
                                 member __.Subscribe obs = validationDeps.Subscribe (obs,result)
                             interface IDependent with
-                                member __.RequestRefresh _ = this.Update()
+                                member __.UpdateDirtyFlag _ = this.Update()
                                 member __.HasDependencies = this.HasDependencies
                             interface ITracksDependents with
                                 member __.Track dep = validationDeps.Add (dep,result)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Gjallarhorn;
@@ -21,6 +22,7 @@ namespace Gjallarhorn.Linq.Tests
         {
             culture = System.Threading.Thread.CurrentThread.CurrentCulture;
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
         }
 
         [TearDown]
@@ -164,7 +166,7 @@ namespace Gjallarhorn.Linq.Tests
                 2,
                 tracker,
                 async v => {
-                    await Task.Delay(30);
+                    await Task.Delay(20);
                     return v + 2;
                 });
 
@@ -174,10 +176,14 @@ namespace Gjallarhorn.Linq.Tests
             Assert.AreEqual(2, value.Value);
             // Mapped should be 2 immediately after setting
             Assert.AreEqual(2, mapped.Value);
+
+            // Give us a chance to start...
+            await Task.Delay(10);
             Assert.IsFalse(tracker.Value);
 
-            // Mapped should get updated async while this blocks
-            await Task.Delay(50);
+            // And now let us finish
+            await Task.Delay(100);
+
             Assert.IsTrue(tracker.Value);
             Assert.AreEqual(2, value.Value);
             Assert.AreEqual(4, mapped.Value);

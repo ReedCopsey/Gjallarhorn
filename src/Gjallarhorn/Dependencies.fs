@@ -25,6 +25,11 @@ module WeakRef =
         | _ -> 
             false, false
 
+    let internal contains (target : 'a) (wr : WeakReference<'a>) =
+        match wr.TryGetTarget() with
+        | false, _ -> false
+        | true, t -> obj.ReferenceEquals(t, target)
+
 ////////////////////////////////////////////////////////
 // This file contains the basic implementations used
 // for tracking dependencies between objects.
@@ -47,8 +52,8 @@ type [<AllowNullLiteral>] IDependencyManager<'a> =
     /// Remove all dependencies from this signal
     abstract member RemoveAll : ISignal<'a> -> unit
 
-    /// Signal to all dependents to refresh themselves
-    abstract member Signal : ISignal<'a> -> unit
+    /// Signal to all dependents that we're dirty
+    abstract member MarkDirty : ISignal<'a> -> unit
 
     /// Determines whether there are dependencies currently being managed
     abstract member HasDependencies : bool with get
@@ -66,20 +71,22 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     // so we do our own management as needed
     let mutable depIDeps : WeakReference<IDependent> array = [| |]
     let mutable depObservers : WeakReference<IObserver<'a>> array = [| |]
-    let mutable trackingUpstream = false
         
     // These are ugly, as it purposefully creates side effects
     // It returns true if we signaled and the object is alive,
     // otherwise false
     let signalIfAliveDep (wr: WeakReference<IDependent>) =
-        wr |> WeakRef.execute (fun dep -> dep.RequestRefresh())
-    let signalIfAliveObs value (wr: WeakReference<IObserver<'a>>) =
-        wr |> WeakRef.execute (fun obs-> obs.OnNext(value))
+        wr |> WeakRef.execute (fun dep -> dep.UpdateDirtyFlag dep)
+    let signalIfAliveObs (v : Lazy<'a>) (wr: WeakReference<IObserver<'a>>) =
+        wr |> WeakRef.execute (fun obs-> obs.OnNext(v.Force()))
 
     // Do our signal, but also remove any unneeded dependencies while we're at it
-    let signalAndUpdateDependencies value =
+    let signalAndUpdateDependencies (source : ISignal<'a>) =
+        // We want this to be lazy so we don't evaluate the value unless we actually have observers
+        let v = Lazy<_>(fun _ -> source.Value)
+
         depIDeps <- depIDeps |> Array.filter signalIfAliveDep
-        depObservers <- depObservers |> Array.filter (signalIfAliveObs value)
+        depObservers <- depObservers |> Array.filter (signalIfAliveObs v)
 
     // Remove a dependency, as well as all "dead" dependencies
     let removeAndFilterDep dep (wr : WeakReference<IDependent>) =
@@ -100,48 +107,32 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         |> WeakRef.execute (fun obs-> obs.OnCompleted())
         |> ignore        
     
-    member private this.UpdateUpstreamTracking source =
-        match this.HasDependencies, trackingUpstream with
-        | true, true -> ()
-        | true, false -> 
-            dependsOn
-            |> Seq.choose WeakRef.toOption
-            |> Seq.iter (fun d -> d.Track source)
-            trackingUpstream <- true
-        | false, false -> ()
-        | false, true ->
-            // Stop tracking
-            dependsOn
-            |> Seq.choose WeakRef.toOption
-            |> Seq.iter (fun d -> d.Untrack source)
-            trackingUpstream <- false
-
-
     member private __.LockObj with get() = depIDeps // Always lock on this array
 
     /// determines whether there are currently any dependencies on this object
     member this.HasDependencies with get() = lock this.LockObj (fun _ -> depIDeps.Length + depObservers.Length > 0)
 
     /// Adds a new dependency to the tracker
-    member this.Add (dep,source) =
+    member this.Add (dep,source) = 
         lock this.LockObj (fun _ ->
-            depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |]
-            this.UpdateUpstreamTracking source)
+            let depExists =
+                depIDeps
+                |> Array.exists (fun wr -> WeakRef.contains dep wr)
+            if (not depExists) then
+                depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |])
     member this.AddObserver (obs,source) =
         lock this.LockObj (fun _ ->
-            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |]
-            this.UpdateUpstreamTracking source)
+            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |])
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
     member this.Remove (dep, source) = 
         lock this.LockObj (fun _ ->
             depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
-            this.UpdateUpstreamTracking source
             this.HasDependencies)
     member this.RemoveObserver (obs, source) = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
-            this.UpdateUpstreamTracking source
+
             this.HasDependencies)
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
@@ -151,13 +142,12 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
                 depIDeps <- [| |]
                 depObservers
                 |> Array.iter markObsComplete
-                depObservers <- [| |]
-                this.UpdateUpstreamTracking source)
+                depObservers <- [| |])
 
     /// Signals the dependencies with a given source, and returns true if there are still dependencies remaining
-    member this.Signal (source : ISignal<'a>) = 
+    member this.MarkDirty (source : ISignal<'a>) = 
         lock this.LockObj (fun _ ->
-            signalAndUpdateDependencies source.Value)
+            signalAndUpdateDependencies source)
 
     interface IDependencyManager<'a> with
         member this.Add (dep: IDependent, source: ISignal<'a>) = this.Add (dep, source)
@@ -169,7 +159,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
             }        
         member this.Remove (dep: IDependent, source: ISignal<'a>) = ignore <| this.Remove (dep, source)
         member this.RemoveAll (source: ISignal<'a>) = this.RemoveAll (source)
-        member this.Signal source = this.Signal source
+        member this.MarkDirty source = this.MarkDirty source
         member this.HasDependencies with get() = this.HasDependencies
 
 /// <summary>Manager of all dependency tracking.  Handles signaling of IDependent instances from any given source</summary>
@@ -195,7 +185,7 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
 
         // If we have any, signal them
         if exists then             
-            dep.Signal source         
+            dep.MarkDirty source         
             // Lock to remove if they no longer exist   
             lock dependencies (fun _ -> if (not dep.HasDependencies) then remove source)
     
@@ -250,5 +240,5 @@ module Dependencies =
 
             member __.HasDependencies with get() = SignalManager.IsTracked source
 
-            member __.Signal source = SignalManager.Signal source
+            member __.MarkDirty source = SignalManager.Signal source
         }

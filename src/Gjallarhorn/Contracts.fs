@@ -19,7 +19,7 @@ and
     [<AllowNullLiteral>] IDependent =    
     /// Signals the type that it should refresh its current value as one of it's dependencies has been updated
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    abstract member RequestRefresh : obj -> unit
+    abstract member UpdateDirtyFlag : obj -> unit
 
     /// Queries whether other dependencies are registered to this dependent
     [<EditorBrowsable(EditorBrowsableState.Never)>]

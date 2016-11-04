@@ -86,10 +86,10 @@ let ``Signal updates with mutable`` start initialView finish finalView =
   let result = Mutable.create start
   let view = Signal.map (fun i -> i.ToString()) result
 
-  Assert.AreEqual(view.Value, initialView)
+  Assert.AreEqual(initialView, view.Value)
 
   result.Value <- finish
-  Assert.AreEqual(view.Value, finalView)
+  Assert.AreEqual(finalView, view.Value)
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesPairStartEndToStringPairs")>]
 let ``Signal\map2 updates from mutables`` start1 start2 startResult finish1 finish2 finishResult =
@@ -308,25 +308,30 @@ let ``Signal\map10 handles subscription tracking properly`` () =
         v9 ; 
         v10 |]
 
-    let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
+    let test() =
+        let view = Signal.map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
 
-    depChecks
-    |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
+        depChecks
+        |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
 
-    let changes = ref 0
-    use _disp = Signal.Subscription.create (fun _ -> incr changes) view
+        let changes = ref 0
+        use _disp = Signal.Subscription.create (fun _ -> incr changes) view
 
-    depChecks
-    |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
+        depChecks
+        |> Array.iter (fun v -> Assert.AreEqual(true, v.HasDependencies))
 
-    Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
-    Assert.AreEqual(0, !changes)
-    v1.Value <- 5
-    Assert.AreEqual("5,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
-    Assert.AreEqual(1, !changes)
+        Assert.AreEqual("1,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+        Assert.AreEqual(0, !changes)
+        v1.Value <- 5
+        Assert.AreEqual("5,2,3.000000,4,5,6,7.100000,8,9,10", view.Value)
+        Assert.AreEqual(1, !changes)
 
-    Assert.IsNotNull(_disp)
-    _disp.Dispose();
+        Assert.IsNotNull(_disp)
+        _disp.Dispose();
+    
+    test()
+    GC.Collect()
+    GC.WaitForPendingFinalizers()
     
     depChecks
     |> Array.iter (fun v -> Assert.AreEqual(false, v.HasDependencies))
@@ -372,3 +377,96 @@ let ``Signal\map4 preserves tracking`` () =
     v1.Value <- 5
     v3.Value <- 7
     Assert.AreEqual(view.Value, "5,2,7,4")
+
+[<Test>]
+let ``Signal\map without subscription triggers proper number of updates`` () =
+    let changes = ref 0
+    let x = Mutable.create 0
+    let f i = incr changes; i*i
+    let y = Signal.map f x // "processing" 
+    Assert.AreEqual(1, !changes)
+    printfn "x = %d" x.Value // nothing 
+    Assert.AreEqual(1, !changes)
+    printfn "y = %d" y.Value // nothing 
+    Assert.AreEqual(1, !changes)
+    printfn "y = %d" y.Value // nothing
+    Assert.AreEqual(1, !changes)
+    x.Value <- 2 // nothing - by design
+    Assert.AreEqual(1, !changes)
+    printfn "y = %d" y.Value // "processing" - gets value at first access, since there's no active subscription 
+    Assert.AreEqual(2, !changes)
+    printfn "y = %d" y.Value // nothing    
+    Assert.AreEqual(2, !changes)
+
+[<Test>]
+let ``Signal\map with subscription triggers proper number of updates`` () =
+    let changes = ref 0
+    let x = Mutable.create 0
+    let f i = 
+        incr changes
+        i*i
+    let y = Signal.map f x // "processing" 
+    use disp = Signal.Subscription.create ignore y 
+    Assert.AreEqual(1, !changes)
+    printfn "x = %d" x.Value // nothing 
+    Assert.AreEqual(1, !changes)
+    printfn "y = %d" y.Value // nothing 
+    Assert.AreEqual(1, !changes)
+    printfn "y = %d" y.Value // nothing
+    Assert.AreEqual(1, !changes)
+    x.Value <- 2 // triggers    
+    Assert.AreEqual(2, !changes)
+    printfn "y = %d" y.Value // nothing
+    Assert.AreEqual(2, !changes)
+    printfn "y = %d" y.Value // nothing    
+    Assert.AreEqual(2, !changes)
+
+[<Test>]
+let ``Issue #16 - Signal.map evaluations - Without Subscription`` () =
+    use sw = new System.IO.StringWriter()
+
+    let x = Mutable.create 0
+    let f i = 
+        sw.Write("*")
+        printfn "processing"
+        i*i
+    Assert.AreEqual("", sw.ToString())
+    let y = Signal.map f x // "processing" 
+    Assert.AreEqual("*", sw.ToString())
+    printfn "x = %A" x.Value // nothing 
+    printfn "y = %A" y.Value // nothing 
+    printfn "y = %A" y.Value // nothing
+
+    printfn "Setting value"
+    x.Value <- 1 // nothing - by design
+    Assert.AreEqual("*", sw.ToString())
+    printfn "Before processing"
+    printfn "y = %A" y.Value // "processing" - gets value at first access, since there's no active subscription 
+    Assert.AreEqual("**", sw.ToString())
+    printfn "y = %A" y.Value // nothing
+    Assert.AreEqual("**", sw.ToString())
+
+[<Test>]
+let ``Issue #16 - Signal.map evaluations - With Subscription`` () =
+    use sw = new System.IO.StringWriter()
+
+    let x = Mutable.create 0
+    let f i = 
+        sw.Write("*")
+        printfn "processing"
+        i*i
+    Assert.AreEqual("", sw.ToString())
+    let y = Signal.map f x // "processing" 
+    Assert.AreEqual("*", sw.ToString())
+    use disp = Signal.Subscription.create ignore y // Add an active subscription - no-op in this case
+    printfn "x = %A" x.Value // nothing 
+    printfn "y = %A" y.Value // nothing 
+    printfn "y = %A" y.Value // nothing
+    Assert.AreEqual("*", sw.ToString())
+    printfn "Setting value"
+    x.Value <- 1 // "processing" - Subscription needs to update immediately
+    Assert.AreEqual("**", sw.ToString())
+    printfn "After processing"
+    printfn "y = %A" y.Value // nothing 
+    printfn "y = %A" y.Value // nothing
+    Assert.AreEqual("**", sw.ToString())

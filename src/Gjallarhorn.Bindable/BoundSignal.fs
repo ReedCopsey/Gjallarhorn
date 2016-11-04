@@ -46,7 +46,7 @@ type BoundSignal<'a>(name, source : INotifyPropertyChanged) =
         member __.Untrack dep = value.Untrack dep
 
     interface IDependent with
-        member __.RequestRefresh sub = value.RequestRefresh sub
+        member __.UpdateDirtyFlag sub = value.UpdateDirtyFlag sub
         member __.HasDependencies with get() = value.HasDependencies
     interface ISignal<'a> with
         member __.Value with get() = value.Value
