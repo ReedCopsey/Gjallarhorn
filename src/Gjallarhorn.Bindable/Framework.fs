@@ -34,8 +34,10 @@ module Framework =
             source.OutputObservables <| applicationInfo.Binding source (state :> _)
             source
 
-        // Subscribe to the observables, and call our update function
-        use _sub = viewContext.Subscribe (fun msg -> state.Value <- applicationInfo.Update msg state.Value)
+        // Permanently subscribe to the observables, and call our update function
+        // Note we're not allowing this to be a disposable subscription - we need to force it to
+        // stay alive, even in Xamarin Forms where the "render" method doesn't do the final rendering
+        viewContext.Add (fun msg -> state.Value <- applicationInfo.Update msg state.Value)
         
         // Render the "application"
         applicationInfo.Render viewContext

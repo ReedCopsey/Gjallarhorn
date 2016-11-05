@@ -59,25 +59,29 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
     <Resource Include="MainWindow.xaml" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Gjallarhorn.Bindable.Wpf\Gjallarhorn.Bindable.Wpf.fsproj">
+    <ProjectReference Include="..\..\..\src\Gjallarhorn.Bindable.Wpf\Gjallarhorn.Bindable.Wpf.fsproj">
       <Name>Gjallarhorn.Bindable.Wpf</Name>
       <Project>{79269e6a-2c7e-442d-8b23-55b6d940a5d2}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Gjallarhorn.Bindable\Gjallarhorn.Bindable.fsproj">
+    <ProjectReference Include="..\..\..\src\Gjallarhorn.Bindable\Gjallarhorn.Bindable.fsproj">
       <Name>Gjallarhorn.Bindable</Name>
       <Project>{dc46e916-06fc-4256-acfc-ebc7c9dc95ea}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Gjallarhorn\Gjallarhorn.fsproj">
+    <ProjectReference Include="..\..\..\src\Gjallarhorn\Gjallarhorn.fsproj">
       <Name>Gjallarhorn</Name>
       <Project>{41fab705-05f3-45ae-99ef-524e6d9736ff}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\ElmInspiredOne\ElmInspiredOne.fsproj">
+      <Name>ElmInspiredOne (samples\ElmInspiredOne\ElmInspiredOne\ElmInspiredOne)</Name>
+      <Project>{350db7f3-951f-4a79-a33e-b9dad42704a5}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
@@ -104,5 +108,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\.paket\paket.targets" />
+  <Import Project="..\..\..\.paket\paket.targets" />
 </Project>

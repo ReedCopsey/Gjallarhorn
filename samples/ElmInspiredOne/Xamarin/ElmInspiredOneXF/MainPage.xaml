@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ElmInspiredXF.MainPage"
+             xmlns:local="clr-namespace:SimpleDataEntry;assembly=SimpleDataEntry">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Label  Grid.Row="0" Grid.Column="0" Text="Current:" />
+    <Label  Grid.Row="0" Grid.Column="1" Text="{Binding Current, StringFormat='{0:N0}'}" />
+
+    <Button Margin="5" Grid.Row="1" Grid.Column="0"
+            Command="{Binding Increment}" Text="Increment" />
+    <Button Margin="5" Grid.Row="1" Grid.Column="1"
+            Command="{Binding Decrement}" Text="Decrement" />
+  </Grid>
+</ContentPage>
