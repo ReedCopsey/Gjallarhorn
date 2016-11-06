@@ -45,7 +45,10 @@ let authors = [ "Reed Copsey, Jr." ]
 let tags = "fsharp mutable reactive observable inotifypropertychanged"
 
 // File system information
-let solutionFile  = "Gjallarhorn.sln"
+let solutionFile =
+    match getBuildParamOrDefault "Solution" "Full" with
+    | "NoAndroid" -> "GjallarhornNoAndroid.sln"
+    | _ -> "Gjallarhorn.sln" 
 
 // Pattern specifying assemblies to be tested using NUnit
 let testAssemblies = "tests/**/bin/Release/*Tests*.dll"
