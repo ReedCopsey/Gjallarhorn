@@ -487,11 +487,11 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
     member private this.AddHandle h =
         lock handles (fun _ ->
             handles.Add h
-            this.MarkDirtyBase this   
+            this.MarkDirtyGuarded this   
         )
     member private this.RemoveHandle h =
         lock handles (fun _ ->
-            if handles.Remove h then this.MarkDirtyBase this
+            if handles.Remove h then this.MarkDirtyGuarded this
         )
 
     /// Gets an execution handle, which makes this as executing until the handle is disposed.
@@ -505,7 +505,7 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
         this.AddHandle handle
         handle
 
-    member private __.MarkDirtyBase (source : obj) = base.MarkDirtyGuarded source
+    member private this.MarkDirtyBase source = base.MarkDirtyGuarded source
     override this.MarkDirtyGuarded source = 
         match ctx with
         | null -> this.MarkDirtyBase source
