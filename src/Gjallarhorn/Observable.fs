@@ -18,6 +18,11 @@ module Observable =
         provider
         |> Observable.choose id
 
+    /// Converts an observable stream of options into a message type when valid
+    let toMessage (mapping : 'a -> 'b) (provider : IObservable<'a option>) =
+        provider
+        |> Observable.choose (Option.map mapping)
+
     /// Maps the input observable through an async workflow.
     let mapAsync (mapping : 'a -> Async<'b>) (provider : IObservable<'a>) =
         let evt = Event<_>()
