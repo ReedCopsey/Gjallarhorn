@@ -8,7 +8,7 @@ open CollectionSample.Model
 module internal State =   
 
     // The messages we allow for manipulation of our state
-    type PostMessage =
+    type private PostMessage =
         // Get the current state
         | Get of AsyncReplyChannel<Requests>                                  
         // Update based on an UpdateRequest
@@ -24,7 +24,7 @@ module internal State =
 
     // Manage our state internally using a mailbox processor
     // This lets us post updates from any thread
-    let stateManager = 
+    let private stateManager = 
         let notifyStateUpdated state = 
             // Trigger our new state has changed
             stateChangedEvent.Trigger state
@@ -51,6 +51,11 @@ module internal State =
             }
                                     
             loop [] )
+
+    let update updateRequest = updateRequest |> Update |> stateManager.Post
+    let get () = Get |> stateManager.PostAndReply 
+    let getAsync () = Get |> stateManager.PostAndAsyncReply
+    let processItems minimumLife = (fun c -> Process(c,minimumLife)) |> stateManager.PostAndReply
 
     // Publish our event of changing states
     let stateChanged = stateChangedEvent.Publish

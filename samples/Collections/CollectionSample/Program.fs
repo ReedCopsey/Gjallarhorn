@@ -27,4 +27,4 @@ module Program =
         ]
 
     // ----------------------------------   Framework  -----------------------------------     
-    let applicationCore fnAccepted fnRejected = Framework.application StateManagement.asSignal (fun _ -> StateManagement.initExternalUpdates fnAccepted fnRejected) StateManagement.update bindToSource 
+    let applicationCore fnAccepted fnRejected = Framework.application StateManagement.asSignal (fun _ -> StateManagement.initExternalUpdates fnAccepted fnRejected) State.update bindToSource 

@@ -17,8 +17,7 @@ module internal ExternalUpdater =
                 do! Async.Sleep <| 2500 + rnd.Next(2500)                                
                 
                 Operations.AddNew(Guid.NewGuid(), rnd.NextDouble() * 500.0)
-                |> State.Update 
-                |> State.stateManager.Post 
+                |> State.update
         } |> Async.Start
 
     // Purge processed elements from the list as time goes by at random intervals
@@ -33,6 +32,7 @@ module internal ExternalUpdater =
                     | Rejected -> handleRejected r
                     | _ -> failwith "Unknown request processed by state manager"
 
-                State.stateManager.PostAndReply (fun c -> State.Process(c, TimeSpan.FromSeconds(5.0))) 
+                TimeSpan.FromSeconds(5.0)
+                |> State.processItems 
                 |> Seq.iter handle
         } |> Async.Start
