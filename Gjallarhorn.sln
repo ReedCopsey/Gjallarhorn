@@ -92,11 +92,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SimpleForm", "samples\Frame
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfSimpleForm", "samples\FrameworkSimpleForm\Wpf\WpfSimpleForm.fsproj", "{CB1FBB45-FE0D-4502-8CD4-97369D102052}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimpleCollections", "SimpleCollections", "{0387E2FF-28A5-46EE-B99C-DEB15939FB49}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Collections", "Collections", "{0387E2FF-28A5-46EE-B99C-DEB15939FB49}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CollectionSample", "samples\SimpleCollections\CollectionSample\CollectionSample.fsproj", "{10E8B8CC-745C-4548-B45E-C70B7B6EFFA3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CollectionSample", "samples\Collections\CollectionSample\CollectionSample.fsproj", "{10E8B8CC-745C-4548-B45E-C70B7B6EFFA3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfCollectionManager", "samples\SimpleCollections\WpfCollectionManager\WpfCollectionManager.fsproj", "{E08CC0E3-3BF3-4D56-9CBF-88B80CFDDE36}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WpfCollectionManager", "samples\Collections\WpfCollectionManager\WpfCollectionManager.fsproj", "{E08CC0E3-3BF3-4D56-9CBF-88B80CFDDE36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

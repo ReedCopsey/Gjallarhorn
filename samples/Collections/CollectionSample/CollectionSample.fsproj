@@ -43,8 +43,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Model.fs" />
+    <Compile Include="State.fs" />
+    <Compile Include="ExternalUpdater.fs" />
+    <Compile Include="StateManagement.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
