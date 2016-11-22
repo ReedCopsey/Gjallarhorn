@@ -16,7 +16,7 @@ module Program =
     let bindToSource source (model : ISignal<Requests>) =    
         let sorted = 
             model
-            |> Signal.map (fun reqs -> reqs |> Seq.sortBy (fun req -> req.Created))
+            |> Signal.map (Seq.sortBy (fun req -> req.Created))
         // Create a property to display our current value    
         Binding.toView source "Requests" sorted
         
