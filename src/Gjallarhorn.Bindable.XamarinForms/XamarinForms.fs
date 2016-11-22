@@ -35,8 +35,8 @@ module Framework =
                 { Core = { Model = this.Core.Model ; Init = this.Core.Init ; Update = this.Core.Update ; Binding = this.Core.Binding } ; Render = render }            
 
             member this.CreateApp() =
-                let render dataContext = 
-                    this.View.BindingContext <- dataContext     
+                let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
+                    this.View.BindingContext <- createCtx SynchronizationContext.Current
                     1       
                 Platform.install ()
                 this.Core.Init ()
