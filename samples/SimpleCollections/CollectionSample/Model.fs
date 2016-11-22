@@ -51,6 +51,13 @@ module internal State =
             // Trigger our new state has changed
             stateChangedEvent.Trigger state
             state
+        let replace pf sf xs =
+            let find = ref false
+            let rec aux = function
+                | [] -> []
+                | x::xs -> if pf x then find := true;sf :: xs else x :: (aux xs)
+            aux xs
+
         MailboxProcessor.Start(fun inbox ->
             let rec loop current = async {
                 let! msg = inbox.Receive()
@@ -62,8 +69,8 @@ module internal State =
                 | Update(msg) ->
                     let state = 
                         match msg with
-                        | Accept(r)-> { r with Status = Accepted } :: (current |> List.except [| r |])
-                        | Reject(r) -> { r with Status = Rejected } :: (current |> List.except [| r |])                    
+                        | Accept(r)-> replace ((=) r) ({ r with Status = Accepted }) current
+                        | Reject(r) -> replace ((=) r) { r with Status = Rejected } current 
                         |> notifyStateUpdated
                     return! loop state
                 | Purge ->
