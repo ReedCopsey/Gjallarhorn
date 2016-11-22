@@ -56,4 +56,4 @@ module Program =
         [ first ; last ]
 
     // ----------------------------------   Framework  -----------------------------------     
-    let applicationCore = Framework.info Model.Default update bindToSource 
+    let applicationCore = Framework.basicApplication Model.Default update bindToSource 

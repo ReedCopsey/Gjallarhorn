@@ -32,14 +32,15 @@ module Framework =
         }
         with
             member this.ToApplicationSpecification render : Framework.ApplicationSpecification<'Model,'Message> = 
-                { Core = { Model = this.Core.Model ; Update = this.Core.Update ; Binding = this.Core.Binding } ; Render = render }            
+                { Core = { Model = this.Core.Model ; Init = this.Core.Init ; Update = this.Core.Update ; Binding = this.Core.Binding } ; Render = render }            
 
             member this.CreateApp() =
                 let render dataContext = 
                     this.View.BindingContext <- dataContext     
                     1       
                 Platform.install ()
-                Gjallarhorn.Bindable.Framework.application (this.ToApplicationSpecification render) |> ignore
+                this.Core.Init ()
+                Gjallarhorn.Bindable.Framework.runApplication (this.ToApplicationSpecification render) |> ignore
                 App(this.View)                
 
     [<CompiledName("CreateApplicationInfo")>]

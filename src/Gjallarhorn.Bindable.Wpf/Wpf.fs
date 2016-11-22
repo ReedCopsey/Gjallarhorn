@@ -42,14 +42,25 @@ module Framework =
         }
         with
             member this.ToApplicationSpecification render : Framework.ApplicationSpecification<'Model,'Message> = 
-                { Core = { Model = this.Core.Model ; Update = this.Core.Update ; Binding = this.Core.Binding } ; Render = render }            
+                { 
+                    Core = 
+                        {    
+                            Model = this.Core.Model 
+                            Init = this.Core.Init 
+                            Update = this.Core.Update 
+                            Binding = this.Core.Binding 
+                        } 
+                    Render = render 
+                }            
 
     let fromInfoAndWindow core window = { Core = core ; View = window }
 
     let runApplication<'Model,'Message> (applicationInfo : WpfApplicationInfo<'Model,'Message>) =
-        let render dataContext = 
+        let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
+            let dataContext = createCtx SynchronizationContext.Current
             applicationInfo.View.DataContext <- dataContext
             Application().Run(applicationInfo.View)
 
         Platform.install true |> ignore
-        Gjallarhorn.Bindable.Framework.application (applicationInfo.ToApplicationSpecification render) 
+        applicationInfo.Core.Init ()
+        Gjallarhorn.Bindable.Framework.runApplication (applicationInfo.ToApplicationSpecification render) 

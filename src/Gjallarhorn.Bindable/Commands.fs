@@ -79,6 +79,14 @@ module Command =
     let create enabledSource =
         (new SignalCommand(enabledSource)) :> ITrackingCommand<DateTime>
 
+    /// Create a parameterized command with an optional enabling source, provided as an ISignal<bool>
+    let createParam<'a> enabledSource =
+        (new SignalParameterCommand<'a>(enabledSource)) :> ITrackingCommand<DateTime * 'a>
+
     /// Create a command which is always enabled
     let createEnabled () =
         create (Signal.constant true)
+    
+    /// Create a parameterized command which is always enabled
+    let createParamEnabled () =
+        createParam (Signal.constant true)
