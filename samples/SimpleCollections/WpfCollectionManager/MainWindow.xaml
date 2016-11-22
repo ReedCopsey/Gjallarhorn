@@ -1,0 +1,39 @@
+﻿<Window
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"		
+		Title="Collection Mananger" MinWidth="600" Height="350" x:Name="win">
+    <Window.Resources>
+        <DataTemplate x:Key="PersonTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
+
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
+
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="ID:" Grid.Column="0" Margin="5"/>
+                <TextBox IsReadOnly="True" Text="{Binding Person, Mode=OneWay}" Grid.Column="1" Margin="5"/>
+                <TextBlock Text="Hours:" Grid.Column="2" Margin="5"/>
+                <TextBox IsReadOnly="True" Text="{Binding ExpectedHours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
+
+                <Button Command="{Binding Source={x:Reference win}, Path=DataContext.Accept}" CommandParameter="{Binding}" Grid.Column="4" Margin="5">Accept</Button>
+                <Button Command="{Binding Source={x:Reference win}, Path=DataContext.Reject}" CommandParameter="{Binding}" Grid.Column="5" Margin="5">Reject</Button>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5">Approve or Reject the Following:</TextBlock>
+        <ListView Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Requests, Mode=OneWay}" ItemTemplate="{StaticResource PersonTemplate}"/>
+
+
+    </Grid>
+</Window>

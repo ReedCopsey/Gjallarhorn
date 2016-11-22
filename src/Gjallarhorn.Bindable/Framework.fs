@@ -8,7 +8,7 @@ module Framework =
     
     type ApplicationCore<'Model,'Message> = 
         {
-            Model : ISignal<'Model> 
+            Model : unit -> ISignal<'Model> 
             Init : unit -> unit // Initialization function which runs once after platforms are installed
             Update : 'Message -> unit
             Binding : ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
@@ -21,7 +21,7 @@ module Framework =
         let m = Mutable.create model
         let upd msg = m.Value <- update msg m.Value
             
-        { Model = m :> ISignal<_>; Init = ignore ; Update = upd ; Binding = binding }
+        { Model = (fun _ -> m :> ISignal<_>) ; Init = ignore ; Update = upd ; Binding = binding }
 
     type ApplicationSpecification<'Model,'Message> = 
         { 
@@ -36,9 +36,9 @@ module Framework =
     let runApplication<'Model,'Message> (applicationInfo : ApplicationSpecification<'Model,'Message>) =        
         // Map our state directly into the view context - this gives us something that can be data bound
         let viewContext (ctx : System.Threading.SynchronizationContext) = 
-            let source = Binding.createObservableSource<'Message>()        
+            let source = Binding.createObservableSource<'Message>()                    
             let model = 
-                applicationInfo.Model 
+                applicationInfo.Model () 
                 |> Signal.observeOn ctx
 
             source.OutputObservables <| applicationInfo.Binding source model

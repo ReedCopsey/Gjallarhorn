@@ -59,19 +59,6 @@ type internal SignalCommand (allowExecute : ISignal<bool>) =
     override __.HandleExecute _ =
         base.HandleExecute (DateTime.Now)
 
-/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<DateTime>, where each execute passes DateTime.UtcNow on execution
-type internal SignalParameterCommand<'a> (allowExecute : ISignal<bool>) =
-    inherit ParameterCommand<DateTime * 'a>(allowExecute)
-
-    override __.HandleExecute param =
-        let v = Utilities.downcastAndCreateOption param
-        match v with
-        | Some newVal ->
-            let v = (DateTime.Now, newVal)
-            base.HandleExecute v
-        | None ->
-            ()        
-
 /// Core module for creating and using ICommand implementations
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Command =        
@@ -81,7 +68,7 @@ module Command =
 
     /// Create a parameterized command with an optional enabling source, provided as an ISignal<bool>
     let createParam<'a> enabledSource =
-        (new SignalParameterCommand<'a>(enabledSource)) :> ITrackingCommand<DateTime * 'a>
+        (new ParameterCommand<'a>(enabledSource)) :> ITrackingCommand<'a>
 
     /// Create a command which is always enabled
     let createEnabled () =

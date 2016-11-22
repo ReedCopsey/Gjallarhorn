@@ -36,7 +36,7 @@ module internal State =
     type PostMessage =
         | Get of AsyncReplyChannel<Requests>    // Get the current state
         | Update of UpdateRequest               // Update based on an UpdateRequest
-        | PurgeHandled                          // Purge all Accepted or Rejected items from the model
+        | Purge                                 // Purge all Accepted or Rejected items from the model
         | AddNew of string * float              // Add a new request
     
     // Provide a mechanism to publish changes to our state as an observable
@@ -44,43 +44,44 @@ module internal State =
     // "duplicate state"
     let private stateChangedEvent = Event<_>()
 
+    // Manage our state internally using a mailbox processor
+    // This lets us post updates from any thread
     let stateManager = 
-        new MailboxProcessor<_>(fun inbox ->
-            let updateState state = 
-                // Trigger our new state has changed
-                stateChangedEvent.Trigger state
-                state
-
-            let rec loop oldState = async {
+        let notifyStateUpdated state = 
+            // Trigger our new state has changed
+            stateChangedEvent.Trigger state
+            state
+        MailboxProcessor.Start(fun inbox ->
+            let rec loop current = async {
                 let! msg = inbox.Receive()
+
                 match msg with 
-                | Get(channel) -> 
-                    channel.Reply oldState
-                    return! loop(oldState)
+                | Get replyChannel -> 
+                    replyChannel.Reply current
+                    return! loop current
                 | Update(msg) ->
                     let state = 
                         match msg with
-                        | Accept(r)-> { r with Status = Accepted } :: oldState |> List.except [| r |]            
-                        | Reject(r) -> { r with Status = Rejected } :: oldState |> List.except [| r |]                    
-                        |> updateState
-                    return! loop(state)
-                | PurgeHandled ->
+                        | Accept(r)-> { r with Status = Accepted } :: (current |> List.except [| r |])
+                        | Reject(r) -> { r with Status = Rejected } :: (current |> List.except [| r |])                    
+                        |> notifyStateUpdated
+                    return! loop state
+                | Purge ->
                     let isUnhandled request = match request.Status with | Unknown -> true | _ -> false
                     let state = 
-                        oldState 
+                        current 
                         |> List.filter isUnhandled                    
-                        |> updateState
-                    return! loop(state)
+                        |> notifyStateUpdated
+                    return! loop state
                 | AddNew(name, hours) ->
                     let r = { Person = name ; ExpectedHours = hours ; Status = Unknown }
-                    let state = r :: oldState |> updateState
-                    return! loop(updateState state)
+                    let state = r :: current |> notifyStateUpdated
+                    return! loop state 
             }
-                
-            loop []
-        )
-    stateManager.Start()
+                                    
+            loop [] )
 
+    // Publish our event of changing states
     let stateChanged = stateChangedEvent.Publish
 
 // This is to simulate "external" influence on our model data
@@ -93,25 +94,29 @@ module internal AutoUpdater =
         Array.init charCount (fun _ -> possibleChars.[rnd.Next(possibleChars.Length)])
         |> String        
 
+    // Add a random new elmenet to the list on a regular basis
     let startUpdating () =
         async {
-            // 0.5-1.5 seconds sleep between additions
-            do! Async.Sleep <| 500 + rnd.Next(1000)
-            let duration = rnd.NextDouble() * 500.0
-            let name = generateRandomString ()
+            // 1.5-2.5 seconds sleep between additions
+            while true do
+                do! Async.Sleep <| 1500 + rnd.Next(1000)
+                let duration = rnd.NextDouble() * 500.0
+                let name = generateRandomString ()
 
-            State.AddNew(name, duration) |> State.stateManager.Post 
-
+                State.AddNew(name, duration) |> State.stateManager.Post 
         } |> Async.Start
 
+    // Purge processed elements from the list as time goes by at random intervals
     let startPurging () =
         async {
             // 5-10 seconds sleep between purges of accepted/rejected items
-            do! Async.Sleep <| 5000 + rnd.Next(5000)
+            while true do
+                do! Async.Sleep <| 5000 + rnd.Next(5000)
+                State.Purge |> State.stateManager.Post 
         } |> Async.Start
 
 module Model =
-    // Initialization function
+    // Initialization function - Kick off our routines to add and remove data
     let init () =
         AutoUpdater.startUpdating ()
         AutoUpdater.startPurging ()
@@ -124,6 +129,6 @@ module Model =
     let getAsync () = State.stateManager.PostAndAsyncReply State.Get
 
     // Gets the state as a Signal
-    let asSignal =       
+    let asSignal () =       
         let current = get ()  
         Signal.fromObservable current State.stateChanged 

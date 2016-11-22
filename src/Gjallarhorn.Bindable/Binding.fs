@@ -137,12 +137,12 @@ module Binding =
         let command = Command.createParamEnabled ()
         source.AddDisposable command
         source.ConstantToView (command, name)
-        command |> Observable.map (fun (_,p) -> message p)
+        command |> Observable.map (fun p -> message p)
 
     /// Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message
     let createMessageParamChecked name canExecute message (source : BindingSource) =
         let command = Command.createParam canExecute
         source.AddDisposable command
         source.ConstantToView (command, name)
-        command |> Observable.map (fun (_,p) -> message p)
+        command |> Observable.map (fun p -> message p)
 
