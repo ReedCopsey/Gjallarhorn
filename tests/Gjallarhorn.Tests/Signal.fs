@@ -470,3 +470,50 @@ let ``Issue #16 - Signal.map evaluations - With Subscription`` () =
     printfn "y = %A" y.Value // nothing 
     printfn "y = %A" y.Value // nothing
     Assert.AreEqual("**", sw.ToString())
+
+type Msg =
+| Update of int
+
+[<Test>]
+let ``State functions as mutable`` () =
+    let update msg state =
+        match msg with
+        | Update(newValue) -> newValue
+
+    use state = new State<int, Msg>(0, update)
+
+    let m = state :> IMutatable<_>
+
+    Assert.AreEqual(0, m.Value)
+
+    m.Value <- 3
+    Assert.AreEqual(3, m.Value)
+
+    Update(5) |> state.Update |> ignore
+    Assert.AreEqual(5, m.Value)
+
+[<Test>]
+let ``State propogates changes properly`` () =
+    let update msg state =
+        match msg with
+        | Update(newValue) -> newValue
+
+    use state = new State<int, Msg>(0, update)
+
+    let m = state :> IMutatable<_>
+
+    let sign = state |> Signal.map (fun v -> v * 10)
+
+    let mutable value = sign.Value
+
+    use __ = sign |> Observable.subscribe (fun v -> value <- v)
+
+    Assert.AreEqual(0, m.Value)
+
+    m.Value <- 3
+    Assert.AreEqual(3, m.Value)
+
+    Update(5) |> state.Update |> ignore
+    Assert.AreEqual(5, m.Value)
+
+    Assert.AreEqual(50, value)

@@ -35,9 +35,10 @@ module Operations =
         | Accept of Request
         | Reject of Request
         | AddNew of Guid * float
+        | Process of TimeSpan
 
     // Update the model based on an UpdateRequest
-    let update msg current =
+    let update processAccepted processRejected msg current =
         let excluded r = current |> List.except [| r |]
         match msg with
         | Accept(r)-> 
@@ -47,18 +48,24 @@ module Operations =
         | AddNew(guid, hours) -> 
             let r : Request = { Id = guid ; Created = DateTime.UtcNow ; ExpectedHours = hours ; Status = Unknown ; StatusUpdated = None }
             r :: current 
+        | Process(minLife) ->
+            let shouldKeep life (request : Request) = 
+                match request.Status, request.StatusUpdated with 
+                | Unknown, _ -> true
+                | _, Some upd when upd < (DateTime.UtcNow - life) -> 
+                    false // Only purge if it's old enough, and not unknown
+                | _ -> true
+            let state, removed =
+                current
+                |> List.partition (shouldKeep minLife)
 
-    // Process all of the items in the model,
-    // returning the new state, and the processed items
-    // Returns newState*processedItems as 2 lists
-    let partitionProcessed minLife current =
-        let shouldKeep life (request : Request) = 
-            match request.Status, request.StatusUpdated with 
-            | Unknown, _ -> true
-            | _, Some upd when upd < (DateTime.UtcNow - life) -> 
-                false // Only purge if it's old enough, and not unknown
-            | _ -> true
-        current 
-        |> List.partition (shouldKeep minLife)
-    
+            let processRemoved req =
+                match req.Status with
+                | Accepted -> processAccepted req
+                | Rejected -> processRejected req
+                | _ -> failwith "Unknown status hit processing stage"
 
+            removed
+            |> List.iter processRemoved
+
+            state

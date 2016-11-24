@@ -60,6 +60,22 @@ let ``Signal\fromObservable initializes properly`` start =
     Assert.AreEqual(box start, signal.Value)    
 
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``Signal\fromObservable notifies properly`` start finish =
+    let evt = Event<'a>()
+    let obs = evt.Publish
+
+    let signal = Signal.fromObservable start obs
+
+    let mapped = signal |> Signal.map id
+    let mutable value = mapped.Value
+
+    use subscription = mapped |> Observable.subscribe (fun v -> value <- v)
+    Assert.AreEqual(box start, value)    
+
+    evt.Trigger finish
+
+    Assert.AreEqual(box finish, value)    
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
 let ``Signal\fromObservable tracks changes in values`` start finish =
     let evt = Event<_>()
     let obs = evt.Publish

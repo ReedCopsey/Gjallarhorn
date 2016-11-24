@@ -47,8 +47,9 @@
     <Compile Include="Dependencies.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="CoreTypes.fs" />
-    <Compile Include="Mutable.fs" />
     <Compile Include="Signal.fs" />
+    <Compile Include="State.fs" />
+    <Compile Include="Mutable.fs" />
     <Compile Include="Observable.fs" />
     <Compile Include="IO.fs" />
     <Compile Include="Linq.fs" />

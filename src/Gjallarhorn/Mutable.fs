@@ -9,6 +9,10 @@ module Mutable =
     let create (value : 'a) = 
         Mutable<'a>(value) :> IMutatable<'a>
 
+    /// Create a threadsafe mutable variable wrapping an initial value
+    let createThreadsafe (value : 'a) = 
+        new Gjallarhorn.State<'a, unit>(value, (fun _ s -> s)) :> IMutatable<'a>
+
     /// Gets the value associated with the mutatable object
     let get (mutatable : IMutatable<'a>) = 
         mutatable.Value

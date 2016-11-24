@@ -27,4 +27,7 @@ module Program =
         ]
 
     // ----------------------------------   Framework  -----------------------------------     
-    let applicationCore fnAccepted fnRejected = Framework.application StateManagement.asSignal (fun _ -> StateManagement.initExternalUpdates fnAccepted fnRejected) State.update bindToSource 
+    
+    let applicationCore fnAccepted fnRejected = 
+        let state = CollectionSample.StateManagement(fnAccepted, fnRejected)
+        Framework.application state.ToSignal state.Initialize state.Update bindToSource 

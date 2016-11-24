@@ -29,6 +29,14 @@ let ``Mutable\get retrieves value`` start finish =
     Mutable.set value finish
     Assert.AreEqual(box finish, Mutable.get value)
   
+[<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
+let ``Mutable\threadsafe get retrieves value`` start finish =
+    let value = Mutable.createThreadsafe start
+    Assert.AreEqual(box start, Mutable.get value)
+    
+    Mutable.set value finish
+    Assert.AreEqual(box finish, Mutable.get value)
+  
   
 [<Test;TestCaseSource(typeof<Utilities>,"CasesStartEnd")>]
 let ``Mutable\set mutates value`` start finish =
