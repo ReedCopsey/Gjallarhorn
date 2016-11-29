@@ -11,6 +11,7 @@ open Gjallarhorn.Wpf
 
 // ----------------------------------     View      ---------------------------------- 
 // Our platform specific view type
+type App = XAML<"App.xaml">
 type MainWin = XAML<"MainWindow.xaml">
 
 // ----------------------------------  Application  ---------------------------------- 
@@ -32,4 +33,4 @@ let main _ =
     // Run using the WPF wrappers around the basic application framework
     MainWin()
     |> Framework.fromInfoAndWindow (Program.applicationCore fnAccepted fnRejected)
-    |> Framework.runApplication
+    |> Framework.runApplication App

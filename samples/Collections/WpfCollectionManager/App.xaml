@@ -1,0 +1,17 @@
+﻿<Application
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+  xmlns:local="clr-namespace:CollectionManager.Views;assembly=WpfCollectionManager">
+    <Application.Resources>
+        <local:StatusToColorConverter x:Key="statusToColor" />
+        <Style TargetType="{x:Type Rectangle}" x:Key="statusRectangle" >
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <Binding Path="Status" Mode="OneWay" Converter="{StaticResource statusToColor}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>

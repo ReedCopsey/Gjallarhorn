@@ -6,12 +6,14 @@ open Gjallarhorn.Bindable
 
 module Framework =
     
+    type Component<'Model,'Message> = ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
+    
     type ApplicationCore<'Model,'Message> = 
         {
             Model : unit -> ISignal<'Model> 
             Init : unit -> unit // Initialization function which runs once after platforms are installed
             Update : 'Message -> unit
-            Binding : ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
+            Binding : Component<'Model,'Message>
         }
 
     type CreateDataContext<'Message> = System.Threading.SynchronizationContext -> ObservableBindingSource<'Message>

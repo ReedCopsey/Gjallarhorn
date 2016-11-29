@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Resource Include="App.xaml" />
     <Resource Include="MainWindow.xaml" />
     <Compile Include="Converters.fs" />
     <Compile Include="App.fs" />

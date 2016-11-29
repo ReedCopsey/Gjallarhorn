@@ -20,4 +20,4 @@ let main _ =
     // Run using the WPF wrappers around the basic application framework
     MainWin()
     |> Framework.fromInfoAndWindow Program.applicationCore
-    |> Framework.runApplication
+    |> Framework.runApplication System.Windows.Application

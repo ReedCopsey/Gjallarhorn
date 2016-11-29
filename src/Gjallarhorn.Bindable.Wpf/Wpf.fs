@@ -55,11 +55,12 @@ module Framework =
 
     let fromInfoAndWindow core window = { Core = core ; View = window }
 
-    let runApplication<'Model,'Message> (applicationInfo : WpfApplicationInfo<'Model,'Message>) =
+    let runApplication<'Model,'Message,'Application when 'Application :> Application> (application : unit -> 'Application) (applicationInfo : WpfApplicationInfo<'Model,'Message>) =
         let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
             let dataContext = createCtx SynchronizationContext.Current
             applicationInfo.View.DataContext <- dataContext
-            Application().Run(applicationInfo.View)
+                        
+            application().Run(applicationInfo.View)
 
         Platform.install true |> ignore
         applicationInfo.Core.Init ()
