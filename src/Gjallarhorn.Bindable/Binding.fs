@@ -104,6 +104,10 @@ module Binding =
     let constantToView name value (source : BindingSource) =
         source.ConstantToView (value, name)
 
+    /// Bind a component to the given name
+    let componentToView<'TModel, 'TMessage> (source : BindingSource) name (comp : Component<'TModel,'TMessage>) (signal : ISignal<'TModel>) =
+        source.TrackComponent(name, comp, signal)
+
     /// Creates an ICommand (one way property) to a binding source by name
     let createCommand name (source : BindingSource) =
         let command = Command.createEnabled()

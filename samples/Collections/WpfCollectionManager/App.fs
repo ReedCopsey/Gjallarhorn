@@ -30,7 +30,5 @@ let main _ =
         Console.ForegroundColor <- ConsoleColor.Red
         printfn "Rejected Request: %A" req.Id
 
-    // Run using the WPF wrappers around the basic application framework
-    MainWin()
-    |> Framework.fromInfoAndWindow (Program.applicationCore fnAccepted fnRejected)
-    |> Framework.runApplication App
+    // Run using the WPF wrappers around the basic application framework    
+    Framework.runApplication App MainWin (Program.applicationCore fnAccepted fnRejected)

@@ -17,7 +17,5 @@ type MainWin = XAML<"MainWindow.xaml">
 [<STAThread>]
 [<EntryPoint>]
 let main _ =         
-    // Run using the WPF wrappers around the basic application framework
-    MainWin()
-    |> Framework.fromInfoAndWindow Program.applicationCore
-    |> Framework.runApplication System.Windows.Application
+    // Run using the WPF wrappers around the basic application framework        
+    Framework.runApplication System.Windows.Application MainWin Program.applicationCore

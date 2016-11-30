@@ -107,6 +107,9 @@ type internal RefTypeBindingTarget<'b>() =
             failwith <| sprintf "Property [%s] already exists on this binding source" name
         properties.Add(name, p)
     
+    override __.CreateObservableBindingSource () =
+        new RefTypeBindingTarget<_>() :> _
+
     interface IReflectableType with 
         member __.GetTypeInfo() = DynTypeInfo(ownerType, getProperty) :> _
 

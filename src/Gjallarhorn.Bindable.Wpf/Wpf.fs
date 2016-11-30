@@ -35,33 +35,21 @@ module Framework =
     open System
     open System.Windows
 
-    type WpfApplicationInfo<'Model,'Message> = 
-        { 
-            Core : Framework.ApplicationCore<'Model, 'Message>
-            View : Window
-        }
-        with
-            member this.ToApplicationSpecification render : Framework.ApplicationSpecification<'Model,'Message> = 
+    module App =                    
+       let toApplicationSpecification render (appCore : Framework.ApplicationCore<'Model, 'Message>) : Framework.ApplicationSpecification<'Model,'Message> = 
                 { 
-                    Core = 
-                        {    
-                            Model = this.Core.Model 
-                            Init = this.Core.Init 
-                            Update = this.Core.Update 
-                            Binding = this.Core.Binding 
-                        } 
+                    Core = appCore
                     Render = render 
-                }            
+                }                
 
-    let fromInfoAndWindow core window = { Core = core ; View = window }
-
-    let runApplication<'Model,'Message,'Application when 'Application :> Application> (application : unit -> 'Application) (applicationInfo : WpfApplicationInfo<'Model,'Message>) =
+    let runApplication<'Model,'Message,'Application,'Window when 'Application :> Application and 'Window :> Window> (application : unit -> 'Application) (window : unit -> 'Window) (applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
         let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
             let dataContext = createCtx SynchronizationContext.Current
-            applicationInfo.View.DataContext <- dataContext
-                        
-            application().Run(applicationInfo.View)
+
+            let win = window()
+            win.DataContext <- dataContext                        
+            application().Run win
 
         Platform.install true |> ignore
-        applicationInfo.Core.Init ()
-        Gjallarhorn.Bindable.Framework.runApplication (applicationInfo.ToApplicationSpecification render) 
+        applicationInfo.Init ()
+        Gjallarhorn.Bindable.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 

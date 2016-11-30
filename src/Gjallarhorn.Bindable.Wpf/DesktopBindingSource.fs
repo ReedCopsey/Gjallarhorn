@@ -31,6 +31,9 @@ type [<TypeDescriptionProvider(typeof<BindingSourceTypeDescriptorProvider>)>] in
             failwith <| sprintf "Property [%s] already exists on this binding source" name
         customProps.Add(name, (this.MakePD<'a> name, ValueHolder.readOnly getter))   
 
+    override __.CreateObservableBindingSource () =
+        new DesktopBindingSource<_>() :> _
+
     interface IPropertyBag with
         member __.CustomProperties = customProps
 

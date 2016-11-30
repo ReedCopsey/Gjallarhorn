@@ -5,9 +5,7 @@ open Gjallarhorn
 open Gjallarhorn.Bindable
 
 module Framework =
-    
-    type Component<'Model,'Message> = ObservableBindingSource<'Message> -> ISignal<'Model> -> IObservable<'Message> list
-    
+        
     type ApplicationCore<'Model,'Message> = 
         {
             Model : unit -> ISignal<'Model> 
@@ -43,7 +41,8 @@ module Framework =
                 applicationInfo.Model () 
                 |> Signal.observeOn ctx
 
-            source.OutputObservables <| applicationInfo.Binding source model
+            applicationInfo.Binding (source :> _) model
+            |> source.OutputObservables
 
             // Permanently subscribe to the observables, and call our update function
             // Note we're not allowing this to be a disposable subscription - we need to force it to

@@ -17,6 +17,10 @@ type TestBindingSource<'b>() =
         ()
     override __.AddReadOnlyProperty<'a> (name, getter : Func<'a>) =
         ()
+
+    override __.CreateObservableBindingSource () =
+        new TestBindingSource<_>() :> _
+
 type PropertyChangedObserver(o : INotifyPropertyChanged) =
     let changes = System.Collections.Generic.Dictionary<string,int>()
 

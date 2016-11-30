@@ -13,6 +13,7 @@ open System.Windows.Input
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
+
 [<AbstractClass>]
 type BindingSource() as self =
 
@@ -125,6 +126,18 @@ type BindingSource() as self =
             this.TrackValidator name v.Output.ValidationResult
         | _ -> ()
 
+    abstract CreateObservableBindingSource<'a> : unit -> ObservableBindingSource<'a>
+
+    member this.TrackComponent<'a,'b> (name, comp : Component<'a,'b>, model : ISignal<'a>) = 
+        let source = this.CreateObservableBindingSource<'b>()
+        this.TrackObservable (name, model)
+        this.AddReadOnlyProperty(name, fun _ -> source)
+        
+        let obs = comp (source :> BindingSource) model
+        source.OutputObservables(obs)
+
+        source :> IObservable<_>
+
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
         this.AddReadOnlyProperty(name, fun _ -> value)
@@ -162,29 +175,30 @@ type BindingSource() as self =
 
     /// Adds a read and write property, specified by name, getter, and setter, to the binding source
     abstract AddReadWriteProperty<'a> : string * System.Func<'a> * System.Action<'a> -> unit
-        
-[<AbstractClass>]
+
 /// Base class for binding sources, used by platform specific libraries to share implementation details
-type ObservableBindingSource<'b>() =
+and [<AbstractClass>] ObservableBindingSource<'Message>() =
     inherit BindingSource()
     
     // Use event as simple observable source
-    let output = Event<'b>()
+    let output = Event<'Message>()
 
     /// Outputs a value through it's observable implementation
     member __.OutputValue value = output.Trigger value
 
     /// Outputs values by subscribing to changes on an observable
-    member this.OutputObservable (obs : IObservable<'b>) =
+    member this.OutputObservable<'Message> (obs : IObservable<'Message>) =
         let sub = obs.Subscribe output.Trigger
         this.AddDisposable sub
 
     /// Outputs values by subscribing to changes on a list of observables
-    member this.OutputObservables (obs : IObservable<'b> list) =
+    member this.OutputObservables<'Message> (obs : IObservable<'Message> list) : unit =        
         obs
-        |> List.iter (fun o ->
-            let sub = o.Subscribe output.Trigger
-            this.AddDisposable sub)
+        |> List.iter this.OutputObservable
     
-    interface System.IObservable<'b> with
+    interface System.IObservable<'Message> with
         member __.Subscribe obs = output.Publish.Subscribe obs
+
+/// A component takes a BindingSource and a Signal for a model and returns a list of observable messages
+and Component<'Model,'Message> = BindingSource -> ISignal<'Model> -> IObservable<'Message> list
+
