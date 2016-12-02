@@ -201,4 +201,3 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() =
 
 /// A component takes a BindingSource and a Signal for a model and returns a list of observable messages
 and Component<'Model,'Message> = BindingSource -> ISignal<'Model> -> IObservable<'Message> list
-

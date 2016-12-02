@@ -48,6 +48,7 @@
     <Compile Include="BoundSignal.fs" />
     <Compile Include="BindingSource.fs" />
     <Compile Include="Binding.fs" />
+    <Compile Include="CollectionBinding.fs" />
     <Compile Include="BindingSourceUtilities.fs" />
     <Compile Include="BindingSourceFactory.fs" />
     <Compile Include="Framework.fs" />
