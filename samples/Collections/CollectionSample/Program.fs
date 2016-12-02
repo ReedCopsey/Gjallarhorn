@@ -13,10 +13,13 @@ module Program =
     // Create a function that binds a model to a source, and outputs messages
     // This essentially acts as our "view" in Elm terminology, though it doesn't actually display 
     // the view as much as map from our type to bindings
-
+    
     // Create a component for a single request
-    let requestComponent source model = 
-        Binding.toView source "Model" model
+    let requestComponent source (model : ISignal<Request>) =         
+        // Bind the properties we want to display
+        model |> Signal.map (fun v -> v.Id) |> Binding.toView source "Id"
+        model |> Signal.map (fun v -> v.ExpectedHours) |> Binding.toView source "Hours"
+        model |> Signal.map (fun v -> v.Status) |> Binding.toView source "Status"
             
         [
             source |> Binding.createMessage "Accept" Operations.AcceptRequest
