@@ -167,6 +167,49 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
                 |> Seq.map (fun (a,b,c) -> box b)
             (seq :> IEnumerable).GetEnumerator()
 
+    // We implement this for better support in WPF collection space,
+    // but it should never be used
+    interface ICollection with 
+        member __.Count: int = internalCollection.Count
+            
+        member __.CopyTo(array: Array, index: int) = 
+            for i in 0 .. internalCollection.Count - 1 do
+                let (_,b,_) = internalCollection.[i]
+                array.SetValue(b, i + index)
+
+        member __.SyncRoot = (internalCollection :> ICollection).SyncRoot
+        member __.IsSynchronized = false            
+
+    interface IList with
+        member __.Add(value: obj): int = failwith "Not implemented"
+        member __.Insert(index: int, value: obj) =  failwith "Not implemented"
+        member __.Clear(): unit = failwith "Not implemented"
+        
+        member __.Contains(value: obj) = 
+            internalCollection
+            |> Seq.tryFind (fun (_,b,_) -> b.Equals(value))
+            |> Option.isSome
+
+        member __.IndexOf(value: obj) = 
+            let i = 
+                internalCollection
+                |> Seq.tryFindIndex (fun (_,b,_) -> b.Equals(value))
+            defaultArg i -1
+
+        member __.IsFixedSize = false
+        member __.IsReadOnly = false
+            
+        member __.Item
+            with get (index: int): obj = 
+                let (_,b,_) = internalCollection.[index]
+                box b
+            and set (index: int) (v: obj): unit =  failwith "Not implemented"
+
+        member this.Remove(value: obj): unit = failwith "Not implemented"
+        member this.RemoveAt(index: int): unit = failwith "Not implemented"
+        
+        
+
     interface INotifyCollectionChanged with
         [<CLIEvent>]
         member __.CollectionChanged = collectionChanged.Publish

@@ -17,9 +17,9 @@ module Program =
     // Create a component for a single request
     let requestComponent source (model : ISignal<Request>) =         
         // Bind the properties we want to display
-        model |> Signal.map (fun v -> v.Id) |> Binding.toView source "Id"
+        model |> Signal.map (fun v -> v.Id)            |> Binding.toView source "Id"
         model |> Signal.map (fun v -> v.ExpectedHours) |> Binding.toView source "Hours"
-        model |> Signal.map (fun v -> v.Status) |> Binding.toView source "Status"
+        model |> Signal.map (fun v -> v.Status)        |> Binding.toView source "Status"
             
         [
             source |> Binding.createMessage "Accept" Operations.AcceptRequest
