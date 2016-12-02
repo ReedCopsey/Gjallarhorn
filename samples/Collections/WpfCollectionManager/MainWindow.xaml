@@ -4,7 +4,7 @@
         xmlns:model="clr-namespace:CollectionSample.Model;assembly=CollectionSample"
 		Title="Collection Mananger" Width="600" Height="350" x:Name="win">
     <Window.Resources>
-        <DataTemplate x:Key="PersonTemplate" DataType="{x:Type model:Request}">
+        <DataTemplate x:Key="PersonTemplate" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -16,17 +16,17 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Rectangle Grid.ColumnSpan="6" Style="{DynamicResource statusRectangle}"/>
+                <Rectangle DataContext="{Binding Model}" Grid.ColumnSpan="6" Style="{DynamicResource statusRectangle}"/>
                 <TextBlock Text="ID:" Grid.Column="0" Margin="5"/>
                 <TextBox 
                         IsReadOnly="True" 
-                        Text="{Binding Id, Mode=OneWay}"                         
+                        Text="{Binding Model.Id, Mode=OneWay}"                         
                         Grid.Column="1" Margin="5"/>
                 <TextBlock Text="Hours:" Grid.Column="2" Margin="5"/>
-                <TextBox IsReadOnly="True" Text="{Binding ExpectedHours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
+                <TextBox IsReadOnly="True" Text="{Binding Model.ExpectedHours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
 
-                <Button Command="{Binding Source={x:Reference win}, Path=DataContext.Accept}" CommandParameter="{Binding}" Grid.Column="4" Margin="5">Accept</Button>
-                <Button Command="{Binding Source={x:Reference win}, Path=DataContext.Reject}" CommandParameter="{Binding}" Grid.Column="5" Margin="5">Reject</Button>
+                <Button Command="{Binding Accept}" Grid.Column="4" Margin="5">Accept</Button>
+                <Button Command="{Binding Reject}" Grid.Column="5" Margin="5">Reject</Button>
             </Grid>
         </DataTemplate>
     </Window.Resources>

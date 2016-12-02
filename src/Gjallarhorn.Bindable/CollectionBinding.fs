@@ -17,7 +17,7 @@ open System.Windows.Input
 
 
 type internal ChangeType<'Message> =    
-    | None
+    | NoChanges
     | Reset
     | Add of index:int * orig:ObservableBindingSource<'Message>
     | Remove of index:int * orig:ObservableBindingSource<'Message>
@@ -36,7 +36,7 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
     let triggerChange change =
         let args =
             match change with
-            | None -> null
+            | NoChanges -> null
             | Reset -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
             | Add(i,item) -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, i)
             | Remove(i,item) -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, i)
@@ -91,58 +91,64 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
 
         let nc = ResizeArray(newCollection)
 
-        let toSeq v = seq { yield v }
-
         // Handle some of the easy cases
-        let changes =
-            match nc.Count, internalCollection.Count with
-            | 0, _ -> // Clear collection
-                clearInternal()
-                toSeq Reset
-            | _, 0 -> // New collection
-                nc |> Seq.map append |> ignore
-                toSeq Reset
-            | 1, 1 -> 
-                internalCollection.[0] |> updateEntry nc.[0]
-                toSeq None
-            | _ ->
-                // All other types require iteration through the series
-                seq {
-                    for i in 0 .. nc.Count - 1 do
-                        // If we're past the collection, just append
-                        if !currentIndex > internalCollection.Count - 1 then
-                            incr currentIndex
-                            yield append nc.[i]
-                        else                     
-                            // If we're equal, must move on        
-                            if isEqual !currentIndex nc.[i] then
-                                incr currentIndex
-                            // We're equal, but at the end - so replace last element
-                            elif !currentIndex = internalCollection.Count - 1 then
-                                updateEntry nc.[i] internalCollection.[!currentIndex]
-                                incr currentIndex
-                            // If we're not equal, but the _next_ items in both collections are, we have a replacement condition
-                            elif !currentIndex < internalCollection.Count - 1 && i < nc.Count - 1 && isEqual (!currentIndex + 1) nc.[i + 1] then
-                                updateEntry nc.[i] internalCollection.[!currentIndex]
-                                incr currentIndex
-                            // If we're not equal, but the _next_ item is, we have an remove condition
-                            elif !currentIndex < internalCollection.Count - 1 && isEqual (!currentIndex + 1) nc.[i] then
-                                yield remove !currentIndex
-                            // If we're not equal, but the _next_ items in new collections are, we have a insert
-                            elif i < nc.Count - 1 && isEqual (!currentIndex) nc.[i + 1] then
-                                yield insert nc.[i] !currentIndex
-                                incr currentIndex
-                    // Trim off any extra past the end of the collection
-                    while internalCollection.Count > nc.Count do
-                        yield remove (internalCollection.Count - 1)
-                }                               
-
-        if Seq.length (Seq.truncate 4 changes) > 3 then
+        let changes = ResizeArray<_>()                
+        match nc.Count, internalCollection.Count with
+        | 0, _ -> // Clear collection
+            clearInternal()
+            changes.Add Reset
+        | _, 0 -> // New collection
+            nc |> Seq.iter (fun m -> append m |> ignore)
+            changes.Add Reset
+        | 1, 1 -> 
+            internalCollection.[0] |> updateEntry nc.[0]                
+        | _ ->
+            // All other types require iteration through the series
+            for i in 0 .. nc.Count - 1 do
+                // If we're past the collection, just append
+////                if !currentIndex > internalCollection.Count - 1 then
+////                    incr currentIndex
+////                    append nc.[i]
+////                    |> changes.Add 
+                if i > internalCollection.Count - 1 then
+                    append nc.[i]
+                    |> changes.Add 
+                else                     
+                    internalCollection.[i] |> updateEntry nc.[i]
+////                        // If we're equal, must move on        
+////                        if isEqual !currentIndex nc.[i] then
+////                            incr currentIndex
+////                        // We're equal, but at the end - so replace last element
+////                        elif !currentIndex = internalCollection.Count - 1 then
+////                            updateEntry nc.[i] internalCollection.[!currentIndex]
+////                            incr currentIndex
+////                        // If we're not equal, but the _next_ items in both collections are, we have a replacement condition
+////                        elif !currentIndex < internalCollection.Count - 1 && i < nc.Count - 1 && isEqual (!currentIndex + 1) nc.[i + 1] then
+////                            updateEntry nc.[i] internalCollection.[!currentIndex]
+////                            incr currentIndex
+////                        // If we're not equal, but the _next_ item is, we have an remove condition
+////                        elif !currentIndex < internalCollection.Count - 1 && isEqual (!currentIndex + 1) nc.[i] then
+////                            remove !currentIndex
+////                            |> changes.Add 
+////                        // If we're not equal, but the _next_ items in new collections are, we have a insert
+////                        elif i < nc.Count - 1 && isEqual (!currentIndex) nc.[i + 1] then
+////                            insert nc.[i] !currentIndex
+////                            |> changes.Add 
+////                            incr currentIndex
+            // Trim off any extra past the end of the collection
+            while internalCollection.Count > nc.Count do
+                remove (internalCollection.Count - 1)
+                |> changes.Add 
+        changes.RemoveAll(fun v -> v = NoChanges) |> ignore
+            
+        if changes.Count > 3 then
             triggerChange Reset
         else
             changes |> Seq.iter triggerChange
 
     let sub = collection |> Signal.Subscription.create updateCollection
+
+    member this.Items with get () = (this :> IEnumerable<obj>)
 
     interface IObservable<'Message * 'Model> with   
         member __.Subscribe obs = (outputStream :> IObservable<'Message * 'Model>).Subscribe(obs)
@@ -168,3 +174,12 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
     interface IDisposable with
         member __.Dispose() =
             sub.Dispose()
+
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module BindingCollection =
+    /// Add a collection bound to the view
+    let toView (source : BindingSource) name (signal : ISignal<'Coll>) (comp : Component<'Model,'Message>) =
+        let cb = new BoundCollection<_,_,_>(signal, comp)
+        source.ConstantToView (cb, name)
+        source.AddDisposable cb
+        cb :> IObservable<_>

@@ -42,7 +42,6 @@ type PropertyChangedObserver(o : INotifyPropertyChanged) =
 [<TestFixture>]
 type BindingSourceTest() =
 
-
     let getProperty (source : obj) name =
         let props = TypeDescriptor.GetProperties source
         let prop = props.Find(name, false)

@@ -30,12 +30,23 @@ type Requests = Request list
 
 // Operations on our model
 module Operations =
+    type RequestUpdate =
+        | AcceptRequest
+        | RejectRequest
+    
     // These are the updates that can be performed on our requests
     type Update = 
         | Accept of Request
         | Reject of Request
         | AddNew of Guid * float
         | Process of TimeSpan
+
+    // Maps from an accept/rejection of a single request to an
+    // update message for the model as a whole
+    let requestUpdateToUpdate (ru : RequestUpdate, req : Request) =
+        match ru with
+        | AcceptRequest -> Accept req
+        | RejectRequest -> Reject req
 
     // Update the model based on an UpdateRequest
     let update processAccepted processRejected msg current =
