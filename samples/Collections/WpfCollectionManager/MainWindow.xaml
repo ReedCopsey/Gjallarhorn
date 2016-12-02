@@ -4,7 +4,7 @@
         xmlns:model="clr-namespace:CollectionSample.Model;assembly=CollectionSample"
 		Title="Collection Mananger" Width="600" Height="350" x:Name="win">
     <Window.Resources>
-        <DataTemplate x:Key="PersonTemplate" >
+        <DataTemplate x:Key="RequestTemplate" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -37,7 +37,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="5">Approve or Reject the Following:</TextBlock>
-        <ListView Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Requests, Mode=OneWay}" ItemTemplate="{StaticResource PersonTemplate}"/>
+        <ListView Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Requests, Mode=OneWay}" ItemTemplate="{StaticResource RequestTemplate}"/>
 
 
     </Grid>
