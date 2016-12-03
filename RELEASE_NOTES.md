@@ -11,3 +11,8 @@
 
 #### 0.0.4-beta - June 13th 2016
 * Overhauled binding API to make things more clear.
+
+#### 0.0.5-beta - December 2nd 2016
+* Reworked notification plumbing to be less surprising
+* Added initial framework for building applications directly
+* Added component model to framework

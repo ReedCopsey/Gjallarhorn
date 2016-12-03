@@ -5,26 +5,29 @@ open Gjallarhorn
 open System
 open System.Runtime.CompilerServices
 
+/// Helper module for dealing with weak references
 module WeakRef =
+    /// Convert the WeakReference to an option
     let toOption (wr : WeakReference<_>) =
         match wr.TryGetTarget() with
         | true, t -> Some t
         | false, _ -> None
 
+    /// Execute a function on the contained value within a weak reference
     let execute (f : 'a -> unit) (wr : WeakReference<'a>) =
         match wr.TryGetTarget() with
         | true, t ->
             f(t)
             true
         | _ -> false
-
+    /// Return true if a weak reference is still alive
     let test (f : 'a -> bool) (wr : WeakReference<'a>) =
         match wr.TryGetTarget() with
         | true, t ->
             true, f(t)
         | _ -> 
             false, false
-
+    /// See if a specific target is contained by a weak reference
     let internal contains (target : 'a) (wr : WeakReference<'a>) =
         match wr.TryGetTarget() with
         | false, _ -> false

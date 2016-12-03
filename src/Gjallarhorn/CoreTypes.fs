@@ -31,10 +31,13 @@ type internal FSharpFuncExtensions =
     [<Extension>] 
     static member ToFSharpFunc<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k> (func:System.Func<'a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k>) = fun a b c d e f g h i j -> func.Invoke(a,b,c,d,e,f,g,h,i,j)
 
+/// A disposable type that manages multiple other disposables, and disposes all of them when disposed
 type ICompositeDisposable =
     inherit IDisposable
 
+    /// Add an idisposable to this composite disposable
     abstract member Add : IDisposable -> unit
+    /// Remove an idisposable to this composite disposable
     abstract member Remove : IDisposable -> unit
 
 /// Type which allows tracking of multiple disposables at once
@@ -100,7 +103,7 @@ open System.Collections.Generic
 open Gjallarhorn
 open Gjallarhorn.Helpers
 
-// A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
+/// A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
 type Mutable<'a>(value : 'a) =
 
     let mutable v = value
@@ -108,6 +111,7 @@ type Mutable<'a>(value : 'a) =
     // Stores dependencies remotely to not use any space in the object (no memory overhead requirements)
     member private this.Dependencies with get() = Dependencies.createRemote this
     
+    /// Gets and sets the Value contained within this mutable
     member this.Value 
         with get() = v
         and set(value) =
@@ -160,7 +164,7 @@ type SignalBase<'a>(dependencies) as self =
             dependencies.MarkDirty this |> ignore
             signalGuard <- false
    
-    // Implementers should only update if we're dirty
+    /// Update and fetch the current value.  Implementers should only update if we're dirty.
     abstract member UpdateAndGetCurrentValue : updateRequired : bool -> 'a    
 
     /// Gets the current value

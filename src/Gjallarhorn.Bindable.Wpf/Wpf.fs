@@ -29,6 +29,7 @@ module Platform =
         | true -> installAndGetSynchronizationContext ()
         | false -> SynchronizationContext.Current
 
+/// WPF Specific implementation of the Application Framework
 module Framework =
     open Gjallarhorn
     open Gjallarhorn.Bindable
@@ -41,7 +42,7 @@ module Framework =
                     Core = appCore
                     Render = render 
                 }                
-
+    /// Run an application given an Application generator, Window generator, and other required information
     let runApplication<'Model,'Message,'Application,'Window when 'Application :> Application and 'Window :> Window> (application : unit -> 'Application) (window : unit -> 'Window) (applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
         let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
             let dataContext = createCtx SynchronizationContext.Current

@@ -1,20 +1,12 @@
 ﻿namespace Gjallarhorn.Bindable
 
 open Gjallarhorn
-open Gjallarhorn.Helpers
-open Gjallarhorn.Internal
-open Gjallarhorn.Interaction
-open Gjallarhorn.Validation
-
 open Gjallarhorn.Bindable
 
 open System
 open System.Collections
 open System.Collections.Generic
 open System.Collections.Specialized
-open System.ComponentModel
-open System.Windows.Input
-
 
 type internal ChangeType<'Message> =    
     | NoChanges
@@ -22,8 +14,7 @@ type internal ChangeType<'Message> =
     | Add of index:int * orig:ObservableBindingSource<'Message>
     | Remove of index:int * orig:ObservableBindingSource<'Message>
 
-
-type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> System.Collections.Generic.IEnumerable<'Model>> (collection : ISignal<'Coll>, comp : Component<'Model,'Message>) as self =
+type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> System.Collections.Generic.IEnumerable<'Model>> (collection : ISignal<'Coll>, comp : Component<'Model,'Message>) as self =
     let internalCollection = ResizeArray<IMutatable<'Model>*ObservableBindingSource<'Message>*IDisposable>()
 
     let collectionChanged = Event<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>()
@@ -205,8 +196,8 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
                 box b
             and set (index: int) (v: obj): unit =  failwith "Not implemented"
 
-        member this.Remove(value: obj): unit = failwith "Not implemented"
-        member this.RemoveAt(index: int): unit = failwith "Not implemented"
+        member __.Remove(value: obj): unit = failwith "Not implemented"
+        member __.RemoveAt(index: int): unit = failwith "Not implemented"
         
         
 
@@ -219,6 +210,7 @@ type BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> S
             sub.Dispose()
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+/// Functions to work with binding collections to binding sources
 module BindingCollection =
     /// Add a collection bound to the view
     let toView (source : BindingSource) name (signal : ISignal<'Coll>) (comp : Component<'Model,'Message>) =

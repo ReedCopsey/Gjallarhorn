@@ -8,6 +8,7 @@ open Gjallarhorn.Validation
 open System
 open System.Collections.Generic
 
+/// A single step in a validation chain
 type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)
 
 /// Used to report data to a user

@@ -10,6 +10,7 @@ type private PostMessage<'TModel,'TMsg> =
     | Set of 'TModel * AsyncReplyChannel<'TModel>
     | Update of 'TMsg * AsyncReplyChannel<'TModel>
 
+/// Type which manages state internally given an initial state and an update function
 type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 'TModel) =
     // Provide a mechanism to publish changes to our state as an observable
     // Note that we could have used a mutable here, but that would effectively
@@ -48,13 +49,19 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
                                     
             loop initialState )
 
+    /// Get the current state synchronously
     member __.Get () = Get |> stateManager.PostAndReply 
+    /// Get the current state asynchronously
     member __.GetAsync () = Get |> stateManager.PostAndAsyncReply
 
+    /// Set the state to a new value synchronously
     member __.Set model = stateManager.PostAndReply (fun c -> Set(model, c))
+    /// Set the state to a new value asynchronously
     member __.SetAsync model = stateManager.PostAndAsyncReply (fun c -> Set(model, c))
 
+    /// Perform an update on the current state
     member __.Update updateRequest = stateManager.PostAndReply (fun c -> Update(updateRequest, c))
+    /// Perform an update on the current state asynchronously
     member __.UpdateAsync updateRequest = stateManager.PostAndAsyncReply (fun c -> Update(updateRequest, c))    
 
     interface IObservable<'TModel> with

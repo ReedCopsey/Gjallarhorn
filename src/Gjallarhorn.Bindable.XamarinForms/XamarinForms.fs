@@ -14,12 +14,14 @@ module Platform =
     let install () =        
         Gjallarhorn.Bindable.Binding.Implementation.installCreationFunction (fun _ -> creation typeof<obj>) creation
 
+/// Xamarin Forms implementation of the basic application framework
 module Framework =
     open Gjallarhorn
     open Gjallarhorn.Bindable    
 
     open Xamarin.Forms
 
+    /// Default Xamarin Forms Application implementation
     type App(page) as self =
         inherit Application()    
         do         
@@ -44,4 +46,5 @@ module Framework =
                 App(this.View)                
 
     [<CompiledName("CreateApplicationInfo")>]
+    /// Create the application core given a specific view
     let createApplicationInfo core view = { Core = core ; View = view }

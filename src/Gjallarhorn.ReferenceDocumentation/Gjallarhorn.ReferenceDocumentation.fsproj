@@ -87,6 +87,12 @@
     <Compile Include="..\Gjallarhorn.Bindable\Binding.fs">
       <Link>Binding.fs</Link>
     </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\CollectionBinding.fs">
+      <Link>CollectionBinding.fs</Link>
+    </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\Framework.fs">
+      <Link>Framework.fs</Link>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

@@ -15,6 +15,7 @@ open Microsoft.FSharp.Quotations.Patterns
 
 
 [<AbstractClass>]
+/// Base class of binding sources
 type BindingSource() as self =
 
     let uiCtx = System.Threading.SynchronizationContext.Current
@@ -105,7 +106,7 @@ type BindingSource() as self =
 
         updateErrors name validator.Value 
 
-    // Track an Input type
+    /// Track an Input type
     member this.TrackInput (name, input : Report<'a,'b>) =
         this.TrackObservable (name, input.UpdateStream)
         this.AddReadOnlyProperty (name, Func<_>(input.GetValue))
@@ -116,7 +117,7 @@ type BindingSource() as self =
             this.TrackValidator name v.Validation.ValidationResult
         | _ -> ()
 
-    // Track an InOut type
+    /// Track an InOut type
     member this.TrackInOut<'a,'b,'c> (name, inout : InOut<'a,'b>) =
         this.TrackObservable (name, inout.UpdateStream)
         this.AddReadWriteProperty (name, Func<_>(inout.GetValue), Action<_>(inout.SetValue))
@@ -126,8 +127,10 @@ type BindingSource() as self =
             this.TrackValidator name v.Output.ValidationResult
         | _ -> ()
 
+    /// Create a typed observable binding source
     abstract CreateObservableBindingSource<'a> : unit -> ObservableBindingSource<'a>
 
+    /// Track a component in the view, given a signal representing the model and a name for binding
     member this.TrackComponent<'a,'b> (name, comp : Component<'a,'b>, model : ISignal<'a>) = 
         let source = this.CreateObservableBindingSource<'b>()
         this.TrackObservable (name, model)
