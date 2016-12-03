@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Subscription - Gjallarhorn</title>
+    <title>Framework - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,10 +35,9 @@
 
 
 
-<h1>Subscription</h1>
+<h1>Framework</h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
-  <span>Parent Module: <a href="gjallarhorn-signalmodule.html">Signal</a></span>
+  <span>Namespace: Gjallarhorn.Wpf</span><br />
 </p>
 <div class="xmldoc">
 </div>
@@ -54,61 +53,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
-            copyStep target stepFunction provider
+          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
+            runApplication (...)
           </code>
-          <div class="tip" id="43">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'b, 'a          </div>
+          <div class="tip" id="125">
+            <strong>Signature:</strong> application:(unit -&gt; &#39;Application) -&gt; window:(unit -&gt; &#39;Window) -&gt; applicationInfo:ApplicationCore&lt;&#39;Model,&#39;Message&gt; -&gt; int<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message, 'Application, 'Window          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L73-73" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable.Wpf/Wpf.fs#L45-45" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
-            copyTo target provider
-          </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L68-68" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
-            create f provider
-          </code>
-          <div class="tip" id="45">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L47-47" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
-
-
+          
         </td>
       </tr>
     </tbody>

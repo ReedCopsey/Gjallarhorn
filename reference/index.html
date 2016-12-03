@@ -72,6 +72,12 @@ All signals must also inherit Internal.IDependent and Internal.ITracksDependents
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-state-2.html">State<'TModel, 'TMsg></a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-validationresult.html">ValidationResult</a>
           </td>
           <td class="xmldoc"><p>Defines a validation result</p>
@@ -137,6 +143,14 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-bindable-component-2.html">Component<'Model, 'Message></a>
+          </td>
+          <td class="xmldoc"><p>A component takes a BindingSource and a Signal for a model and returns a list of observable messages</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-bindable-itrackingcommand-1.html">ITrackingCommand<'a></a>
           </td>
           <td class="xmldoc"><p>An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.</p>
@@ -145,7 +159,7 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
         </tr>
         <tr>
           <td class="type-name">
-            <a href="gjallarhorn-bindable-observablebindingsource-1.html">ObservableBindingSource<'b></a>
+            <a href="gjallarhorn-bindable-observablebindingsource-1.html">ObservableBindingSource<'Message></a>
           </td>
           <td class="xmldoc"><p>Base class for binding sources, used by platform specific libraries to share implementation details</p>
 
@@ -168,11 +182,23 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
         </tr>
         <tr>
           <td class="module-name">
+            <a href="gjallarhorn-bindable-bindingcollectionmodule.html">BindingCollection</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
             <a href="gjallarhorn-bindable-commandmodule.html">Command</a>
           </td>
           <td class="xmldoc"><p>Core module for creating and using ICommand implementations</p>
 
 </td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"></td>
         </tr>
     </tbody>
   </table>
@@ -237,6 +263,14 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-interaction-out-1.html">Out<'a></a>
+          </td>
+          <td class="xmldoc"><p>Used as an output mapping to fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-interaction-report-2.html">Report<'a, 'b></a>
           </td>
           <td class="xmldoc"><p>Used to report data to a user</p>
@@ -248,6 +282,14 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
             <a href="gjallarhorn-interaction-validatedinout-3.html">ValidatedInOut<'a, 'b, 'c></a>
           </td>
           <td class="xmldoc"><p>Used as an input and output mapping with validation to report and fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-validatedout-2.html">ValidatedOut<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used as an output mapping with validation to fetch data from a user</p>
 
 </td>
         </tr>
@@ -406,6 +448,12 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
     <tbody>
         <tr>
           <td class="module-name">
+            <a href="gjallarhorn-wpf-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
             <a href="gjallarhorn-wpf-platform.html">Platform</a>
           </td>
           <td class="xmldoc"><p>Platform installation</p>
@@ -425,6 +473,12 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
     <tbody>
         <tr>
           <td class="module-name">
+            <a href="gjallarhorn-xamarinforms-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="module-name">
             <a href="gjallarhorn-xamarinforms-platform.html">Platform</a>
           </td>
           <td class="xmldoc"><p>Platform installation</p>
@@ -442,6 +496,11 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">Gjallarhorn</li>
             <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
             <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>

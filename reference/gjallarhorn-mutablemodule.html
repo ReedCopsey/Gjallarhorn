@@ -76,14 +76,34 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            get mutatable
+            createThreadsafe value
           </code>
           <div class="tip" id="2">
-            <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; &#39;a<br />
+            <strong>Signature:</strong> value:&#39;a -&gt; IMutatable&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L13-13" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a threadsafe mutable variable wrapping an initial value</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+            get mutatable
+          </code>
+          <div class="tip" id="3">
+            <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; &#39;a<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L17-17" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -95,15 +115,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
             set mutatable value
           </code>
-          <div class="tip" id="3">
+          <div class="tip" id="4">
             <strong>Signature:</strong> mutatable:IMutatable&lt;&#39;a&gt; -&gt; value:&#39;a -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L17-17" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L21-21" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -115,15 +135,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
+          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
             step f mutatable
           </code>
-          <div class="tip" id="4">
+          <div class="tip" id="5">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;a) -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L21-21" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Mutable.fs#L25-25" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -141,6 +161,11 @@
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">Gjallarhorn</li>
             <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
             <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>

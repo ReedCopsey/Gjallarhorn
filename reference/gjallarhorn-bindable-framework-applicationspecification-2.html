@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Subscription - Gjallarhorn</title>
+    <title>ApplicationSpecification<'Model, 'Message> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,80 +35,118 @@
 
 
 
-<h1>Subscription</h1>
+<h1>ApplicationSpecification<'Model, 'Message></h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
-  <span>Parent Module: <a href="gjallarhorn-signalmodule.html">Signal</a></span>
+  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Parent Module: <a href="gjallarhorn-bindable-framework.html">Framework</a></span>
 </p>
 <div class="xmldoc">
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Record Fields</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Record Field</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
-            copyStep target stepFunction provider
+          <code onmouseout="hideTip(event, '154', 154)" onmouseover="showTip(event, '154', 154)">
+            Core
           </code>
-          <div class="tip" id="43">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'b, 'a          </div>
+          <div class="tip" id="154">
+            <strong>Signature:</strong> ApplicationCore&lt;&#39;Model,&#39;Message&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L73-73" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L28-28" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
-            copyTo target provider
+          <code onmouseout="hideTip(event, '155', 155)" onmouseover="showTip(event, '155', 155)">
+            Render
           </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="155">
+            <strong>Signature:</strong> CreateDataContext&lt;&#39;Message&gt; -&gt; int<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L68-68" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L29-29" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
 
-
+          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
+            Binding
+          </code>
+          <div class="tip" id="156">
+            <strong>Signature:</strong> Component&lt;&#39;Model,&#39;Message&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L34-34" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Binding</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
-            create f provider
+          <code onmouseout="hideTip(event, '157', 157)" onmouseover="showTip(event, '157', 157)">
+            Model
           </code>
-          <div class="tip" id="45">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="157">
+            <strong>Signature:</strong> unit -&gt; ISignal&lt;&#39;Model&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L47-47" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L32-32" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
+          
+              <p>CompiledName: <code>get_Model</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
 
-
+          <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
+            Update
+          </code>
+          <div class="tip" id="158">
+            <strong>Signature:</strong> &#39;Message -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L33-33" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Update</code></p>
         </td>
       </tr>
     </tbody>

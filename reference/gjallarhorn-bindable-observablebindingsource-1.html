@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>ObservableBindingSource<'b> - Gjallarhorn</title>
+    <title>ObservableBindingSource<'Message> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,7 +35,7 @@
 
 
 
-<h1>ObservableBindingSource<'b></h1>
+<h1>ObservableBindingSource<'Message></h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
@@ -52,15 +52,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '145', 145)" onmouseover="showTip(event, '145', 145)">
+          <code onmouseout="hideTip(event, '177', 177)" onmouseover="showTip(event, '177', 177)">
             new()
           </code>
-          <div class="tip" id="145">
-            <strong>Signature:</strong> unit -&gt; ObservableBindingSource&lt;&#39;b&gt;<br />
+          <div class="tip" id="177">
+            <strong>Signature:</strong> unit -&gt; ObservableBindingSource&lt;&#39;Message&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L168-168" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L180-180" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -79,15 +79,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '146', 146)" onmouseover="showTip(event, '146', 146)">
+          <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
             OutputObservable(obs)
           </code>
-          <div class="tip" id="146">
-            <strong>Signature:</strong> obs:IObservable&lt;&#39;b&gt; -&gt; unit<br />
+          <div class="tip" id="178">
+            <strong>Signature:</strong> obs:IObservable&lt;&#39;Message&gt; -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L178-178" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L190-190" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -99,15 +99,35 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '147', 147)" onmouseover="showTip(event, '147', 147)">
-            OutputValue(value)
+          <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
+            OutputObservables(obs)
           </code>
-          <div class="tip" id="147">
-            <strong>Signature:</strong> value:&#39;b -&gt; unit<br />
+          <div class="tip" id="179">
+            <strong>Signature:</strong> (obs:IObservable&lt;&#39;Message&gt; list) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L175-175" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L195-195" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Outputs values by subscribing to changes on a list of observables</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
+            OutputValue(value)
+          </code>
+          <div class="tip" id="180">
+            <strong>Signature:</strong> value:&#39;Message -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L187-187" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -125,6 +145,11 @@
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">Gjallarhorn</li>
             <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
             <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>

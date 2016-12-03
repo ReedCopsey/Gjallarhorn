@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Subscription - Gjallarhorn</title>
+    <title>ValidatedOut<'a, 'b> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,80 +35,66 @@
 
 
 
-<h1>Subscription</h1>
+<h1>ValidatedOut<'a, 'b></h1>
 <p>
-  <span>Namespace: Gjallarhorn</span><br />
-  <span>Parent Module: <a href="gjallarhorn-signalmodule.html">Signal</a></span>
+  <span>Namespace: Gjallarhorn.Interaction</span><br />
 </p>
 <div class="xmldoc">
+<p>Used as an output mapping with validation to fetch data from a user</p>
+
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
-            copyStep target stepFunction provider
+          <code onmouseout="hideTip(event, '203', 203)" onmouseover="showTip(event, '203', 203)">
+            new(initialValue, validation)
           </code>
-          <div class="tip" id="43">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'b, 'a          </div>
+          <div class="tip" id="203">
+            <strong>Signature:</strong> (initialValue:&#39;a * validation:Validation&lt;&#39;a,&#39;b&gt;) -&gt; ValidatedOut&lt;&#39;a,&#39;b&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L73-73" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L75-75" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
-
-
+          
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
-            copyTo target provider
+          <code onmouseout="hideTip(event, '204', 204)" onmouseover="showTip(event, '204', 204)">
+            Output
           </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="204">
+            <strong>Signature:</strong> IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L68-68" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L83-83" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
+          <p>The validated output data from the user interaction</p>
 
 
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
-            create f provider
-          </code>
-          <div class="tip" id="45">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L47-47" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
-
-
+              <p>CompiledName: <code>get_Output</code></p>
         </td>
       </tr>
     </tbody>

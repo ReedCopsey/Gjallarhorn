@@ -55,15 +55,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
+          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
             create enabledSource
           </code>
-          <div class="tip" id="96">
+          <div class="tip" id="103">
             <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L79-79" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L66-66" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -75,19 +75,59 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
+          <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
             createEnabled ()
           </code>
-          <div class="tip" id="97">
+          <div class="tip" id="104">
             <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L83-83" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L74-74" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Create a command which is always enabled</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
+            createParam enabledSource
+          </code>
+          <div class="tip" id="105">
+            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L70-70" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a parameterized command with an optional enabling source, provided as an ISignal<bool></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '106', 106)" onmouseover="showTip(event, '106', 106)">
+            createParamEnabled ()
+          </code>
+          <div class="tip" id="106">
+            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;&#39;c&gt;<br />
+                          <strong>Type parameters:</strong> 'c          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L78-78" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a parameterized command which is always enabled</p>
 
 
         </td>
@@ -101,6 +141,11 @@
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">Gjallarhorn</li>
             <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
             <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>

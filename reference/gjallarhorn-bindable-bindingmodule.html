@@ -74,12 +74,32 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+            componentToView source name comp signal
+          </code>
+          <div class="tip" id="80">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; comp:Component&lt;&#39;TModel,&#39;TMessage&gt; -&gt; signal:ISignal&lt;&#39;TModel&gt; -&gt; IObservable&lt;&#39;TMessage&gt;<br />
+                          <strong>Type parameters:</strong> 'TModel, 'TMessage          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L108-108" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Bind a component to the given name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
             constantToView name value source
           </code>
-          <div class="tip" id="79">
-            <strong>Signature:</strong> name:string -&gt; value:&#39;?48763 -&gt; source:BindingSource -&gt; unit<br />
-                          <strong>Type parameters:</strong> '?48763          </div>
+          <div class="tip" id="81">
+            <strong>Signature:</strong> name:string -&gt; value:&#39;?49136 -&gt; source:BindingSource -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?49136          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L104-104" class="github-link">
@@ -94,15 +114,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
             createCommand name source
           </code>
-          <div class="tip" id="80">
+          <div class="tip" id="82">
             <strong>Signature:</strong> name:string -&gt; source:BindingSource -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L108-108" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L112-112" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -114,15 +134,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
             createCommandChecked (...)
           </code>
-          <div class="tip" id="81">
+          <div class="tip" id="83">
             <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; source:BindingSource -&gt; ITrackingCommand&lt;DateTime&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L115-115" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L119-119" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -134,10 +154,90 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+            createMessage name message source
+          </code>
+          <div class="tip" id="84">
+            <strong>Signature:</strong> name:string -&gt; message:&#39;?49143 -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?49143&gt;<br />
+                          <strong>Type parameters:</strong> '?49143          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L126-126" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+            createMessageChecked (...)
+          </code>
+          <div class="tip" id="85">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; message:&#39;?49145 -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?49145&gt;<br />
+                          <strong>Type parameters:</strong> '?49145          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L133-133" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
+            createMessageParam name message source
+          </code>
+          <div class="tip" id="86">
+            <strong>Signature:</strong> name:string -&gt; message:(&#39;?49147 -&gt; &#39;?49148) -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?49148&gt;<br />
+                          <strong>Type parameters:</strong> '?49147, '?49148          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L140-140" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
+            createMessageParamChecked (...)
+          </code>
+          <div class="tip" id="87">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; message:(&#39;?49150 -&gt; &#39;?49151) -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?49151&gt;<br />
+                          <strong>Type parameters:</strong> '?49150, '?49151          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L147-147" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
             createObservableSource ()
           </code>
-          <div class="tip" id="82">
+          <div class="tip" id="88">
             <strong>Signature:</strong> unit -&gt; ObservableBindingSource&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -154,10 +254,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+          <code onmouseout="hideTip(event, '89', 89)" onmouseover="showTip(event, '89', 89)">
             createSource ()
           </code>
-          <div class="tip" id="83">
+          <div class="tip" id="89">
             <strong>Signature:</strong> unit -&gt; BindingSource<br />
                       </div>
         </td>
@@ -174,10 +274,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+          <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
             memberToFromView (...)
           </code>
-          <div class="tip" id="84">
+          <div class="tip" id="90">
             <strong>Signature:</strong> source:BindingSource -&gt; expr:Expr -&gt; validation:Validation&lt;&#39;a,&#39;a&gt; -&gt; signal:ISignal&lt;&#39;b&gt; -&gt; IValidatedSignal&lt;&#39;a,&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -194,10 +294,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+          <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
             mutateToFromView source name mutatable
           </code>
-          <div class="tip" id="85">
+          <div class="tip" id="91">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -214,10 +314,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
+          <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
             mutateToFromViewConverted (...)
           </code>
-          <div class="tip" id="86">
+          <div class="tip" id="92">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; converter:(&#39;a -&gt; &#39;b) -&gt; validator:Validation&lt;&#39;b,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -234,10 +334,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
+          <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
             mutateToFromViewValidated (...)
           </code>
-          <div class="tip" id="87">
+          <div class="tip" id="93">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validator:Validation&lt;&#39;a,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -254,10 +354,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
+          <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
             toFromView source name signal
           </code>
-          <div class="tip" id="88">
+          <div class="tip" id="94">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -274,10 +374,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '89', 89)" onmouseover="showTip(event, '89', 89)">
+          <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
             toFromViewConvertedValidated (...)
           </code>
-          <div class="tip" id="89">
+          <div class="tip" id="95">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; converter:(&#39;a -&gt; &#39;b) -&gt; validator:Validation&lt;&#39;b,&#39;c&gt; -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; IValidatedSignal&lt;&#39;b,&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
         </td>
@@ -294,10 +394,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
+          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
             toFromViewValidated (...)
           </code>
-          <div class="tip" id="90">
+          <div class="tip" id="96">
             <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validator:Validation&lt;&#39;a,&#39;b&gt; -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -314,12 +414,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
+          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
             toView source name signal
           </code>
-          <div class="tip" id="91">
-            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; signal:ISignal&lt;&#39;?48759&gt; -&gt; unit<br />
-                          <strong>Type parameters:</strong> '?48759          </div>
+          <div class="tip" id="97">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; signal:ISignal&lt;&#39;?49132&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?49132          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L96-96" class="github-link">
@@ -334,12 +434,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
+          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
             toViewValidated (...)
           </code>
-          <div class="tip" id="92">
-            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validation:Validation&lt;&#39;?48761,&#39;?48761&gt; -&gt; signal:ISignal&lt;&#39;?48761&gt; -&gt; unit<br />
-                          <strong>Type parameters:</strong> '?48761          </div>
+          <div class="tip" id="98">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validation:Validation&lt;&#39;?49134,&#39;?49134&gt; -&gt; signal:ISignal&lt;&#39;?49134&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?49134          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Binding.fs#L100-100" class="github-link">
@@ -360,6 +460,11 @@
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">Gjallarhorn</li>
             <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
             <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
