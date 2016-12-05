@@ -123,6 +123,20 @@ module Binding =
         command    
 
     /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    let createCommandParam<'a> name (source : BindingSource) =
+        let command : ITrackingCommand<'a> = Command.createParamEnabled()
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command
+
+    /// Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message
+    let createCommandParamChecked<'a> name canExecute (source : BindingSource) =
+        let command : ITrackingCommand<'a> = Command.createParam canExecute
+        source.AddDisposable command
+        source.ConstantToView (command, name)
+        command
+
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
     let createMessage name message (source : BindingSource) =
         let command = Command.createEnabled()
         source.AddDisposable command
@@ -136,7 +150,7 @@ module Binding =
         source.ConstantToView (command, name)
         command |> Observable.map (fun _ -> message)
 
-/// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
     let createMessageParam name message (source : BindingSource) =
         let command = Command.createParamEnabled ()
         source.AddDisposable command
