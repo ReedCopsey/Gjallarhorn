@@ -1,5 +1,5 @@
 ﻿type project
-tags wpf
+tags F# FSharp async Reactive Rx Observable WPF
 projectUrl https://github.com/ReedCopsey/Gjallarhorn
 licenseUrl http://opensource.org/licenses/MIT
 
