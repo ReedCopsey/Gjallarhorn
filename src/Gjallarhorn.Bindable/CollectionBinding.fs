@@ -13,8 +13,12 @@ type internal ChangeType<'Message> =
     | Reset
     | Add of index:int * orig:ObservableBindingSource<'Message>
     | Remove of index:int * orig:ObservableBindingSource<'Message>
+    | Move of oldIndex:int * newIndex:int * orig:ObservableBindingSource<'Message>
 
 type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and 'Coll :> System.Collections.Generic.IEnumerable<'Model>> (collection : ISignal<'Coll>, comp : Component<'Model,'Message>) as self =
+    [<Literal>] 
+    let maxChangesBeforeReset = 5
+
     let internalCollection = ResizeArray<IMutatable<'Model>*ObservableBindingSource<'Message>*IDisposable>()
 
     let collectionChanged = Event<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>()
@@ -31,6 +35,7 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
             | Reset -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
             | Add(i,item) -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, i)
             | Remove(i,item) -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, i)
+            | Move(i,j,item) -> NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, [|item|], i, j)
 
         if args <> null then
             collectionChanged.Trigger(self, args)
@@ -43,7 +48,7 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
         internalCollection |> Seq.iter cleanItem
         internalCollection.Clear()
 
-    let updateEntry (m: 'Model) (mm : IMutatable<'Model>, b : ObservableBindingSource<'Message>, s : IDisposable) =
+    let updateEntry (m: 'Model) (mm : IMutatable<'Model>, _b, _s) =
         mm.Value <- m
 
     let createEntry (m : 'Model) =
@@ -60,6 +65,12 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
         let (_,bs,_) = entry
         Add(internalCollection.Count - 1, bs)
 
+    let swap i =
+        let (a,b,c) = internalCollection.[i + 1]
+        internalCollection.[i + 1] <- internalCollection.[i] 
+        internalCollection.[i] <- (a,b,c)
+        Move(i+1, i, b)
+
     let insert m index =        
         let entry = createEntry m
         internalCollection.Insert(index, entry)
@@ -72,70 +83,104 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
         internalCollection.RemoveAt(index)
         Remove(index, orig)
 
-    let isEqual index v =
-        let (mm,_,_) = internalCollection.[index]
+    let tEqual (mm : IMutatable<'Model>, _b, _s) v =
         mm.Value = v
 
-    let updateCollection (newCollection : 'Coll) =
-        // Big ball of imperative code here
-        let currentIndex = ref 0
+    let isEqual index v =
+        tEqual internalCollection.[index] v
 
+    // Big ball of imperative code here...
+    let updateCollection (newCollection : 'Coll) =
+        
         let nc = ResizeArray(newCollection)
 
-        // Handle some of the easy cases
-        let changes = ResizeArray<_>()                
-        match nc.Count, internalCollection.Count with
-        | 0, _ -> // Clear collection
-            clearInternal()
-            changes.Add Reset
-        | _, 0 -> // New collection
-            nc |> Seq.iter (fun m -> append m |> ignore)
-            changes.Add Reset
-        | 1, 1 -> 
-            internalCollection.[0] |> updateEntry nc.[0]                
-        | _ ->
-            // All other types require iteration through the series
-            for i in 0 .. nc.Count - 1 do
-                // If we're past the collection, just append
-////                if !currentIndex > internalCollection.Count - 1 then
-////                    incr currentIndex
-////                    append nc.[i]
-////                    |> changes.Add 
-                if i > internalCollection.Count - 1 then
-                    append nc.[i]
+        // Handle some of the easy cases, brute force the rest
+        let changes = ResizeArray<_>()     
+        
+        let bruteForce () =
+                // All other types require iteration through the series
+                for i in 0 .. nc.Count - 1 do
+                    if i > internalCollection.Count - 1 then
+                        append nc.[i]
+                        |> changes.Add 
+                    else                     
+                        internalCollection.[i] |> updateEntry nc.[i]
+                // Trim off any extra past the end of the collection
+                while internalCollection.Count > nc.Count do
+                    remove (internalCollection.Count - 1)
                     |> changes.Add 
-                else                     
-                    internalCollection.[i] |> updateEntry nc.[i]
-////                        // If we're equal, must move on        
-////                        if isEqual !currentIndex nc.[i] then
-////                            incr currentIndex
-////                        // We're equal, but at the end - so replace last element
-////                        elif !currentIndex = internalCollection.Count - 1 then
-////                            updateEntry nc.[i] internalCollection.[!currentIndex]
-////                            incr currentIndex
-////                        // If we're not equal, but the _next_ items in both collections are, we have a replacement condition
-////                        elif !currentIndex < internalCollection.Count - 1 && i < nc.Count - 1 && isEqual (!currentIndex + 1) nc.[i + 1] then
-////                            updateEntry nc.[i] internalCollection.[!currentIndex]
-////                            incr currentIndex
-////                        // If we're not equal, but the _next_ item is, we have an remove condition
-////                        elif !currentIndex < internalCollection.Count - 1 && isEqual (!currentIndex + 1) nc.[i] then
-////                            remove !currentIndex
-////                            |> changes.Add 
-////                        // If we're not equal, but the _next_ items in new collections are, we have a insert
-////                        elif i < nc.Count - 1 && isEqual (!currentIndex) nc.[i + 1] then
-////                            insert nc.[i] !currentIndex
-////                            |> changes.Add 
-////                            incr currentIndex
-            // Trim off any extra past the end of the collection
-            while internalCollection.Count > nc.Count do
-                remove (internalCollection.Count - 1)
-                |> changes.Add 
+
+        let computeChanges () =           
+            match nc.Count, internalCollection.Count, nc.Count - internalCollection.Count with
+            | 0, _, _ -> // Clear collection
+                clearInternal()
+                changes.Add Reset
+            | _, 0, _ -> // New collection
+                nc |> Seq.iter (fun m -> append m |> ignore)
+                changes.Add Reset
+            | 1, 1, _ -> 
+                internalCollection.[0] |> updateEntry nc.[0]                
+            | _, _, sizeChange when sizeChange < 0 ->                
+                let offset = -sizeChange
+                // We need to remove a single element - check some common occurrences
+                if isEqual offset nc.[0] then
+                    for i in offset - 1 .. -1 .. 0 do
+                        remove i |> changes.Add // Remove first N
+                elif isEqual (nc.Count - offset) nc.[nc.Count - 1] then
+                    for i in internalCollection.Count - 1 .. -1 .. nc.Count do
+                        remove i |> changes.Add // Remove last N
+                else
+                    let firstChangeIndex = nc |> Seq.zip internalCollection |> Seq.tryFindIndex (fun (a,b) -> not(tEqual a b))
+                    match firstChangeIndex with
+                    | None -> ()
+                    | Some firstDiff ->
+                        if isEqual (firstDiff+offset) nc.[firstDiff] then
+                            for i in offset - 1 .. -1 .. 0 do
+                                remove (firstDiff + i) |> changes.Add
+                bruteForce ()
+            | _, _, sizeChange when sizeChange > 0 ->                
+                let offset = sizeChange
+                // We need to remove a single element - check some common occurrences
+                if isEqual 0 nc.[offset] then
+                    for i in 0 .. offset - 1 do
+                        insert nc.[i] i |> changes.Add // Add first N
+                elif isEqual (internalCollection.Count - 1) nc.[nc.Count - offset] then
+                    for i in internalCollection.Count .. nc.Count - 1 do
+                        append nc.[i] |> changes.Add // Add last N
+                else
+                    let firstChangeIndex = nc |> Seq.zip internalCollection |> Seq.tryFindIndex (fun (a,b) -> not(tEqual a b))
+                    match firstChangeIndex with
+                    | None -> ()
+                    | Some firstDiff ->
+                        if isEqual (firstDiff) nc.[firstDiff + offset] then
+                            for i in firstDiff .. firstDiff + offset - 1 do
+                                insert nc.[i] i |> changes.Add
+                bruteForce ()
+            | _, _, 0 ->
+                // We're going to check for a swap of 2 elements
+                let firstChangeIndex = nc |> Seq.zip internalCollection |> Seq.tryFindIndex (fun (a,b) -> not(tEqual a b))
+                match firstChangeIndex with
+                | Some firstDiff when firstDiff < nc.Count - 1 -> // Check element + next for swap
+                    if isEqual (firstDiff) nc.[firstDiff + 1] && isEqual (firstDiff + 1) nc.[firstDiff] then
+                        swap firstDiff                        
+                        |> changes.Add
+                | _ -> ()
+                
+                bruteForce()
+            | _ -> 
+                bruteForce() // Should always be covered by above
+        
+        computeChanges ()
         changes.RemoveAll(fun v -> v = NoChanges) |> ignore
             
-        if changes.Count > 3 then
+        if changes.Count > maxChangesBeforeReset then
             triggerChange Reset
         else
             changes |> Seq.iter triggerChange
+
+    // Fill the collection with the initial state
+    do
+        collection.Value |> Seq.iter (fun m -> append m |> ignore)
 
     let sub = collection |> Signal.Subscription.create updateCollection
 

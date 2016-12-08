@@ -52,6 +52,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="BindingSource.fs" />
+    <Compile Include="CollectionBinding.fs" />
     <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
