@@ -1,0 +1,5 @@
+﻿type project
+tags F# FSharp async Reactive Rx Observable
+projectUrl https://github.com/ReedCopsey/Gjallarhorn
+licenseUrl http://opensource.org/licenses/MIT
+

@@ -1,0 +1,13 @@
+﻿type project
+tags F# FSharp async Reactive Rx Observable WPF
+projectUrl https://github.com/ReedCopsey/Gjallarhorn
+licenseUrl http://opensource.org/licenses/MIT
+
+frameworkAssemblies
+  PresentationCore
+  PresentationFramework
+  System.Xml
+  System.Xaml
+  WindowsBase
+  UIAutomationTypes
+
