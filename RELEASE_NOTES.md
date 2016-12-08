@@ -16,3 +16,7 @@
 * Reworked notification plumbing to be less surprising
 * Added initial framework for building applications directly
 * Added component model to framework
+
+#### 0.0.6-beta - December 8th 2016
+* Improved collection handling performance via internal optimizations
+* 
