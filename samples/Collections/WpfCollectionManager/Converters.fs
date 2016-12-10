@@ -1,6 +1,6 @@
 ﻿namespace CollectionManager.Views
 
-open CollectionSample.Model
+open CollectionSample.RequestModel
 open System.Windows
 open System.Windows.Media
 

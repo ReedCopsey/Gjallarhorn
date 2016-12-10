@@ -1,18 +1,16 @@
-﻿open System
+﻿
+open System
 
 open CollectionSample
-open CollectionSample.Model
-open FsXaml
+open CollectionSample.RequestModel
 open Gjallarhorn.Wpf
+
+open Views
 
 // The WPF Platform specific bits of this application need to do 2 things:
 // 1) They create the view (the actual Window)
 // 2) The start the WPF specific version of the framework with the view
 
-// ----------------------------------     View      ---------------------------------- 
-// Our platform specific view type
-type App = XAML<"App.xaml">
-type MainWin = XAML<"MainWindow.xaml">
 
 // ----------------------------------  Application  ---------------------------------- 
 [<STAThread>]

@@ -7,7 +7,7 @@
 // mailbox processors, defined outside of the main UI, to manage a model
 // defined itself as a collection
 
-namespace CollectionSample.Model
+namespace CollectionSample.RequestModel
 
 open System
 open Gjallarhorn

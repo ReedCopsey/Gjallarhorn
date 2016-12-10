@@ -2,7 +2,8 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
-open CollectionSample.Model
+open CollectionSample.RequestModel
+open CollectionSample.External
 
 // Note that this program is defined in a PCL, and is completely platform neutral.
 // It will work unchanged on WPF, Xamarin Forms, etc
@@ -40,8 +41,39 @@ module Program =
             |> Observable.map Operations.requestUpdateToUpdate 
         ]
 
+    let externalComponent source (model : ISignal<ExternalModel>) =
+        let updating = 
+            model
+            |> Signal.map (fun m -> Option.isSome m.Updating)
+            |> Binding.toFromView source "Updating"
+        let processing = 
+            model
+            |> Signal.map (fun m -> Option.isSome m.Processing)
+            |> Binding.toFromView source "Processing"
+
+        [ 
+            updating |> Observable.map SetUpdating
+            processing |> Observable.map SetProcessing
+        ]
+
+    /// Compose our components above into one application level component
+    let appComponent source (model : ISignal<Model>) =
+        let requestUpdates =            
+            model 
+            |> Signal.map (fun m -> m.Requests)
+            |> Binding.componentToView source "Requests" requestsComponent 
+        let externalUpdates =
+            model 
+            |> Signal.map (fun m -> m.ExternalModel)
+            |> Binding.componentToView source "Updates" externalComponent
+
+        [
+            requestUpdates |> Observable.map Msg.Update
+            externalUpdates |> Observable.map Msg.External
+        ]
+
     // ----------------------------------   Framework  -----------------------------------     
     
     let applicationCore fnAccepted fnRejected = 
         let state = CollectionSample.StateManagement(fnAccepted, fnRejected)
-        Framework.application state.ToSignal state.Initialize state.Update requestsComponent 
+        Framework.application state.ToSignal state.Initialize state.Update appComponent

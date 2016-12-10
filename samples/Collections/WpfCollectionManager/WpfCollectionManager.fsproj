@@ -61,8 +61,10 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Resource Include="App.xaml" />
+    <Resource Include="RequestView.xaml" />
     <Resource Include="MainWindow.xaml" />
     <Compile Include="Converters.fs" />
+    <Compile Include="Views.fs" />
     <Compile Include="App.fs" />
     <None Include="App.config" />
   </ItemGroup>
