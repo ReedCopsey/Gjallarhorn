@@ -211,7 +211,18 @@ module Signal =
     let mapOption10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 = 
         let f1, bc = liftO f v1 v2 v3
         mapOption9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
-        
+
+    /// Creates a function from a signal containing a function, where the value is fetched on execution
+    let toFunction (fs:ISignal<'a -> 'b>) : 'a -> 'b =
+        let execute v = fs.Value(v)
+        execute
+
+    /// Maps a function from a signal containing a function, where the value is fetched on execution
+    let mapFunction (f:'c -> 'a -> 'b) (v : ISignal<'c>) : 'a -> 'b =
+        v 
+        |> map f
+        |> toFunction
+
     /// Filters the signal, so only values matching the predicate are cached and propogated onwards. 
     /// If the provider's value doesn't match the predicate, the resulting signal begins with the provided defaultValue.
     let filter (predicate : 'a -> bool) defaultValue (provider : ISignal<'a>) =

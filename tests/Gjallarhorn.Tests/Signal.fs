@@ -517,3 +517,104 @@ let ``State propogates changes properly`` () =
     Assert.AreEqual(5, m.Value)
 
     Assert.AreEqual(50, value)
+
+[<Test>]
+let ``Signal\toFunction allows closing over a mutable`` () =
+    let mutable result = ""
+    let count = ref 0
+
+    let myService config : unit -> string =
+      fun () -> 
+        incr count
+        sprintf "config=%s" config       
+
+    let myConfig = Mutable.create "A"
+
+    let myService' =
+        myConfig
+        |> Signal.map myService
+        |> Signal.toFunction
+
+    Assert.AreEqual(0, !count)
+    result <- myService' () 
+
+    Assert.AreEqual(1, !count)
+    Assert.AreEqual("config=A", result)
+
+    // Setting the value 
+    myConfig.Value <- "B"
+    Assert.AreEqual(1, !count)
+    
+    // But calling it now that the original is set does
+    result <- myService' () 
+    Assert.AreEqual("config=B", result)
+    Assert.AreEqual(2, !count)
+
+
+[<Test>]
+let ``Signal\toFunction allows closing over a mapped signal`` () =
+    let mutable result = ""
+    let count = ref 0
+
+    let myService (config:string) : unit -> string =
+      fun () -> 
+        incr count
+        sprintf "config=%s" config
+        
+
+    let myConfig = Mutable.create 1
+
+    let myService' =
+        myConfig
+        |> Signal.map string
+        |> Signal.map myService
+        |> Signal.toFunction
+
+    Assert.AreEqual(0, !count)
+    result <- myService' () 
+
+    Assert.AreEqual(1, !count)
+    Assert.AreEqual("config=1", result)
+
+    // Setting the value doesn't trigger execution
+    myConfig.Value <- 2
+    Assert.AreEqual(1, !count)
+    
+    // But calling it now that the original is set does
+    result <- myService' () 
+    Assert.AreEqual("config=2", result)
+    Assert.AreEqual(2, !count)
+
+[<Test>]
+let ``Signal\mapFunction allows closing over a mapped signal`` () =
+    let mutable result = ""
+    let count = ref 0
+
+    let myService (config:string) : unit -> string =
+      fun () -> 
+        incr count
+        sprintf "config=%s" config
+        
+
+    let myConfig = Mutable.create 1
+
+    let myService' =
+        myConfig
+        |> Signal.map string
+        |> Signal.mapFunction myService        
+
+    Assert.AreEqual(0, !count)
+    result <- myService' () 
+
+    Assert.AreEqual(1, !count)
+    Assert.AreEqual("config=1", result)
+
+    // Setting the value doesn't trigger execution
+    myConfig.Value <- 2
+    Assert.AreEqual(1, !count)
+    
+    // But calling it now that the original is set does
+    result <- myService' () 
+    Assert.AreEqual("config=2", result)
+    Assert.AreEqual(2, !count)
+
