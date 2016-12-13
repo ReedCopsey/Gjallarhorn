@@ -19,4 +19,9 @@
 
 #### 0.0.6-beta - December 8th 2016
 * Improved collection handling performance via internal optimizations
-* 
+ 
+#### 0.0.7-beta - December 12th 2016
+* Added new Signal.toFunction and Signal.mapFunction members
+* Added ObservableSource<'a> to ease working with observables
+* Improved samples
+ 
