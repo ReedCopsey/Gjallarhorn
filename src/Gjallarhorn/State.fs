@@ -84,8 +84,8 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             (signal :?> System.IDisposable).Dispose()            
             GC.SuppressFinalize this
 
-/// A wrapper for a mutable value with change notification, using references for the backing value
-type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
+/// A thread-safe wrapper for a reference value with change notification
+type Reference<'a when 'a : not struct>(value : 'a) as self =
     let v = ref value
     let deps =
         let depsArray : ITracksDependents array = Array.empty
@@ -98,7 +98,6 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
             let oldValue = !v
             let result = Interlocked.Exchange<'a>(v, value)
             if obj.ReferenceEquals(result, oldValue) then ()
-            // NOTE; tail call fun required?
             else Thread.SpinWait 20; this.Value <- value
             deps.MarkDirty(this)
 
