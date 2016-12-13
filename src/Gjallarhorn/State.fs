@@ -82,3 +82,39 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
         member this.Dispose() = 
             (signal :?> System.IDisposable).Dispose()            
             GC.SuppressFinalize this
+
+/// A wrapper for a mutable value with change notification, based on/derived from clojure's Atoms
+type AtomicMutable<'a>(value : 'a) =
+    let v = ref value
+
+    let rec setValue newValue =
+        let result = Interlocked.CompareExchange<'a>(v, newValue, !v)
+        if obj.ReferenceEquals result !v then ()
+        else Thread.SpinWait 20; setValue newValue
+
+    // Stores dependencies remotely to not use any space in the object (no memory overhead requirements)
+    member private this.Dependencies with get() = Dependencies.createRemote this
+    
+    /// Gets and sets the Value contained within this mutable
+    member this.Value 
+        with get() = !v
+        and set(value) =
+            setValue value
+            this.Dependencies.MarkDirty(this)
+
+    override this.Finalize() =
+        this.Dependencies.RemoveAll this        
+
+    interface IObservable<'a> with
+        member this.Subscribe obs = this.Dependencies.Subscribe(obs,this)
+    interface ITracksDependents with
+        member this.Track dep = this.Dependencies.Add (dep,this)
+        member this.Untrack dep = this.Dependencies.Remove (dep,this)
+    interface IDependent with
+        member __.UpdateDirtyFlag _ = ()
+        member this.HasDependencies with get() = this.Dependencies.HasDependencies
+    interface ISignal<'a> with
+        member __.Value with get() = v
+
+    interface IMutatable<'a> with
+        member this.Value with get() = v and set(v) = this.Value <- v
