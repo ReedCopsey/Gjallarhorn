@@ -3,8 +3,8 @@
 open System
 open Gjallarhorn.Internal
 
-
 // The messages we allow for manipulation of our state
+[<NoComparison>]
 type private PostMessage<'TModel,'TMsg> =
     | Get of AsyncReplyChannel<'TModel>                                  
     | Set of 'TModel * AsyncReplyChannel<'TModel>

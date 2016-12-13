@@ -107,7 +107,7 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
                         internalCollection.[i] |> updateEntry nc.[i]
                 // Trim off any extra past the end of the collection
                 while internalCollection.Count > nc.Count do
-                    remove (internalCollection.Count - 1)
+                    remove nc.Count
                     |> changes.Add 
 
         let computeChanges () =           
@@ -127,16 +127,17 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
                     for i in offset - 1 .. -1 .. 0 do
                         remove i |> changes.Add // Remove first N
                 elif offset <= nc.Count && isEqual (nc.Count - offset) nc.[nc.Count - 1] then
-                    for i in internalCollection.Count - 1 .. -1 .. nc.Count do
-                        remove i |> changes.Add // Remove last N
+                    // for i in internalCollection.Count - 1 .. -1 .. nc.Count do
+                    for i in nc.Count .. internalCollection.Count - 1 do
+                        remove nc.Count |> changes.Add // Remove last N
                 else
                     let firstChangeIndex = nc |> Seq.zip internalCollection |> Seq.tryFindIndex (fun (a,b) -> not(tEqual a b))
                     match firstChangeIndex with
                     | None -> ()
                     | Some firstDiff ->
                         if isEqual (firstDiff+offset) nc.[firstDiff] then
-                            for i in offset - 1 .. -1 .. 0 do
-                                remove (firstDiff + i) |> changes.Add
+                            for i in 0 .. offset - 1 do
+                                remove firstDiff |> changes.Add
                 bruteForce ()
             | _, _, sizeChange when sizeChange > 0 ->                
                 let offset = sizeChange
@@ -174,17 +175,17 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
         changes.RemoveAll(fun v -> v = NoChanges) |> ignore
            
         let triggerChanges changes =
-            let removes =
-                changes 
-                |> Seq.filter (fun c -> match c with | Remove(_) -> true | _ -> false)
-                |> Seq.length
-
-            // TODO:    This breaks occasionally - if there are 3 elements, and remove the 1st and last, remove dies. 
-            //          Make a good test, and figure out why, then switch this back to just removes
-            if removes > 1 then
-                triggerChange Reset
-            else
-                changes |> Seq.iter triggerChange
+//            let removes =
+//                changes 
+//                |> Seq.filter (fun c -> match c with | Remove(_) -> true | _ -> false)
+//                |> Seq.length
+//
+//            // TODO:    This breaks occasionally - if there are 3 elements, and remove the 1st and last, remove dies. 
+//            //          Make a good test, and figure out why, then switch this back to just removes
+//            if removes > 1 then
+//                triggerChange Reset
+//            else
+              changes |> Seq.iter triggerChange
 
         if changes.Count > maxChangesBeforeReset then
             triggerChange Reset

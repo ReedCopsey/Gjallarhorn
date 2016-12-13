@@ -41,7 +41,7 @@ type CollectionBindingTest() =
     member __.Initialize() =
         Gjallarhorn.Wpf.Platform.install(false) |> ignore
 
-    // TODO: Reimplement this [<Test>]
+    [<Test>]
     member __.``BoundCollection raises collection changed`` () =
         let l = Mutable.create [ 1 ; 2 ; 3 ; 4 ]
 
@@ -262,7 +262,7 @@ type CollectionBindingTest() =
         Assert.AreEqual([ 1 ], changes)
         Assert.AreEqual(0, !count) // original 3 & 5 get overwritten
 
-    // TODO: Reimplement this [<Test>]
+    [<Test>]
     member __.``BoundCollection raises removes if consecutive elements are removed`` () =
         let l = Mutable.create [ 1 ; 2 ; 3 ; 4 ; 5]
         let count = ref 0
@@ -278,7 +278,7 @@ type CollectionBindingTest() =
             obs.[NotifyCollectionChangedAction.Remove]            
             |> List.map (fun v -> v.OldStartingIndex)            
         Assert.AreEqual([ 1 ; 4 ; 5] , l.Value)
-        Assert.AreEqual([ 2 ; 1 ], changes)
+        Assert.AreEqual([ 1 ; 1 ], changes)
         Assert.AreEqual(0, !count) // original 3 & 5 get overwritten
 
     [<Test>]
