@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"		     
         xmlns:local="clr-namespace:Views;assembly=WpfCollectionManager"
         xmlns:model="clr-namespace:CollectionSample.Model;assembly=CollectionSample"
-		Title="Collection Mananger" Width="600" Height="350" x:Name="win">
+		Title="Collection Mananger" Width="680" Height="350" x:Name="win">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

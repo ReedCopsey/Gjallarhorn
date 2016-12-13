@@ -2,6 +2,62 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"		        
         xmlns:model="clr-namespace:CollectionSample.Model;assembly=CollectionSample">
+    <UserControl.Resources>
+        <DataTemplate x:Key="UnselectedRequestTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="250"/>
+                </Grid.ColumnDefinitions>
+                <Rectangle Grid.ColumnSpan="4" Style="{DynamicResource statusRectangle}"/>
+                <TextBlock Text="ID:" Grid.Column="0" Margin="5"/>
+                <TextBox 
+                        IsReadOnly="True" 
+                        Text="{Binding Id, Mode=OneWay}"                         
+                        Grid.Column="1" Margin="5"/>
+                <TextBlock Text="Hours:" Grid.Column="2" Margin="5"/>
+                <TextBox IsReadOnly="True" Text="{Binding Hours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="SelectedRequestTemplate">
+            <Border BorderThickness="1" BorderBrush="DarkGray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="250"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.ColumnSpan="4" Grid.RowSpan="2"  Style="{DynamicResource statusRectangle}"/>
+                    <TextBlock Text="ID:" Grid.Column="0" Margin="5"/>
+                    <TextBox 
+                        IsReadOnly="True" 
+                        Text="{Binding Id, Mode=OneWay}"                         
+                        Grid.Column="1" Margin="5"/>
+                    <TextBlock Text="Hours:" Grid.Column="2" Margin="5"/>
+                    <TextBox IsReadOnly="True" Text="{Binding Hours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
+
+                    <Button Command="{Binding Accept}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">Accept</Button>
+                    <Button Command="{Binding Reject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5">Reject</Button>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type ListBoxItem}" x:Key="ContainerStyle">
+            <Setter Property="ContentTemplate" Value="{StaticResource UnselectedRequestTemplate}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="ContentTemplate" Value="{StaticResource SelectedRequestTemplate}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -11,34 +67,7 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="5">Approve or Reject the Following:</TextBlock>
 
         <ListView Grid.Row="1" Grid.Column="1" Margin="5" 
-                  ItemsSource="{Binding Requests, Mode=OneWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="250"/>
-
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="80"/>
-
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Grid.ColumnSpan="6" Style="{DynamicResource statusRectangle}"/>
-                        <TextBlock Text="ID:" Grid.Column="0" Margin="5"/>
-                        <TextBox 
-                        IsReadOnly="True" 
-                        Text="{Binding Id, Mode=OneWay}"                         
-                        Grid.Column="1" Margin="5"/>
-                        <TextBlock Text="Hours:" Grid.Column="2" Margin="5"/>
-                        <TextBox IsReadOnly="True" Text="{Binding Hours, StringFormat={}{0:N1}, Mode=OneWay}" Grid.Column="3" Margin="5"/>
-
-                        <Button Command="{Binding Accept}" Grid.Column="4" Margin="5">Accept</Button>
-                        <Button Command="{Binding Reject}" Grid.Column="5" Margin="5">Reject</Button>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                  ItemsSource="{Binding Requests, Mode=OneWay}"
+                  ItemContainerStyle="{StaticResource ContainerStyle}" />
     </Grid>
 </UserControl>
