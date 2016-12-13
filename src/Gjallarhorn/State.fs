@@ -88,18 +88,9 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
 type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let v = ref value
     let deps =
-        let depsArray : ITracksDependents array = [||]
+        let depsArray : ITracksDependents array = Array.empty
         Dependencies.create depsArray self
 
-    let rec setValue newValue =
-        let oldValue = !v
-        let result = Interlocked.Exchange<'a>(v, newValue)
-        if obj.ReferenceEquals(result, oldValue) then ()
-        else Thread.SpinWait 20; setValue newValue
-
-    // Stores dependencies remotely to not use any space in the object (no memory overhead requirements)
-    member private this.Dependencies with get() = deps
-    
     /// Gets and sets the Value contained within this mutable
     member this.Value 
         with get() = !v
@@ -109,18 +100,18 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
             if obj.ReferenceEquals(result, oldValue) then ()
             // NOTE; tail call fun required?
             else Thread.SpinWait 20; this.Value <- value
-            this.Dependencies.MarkDirty(this)
+            deps.MarkDirty(this)
 
     override this.Finalize() =
-        this.Dependencies.RemoveAll this        
+        deps.RemoveAll this        
 
     interface IObservable<'a> with
-        member this.Subscribe obs = this.Dependencies.Subscribe(obs,this)
+        member this.Subscribe obs = deps.Subscribe(obs,this)
     interface ITracksDependents with
-        member this.Track dep = this.Dependencies.Add (dep,this)
-        member this.Untrack dep = this.Dependencies.Remove (dep,this)
+        member this.Track dep = deps.Add (dep,this)
+        member this.Untrack dep = deps.Remove (dep,this)
     interface IDependent with
         member __.UpdateDirtyFlag _ = ()
-        member this.HasDependencies with get() = this.Dependencies.HasDependencies
+        member this.HasDependencies with get() = deps.HasDependencies
     interface ISignal<'a>
     interface IMutatable<'a>
