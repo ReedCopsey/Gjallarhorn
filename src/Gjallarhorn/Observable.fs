@@ -4,9 +4,18 @@ open Gjallarhorn.Helpers
 open Gjallarhorn.Internal
 open System
 
+type ObservableSource<'a> () =
+    let evt = Event<'a>()
+
+    member __.Trigger v = evt.Trigger v
+
+    interface IObservable<'a> with
+        member __.Subscribe obs = (evt.Publish :> IObservable<_>).Subscribe(obs)
+
 /// Additional functions related to Observable for use with Gjallarhorn
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Observable =
+
     /// Filters the input observable by using a separate bool signal. The value of the signal is used as the filtering predicate
     let filterBy (condition : ISignal<bool>) input =
         input
