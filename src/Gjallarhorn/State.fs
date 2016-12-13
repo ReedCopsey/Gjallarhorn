@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn
 
 open System
+open System.Threading
 open Gjallarhorn.Internal
 
 
@@ -83,23 +84,31 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             (signal :?> System.IDisposable).Dispose()            
             GC.SuppressFinalize this
 
-/// A wrapper for a mutable value with change notification, based on/derived from clojure's Atoms
-type AtomicMutable<'a>(value : 'a) =
+/// A wrapper for a mutable value with change notification, using references for the backing value
+type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let v = ref value
+    let deps =
+        let depsArray : ITracksDependents array = [||]
+        Dependencies.create depsArray self
 
     let rec setValue newValue =
-        let result = Interlocked.CompareExchange<'a>(v, newValue, !v)
-        if obj.ReferenceEquals result !v then ()
+        let oldValue = !v
+        let result = Interlocked.Exchange<'a>(v, newValue)
+        if obj.ReferenceEquals(result, oldValue) then ()
         else Thread.SpinWait 20; setValue newValue
 
     // Stores dependencies remotely to not use any space in the object (no memory overhead requirements)
-    member private this.Dependencies with get() = Dependencies.createRemote this
+    member private this.Dependencies with get() = deps
     
     /// Gets and sets the Value contained within this mutable
     member this.Value 
         with get() = !v
         and set(value) =
-            setValue value
+            let oldValue = !v
+            let result = Interlocked.Exchange<'a>(v, value)
+            if obj.ReferenceEquals(result, oldValue) then ()
+            // NOTE; tail call fun required?
+            else Thread.SpinWait 20; this.Value <- value
             this.Dependencies.MarkDirty(this)
 
     override this.Finalize() =
@@ -113,8 +122,5 @@ type AtomicMutable<'a>(value : 'a) =
     interface IDependent with
         member __.UpdateDirtyFlag _ = ()
         member this.HasDependencies with get() = this.Dependencies.HasDependencies
-    interface ISignal<'a> with
-        member __.Value with get() = v
-
-    interface IMutatable<'a> with
-        member this.Value with get() = v and set(v) = this.Value <- v
+    interface ISignal<'a>
+    interface IMutatable<'a>
