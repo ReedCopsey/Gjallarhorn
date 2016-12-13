@@ -2,38 +2,39 @@
 
 open Gjallarhorn
 open CollectionSample.RequestModel
-open System.Threading
 open CollectionSample.External
-
     
 
 // Create an application wide model+ msg + update which composes 
 // multiple models
-type Model = { Requests : Requests ; ExternalModel : ExternalModel }
+type Model = { Requests : Requests ; AddingRequests : ExecutionStatus ; Processing : ExecutionStatus }
     
 type Msg =
-    | External of External.UpdateExternal    
+    | AddRequests of SetExecutionState
+    | ProcessRequests of SetExecutionState
     | Update of Operations.Update
 
 // Type that allows us to manage the state external of the basic application framework.
-type StateManagement (fnAccepted : Request -> unit , fnRejected : Request -> unit) =
+type StateManagement (fnAccepted : Request -> unit , fnRejected : Request -> unit, add, proc) =
 
     let updateRequests = Operations.update fnAccepted fnRejected 
-    let updateExternal (c : Model) msg = c.ExternalModel.Updater.Update msg c.ExternalModel
+    let updateAdd (c : Model) msg = Execution.update add msg c.AddingRequests
+    let updateProcess (c : Model) msg = Execution.update proc msg c.Processing
     
-    let extModel = { Updating = None ; Processing = None ; Updater = ExternalUpdater() } 
-
     let update (msg : Msg) (current : Model )= 
         match msg with
-        | Msg.External m -> { current with ExternalModel = updateExternal current m }
+        | Msg.AddRequests b -> { current with AddingRequests = updateAdd current b }
+        | Msg.ProcessRequests b -> { current with Processing = updateProcess current b }
         | Msg.Update u -> { current with Requests = updateRequests u current.Requests }
 
-    let state = new State<Model,Msg>({ Requests = [] ; ExternalModel = extModel }, update)
+    let initialModel = 
+        { 
+            Requests = [] 
+            AddingRequests = { Operating = None } 
+            Processing = { Operating = None } 
+        }
 
-    // Process the messages from our external updater
-    let _subscription =
-        extModel.Updater.Updates
-        |> Observable.subscribe (fun msg -> state.Update (Update msg) |> ignore )
+    let state = new State<Model,Msg>(initialModel, update)
 
     // Gets the state as a Signal
     member __.ToSignal () = state :> ISignal<_> 
@@ -41,8 +42,8 @@ type StateManagement (fnAccepted : Request -> unit , fnRejected : Request -> uni
     // Initialization function - Kick off our routines to add and remove data
     member __.Initialize () =
         // Start updating and processing
-        External.UpdateExternal.SetUpdating true |> External |> state.Update |> ignore
-        External.UpdateExternal.SetProcessing true |> External |> state.Update  |> ignore
+        Executing true |> AddRequests |> state.Update |> ignore
+        Executing true |> ProcessRequests |> state.Update |> ignore
 
     // Our main update function 
     member __.Update with get () = state.Update >> ignore

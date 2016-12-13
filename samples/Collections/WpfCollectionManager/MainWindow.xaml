@@ -10,6 +10,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <local:RequestView Grid.Row="1" DataContext="{Binding Requests}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <CheckBox Grid.Row="0" Grid.Column="0" Margin="5" IsChecked="{Binding Updates.AddingRequests}">Add new requests</CheckBox>
+        <CheckBox Grid.Row="0" Grid.Column="1" Margin="5" IsChecked="{Binding Updates.Processing}">Process handled requests</CheckBox>
+
+        <!-- Include our requests -->
+        <local:RequestView Grid.Row="1" Grid.ColumnSpan="2" DataContext="{Binding Requests}" />
     </Grid>
 </Window>
