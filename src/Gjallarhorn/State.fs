@@ -85,7 +85,7 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             GC.SuppressFinalize this
 
 /// A thread-safe wrapper for a reference value with change notification
-type Reference<'a when 'a : not struct>(value : 'a) as self =
+type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let v = ref value
     let deps =
         let depsArray : ITracksDependents array = Array.empty
