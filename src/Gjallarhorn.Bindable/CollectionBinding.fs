@@ -126,7 +126,7 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
                 if isEqual offset nc.[0] then
                     for i in offset - 1 .. -1 .. 0 do
                         remove i |> changes.Add // Remove first N
-                elif isEqual (nc.Count - offset) nc.[nc.Count - 1] then
+                elif offset <= nc.Count && isEqual (nc.Count - offset) nc.[nc.Count - 1] then
                     for i in internalCollection.Count - 1 .. -1 .. nc.Count do
                         remove i |> changes.Add // Remove last N
                 else
@@ -172,11 +172,24 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
         
         computeChanges ()
         changes.RemoveAll(fun v -> v = NoChanges) |> ignore
-            
+           
+        let triggerChanges changes =
+            let removes =
+                changes 
+                |> Seq.filter (fun c -> match c with | Remove(_) -> true | _ -> false)
+                |> Seq.length
+
+            // TODO:    This breaks occasionally - if there are 3 elements, and remove the 1st and last, remove dies. 
+            //          Make a good test, and figure out why, then switch this back to just removes
+            if removes > 1 then
+                triggerChange Reset
+            else
+                changes |> Seq.iter triggerChange
+
         if changes.Count > maxChangesBeforeReset then
             triggerChange Reset
         else
-            changes |> Seq.iter triggerChange
+            triggerChanges changes
 
     // Fill the collection with the initial state
     do
