@@ -262,6 +262,50 @@ notion of a value (represented in the <code>Value</code> property) which always 
 </code></pre></td>
 </tr>
 </table>
+<p>It is also possible to use signals by closing over them with functions.  This provides a clean mechanism for working with configuration.</p>
+<p>For example:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs27', 86)" onmouseover="showTip(event, 'fs27', 86)" class="t">Configuration</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs28', 87)" onmouseover="showTip(event, 'fs28', 87)" class="i">Author</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs29', 88)" onmouseover="showTip(event, 'fs29', 88)" class="t">string</span> ; <span onmouseout="hideTip(event, 'fs30', 89)" onmouseover="showTip(event, 'fs30', 89)" class="i">AutoPublish</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs31', 90)" onmouseover="showTip(event, 'fs31', 90)" class="t">bool</span> }
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 91)" onmouseover="showTip(event, 'fs32', 91)" class="i">config</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> { <span class="i">Author</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span> ; <span class="i">AutoPublish</span> <span class="o">=</span> <span class="k">false</span> }
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 92)" onmouseover="showTip(event, 'fs33', 92)" class="f">workWithConfig</span> (<span onmouseout="hideTip(event, 'fs34', 93)" onmouseover="showTip(event, 'fs34', 93)" class="i">author</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs29', 94)" onmouseover="showTip(event, 'fs29', 94)" class="t">string</span>) <span onmouseout="hideTip(event, 'fs35', 95)" onmouseover="showTip(event, 'fs35', 95)" class="i">op</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs3', 96)" onmouseover="showTip(event, 'fs3', 96)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s"> Author = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs35', 97)" onmouseover="showTip(event, 'fs35', 97)" class="i">op</span> <span onmouseout="hideTip(event, 'fs34', 98)" onmouseover="showTip(event, 'fs34', 98)" class="i">author</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 99)" onmouseover="showTip(event, 'fs36', 99)" class="f">operation</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs32', 100)" onmouseover="showTip(event, 'fs32', 100)" class="i">config</span>
+    <span class="o">|&gt;</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs12', 101)" onmouseover="showTip(event, 'fs12', 101)" class="i">c</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs12', 102)" onmouseover="showTip(event, 'fs12', 102)" class="i">c</span><span class="o">.</span><span class="i">Author</span>)
+    <span class="o">|&gt;</span> <span class="i">Signal</span><span class="o">.</span><span class="i">mapFunction</span> <span onmouseout="hideTip(event, 'fs33', 103)" onmouseover="showTip(event, 'fs33', 103)" class="i">workWithConfig</span>
+
+<span onmouseout="hideTip(event, 'fs36', 104)" onmouseover="showTip(event, 'fs36', 104)" class="f">operation</span> <span class="s">&quot;One&quot;</span>
+<span class="c">// prints &quot;One Author = Foo&quot;</span>
+
+<span class="c">// Change our configuration</span>
+<span onmouseout="hideTip(event, 'fs32', 105)" onmouseover="showTip(event, 'fs32', 105)" class="i">config</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> { <span class="i">Author</span> <span class="o">=</span> <span class="s">&quot;Reed&quot;</span> ; <span class="i">AutoPublish</span> <span class="o">=</span> <span class="k">true</span> }
+
+<span onmouseout="hideTip(event, 'fs36', 106)" onmouseover="showTip(event, 'fs36', 106)" class="f">operation</span> <span class="s">&quot;One&quot;</span>
+<span class="c">// prints &quot;One Author = Reed&quot;</span>
+</code></pre></td>
+</tr>
+</table>
 <p>Now, let's move on to <a href="mutables.html">Mutables in Gjallarhorn</a>.</p>
 
 <div class="tip" id="fs1">namespace System</div>
@@ -290,6 +334,16 @@ notion of a value (represented in the <code>Value</code> property) which always 
 <div class="tip" id="fs24">module Observable<br /><br />from Microsoft.FSharp.Control</div>
 <div class="tip" id="fs25">val add : callback:(&#39;T -&gt; unit) -&gt; source:IObservable&lt;&#39;T&gt; -&gt; unit<br /><br />Full name: Microsoft.FSharp.Control.Observable.add</div>
 <div class="tip" id="fs26">val s : int</div>
+<div class="tip" id="fs27">Multiple items<br />namespace System.Configuration<br /><br />--------------------<br />type Configuration =<br />&#160;&#160;{Author: string;<br />&#160;&#160;&#160;AutoPublish: bool;}<br /><br />Full name: Signals.Configuration</div>
+<div class="tip" id="fs28">Configuration.Author: string</div>
+<div class="tip" id="fs29">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs30">Configuration.AutoPublish: bool</div>
+<div class="tip" id="fs31">type bool = Boolean<br /><br />Full name: Microsoft.FSharp.Core.bool</div>
+<div class="tip" id="fs32">val config : obj<br /><br />Full name: Signals.config</div>
+<div class="tip" id="fs33">val workWithConfig : author:string -&gt; op:string -&gt; unit<br /><br />Full name: Signals.workWithConfig</div>
+<div class="tip" id="fs34">val author : string</div>
+<div class="tip" id="fs35">val op : string</div>
+<div class="tip" id="fs36">val operation : (string -&gt; obj)<br /><br />Full name: Signals.operation</div>
 
         </div>
         <div class="span3">
