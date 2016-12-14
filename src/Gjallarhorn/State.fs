@@ -92,24 +92,22 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
         let result = Interlocked.CompareExchange<'a>(&v, f v, v)
         if obj.ReferenceEquals(result, v) then ()
         else Thread.SpinWait 20; swap f
+    let setValue value =
+        let result = Interlocked.Exchange<'a>(&v, value)
+        deps.MarkDirty(this)
 
     /// Gets and sets the Value contained within this mutable
     member this.Value 
         with get() = v
-        and set(value) =
-            let result = Interlocked.Exchange<'a>(&v, value)
-            deps.MarkDirty(this)
-        
-    override this.Finalize() =
-        deps.RemoveAll this        
+        and set(value) = setValue(value)
 
     interface IAtomicMutable<'a> with
         member this.Swap f =
             swap f
             deps.MarkDirty(this)
     interface System.IDisposable with
-        member __.Dispose() =
-	        this.Finalize ()
+        member this.Dispose() =
+            deps.RemoveAll(this)
             GC.SuppressFinalize this
     interface IObservable<'a> with
         member this.Subscribe obs = deps.Subscribe(obs,this)
@@ -117,9 +115,10 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
         member this.Track dep = deps.Add (dep,this)
         member this.Untrack dep = deps.Remove (dep,this)
     interface IDependent with
-        member __.UpdateDirtyFlag _ = ()
+        member this.UpdateDirtyFlag _ = ()
         member this.HasDependencies with get() = deps.HasDependencies
     interface IMutatable<'a> with
-        member __.Value with get() = v and set(newval) = this.Value(newval)
+        member this.Value with get() = v and set(newval) = setValue(newval)
     interface ISignal<'a> with
-        member __.Value with get() = v and set(newval) = this.Value(newval)
+        member this.Value with get() = v
+
