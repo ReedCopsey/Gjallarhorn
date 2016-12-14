@@ -5,7 +5,7 @@ open System.Threading
 open Gjallarhorn.Internal
 
 // The messages we allow for manipulation of our state
-[<NoComparison>]
+[<NoComparison;NoEquality>]
 type private PostMessage<'a> =
     | Get of AsyncReplyChannel<'a>                                  
     | Set of 'a * AsyncReplyChannel<'a>
@@ -115,8 +115,14 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
         with get() = v
         and set(value) = setValue value
 
+    /// Updates the current value in a manner that guarantees proper execution, 
+    /// given a function that takes the current value and generates a new value,
+    /// and then returns the new value
+    /// <remarks>The function may be executed multiple times, depending on the implementation.</remarks>
+    member __.Update f = swap f
+
     interface IAtomicMutatable<'a> with
-        member __.Update f = swap f
+        member this.Update f = this.Update f
             
     interface System.IDisposable with
         member this.Dispose() =
