@@ -80,9 +80,32 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '146', 146)" onmouseover="showTip(event, '146', 146)">
-            Value()
+            Update(f)
           </code>
           <div class="tip" id="146">
+            <strong>Signature:</strong> (f:(&#39;a -&gt; &#39;a)) -&gt; &#39;a<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L122-122" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Updates the current value in a manner that guarantees proper execution,
+given a function that takes the current value and generates a new value,
+and then returns the new value
+<remarks>The function may be executed multiple times, depending on the implementation.</remarks></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '147', 147)" onmouseover="showTip(event, '147', 147)">
+            Value()
+          </code>
+          <div class="tip" id="147">
             <strong>Signature:</strong> unit -&gt; &#39;a<br />
                       </div>
         </td>
@@ -100,10 +123,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '147', 147)" onmouseover="showTip(event, '147', 147)">
+          <code onmouseout="hideTip(event, '148', 148)" onmouseover="showTip(event, '148', 148)">
             Value()
           </code>
-          <div class="tip" id="147">
+          <div class="tip" id="148">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
