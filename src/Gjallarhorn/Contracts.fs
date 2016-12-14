@@ -46,3 +46,15 @@ type IMutatable<'a> =
     
     /// The current value of the type
     abstract member Value : 'a with get, set
+
+
+/// Interface for mutable types that implement interlock for thread safety
+type IAtomicMutable<'a when 'a : not struct> =
+    inherit System.IDisposable
+    inherit System.IObservable<'a>
+    inherit Internal.ITracksDependents
+    inherit Internal.IDependent
+    inherit ISignal<'a>
+    inherit IMutatable<'a>
+
+    abstract member Swap : ('a -> 'a) -> unit
