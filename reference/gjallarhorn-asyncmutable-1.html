@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>AsyncMutable<'TModel> - Gjallarhorn</title>
+    <title>AsyncMutable<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,7 +35,7 @@
 
 
 
-<h1>AsyncMutable<'TModel></h1>
+<h1>AsyncMutable<'a></h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
 </p>
@@ -56,7 +56,7 @@
             new(initialState)
           </code>
           <div class="tip" id="138">
-            <strong>Signature:</strong> initialState:&#39;TModel -&gt; AsyncMutable&lt;&#39;TModel&gt;<br />
+            <strong>Signature:</strong> initialState:&#39;a -&gt; AsyncMutable&lt;&#39;a&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -83,7 +83,7 @@
             Get()
           </code>
           <div class="tip" id="139">
-            <strong>Signature:</strong> unit -&gt; &#39;TModel<br />
+            <strong>Signature:</strong> unit -&gt; &#39;a<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -103,7 +103,7 @@
             GetAsync()
           </code>
           <div class="tip" id="140">
-            <strong>Signature:</strong> unit -&gt; Async&lt;&#39;TModel&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Async&lt;&#39;a&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -123,7 +123,7 @@
             Set(model)
           </code>
           <div class="tip" id="141">
-            <strong>Signature:</strong> model:&#39;TModel -&gt; &#39;TModel<br />
+            <strong>Signature:</strong> model:&#39;a -&gt; &#39;a<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -143,7 +143,7 @@
             SetAsync(model)
           </code>
           <div class="tip" id="142">
-            <strong>Signature:</strong> model:&#39;TModel -&gt; Async&lt;&#39;TModel&gt;<br />
+            <strong>Signature:</strong> model:&#39;a -&gt; Async&lt;&#39;a&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -163,7 +163,7 @@
             Update(fn)
           </code>
           <div class="tip" id="143">
-            <strong>Signature:</strong> (fn:(&#39;TModel -&gt; &#39;TModel)) -&gt; &#39;TModel<br />
+            <strong>Signature:</strong> (fn:(&#39;a -&gt; &#39;a)) -&gt; &#39;a<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -183,7 +183,7 @@
             UpdateAsync(fn)
           </code>
           <div class="tip" id="144">
-            <strong>Signature:</strong> (fn:(&#39;TModel -&gt; &#39;TModel)) -&gt; Async&lt;&#39;TModel&gt;<br />
+            <strong>Signature:</strong> (fn:(&#39;a -&gt; &#39;a)) -&gt; Async&lt;&#39;a&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
