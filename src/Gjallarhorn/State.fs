@@ -88,37 +88,37 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
 type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let mutable v = value
     let deps = Dependencies.create [||] self
-    let rec swap (f : 'a -> 'a) =
-        let result = Interlocked.CompareExchange<'a>(&v, f v, v)
-        if obj.ReferenceEquals(result, v) then ()
-        else Thread.SpinWait 20; swap f
+    let swap (f : 'a -> 'a) =
+        let sw = SpinWait()        
+        while not ( obj.ReferenceEquals(Interlocked.CompareExchange<'a>(&v, f v, v), v) ) do
+            sw.SpinOnce()            
+        deps.MarkDirty self
     let setValue value =
-        let result = Interlocked.Exchange<'a>(&v, value)
-        deps.MarkDirty(this)
+        Interlocked.Exchange<'a>(&v, value) |> ignore
+        deps.MarkDirty self
 
     /// Gets and sets the Value contained within this mutable
-    member this.Value 
+    member __.Value 
         with get() = v
-        and set(value) = setValue(value)
+        and set(value) = setValue value
 
     interface IAtomicMutable<'a> with
-        member this.Swap f =
-            swap f
-            deps.MarkDirty(this)
+        member __.Update f = swap f
+            
     interface System.IDisposable with
         member this.Dispose() =
-            deps.RemoveAll(this)
+            deps.RemoveAll this
             GC.SuppressFinalize this
     interface IObservable<'a> with
-        member this.Subscribe obs = deps.Subscribe(obs,this)
+        member this.Subscribe obs = deps.Subscribe(obs, this)
     interface ITracksDependents with
-        member this.Track dep = deps.Add (dep,this)
-        member this.Untrack dep = deps.Remove (dep,this)
+        member this.Track dep = deps.Add (dep, this)
+        member this.Untrack dep = deps.Remove (dep, this)
     interface IDependent with
-        member this.UpdateDirtyFlag _ = ()
-        member this.HasDependencies with get() = deps.HasDependencies
-    interface IMutatable<'a> with
-        member this.Value with get() = v and set(newval) = setValue(newval)
+        member __.UpdateDirtyFlag _ = ()
+        member __.HasDependencies with get() = deps.HasDependencies
     interface ISignal<'a> with
-        member this.Value with get() = v
+        member __.Value with get() = v
+    interface IMutatable<'a> with
+        member __.Value with get() = v and set(v) = setValue v
 

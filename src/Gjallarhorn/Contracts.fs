@@ -48,13 +48,11 @@ type IMutatable<'a> =
     abstract member Value : 'a with get, set
 
 
-/// Interface for mutable types that implement interlock for thread safety
-type IAtomicMutable<'a when 'a : not struct> =
-    inherit System.IDisposable
-    inherit System.IObservable<'a>
-    inherit Internal.ITracksDependents
-    inherit Internal.IDependent
-    inherit ISignal<'a>
+/// Interface for mutable types that have atomic update functionality
+type IAtomicMutable<'a> =
     inherit IMutatable<'a>
-
-    abstract member Swap : ('a -> 'a) -> unit
+    
+    /// Updates the current value in a manner that guarantees proper execution, 
+    /// given a function that takes the initial value and the new one.
+    /// <remarks>The function may be executed multiple times, depending on the implementation.</remarks>
+    abstract member Update : ('a -> 'a) -> unit
