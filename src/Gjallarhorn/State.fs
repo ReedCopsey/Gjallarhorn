@@ -1,6 +1,7 @@
 ﻿namespace Gjallarhorn
 
 open System
+open System.Threading
 open Gjallarhorn.Internal
 
 // The messages we allow for manipulation of our state
@@ -82,3 +83,37 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
         member this.Dispose() = 
             (signal :?> System.IDisposable).Dispose()            
             GC.SuppressFinalize this
+
+/// A thread-safe wrapper using interlock for a mutable value with change notification
+type InterlockMutable<'a when 'a : not struct>(value : 'a) as self =
+    let mutable v = value
+    let deps = Dependencies.create [||] self
+    let rec swap (f : 'a -> 'a) =
+        let result = Interlocked.CompareExchange<'a>(&v, f v, v)
+        if obj.ReferenceEquals(result, v) then ()
+        else Thread.SpinWait 20; swap f
+
+    /// Gets and sets the Value contained within this mutable
+    member this.Value 
+        with get() = v
+        and set(value) =
+            let result = Interlocked.Exchange<'a>(&v, value)
+            deps.MarkDirty(this)
+
+    member this.Swap f =
+        swap f
+        deps.MarkDirty(this)
+        
+    override this.Finalize() =
+        deps.RemoveAll this        
+
+    interface IObservable<'a> with
+        member this.Subscribe obs = deps.Subscribe(obs,this)
+    interface ITracksDependents with
+        member this.Track dep = deps.Add (dep,this)
+        member this.Untrack dep = deps.Remove (dep,this)
+    interface IDependent with
+        member __.UpdateDirtyFlag _ = ()
+        member this.HasDependencies with get() = deps.HasDependencies
+    interface ISignal<'a>
+    interface IMutatable<'a>
