@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Converters - Gjallarhorn</title>
+    <title>AsyncMutable<'TModel> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,80 +35,63 @@
 
 
 
-<h1>Converters</h1>
+<h1>AsyncMutable<'TModel></h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
-  <span>Parent Module: <a href="gjallarhorn-validationmodule.html">Validation</a></span>
 </p>
 <div class="xmldoc">
-<p>Library of validation converters which can be used to convert value representations as part of the validation process</p>
+<p>Type which manages state internally using a mailbox</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
-            fromTo input
+          <code onmouseout="hideTip(event, '138', 138)" onmouseover="showTip(event, '138', 138)">
+            new(initialState)
           </code>
-          <div class="tip" id="57">
-            <strong>Signature:</strong> input:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L129-129" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Convert between any two types, using System.Convert.ChangeType</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
-            stringToDouble input
-          </code>
-          <div class="tip" id="58">
-            <strong>Signature:</strong> input:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;float&gt;<br />
+          <div class="tip" id="138">
+            <strong>Signature:</strong> initialState:&#39;TModel -&gt; AsyncMutable&lt;&#39;TModel&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L156-156" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Convert from a string to a 64bit float</p>
-
-
+          
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
-            stringToDoubleC style provider input
+          <code onmouseout="hideTip(event, '139', 139)" onmouseover="showTip(event, '139', 139)">
+            Get()
           </code>
-          <div class="tip" id="59">
-            <strong>Signature:</strong> style:NumberStyles -&gt; provider:IFormatProvider -&gt; input:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;float&gt;<br />
+          <div class="tip" id="139">
+            <strong>Signature:</strong> unit -&gt; &#39;TModel<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L164-164" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L54-54" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Convert from a string to a double specifying culture information</p>
+          <p>Get the current state synchronously</p>
 
 
         </td>
@@ -116,19 +99,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
-            stringToInt32 input
+          <code onmouseout="hideTip(event, '140', 140)" onmouseover="showTip(event, '140', 140)">
+            GetAsync()
           </code>
-          <div class="tip" id="60">
-            <strong>Signature:</strong> input:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;int&gt;<br />
+          <div class="tip" id="140">
+            <strong>Signature:</strong> unit -&gt; Async&lt;&#39;TModel&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L148-148" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L56-56" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Convert from a string to an integer</p>
+          <p>Get the current state asynchronously</p>
 
 
         </td>
@@ -136,19 +119,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
-            stringToInt32C style provider input
+          <code onmouseout="hideTip(event, '141', 141)" onmouseover="showTip(event, '141', 141)">
+            Set(model)
           </code>
-          <div class="tip" id="61">
-            <strong>Signature:</strong> style:NumberStyles -&gt; provider:IFormatProvider -&gt; input:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;int&gt;<br />
+          <div class="tip" id="141">
+            <strong>Signature:</strong> model:&#39;TModel -&gt; &#39;TModel<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L140-140" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L59-59" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Convert from a string to an integer specifying culture information</p>
+          <p>Set the state to a new value synchronously</p>
 
 
         </td>
@@ -156,19 +139,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
-            toSelf input
+          <code onmouseout="hideTip(event, '142', 142)" onmouseover="showTip(event, '142', 142)">
+            SetAsync(model)
           </code>
-          <div class="tip" id="62">
-            <strong>Signature:</strong> input:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="142">
+            <strong>Signature:</strong> model:&#39;TModel -&gt; Async&lt;&#39;TModel&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L115-115" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L62-62" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>An "id" style conversion which does nothing</p>
+          <p>Set the state to a new value asynchronously</p>
 
 
         </td>
@@ -176,19 +159,39 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
-            toString input
+          <code onmouseout="hideTip(event, '143', 143)" onmouseover="showTip(event, '143', 143)">
+            Update(fn)
           </code>
-          <div class="tip" id="63">
-            <strong>Signature:</strong> input:ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;string&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="143">
+            <strong>Signature:</strong> (fn:(&#39;TModel -&gt; &#39;TModel)) -&gt; &#39;TModel<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L124-124" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L65-65" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Convert to a string representation using Object.ToString()</p>
+          <p>Perform an update on the current state</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '144', 144)" onmouseover="showTip(event, '144', 144)">
+            UpdateAsync(fn)
+          </code>
+          <div class="tip" id="144">
+            <strong>Signature:</strong> (fn:(&#39;TModel -&gt; &#39;TModel)) -&gt; Async&lt;&#39;TModel&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/State.fs#L67-67" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Perform an update on the current state asynchronously</p>
 
 
         </td>

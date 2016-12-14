@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Subscription - Gjallarhorn</title>
+    <title>IAsyncMutatable<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,38 +35,37 @@
 
 
 
-<h1>Subscription</h1>
+<h1>IAsyncMutatable<'a></h1>
 <p>
   <span>Namespace: Gjallarhorn</span><br />
-  <span>Parent Module: <a href="gjallarhorn-signalmodule.html">Signal</a></span>
 </p>
 <div class="xmldoc">
+<p>Interface for mutable types that have asynchronous support atomic update functionality</p>
+
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Instance member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
-            copyStep target stepFunction provider
+          <code onmouseout="hideTip(event, '148', 148)" onmouseover="showTip(event, '148', 148)">
+            GetAsync()
           </code>
-          <div class="tip" id="46">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;b&gt; -&gt; stepFunction:(&#39;b -&gt; &#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'b, 'a          </div>
+          <div class="tip" id="148">
+            <strong>Signature:</strong> unit -&gt; Async&lt;&#39;a&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L73-73" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L72-72" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable via a stepping function</p>
+          <p>Asynchronously get the value contained within this mutable</p>
 
 
         </td>
@@ -74,19 +73,20 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
-            copyTo target provider
+          <code onmouseout="hideTip(event, '149', 149)" onmouseover="showTip(event, '149', 149)">
+            SetAsync(arg1)
           </code>
-          <div class="tip" id="47">
-            <strong>Signature:</strong> target:IMutatable&lt;&#39;a&gt; -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="149">
+            <strong>Signature:</strong> &#39;a -&gt; Async&lt;&#39;a&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L68-68" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L75-75" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which copies its value upon change into a mutable</p>
+          <p>Asynchronously set the value contained within this mutable</p>
 
 
         </td>
@@ -94,19 +94,23 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
-            create f provider
+          <code onmouseout="hideTip(event, '150', 150)" onmouseover="showTip(event, '150', 150)">
+            UpdateAsync(arg1)
           </code>
-          <div class="tip" id="48">
-            <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; IDisposable<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="150">
+            <strong>Signature:</strong> ((&#39;a -&gt; &#39;a)) -&gt; Async&lt;&#39;a&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L47-47" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Contracts.fs#L69-69" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a subscription to the changes of a signal which calls the provided function upon each change</p>
+          <p>Asynchronously update the current value in a manner that guarantees proper execution,
+given a function that takes the current value and generates a new value,
+and then returns the new value asynchronously
+<remarks>The function may be executed multiple times, depending on the implementation.</remarks></p>
 
 
         </td>
