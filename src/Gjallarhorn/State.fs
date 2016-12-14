@@ -85,7 +85,7 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             GC.SuppressFinalize this
 
 /// A thread-safe wrapper using interlock for a mutable value with change notification
-type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
+type InterlockMutable<'a when 'a : not struct>(value : 'a) as self =
     let mutable v = value
     let deps = Dependencies.create [||] self
     let rec swap (f : 'a -> 'a) =
