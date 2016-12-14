@@ -84,21 +84,20 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             (signal :?> System.IDisposable).Dispose()            
             GC.SuppressFinalize this
 
-/// A thread-safe wrapper for a reference value with change notification using interlock
+/// A thread-safe wrapper using interlock for a mutable value with change notification
 type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
-    let v = ref value
+    let mutable v = value
     let deps = Dependencies.create [||] self
     let rec swap (f : 'a -> 'a) =
-        let oldValue = !v
-        let result = Interlocked.CompareExchange<'a>(v, f oldValue, oldValue)
-        if obj.ReferenceEquals(result, oldValue) then ()
+        let result = Interlocked.CompareExchange<'a>(&v, f v, v)
+        if obj.ReferenceEquals(result, v) then ()
         else Thread.SpinWait 20; swap f
 
     /// Gets and sets the Value contained within this mutable
     member this.Value 
-        with get() = !v
+        with get() = v
         and set(value) =
-            let result = Interlocked.Exchange<'a>(v, value)
+            let result = Interlocked.Exchange<'a>(&v, value)
             deps.MarkDirty(this)
 
     member this.Swap f =
