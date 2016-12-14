@@ -6,13 +6,13 @@ open Gjallarhorn.Internal
 
 // The messages we allow for manipulation of our state
 [<NoComparison>]
-type private PostMessage<'TModel,'TMsg> =
+type private PostMessage<'TModel> =
     | Get of AsyncReplyChannel<'TModel>                                  
     | Set of 'TModel * AsyncReplyChannel<'TModel>
-    | Update of 'TMsg * AsyncReplyChannel<'TModel>
+    | Update of ('TModel -> 'TModel) * AsyncReplyChannel<'TModel>
 
-/// Type which manages state internally given an initial state and an update function
-type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 'TModel) =
+/// Type which manages state internally using a mailbox
+type AsyncMutable<'TModel> (initialState : 'TModel) =
     // Provide a mechanism to publish changes to our state as an observable
     // Note that we could have used a mutable here, but that would effectively
     // "duplicate state"
@@ -40,9 +40,9 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
                     let state = newState |> notifyStateUpdated
                     replyChannel.Reply state
                     return! loop state
-                | Update(msg, replyChannel) ->
+                | Update(fn, replyChannel) ->
                     let state = 
-                        update msg current
+                        fn current
                         |> notifyStateUpdated
                     replyChannel.Reply state
                     return! loop state
@@ -57,13 +57,14 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
 
     /// Set the state to a new value synchronously
     member __.Set model = stateManager.PostAndReply (fun c -> Set(model, c))
+    
     /// Set the state to a new value asynchronously
     member __.SetAsync model = stateManager.PostAndAsyncReply (fun c -> Set(model, c))
 
     /// Perform an update on the current state
-    member __.Update updateRequest = stateManager.PostAndReply (fun c -> Update(updateRequest, c))
+    member __.Update fn = stateManager.PostAndReply (fun c -> Update(fn, c))
     /// Perform an update on the current state asynchronously
-    member __.UpdateAsync updateRequest = stateManager.PostAndAsyncReply (fun c -> Update(updateRequest, c))    
+    member __.UpdateAsync fn = stateManager.PostAndAsyncReply (fun c -> Update(fn, c))    
 
     interface IObservable<'TModel> with
         member __.Subscribe obs = (signal :> IObservable<_>).Subscribe obs
@@ -78,6 +79,14 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
 
     interface IMutatable<'TModel> with
         member this.Value with get() = signal.Value and set(v) = this.Set(v) |> ignore
+
+    interface IAtomicMutatable<'TModel> with
+        member this.Update f = this.Update f
+
+    interface IAsyncMutatable<'TModel> with
+        member this.UpdateAsync fn = this.UpdateAsync fn
+        member this.GetAsync () = this.GetAsync ()
+        member this.SetAsync v = this.SetAsync v
         
     interface System.IDisposable with
         member this.Dispose() = 
@@ -90,9 +99,13 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let deps = Dependencies.create [||] self
     let swap (f : 'a -> 'a) =
         let sw = SpinWait()        
-        while not ( obj.ReferenceEquals(Interlocked.CompareExchange<'a>(&v, f v, v), v) ) do
+        let mutable current = v
+        while not ( obj.ReferenceEquals(Interlocked.CompareExchange<'a>(&v, f current, current), current) ) do
             sw.SpinOnce()            
+            current <- v
         deps.MarkDirty self
+        v
+
     let setValue value =
         Interlocked.Exchange<'a>(&v, value) |> ignore
         deps.MarkDirty self
@@ -102,7 +115,7 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
         with get() = v
         and set(value) = setValue value
 
-    interface IAtomicMutable<'a> with
+    interface IAtomicMutatable<'a> with
         member __.Update f = swap f
             
     interface System.IDisposable with

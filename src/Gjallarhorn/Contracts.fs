@@ -49,10 +49,27 @@ type IMutatable<'a> =
 
 
 /// Interface for mutable types that have atomic update functionality
-type IAtomicMutable<'a> =
+type IAtomicMutatable<'a> =
     inherit IMutatable<'a>
     
     /// Updates the current value in a manner that guarantees proper execution, 
-    /// given a function that takes the initial value and the new one.
+    /// given a function that takes the current value and generates a new value,
+    /// and then returns the new value
     /// <remarks>The function may be executed multiple times, depending on the implementation.</remarks>
-    abstract member Update : ('a -> 'a) -> unit
+    abstract member Update : ('a -> 'a) -> 'a
+
+/// Interface for mutable types that have asynchronous support atomic update functionality
+type IAsyncMutatable<'a> =
+    inherit IAtomicMutatable<'a>
+    
+    /// Asynchronously update the current value in a manner that guarantees proper execution, 
+    /// given a function that takes the current value and generates a new value,
+    /// and then returns the new value asynchronously
+    /// <remarks>The function may be executed multiple times, depending on the implementation.</remarks>
+    abstract member UpdateAsync : ('a -> 'a) -> Async<'a>
+
+    /// Asynchronously get the value contained within this mutable
+    abstract member GetAsync : unit -> Async<'a>
+
+    /// Asynchronously set the value contained within this mutable
+    abstract member SetAsync : 'a -> Async<'a>

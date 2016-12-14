@@ -475,12 +475,12 @@ type Msg =
 | Update of int
 
 [<Test>]
-let ``State functions as mutable`` () =
+let ``Async mutables functions as mutable`` () =
     let update msg state =
         match msg with
         | Update(newValue) -> newValue
 
-    use state = new State<int, Msg>(0, update)
+    let state = Mutable.createAsync 0
 
     let m = state :> IMutatable<_>
 
@@ -489,16 +489,16 @@ let ``State functions as mutable`` () =
     m.Value <- 3
     Assert.AreEqual(3, m.Value)
 
-    Update(5) |> state.Update |> ignore
+    Update(5) |> update |> state.Update |> ignore
     Assert.AreEqual(5, m.Value)
 
 [<Test>]
-let ``State propogates changes properly`` () =
+let ``Async mutables propogates changes properly`` () =
     let update msg state =
         match msg with
         | Update(newValue) -> newValue
 
-    use state = new State<int, Msg>(0, update)
+    let state = Mutable.createAsync 0 
 
     let m = state :> IMutatable<_>
 
@@ -513,7 +513,7 @@ let ``State propogates changes properly`` () =
     m.Value <- 3
     Assert.AreEqual(3, m.Value)
 
-    Update(5) |> state.Update |> ignore
+    Update(5) |> update |> state.Update |> ignore
     Assert.AreEqual(5, m.Value)
 
     Assert.AreEqual(50, value)

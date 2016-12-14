@@ -21,7 +21,7 @@ type StateManagement (fnAccepted : Request -> unit , fnRejected : Request -> uni
     let updateAdd (c : Model) msg = Execution.update add msg c.AddingRequests
     let updateProcess (c : Model) msg = Execution.update proc msg c.Processing
     
-    let update (msg : Msg) (current : Model )= 
+    let update (msg : Msg) (current : Model) = 
         match msg with
         | Msg.AddRequests b -> { current with AddingRequests = updateAdd current b }
         | Msg.ProcessRequests b -> { current with Processing = updateProcess current b }
@@ -34,16 +34,17 @@ type StateManagement (fnAccepted : Request -> unit , fnRejected : Request -> uni
             Processing = { Operating = None } 
         }
 
-    let state = new State<Model,Msg>(initialModel, update)
+    let state = new AsyncMutable<Model>(initialModel)
+
+    // Update the current state given a message
+    member __.Update msg = 
+        update msg |> state.Update |> ignore
 
     // Gets the state as a Signal
     member __.ToSignal () = state :> ISignal<_> 
 
     // Initialization function - Kick off our routines to add and remove data
-    member __.Initialize () =
+    member this.Initialize () =
         // Start updating and processing
-        Executing true |> AddRequests |> state.Update |> ignore
-        Executing true |> ProcessRequests |> state.Update |> ignore
-
-    // Our main update function 
-    member __.Update with get () = state.Update >> ignore
+        Executing true |> AddRequests |> this.Update
+        Executing true |> ProcessRequests |> this.Update

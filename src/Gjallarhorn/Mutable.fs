@@ -10,8 +10,12 @@ module Mutable =
         Mutable<'a>(value) :> IMutatable<'a>
 
     /// Create a threadsafe mutable variable wrapping an initial value
-    let createThreadsafe (value : 'a) = 
-        new Gjallarhorn.State<'a, unit>(value, (fun _ s -> s)) :> IMutatable<'a>
+    let createThreadsafe<'a when 'a : not struct> (value : 'a) = 
+        new AtomicMutable<'a>(value) :> IAtomicMutatable<'a>
+
+    /// Create an asynchronous mutable variable wrapping an initial value
+    let createAsync (value : 'a) = 
+        new AsyncMutable<'a>(value) :> IAsyncMutatable<'a>
 
     /// Gets the value associated with the mutatable object
     let get (mutatable : IMutatable<'a>) = 
