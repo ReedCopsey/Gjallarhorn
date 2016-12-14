@@ -96,10 +96,10 @@ let ``Mutable\createThreadsafe updates signals properly`` () =
     let ts = Mutable.createThreadsafe { Value = 0 }
     let s = ts |> Signal.map (fun v -> v.Value)    
 
+    let o = obj()
     use _s = 
-        s 
-        |> Signal.observeOn (SynchronizationContext())
-        |> Observable.subscribe (fun v -> r <- max r v)
+        s         
+        |> Observable.subscribe (fun v -> lock o (fun _ -> r <- max r v))
 
     let max = 10000
     let input = [ 0 .. max ]
@@ -122,11 +122,11 @@ let ``Mutable\createAsync updates signals properly`` () =
     let m = Mutable.create { Value = 0 }
     let ts = Mutable.createAsync { Value = 0 }
     let s = ts |> Signal.map (fun v -> v.Value)    
-
+    
+    let o = obj()
     use _s = 
-        s 
-        |> Signal.observeOn (SynchronizationContext())
-        |> Observable.subscribe (fun v -> r <- max r v)
+        s         
+        |> Observable.subscribe (fun v -> lock o (fun _ -> r <- max r v))
 
     let max = 10000
     let input = [ 0 .. max ]

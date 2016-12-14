@@ -159,10 +159,11 @@ type SignalBase<'a>(dependencies) as self =
     /// Signals to dependencies that we have updated
     abstract member MarkDirtyGuarded : obj -> unit
     default this.MarkDirtyGuarded _ = 
-        if not signalGuard then
-            signalGuard <- true
-            dependencies.MarkDirty this |> ignore
-            signalGuard <- false
+        lock dependencies (fun _ ->
+            if not signalGuard then
+                signalGuard <- true
+                dependencies.MarkDirty this |> ignore
+                signalGuard <- false)
    
     /// Update and fetch the current value.  Implementers should only update if we're dirty.
     abstract member UpdateAndGetCurrentValue : updateRequired : bool -> 'a    
