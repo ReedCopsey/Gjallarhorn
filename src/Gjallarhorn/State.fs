@@ -6,13 +6,13 @@ open Gjallarhorn.Internal
 
 // The messages we allow for manipulation of our state
 [<NoComparison>]
-type private PostMessage<'TModel> =
-    | Get of AsyncReplyChannel<'TModel>                                  
-    | Set of 'TModel * AsyncReplyChannel<'TModel>
-    | Update of ('TModel -> 'TModel) * AsyncReplyChannel<'TModel>
+type private PostMessage<'a> =
+    | Get of AsyncReplyChannel<'a>                                  
+    | Set of 'a * AsyncReplyChannel<'a>
+    | Update of ('a -> 'a) * AsyncReplyChannel<'a>
 
 /// Type which manages state internally using a mailbox
-type AsyncMutable<'TModel> (initialState : 'TModel) =
+type AsyncMutable<'a> (initialState : 'a) =
     // Provide a mechanism to publish changes to our state as an observable
     // Note that we could have used a mutable here, but that would effectively
     // "duplicate state"
@@ -66,7 +66,7 @@ type AsyncMutable<'TModel> (initialState : 'TModel) =
     /// Perform an update on the current state asynchronously
     member __.UpdateAsync fn = stateManager.PostAndAsyncReply (fun c -> Update(fn, c))    
 
-    interface IObservable<'TModel> with
+    interface IObservable<'a> with
         member __.Subscribe obs = (signal :> IObservable<_>).Subscribe obs
     interface ITracksDependents with
         member __.Track dep = (signal :> ITracksDependents).Track dep 
@@ -74,16 +74,16 @@ type AsyncMutable<'TModel> (initialState : 'TModel) =
     interface IDependent with
         member __.UpdateDirtyFlag v = (signal :> IDependent).UpdateDirtyFlag v
         member __.HasDependencies with get() = (signal :> IDependent).HasDependencies
-    interface ISignal<'TModel> with
+    interface ISignal<'a> with
         member __.Value with get() = signal.Value
 
-    interface IMutatable<'TModel> with
+    interface IMutatable<'a> with
         member this.Value with get() = signal.Value and set(v) = this.Set(v) |> ignore
 
-    interface IAtomicMutatable<'TModel> with
+    interface IAtomicMutatable<'a> with
         member this.Update f = this.Update f
 
-    interface IAsyncMutatable<'TModel> with
+    interface IAsyncMutatable<'a> with
         member this.UpdateAsync fn = this.UpdateAsync fn
         member this.GetAsync () = this.GetAsync ()
         member this.SetAsync v = this.SetAsync v
