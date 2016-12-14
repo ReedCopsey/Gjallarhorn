@@ -85,7 +85,7 @@ type State<'TModel,'TMsg> (initialState : 'TModel, update : 'TMsg -> 'TModel -> 
             GC.SuppressFinalize this
 
 /// A thread-safe wrapper using interlock for a mutable value with change notification
-type InterlockMutable<'a when 'a : not struct>(value : 'a) as self =
+type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     let mutable v = value
     let deps = Dependencies.create [||] self
     let rec swap (f : 'a -> 'a) =
@@ -99,14 +99,18 @@ type InterlockMutable<'a when 'a : not struct>(value : 'a) as self =
         and set(value) =
             let result = Interlocked.Exchange<'a>(&v, value)
             deps.MarkDirty(this)
-
-    member this.Swap f =
-        swap f
-        deps.MarkDirty(this)
         
     override this.Finalize() =
         deps.RemoveAll this        
 
+    interface IAtomicMutable<'a> with
+        member this.Swap f =
+            swap f
+            deps.MarkDirty(this)
+    interface System.IDisposable with
+        member __.Dispose() =
+	        this.Finalize ()
+            GC.SuppressFinalize this
     interface IObservable<'a> with
         member this.Subscribe obs = deps.Subscribe(obs,this)
     interface ITracksDependents with
@@ -115,5 +119,7 @@ type InterlockMutable<'a when 'a : not struct>(value : 'a) as self =
     interface IDependent with
         member __.UpdateDirtyFlag _ = ()
         member this.HasDependencies with get() = deps.HasDependencies
-    interface ISignal<'a>
-    interface IMutatable<'a>
+    interface IMutatable<'a> with
+        member __.Value with get() = v and set(newval) = this.Value(newval)
+    interface ISignal<'a> with
+        member __.Value with get() = v and set(newval) = this.Value(newval)
