@@ -25,3 +25,9 @@
 * Added ObservableSource<'a> to ease working with observables
 * Improved samples
  
+#### 0.0.8-beta - December 14th 2016
+* Added new thread safe and async mutable interfaces and core types
+* Added generator functions in Mutable module for async and threadsafe mutables
+* Renamed State to AsyncMutable, cleaned up API
+
+ 
