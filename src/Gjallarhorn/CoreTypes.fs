@@ -139,6 +139,7 @@ type Mutable<'a>(value : 'a) =
 [<AbstractClass>]       
 /// Base class which simplifies implementation of standard signals
 type SignalBase<'a>(dependencies) as self =
+    let mutable disposed = false
     do
         dependencies
         |> Array.iter (fun (d : ITracksDependents) -> d.Track self)
@@ -296,10 +297,17 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
             GC.SuppressFinalize this
 
 type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
-    inherit SignalBase<'b>([| valueProvider |])
-        
-    let mutable lastValue = mapping valueProvider.Value
+    inherit SignalBase<'b>([| valueProvider |])    
+    
     let mutable valueProvider = Some(valueProvider)
+    
+    // Note that we default this here, then set it afterwards.  
+    // This avoids an invalid operation exception in the finalizer
+    // if the mapping throws at construction time.
+    let mutable lastValue = Unchecked.defaultof<'b>
+    
+    do
+        lastValue <- mapping valueProvider.Value.Value
 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
@@ -322,9 +330,12 @@ type internal ObserveOnSignal<'a>(valueProvider : ISignal<'a>, ctx : System.Thre
 type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
     inherit SignalBase<'c>([| valueProvider1 ; valueProvider2 |])
 
-    let mutable lastValue = mapping valueProvider1.Value valueProvider2.Value
+    let mutable lastValue = Unchecked.defaultof<'c> 
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
+
+    do 
+        lastValue <- mapping valueProvider1.Value.Value valueProvider2.Value.Value
 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
@@ -400,9 +411,12 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionP
 type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
     inherit SignalBase<'a>([| valueProvider |])
 
-    let mutable lastValue = if filter(valueProvider.Value) then valueProvider.Value else initialValue
+    let mutable lastValue = Unchecked.defaultof<'a> 
 
-    let mutable valueProvider = Some(valueProvider)    
+    let mutable valueProvider = Some(valueProvider) 
+    
+    do
+        lastValue <- if filter(valueProvider.Value.Value) then valueProvider.Value.Value else initialValue   
 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
@@ -421,13 +435,16 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a
 type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
     inherit SignalBase<'b>([| valueProvider |])
 
-    let mutable lastValue = 
-        match filter(valueProvider.Value) with
-        | Some v -> v
-        | None -> initialValue
+    let mutable lastValue = Unchecked.defaultof<'b>
 
     let mutable valueProvider = Some(valueProvider)
-    
+
+    do    
+        lastValue <-         
+            match filter(valueProvider.Value.Value) with
+            | Some v -> v
+            | None -> initialValue
+
 
     override this.UpdateAndGetCurrentValue updateRequired =
         match valueProvider with

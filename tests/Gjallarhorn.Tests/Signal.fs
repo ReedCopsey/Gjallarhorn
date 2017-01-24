@@ -618,3 +618,12 @@ let ``Signal\mapFunction allows closing over a mapped signal`` () =
     Assert.AreEqual("config=2", result)
     Assert.AreEqual(2, !count)
 
+[<Test>]
+let ``Signal\map which throws is able to be handled`` () =
+    try
+        let value = Mutable.create 1
+        let final = value |> Signal.map (fun _ -> failwith "...")
+        value.Value <- 5
+        printfn "%A" final.Value
+    with
+    | _ as exp -> printfn "%A" exp.Message

@@ -320,3 +320,22 @@ type CollectionBindingTest() =
         Assert.AreEqual([ 1 ; 3 ; 2 ; 4 ], l.Value)
         Assert.AreEqual([ 1 ], changes)
         Assert.AreEqual(0, !count) // original 3 & 5 get overwritten
+
+    [<Test>]
+    member __.``BoundCollection raises move if first two consecutive elements are swapped`` () =
+        let l = Mutable.create [ 1 ; 2 ; 3 ; 4 ]
+        let count = ref 0
+        let subscription _ = incr count
+        use bc = new BoundCollection<int, unit, int list>(l, intComponent subscription)
+
+        let obs = CollectionChangedObserver(bc)    
+        
+        [ 2 ; 1 ; 3 ; 4 ]
+        |> Mutable.set l
+    
+        let changes = 
+            obs.[NotifyCollectionChangedAction.Move]            
+            |> List.map (fun v -> v.OldStartingIndex)            
+        Assert.AreEqual([ 2 ; 1 ; 3 ; 4 ], l.Value)
+        Assert.AreEqual([ 0 ], changes)
+        Assert.AreEqual(0, !count) // original 3 & 5 get overwritten
