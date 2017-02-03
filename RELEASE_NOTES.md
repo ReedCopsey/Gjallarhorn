@@ -30,4 +30,7 @@
 * Added generator functions in Mutable module for async and threadsafe mutables
 * Renamed State to AsyncMutable, cleaned up API
 
+#### 0.0.9-beta - February 3rd 2017
+* Fixed issue with dependency tracking of IObservable<'a>
+
  

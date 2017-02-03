@@ -133,3 +133,23 @@ let ``Signal\fromObservable will allow observable to GC on Dispose`` start finis
     GC.Collect()
     Assert.IsFalse(wr.IsAlive)
 
+
+[<TestCase(1, 2, "2")>]
+[<TestCase(42, 32, "32")>]
+[<TestCase(Int32.MinValue, Int32.MaxValue, "2147483647")>]
+let ``Signal triggers IObservable with add, even after GC`` (start : int) (finish:int) (viewFinish: string) =
+    let result = Mutable.create start
+    let view = Signal.map (fun i -> i.ToString()) result    
+    
+    let changedValue = ref view.Value    
+    view |> Observable.add((fun s -> changedValue := s))
+        
+    GC.Collect()
+    GC.WaitForPendingFinalizers()
+
+    // Note that we keep view alive - when it GCs, the observer finishes
+    GC.KeepAlive(view)
+
+    result.Value <- finish
+    
+    Assert.AreEqual(viewFinish, !changedValue)

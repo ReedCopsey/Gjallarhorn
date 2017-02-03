@@ -73,15 +73,16 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     // We want this as lightweight as possible,
     // so we do our own management as needed
     let mutable depIDeps : WeakReference<IDependent> array = [| |]
-    let mutable depObservers : WeakReference<IObserver<'a>> array = [| |]
+    // Note that observers can't be weak referenced, as Observable.add needs to persist
+    let mutable depObservers : IObserver<'a> array = [| |]
         
     // These are ugly, as it purposefully creates side effects
     // It returns true if we signaled and the object is alive,
     // otherwise false
     let signalIfAliveDep (wr: WeakReference<IDependent>) =
         wr |> WeakRef.execute (fun dep -> dep.UpdateDirtyFlag dep)
-    let signalIfAliveObs (v : Lazy<'a>) (wr: WeakReference<IObserver<'a>>) =
-        wr |> WeakRef.execute (fun obs-> obs.OnNext(v.Force()))
+    let signalObserver (v : Lazy<'a>) (obs : IObserver<'a>) =
+        obs.OnNext(v.Force())
 
     // Do our signal, but also remove any unneeded dependencies while we're at it
     let signalAndUpdateDependencies (source : ISignal<'a>) =
@@ -89,7 +90,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         let v = Lazy<_>(fun _ -> source.Value)
 
         depIDeps <- depIDeps |> Array.filter signalIfAliveDep
-        depObservers <- depObservers |> Array.filter (signalIfAliveObs v)
+        depObservers |> Array.iter (signalObserver v)
 
     // Remove a dependency, as well as all "dead" dependencies
     let removeAndFilterDep dep (wr : WeakReference<IDependent>) =
@@ -97,18 +98,15 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         | false, _ -> false
         | true, true -> false
         | true, false -> true
-    let removeAndFilterObs obs (wr : WeakReference<IObserver<'a>>) =        
-        match WeakRef.test ( (=) obs) wr with
-        | false, _ -> false
-        | true, true -> 
+    let removeAndFilterObs (obs : IObserver<'a>) (wr : IObserver<'a>) =        
+        match obj.ReferenceEquals(obs,wr) with
+        | false -> true
+        | true -> 
             // Mark observer completed
             obs.OnCompleted()
             false
-        | true, false -> true
-    let markObsComplete (wr : WeakReference<IObserver<'a>>) =
-        wr 
-        |> WeakRef.execute (fun obs-> obs.OnCompleted())
-        |> ignore        
+        
+    let markObsComplete (obs : IObserver<'a>) = obs.OnCompleted()        
     
     member private __.LockObj with get() = depIDeps // Always lock on this array
 
@@ -125,7 +123,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
                 depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |])
     member this.AddObserver (obs,source) =
         lock this.LockObj (fun _ ->
-            depObservers <- depObservers |> Array.append [| WeakReference<_>(obs) |])
+            depObservers <- depObservers |> Array.append [| obs |])
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
     member this.Remove (dep, source) = 
@@ -135,7 +133,6 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     member this.RemoveObserver (obs, source) = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
-
             this.HasDependencies)
 
     /// Removes a dependency from the tracker, and returns true if there are still dependencies remaining
