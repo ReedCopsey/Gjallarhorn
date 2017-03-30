@@ -101,15 +101,15 @@ type BindingSource() as self =
         |> Signal.Subscription.create (fun result -> updateErrors name result)
         |> this.AddDisposable
 
-        this.AddReadOnlyProperty (getErrorsPropertyName name, fun _ -> validator.Value.ToList(true) )
-        this.AddReadOnlyProperty (getValidPropertyName name,fun _ -> validator.Value.IsValidResult )
+        this.AddReadOnlyProperty (getErrorsPropertyName name, Func<Collections.Generic.List<string>>(fun _ -> validator.Value.ToList(true) ))
+        this.AddReadOnlyProperty (getValidPropertyName name, Func<bool>(fun _ -> validator.Value.IsValidResult ))
 
         updateErrors name validator.Value 
 
     /// Track an Input type
     member this.TrackInput (name, input : Report<'a,'b>) =
         this.TrackObservable (name, input.UpdateStream)
-        this.AddReadOnlyProperty (name, Func<_>(input.GetValue))
+        this.AddReadOnlyProperty (name, Func<'b>(input.GetValue))
         
         // If we're validated input, handle adding our validation information as well
         match input with
@@ -134,7 +134,7 @@ type BindingSource() as self =
     member this.TrackComponent<'a,'b> (name, comp : Component<'a,'b>, model : ISignal<'a>) = 
         let source = this.CreateObservableBindingSource<'b>()
         this.TrackObservable (name, model)
-        this.AddReadOnlyProperty(name, fun _ -> source)
+        this.AddReadOnlyProperty(name, Func<ObservableBindingSource<'b>>(fun _ -> source))
         
         let obs = comp (source :> BindingSource) model
         source.OutputObservables(obs)
@@ -143,7 +143,7 @@ type BindingSource() as self =
 
     /// Add a readonly binding source for a constant value with a given name    
     member this.ConstantToView (value, name) = 
-        this.AddReadOnlyProperty(name, fun _ -> value)
+        this.AddReadOnlyProperty(name, Func<'b>(fun () -> value))
 
     /// Filter a signal to only output when we're valid
     member this.FilterValid signal =

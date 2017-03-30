@@ -86,7 +86,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     // Do our signal, but also remove any unneeded dependencies while we're at it
     let signalAndUpdateDependencies (source : ISignal<'a>) =
         // We want this to be lazy so we don't evaluate the value unless we actually have observers
-        let v = Lazy<_>(fun _ -> source.Value)
+        let v = Lazy<'a>(fun () -> source.Value)
 
         depIDeps <- depIDeps |> Array.filter signalIfAliveDep
         depObservers <- depObservers |> Array.filter (signalIfAliveObs v)
