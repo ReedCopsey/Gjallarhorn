@@ -211,3 +211,10 @@ type ObservableExtensions() =
     /// Convert from an observable and an initial value to a signal
     static member ToSignal<'a>(this:IObservable<'a>, initialValue:'a) =
         Signal.fromObservable initialValue this
+        
+//NOTE: This allows non-F# extensions to have proper visibility/interop with all CLR languages
+//NOTE: This attribute is only required once per assembly.
+//NOTE: This is being placed _outside_ of AssemblyInfo.fs since that file gets automatically
+//      regenerated (and inserting it into the generated file every time is kind of a pain).
+[<assembly: ExtensionAttribute()>]
+do()
