@@ -88,7 +88,7 @@ Target "AssemblyInfo" (fun _ ->
           Attribute.Description summary
           Attribute.Version release.AssemblyVersion
           Attribute.FileVersion release.AssemblyVersion
-          Attribute.Copyright "Copyright 2016 Reed Copsey, Jr."
+          Attribute.Copyright "Copyright 2017 Reed Copsey, Jr."
           Attribute.Company "Reed Copsey, Jr." ]
 
     let getProjectDetails projectPath =

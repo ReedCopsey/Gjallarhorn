@@ -33,4 +33,7 @@
 #### 0.0.9-beta - February 3rd 2017
 * Fixed issue with dependency tracking of IObservable<'a>
 
+#### 0.0.10-beta - June 9th 2017
+* Fixed issue with missing assembly level attribute for extension methods
+
  
