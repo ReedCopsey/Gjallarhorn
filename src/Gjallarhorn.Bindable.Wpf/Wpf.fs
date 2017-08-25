@@ -47,9 +47,14 @@ module Framework =
         let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
             let dataContext = createCtx SynchronizationContext.Current
 
+            // Construct application first, which guarantees application resources are available
+            let app = application()
+            // Construct main window and set data context
             let win = window()
-            win.DataContext <- dataContext                        
-            application().Run win
+            win.DataContext <- dataContext               
+            
+            // Use standdard WPF message pump
+            app.Run win
 
         Platform.install true |> ignore
         applicationInfo.Init ()
