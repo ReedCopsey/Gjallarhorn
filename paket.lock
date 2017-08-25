@@ -60,7 +60,10 @@ GITHUB
     modules/Octokit/Octokit.fsx (291f58cc70aba6dd871cf18e66d2d88357e4f208)
       Octokit (>= 0.20)
 GROUP Test
+REDIRECTS: ON
+FRAMEWORK: NET461, NET45, PORTABLE-NET45+NETCORE45+WPA81+WP8+MONOANDROID1+MONOTOUCH1
 NUGET
   remote: https://www.nuget.org/api/v2
-    NUnit (2.6.4)
-    NUnit.Runners (2.6.4)
+    FSharp.Core (4.0.0.1) - framework: net45, net461, portable-net45+netcore45+wpa81+wp8+monoandroid1+monotouch1
+    NUnit (2.6.4) - framework: net45, net461, portable-net45+netcore45+wpa81+wp8+monoandroid1+monotouch1
+    NUnit.Runners (2.6.4) - framework: net45, net461, portable-net45+netcore45+wpa81+wp8+monoandroid1+monotouch1
