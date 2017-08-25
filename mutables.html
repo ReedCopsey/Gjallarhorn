@@ -54,14 +54,14 @@
 <span class="k">open</span> <span class="i">Gjallarhorn</span>
 
 <span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">42</span>
+<span class="k">let</span> <span class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">42</span>
 
 <span class="c">// Prints &quot;Value = 42&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="f">printfn</span> <span class="s">&quot;Value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">m</span><span class="o">.</span><span class="i">Value</span>
+<span class="i">printfn</span> <span class="s">&quot;Value = %d&quot;</span> <span class="i">m</span><span class="o">.</span><span class="i">Value</span>
 
-<span onmouseout="hideTip(event, 'fs1', 4)" onmouseover="showTip(event, 'fs1', 4)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">24</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">24</span>
 <span class="c">// Prints &quot;Value = 24&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="f">printfn</span> <span class="s">&quot;Value = </span><span class="pf">%d</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">m</span><span class="o">.</span><span class="i">Value</span>
+<span class="i">printfn</span> <span class="s">&quot;Value = %d&quot;</span> <span class="i">m</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -82,24 +82,22 @@
 <span class="l">12: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 7)" onmouseover="showTip(event, 'fs1', 7)" class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+<span class="k">let</span> <span class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
 
-<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs2', 8)" onmouseover="showTip(event, 'fs2', 8)" class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span onmouseout="hideTip(event, 'fs1', 9)" onmouseover="showTip(event, 'fs1', 9)" class="i">m</span> 
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span class="i">m</span> 
 
 <span class="c">// After this is set, a print will occur</span>
 <span class="c">// Prints: &quot;Value is now 1&quot;</span>
-<span onmouseout="hideTip(event, 'fs1', 10)" onmouseover="showTip(event, 'fs1', 10)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
 
 <span class="c">// After this is set, a second print will occur with the new value</span>
 <span class="c">// Prints: &quot;Value is now 2&quot;</span>
-<span onmouseout="hideTip(event, 'fs1', 11)" onmouseover="showTip(event, 'fs1', 11)" class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
 </code></pre></td>
 </tr>
 </table>
 <p>Now, let's move on to <a href="validation.html">Validation in Gjallarhorn</a>.</p>
 
-<div class="tip" id="fs1">val m : obj<br /><br />Full name: Mutables.m</div>
-<div class="tip" id="fs2">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
 
         </div>
         <div class="span3">
@@ -119,7 +117,7 @@
             <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
             
             <li class="nav-header">Getting started</li>
-            <li><a href="/Gjallarhorn/tutorial.html">Sample tutorial</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
 
             <li class="nav-header">Documentation</li>
             <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>

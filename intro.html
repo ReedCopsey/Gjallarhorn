@@ -52,10 +52,10 @@
 <span class="k">open</span> <span class="i">Gjallarhorn</span>
 
 <span class="c">// Create a mutable variable</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">variable</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;Foo&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="f">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">variable</span><span class="o">.</span><span class="i">Value</span>
-<span onmouseout="hideTip(event, 'fs1', 4)" onmouseover="showTip(event, 'fs1', 4)" class="i">variable</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="f">printfn</span> <span class="s">&quot;hello = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">variable</span><span class="o">.</span><span class="i">Value</span>
+<span class="k">let</span> <span class="i">variable</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;Foo&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;hello = %s&quot;</span> <span class="i">variable</span><span class="o">.</span><span class="i">Value</span>
+<span class="i">variable</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;hello = %s&quot;</span> <span class="i">variable</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
@@ -79,26 +79,21 @@
 <span class="l">11: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create mutable variables</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="i">first</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="i">last</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span class="i">first</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span class="i">last</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
 <span class="c">// Map these two variables from a first and last name to a full name</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs5', 9)" onmouseover="showTip(event, 'fs5', 9)" class="i">full</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">f</span> <span class="i">l</span> <span class="k">-&gt;</span> <span class="i">f</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="i">l</span>) <span onmouseout="hideTip(event, 'fs3', 10)" onmouseover="showTip(event, 'fs3', 10)" class="i">first</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="i">last</span>
+<span class="k">let</span> <span class="i">full</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">f</span> <span class="i">l</span> <span class="k">-&gt;</span> <span class="i">f</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="i">l</span>) <span class="i">first</span> <span class="i">last</span>
 
-<span onmouseout="hideTip(event, 'fs2', 12)" onmouseover="showTip(event, 'fs2', 12)" class="f">printfn</span> <span class="s">&quot;initial = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="i">full</span><span class="o">.</span><span class="i">Value</span>
-<span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="i">first</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Reed&quot;</span>
-<span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="i">last</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Copsey&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;initial = %s&quot;</span> <span class="i">full</span><span class="o">.</span><span class="i">Value</span>
+<span class="i">first</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Reed&quot;</span>
+<span class="i">last</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Copsey&quot;</span>
 <span class="c">// Prints: &quot;Hello Reed Copsey!&quot;</span>
-<span onmouseout="hideTip(event, 'fs2', 16)" onmouseover="showTip(event, 'fs2', 16)" class="f">printfn</span> <span class="s">&quot;Hello </span><span class="pf">%s</span><span class="s">!&quot;</span> <span onmouseout="hideTip(event, 'fs5', 17)" onmouseover="showTip(event, 'fs5', 17)" class="i">full</span><span class="o">.</span><span class="i">Value</span>
+<span class="i">printfn</span> <span class="s">&quot;Hello %s!&quot;</span> <span class="i">full</span><span class="o">.</span><span class="i">Value</span>
 </code></pre></td>
 </tr>
 </table>
 <p>Next, we'll go into <a href="signals.html">more details about signals</a>.</p>
 
-<div class="tip" id="fs1">val variable : obj<br /><br />Full name: Intro.variable</div>
-<div class="tip" id="fs2">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs3">val first : obj<br /><br />Full name: Intro.first</div>
-<div class="tip" id="fs4">val last : obj<br /><br />Full name: Intro.last</div>
-<div class="tip" id="fs5">val full : obj<br /><br />Full name: Intro.full</div>
 
         </div>
         <div class="span3">
@@ -118,7 +113,7 @@
             <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
             
             <li class="nav-header">Getting started</li>
-            <li><a href="/Gjallarhorn/tutorial.html">Sample tutorial</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
 
             <li class="nav-header">Documentation</li>
             <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
