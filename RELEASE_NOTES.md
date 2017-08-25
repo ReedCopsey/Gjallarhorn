@@ -36,4 +36,8 @@
 #### 0.0.10-beta - June 9th 2017
 * Fixed issue with missing assembly level attribute for extension methods
 
+#### 0.11.0 - August 25th 2017
+* Addressed issue with bi-directional mutable bindings
+* Got build working propertly in VS 2017
+
  

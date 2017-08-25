@@ -5,8 +5,8 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("Gjallarhorn.Bindable.Wpf")>]
 [<assembly: AssemblyProductAttribute("Gjallarhorn")>]
 [<assembly: AssemblyDescriptionAttribute("Framework for managing mutable data with change notification and live views")>]
-[<assembly: AssemblyVersionAttribute("0.0.10")>]
-[<assembly: AssemblyFileVersionAttribute("0.0.10")>]
+[<assembly: AssemblyVersionAttribute("0.11.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.11.0")>]
 [<assembly: AssemblyCopyrightAttribute("Copyright 2017 Reed Copsey, Jr.")>]
 [<assembly: AssemblyCompanyAttribute("Reed Copsey, Jr.")>]
 do ()
@@ -15,7 +15,7 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Gjallarhorn.Bindable.Wpf"
     let [<Literal>] AssemblyProduct = "Gjallarhorn"
     let [<Literal>] AssemblyDescription = "Framework for managing mutable data with change notification and live views"
-    let [<Literal>] AssemblyVersion = "0.0.10"
-    let [<Literal>] AssemblyFileVersion = "0.0.10"
+    let [<Literal>] AssemblyVersion = "0.11.0"
+    let [<Literal>] AssemblyFileVersion = "0.11.0"
     let [<Literal>] AssemblyCopyright = "Copyright 2017 Reed Copsey, Jr."
     let [<Literal>] AssemblyCompany = "Reed Copsey, Jr."
