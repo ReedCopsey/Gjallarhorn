@@ -1,0 +1,3 @@
+group Build
+    FSharp.Core
+    Xamarin.Forms

@@ -3,12 +3,16 @@ source https://nuget.org/api/v2
 group Build
   source https://nuget.org/api/v2
   
+  redirects: on
+
+  framework: net45 profile259
+
   nuget SourceLink.Fake
   nuget FAKE
   nuget FSharp.Formatting
   nuget FsXaml.WPF
   nuget Xamarin.Forms
-  nuget FSharp.Core
+  nuget FSharp.Core 4.0.0.1
 
   github fsharp/FAKE modules/Octokit/Octokit.fsx
 
