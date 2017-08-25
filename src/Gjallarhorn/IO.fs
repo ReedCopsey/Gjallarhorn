@@ -86,17 +86,13 @@ type ValidatedOut<'a, 'b> (initialValue : 'a, validation : Validation<'a, 'b>) a
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
 type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
-    inherit InOut<'a,'b>(input, conversion)
-
-    let validated = 
-        self.UpdateStream
-        |> Signal.validate validation
+    inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
 
     let subscription = 
-        validated.ValidationResult
+        self.Output.ValidationResult
         |> Signal.Subscription.create(fun v ->
             if v.IsValidResult then
-                input.Value <- Option.get validated.Value)
+                input.Value <- Option.get self.Output.Value)
 
     interface IDisposable with
         member __.Dispose() =

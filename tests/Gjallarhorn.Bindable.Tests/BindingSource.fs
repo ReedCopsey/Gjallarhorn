@@ -273,3 +273,44 @@ type BindingSourceTest() =
         let cur = getProperty dynamicVm "Full" 
         Assert.AreEqual("Foo Bar", cur)
 
+    [<Test>]
+    member __.``Binding\mutateToFromViewValidated tracks valid state properly`` () =
+        let value = Mutable.create ""
+
+        use dynamicVm = Binding.createSource ()
+        let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
+        Binding.mutateToFromViewValidated dynamicVm "Value" validator value
+    
+        Assert.IsFalse dynamicVm.IsValid
+        value.Value <- "Valid"
+
+        Assert.IsTrue dynamicVm.IsValid 
+
+        value.Value <- "-"
+        Assert.IsFalse dynamicVm.IsValid 
+
+    [<Test>]
+    member __.``Binding\mutateToFromViewValidated assigns back properly`` () =
+        let value = Mutable.create ""
+
+        use dynamicVm = Binding.createSource ()
+        let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
+        Binding.mutateToFromViewValidated dynamicVm "Value" validator value
+    
+        Assert.IsFalse dynamicVm.IsValid
+
+        setProperty dynamicVm "Value" "Valid"
+        Assert.AreEqual ("Valid", value.Value)
+
+        Assert.IsTrue dynamicVm.IsValid 
+
+        setProperty dynamicVm "Value" "-"
+        
+        // Shouldn't push back to mutable since we're invalid!
+        Assert.AreEqual ("Valid", value.Value)
+        Assert.IsFalse dynamicVm.IsValid 
+
+        setProperty dynamicVm "Value" "Valid 2"
+        Assert.AreEqual ("Valid 2", value.Value)
+
+        Assert.IsTrue dynamicVm.IsValid 
