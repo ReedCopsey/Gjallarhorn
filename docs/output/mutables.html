@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Mutables in Gjallarhorn
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Framework for managing mutable data with change notification and live views"/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1><a name="Mutables-in-Gjallarhorn" class="anchor" href="#Mutables-in-Gjallarhorn">Mutables in Gjallarhorn</a></h1>
+<p>One core type in Gjallarhorn is a Mutable.</p>
+<p>A Mutable extends the concept of a signal by allowing the current value to be changed.</p>
+<p>The simplest Mutable can be created via <code>Mutable.create</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
+
+<span class="c">// Create a mutable variable</span>
+<span class="k">let</span> <span class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">42</span>
+
+<span class="c">// Prints &quot;Value = 42&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Value = %d&quot;</span> <span class="i">m</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">24</span>
+<span class="c">// Prints &quot;Value = 24&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Value = %d&quot;</span> <span class="i">m</span><span class="o">.</span><span class="i">Value</span>
+</code></pre></td>
+</tr>
+</table>
+<p>As it's name suggests, <code>Mutable.create</code> takes an initial value and wraps it into a Mutable, which is represented via the <code>IMutatable&lt;'a&gt;</code> interface.</p>
+<p><code>IMutatable&lt;'a&gt;</code> inherits <code>ISignal&lt;'a&gt;</code>, but extends the <code>.Value</code> property to be both gettable and settable, which we can use to fetch or mutate the current value at any point.</p>
+<p>As all Mutables are also signals, the <code>Signal</code> module functionality still works:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
+<span class="k">let</span> <span class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span class="i">m</span> 
+
+<span class="c">// After this is set, a print will occur</span>
+<span class="c">// Prints: &quot;Value is now 1&quot;</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+
+<span class="c">// After this is set, a second print will occur with the new value</span>
+<span class="c">// Prints: &quot;Value is now 2&quot;</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Now, let's move on to <a href="validation.html">Validation in Gjallarhorn</a>.</p>
+
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Validators - Gjallarhorn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Validators</h1>
+<p>
+  <span>Namespace: Gjallarhorn</span><br />
+  <span>Parent Module: <a href="gjallarhorn-validationmodule.html">Validation</a></span>
+</p>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+            containedWithin collection step
+          </code>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> collection:seq&lt;&#39;?9182&gt; -&gt; step:ValidationCollector&lt;&#39;?9182&gt; -&gt; ValidationCollector&lt;&#39;?9182&gt;<br />
+                          <strong>Type parameters:</strong> '?9182          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L241-241" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            containsAtLeastOneDigit str
+          </code>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L207-207" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            containsAtLeastOneLowerCaseCharacter str
+          </code>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L213-213" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+            containsAtLeastOneUpperCaseCharacter str
+          </code>
+          <div class="tip" id="67">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L210-210" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+            greaterOrEqualTo value step
+          </code>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> value:&#39;?9174 -&gt; step:ValidationCollector&lt;&#39;?9174&gt; -&gt; ValidationCollector&lt;&#39;?9174&gt;<br />
+                          <strong>Type parameters:</strong> '?9174          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L225-225" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+            greaterThan value step
+          </code>
+          <div class="tip" id="69">
+            <strong>Signature:</strong> value:&#39;?9172 -&gt; step:ValidationCollector&lt;&#39;?9172&gt; -&gt; ValidationCollector&lt;&#39;?9172&gt;<br />
+                          <strong>Type parameters:</strong> '?9172          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L221-221" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+            hasLength length str
+          </code>
+          <div class="tip" id="70">
+            <strong>Signature:</strong> length:int -&gt; str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L185-185" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+            hasLengthAtLeast length str
+          </code>
+          <div class="tip" id="71">
+            <strong>Signature:</strong> length:int -&gt; str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L189-189" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+            hasLengthNoLongerThan length str
+          </code>
+          <div class="tip" id="72">
+            <strong>Signature:</strong> length:int -&gt; str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L193-193" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+            isAlphanumeric str
+          </code>
+          <div class="tip" id="73">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L204-204" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
+            isBetween lowerBound upperBound step
+          </code>
+          <div class="tip" id="74">
+            <strong>Signature:</strong> lowerBound:&#39;?9180 -&gt; upperBound:&#39;?9180 -&gt; step:ValidationCollector&lt;&#39;?9180&gt; -&gt; ValidationCollector&lt;&#39;?9180&gt;<br />
+                          <strong>Type parameters:</strong> '?9180          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L237-237" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+            lessOrEqualTo value step
+          </code>
+          <div class="tip" id="75">
+            <strong>Signature:</strong> value:&#39;?9178 -&gt; step:ValidationCollector&lt;&#39;?9178&gt; -&gt; ValidationCollector&lt;&#39;?9178&gt;<br />
+                          <strong>Type parameters:</strong> '?9178          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L233-233" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+            lessThan value step
+          </code>
+          <div class="tip" id="76">
+            <strong>Signature:</strong> value:&#39;?9176 -&gt; step:ValidationCollector&lt;&#39;?9176&gt; -&gt; ValidationCollector&lt;&#39;?9176&gt;<br />
+                          <strong>Type parameters:</strong> '?9176          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L229-229" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+            matchesPattern pattern str
+          </code>
+          <div class="tip" id="77">
+            <strong>Signature:</strong> pattern:string -&gt; str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L201-201" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
+            noSpaces str
+          </code>
+          <div class="tip" id="78">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L181-181" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+            notContainedWithin collection step
+          </code>
+          <div class="tip" id="79">
+            <strong>Signature:</strong> collection:seq&lt;&#39;?9184&gt; -&gt; step:ValidationCollector&lt;&#39;?9184&gt; -&gt; ValidationCollector&lt;&#39;?9184&gt;<br />
+                          <strong>Type parameters:</strong> '?9184          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L245-245" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+            notEqual value step
+          </code>
+          <div class="tip" id="80">
+            <strong>Signature:</strong> value:&#39;?9170 -&gt; step:ValidationCollector&lt;&#39;?9170&gt; -&gt; ValidationCollector&lt;&#39;?9170&gt;<br />
+                          <strong>Type parameters:</strong> '?9170          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L217-217" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+            notNullOrWhitespace str
+          </code>
+          <div class="tip" id="81">
+            <strong>Signature:</strong> str:ValidationCollector&lt;string&gt; -&gt; ValidationCollector&lt;string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L177-177" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+            noValidation input
+          </code>
+          <div class="tip" id="82">
+            <strong>Signature:</strong> input:&#39;?9157 -&gt; &#39;?9157<br />
+                          <strong>Type parameters:</strong> '?9157          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Validation.fs#L173-173" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

@@ -1,0 +1,13 @@
+.fake/*
+.paket/*
+.vs/*
+bin/*
+packages/*
+Gjallarhorn.userprefs
+paket-files/*
+samples/*
+src/*
+tests/*
+TestResults.xml
+*.FSharpLint
+docs/tools/.fake/*

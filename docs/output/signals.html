@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Signals in Gjallarhorn
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Framework for managing mutable data with change notification and live views"/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1><a name="Signals-in-Gjallarhorn" class="anchor" href="#Signals-in-Gjallarhorn">Signals in Gjallarhorn</a></h1>
+<p>One of the core types in Gjallarhorn is a Signal.</p>
+<p>A signal represents a value that changes over time, and has the following properties:
+- A current value, which can always be fetched
+- A mechanism to signal changes to subscribers that the value has been updated</p>
+<p>You can think if a signal as a window into data that changes over time.  It's similar to an observable, and even implements IObservable for compatibility with other libraries,
+except that it always has a current value.</p>
+<p>The simplest signal can be created via <code>Signal.constant</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
+<span class="k">open</span> <span class="i">System</span>
+
+<span class="c">// Create a signal over a constant value</span>
+<span class="k">let</span> <span class="i">s</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">constant</span> <span class="n">42</span>
+
+<span class="c">// Prints &quot;Value = 42&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Value = %d&quot;</span> <span class="i">s</span><span class="o">.</span><span class="i">Value</span>
+</code></pre></td>
+</tr>
+</table>
+<p>As it's name suggests, <code>Signal.constant</code> takes a constant value and binds it into a signal, which is represented via the <code>ISignal&lt;'a&gt;</code> interface.</p>
+<p><code>ISignal&lt;'a&gt;</code> provides a simple <code>.Value</code> property, which we can use to fetch the current value at any point.</p>
+<p>All mutables in Gjallarhorn also implement <code>ISignal&lt;'a&gt;</code>, allowing mutables to be used as signals as well.  The <code>Signal</code> module provides functionality
+which allows you to subscribe to changes on signals:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable variable</span>
+<span class="k">let</span> <span class="i">m</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">currentValue</span> <span class="k">-&gt;</span> <span class="i">printfn</span> <span class="s">&quot;Value is now %d&quot;</span> <span class="i">currentValue</span>) <span class="i">m</span> 
+
+<span class="c">// After this is set, a print will occur</span>
+<span class="c">// Prints: &quot;Value is now 1&quot;</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+
+<span class="c">// After this is set, a second print will occur with the new value</span>
+<span class="c">// Prints: &quot;Value is now 2&quot;</span>
+<span class="i">m</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Signals can also be filtered or transformed:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create a mutable value</span>
+<span class="k">let</span> <span class="i">source</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="c">// Create a filter on this</span>
+<span class="k">let</span> <span class="i">filtered</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">filter</span> (<span class="k">fun</span> <span class="i">s</span> <span class="k">-&gt;</span> <span class="i">s</span> <span class="o">&lt;</span> <span class="n">5</span>) <span class="i">source</span>
+
+<span class="c">// Transform the filtered result:</span>
+<span class="k">let</span> <span class="i">final</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map</span> (<span class="k">fun</span> <span class="i">s</span> <span class="k">-&gt;</span> <span class="i">sprintf</span> <span class="s">&quot;Filtered value is %d&quot;</span> <span class="i">s</span>) <span class="i">filtered</span>
+
+<span class="c">// Subscribe to the final notifications:</span>
+<span class="i">Signal</span><span class="o">.</span><span class="i">Subscription</span><span class="o">.</span><span class="i">create</span> (<span class="k">fun</span> <span class="i">s</span> <span class="k">-&gt;</span> <span class="i">printfn</span> <span class="s">&quot;%s&quot;</span> <span class="i">s</span>) <span class="i">final</span>
+
+<span class="c">// Now, let&#39;s set some values:</span>
+<span class="c">// Prints: &quot;Filtered value is 1&quot;</span>
+<span class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">1</span>
+
+<span class="c">// Prints: &quot;Filtered value is 3&quot;</span>
+<span class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">3</span>
+
+<span class="c">// Does not output anything, as the filter&#39;s predicate fails</span>
+<span class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
+
+<span class="c">// Note that the filtered value retains its &quot;last good value&quot;</span>
+<span class="c">// Prints: &quot;Source = 42, filtered = 3&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Source = %d, filtered = %d&quot;</span> <span class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="i">filtered</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="c">// Prints: &quot;Filtered value is 2&quot;</span>
+<span class="i">source</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">2</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Signals can be combined by using <code>Signal.map2</code>, and even higher arity mapping functions:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">a</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span class="i">b</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+
+<span class="k">let</span> <span class="i">v1</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">v1</span> <span class="i">v2</span> <span class="k">-&gt;</span> <span class="i">v1</span> <span class="o">+</span> <span class="i">v2</span>) <span class="i">a</span> <span class="i">b</span> 
+
+<span class="i">a</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Foo&quot;</span>
+<span class="i">b</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Bar&quot;</span>
+
+<span class="c">// Prints: &quot;v1.Value = FooBar&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;v1.Value = %s&quot;</span> <span class="i">v1</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="c">// Mapping also works to combine many signals at once, including mixed types, up to 10 in an signal function</span>
+<span class="k">let</span> <span class="i">c</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="s">&quot;&quot;</span>
+<span class="k">let</span> <span class="i">d</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> <span class="n">0</span>
+
+<span class="k">let</span> <span class="i">v2</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map4</span> (<span class="k">fun</span> <span class="i">v1</span> <span class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span> <span class="k">-&gt;</span> <span class="i">sprintf</span> <span class="s">&quot;%s%s%s : %d&quot;</span> <span class="i">v1</span> <span class="i">v2</span> <span class="i">v3</span> <span class="i">v4</span>) <span class="i">a</span> <span class="i">b</span> <span class="i">c</span> <span class="i">d</span>
+
+<span class="c">// Prints: &quot;v2.Value = FooBar : 0&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;v2.Value = %s&quot;</span> <span class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="i">c</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;Baz&quot;</span>
+<span class="i">d</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> <span class="n">42</span>
+<span class="c">// Prints: &quot;v2.Value = FooBarBaz : 42&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;v2.Value = %s&quot;</span> <span class="i">v2</span><span class="o">.</span><span class="i">Value</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Signals are also closely related to observables.  The main difference between an <code>ISignal&lt;'a&gt;</code> and an <code>IObservable&lt;'a&gt;</code> is that the former has the
+notion of a value (represented in the <code>Value</code> property) which always exists and is current.</p>
+<p>As these are so closely related, <code>ISignal&lt;'a&gt;</code> directly implements <code>IObservable&lt;'a&gt;</code>, and there is a function to convert from <code>IObservable&lt;'a&gt;</code> included in the <code>Signal</code> module.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">e</span> <span class="o">=</span> <span class="i">Event</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>()
+<span class="k">let</span> <span class="i">observable</span> <span class="o">=</span> <span class="i">e</span><span class="o">.</span><span class="i">Publish</span>
+
+<span class="c">// Subscribe to the observable, with &quot;0&quot; as the initial value (since we always need a &quot;current value&quot;)</span>
+<span class="k">let</span> <span class="i">s</span> <span class="o">=</span> <span class="i">Signal</span><span class="o">.</span><span class="i">fromObservable</span> <span class="n">0</span> <span class="i">observable</span>
+
+<span class="c">// Prints: &quot;Signal&#39;s value = 0&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Signal&#39;s value = %d&quot;</span> <span class="i">s</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="i">e</span><span class="o">.</span><span class="i">Trigger</span> <span class="n">42</span>
+
+<span class="c">// Prints: &quot;Signal&#39;s value = 42&quot;</span>
+<span class="i">printfn</span> <span class="s">&quot;Signal&#39;s value = %d&quot;</span> <span class="i">s</span><span class="o">.</span><span class="i">Value</span>
+
+<span class="c">// Convert back to an observable</span>
+<span class="k">let</span> <span class="i">obs</span> <span class="o">=</span> <span class="i">s</span> <span class="o">:&gt;</span> <span class="i">IObservable</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>
+
+<span class="i">obs</span>
+<span class="o">|&gt;</span> <span class="i">Observable</span><span class="o">.</span><span class="i">add</span> (<span class="k">fun</span> <span class="i">s</span> <span class="k">-&gt;</span> <span class="i">printfn</span> <span class="s">&quot;New value of observable = %d&quot;</span> <span class="i">s</span>)
+
+<span class="c">// Prints: &quot;New value of observable = 54&quot;</span>
+<span class="c">// Note that this starts as an observable, maps through a Signal, and back to an observable for the notification!</span>
+<span class="i">e</span><span class="o">.</span><span class="i">Trigger</span> <span class="n">54</span>
+</code></pre></td>
+</tr>
+</table>
+<p>It is also possible to use signals by closing over them with functions.  This provides a clean mechanism for working with configuration.</p>
+<p>For example:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">Configuration</span> <span class="o">=</span> { <span class="i">Author</span> <span class="o">:</span> <span class="i">string</span> ; <span class="i">AutoPublish</span> <span class="o">:</span> <span class="i">bool</span> }
+<span class="k">let</span> <span class="i">config</span> <span class="o">=</span> <span class="i">Mutable</span><span class="o">.</span><span class="i">create</span> { <span class="i">Author</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span> ; <span class="i">AutoPublish</span> <span class="o">=</span> <span class="k">false</span> }
+
+<span class="k">let</span> <span class="i">workWithConfig</span> (<span class="i">author</span><span class="o">:</span> <span class="i">string</span>) <span class="i">op</span> <span class="o">=</span>
+    <span class="i">printfn</span> <span class="s">&quot;%s Author = %s&quot;</span> <span class="i">op</span> <span class="i">author</span>
+
+<span class="k">let</span> <span class="i">operation</span> <span class="o">=</span> 
+    <span class="i">config</span>
+    <span class="o">|&gt;</span> <span class="i">Signal</span><span class="o">.</span><span class="i">map</span> (<span class="k">fun</span> <span class="i">c</span> <span class="k">-&gt;</span> <span class="i">c</span><span class="o">.</span><span class="i">Author</span>)
+    <span class="o">|&gt;</span> <span class="i">Signal</span><span class="o">.</span><span class="i">mapFunction</span> <span class="i">workWithConfig</span>
+
+<span class="i">operation</span> <span class="s">&quot;One&quot;</span>
+<span class="c">// prints &quot;One Author = Foo&quot;</span>
+
+<span class="c">// Change our configuration</span>
+<span class="i">config</span><span class="o">.</span><span class="i">Value</span> <span class="o">&lt;-</span> { <span class="i">Author</span> <span class="o">=</span> <span class="s">&quot;Reed&quot;</span> ; <span class="i">AutoPublish</span> <span class="o">=</span> <span class="k">true</span> }
+
+<span class="i">operation</span> <span class="s">&quot;One&quot;</span>
+<span class="c">// prints &quot;One Author = Reed&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Now, let's move on to <a href="mutables.html">Mutables in Gjallarhorn</a>.</p>
+
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

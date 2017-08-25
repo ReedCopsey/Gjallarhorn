@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Namespaces - Gjallarhorn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+<h1>Gjallarhorn</h1>
+
+
+  <h2>Gjallarhorn Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-asyncmutable-1.html">AsyncMutable<'a></a>
+          </td>
+          <td class="xmldoc"><p>Type which manages state internally using a mailbox</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-atomicmutable-1.html">AtomicMutable<'a></a>
+          </td>
+          <td class="xmldoc"><p>A thread-safe wrapper using interlock for a mutable value with change notification</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-iasyncmutatable-1.html">IAsyncMutatable<'a></a>
+          </td>
+          <td class="xmldoc"><p>Interface for mutable types that have asynchronous support atomic update functionality</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-iatomicmutatable-1.html">IAtomicMutatable<'a></a>
+          </td>
+          <td class="xmldoc"><p>Interface for mutable types that have atomic update functionality</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-imutatable-1.html">IMutatable<'a></a>
+          </td>
+          <td class="xmldoc"><p>Core interface for all mutatable types</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-isignal-1.html">ISignal<'a></a>
+          </td>
+          <td class="xmldoc"><p>Core interface for signals
+<remarks>
+All signals must also inherit Internal.IDependent and Internal.ITracksDependents.
+</remarks></p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-ivalidatedsignal-2.html">IValidatedSignal<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>The output of validating an input signal</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-validationresult.html">ValidationResult</a>
+          </td>
+          <td class="xmldoc"><p>Defines a validation result</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-mutablemodule.html">Mutable</a>
+          </td>
+          <td class="xmldoc"><p>Manages creation of mutable variables</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-signalmodule.html">Signal</a>
+          </td>
+          <td class="xmldoc"><p>Provides mechanisms for working with signals</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-validationmodule.html">Validation</a>
+          </td>
+          <td class="xmldoc"><p>Basic validation support</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Bindable Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-bindingsource.html">BindingSource</a>
+          </td>
+          <td class="xmldoc"><p>Base class of binding sources</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-boundsignal-1.html">BoundSignal<'a></a>
+          </td>
+          <td class="xmldoc"><p>An ISignal<'a> bound to a named property on a source.
+This uses reflection, and INotifyPropertyChanged to update the signal as needed.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-component-2.html">Component<'Model, 'Message></a>
+          </td>
+          <td class="xmldoc"><p>A component takes a BindingSource and a Signal for a model and returns a list of observable messages</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-itrackingcommand-1.html">ITrackingCommand<'a></a>
+          </td>
+          <td class="xmldoc"><p>An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-observablebindingsource-1.html">ObservableBindingSource<'Message></a>
+          </td>
+          <td class="xmldoc"><p>Base class for binding sources, used by platform specific libraries to share implementation details</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-bindingmodule.html">Binding</a>
+          </td>
+          <td class="xmldoc"><p>Functions to work with binding sources</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-bindingcollectionmodule.html">BindingCollection</a>
+          </td>
+          <td class="xmldoc"><p>Functions to work with binding collections to binding sources</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-commandmodule.html">Command</a>
+          </td>
+          <td class="xmldoc"><p>Core module for creating and using ICommand implementations</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"><p>A platform neutral application framework</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Helpers Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-helpers-compositedisposable.html">CompositeDisposable</a>
+          </td>
+          <td class="xmldoc"><p>Type which allows tracking of multiple disposables at once</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-helpers-icompositedisposable.html">ICompositeDisposable</a>
+          </td>
+          <td class="xmldoc"><p>A disposable type that manages multiple other disposables, and disposes all of them when disposed</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-helpers-idletracker.html">IdleTracker</a>
+          </td>
+          <td class="xmldoc"><p>Type which tracks execution, used for tracked async operations
+Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when executing</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Interaction Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-inout-2.html">InOut<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used as an input and output mapping to report and fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-mutatableinout-2.html">MutatableInOut<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-out-1.html">Out<'a></a>
+          </td>
+          <td class="xmldoc"><p>Used as an output mapping to fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-report-2.html">Report<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used to report data to a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-validatedinout-3.html">ValidatedInOut<'a, 'b, 'c></a>
+          </td>
+          <td class="xmldoc"><p>Used as an input and output mapping with validation to report and fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-validatedout-2.html">ValidatedOut<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used as an output mapping with validation to fetch data from a user</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-validatedreport-2.html">ValidatedReport<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>Used to report data to a user with validation</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-interaction-validation-2.html">Validation<'a, 'b></a>
+          </td>
+          <td class="xmldoc"><p>A single step in a validation chain</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-interaction-iomodule.html">IO</a>
+          </td>
+          <td class="xmldoc"><p>Creates IO handles for use with Gjallarhorn adapters, like Gjallarhorn.Bindable</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Internal Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-idependencymanager-1.html">IDependencyManager<'a></a>
+          </td>
+          <td class="xmldoc"><p>Type used to track dependencies</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-idependent.html">IDependent</a>
+          </td>
+          <td class="xmldoc"><p>A type which depends on a signal</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-itracksdependents.html">ITracksDependents</a>
+          </td>
+          <td class="xmldoc"><p>Interface that allows a type to remotely add itself as a dependent</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-mutable-1.html">Mutable<'a></a>
+          </td>
+          <td class="xmldoc"><p>A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-internal-signalbase-1.html">SignalBase<'a></a>
+          </td>
+          <td class="xmldoc"><p>Base class which simplifies implementation of standard signals</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-internal-dependencies.html">Dependencies</a>
+          </td>
+          <td class="xmldoc"><p>Module used to create and manage dependencies</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-internal-weakref.html">WeakRef</a>
+          </td>
+          <td class="xmldoc"><p>Helper module for dealing with weak references</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Linq Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-mutable.html">Mutable</a>
+          </td>
+          <td class="xmldoc"><p>Functions for working with Mutables from C#</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-observableextensions.html">ObservableExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extension methods for working with Observables from C# using a LINQ inspired API</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-signal.html">Signal</a>
+          </td>
+          <td class="xmldoc"><p>Functions for working with Signals from C#</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-linq-signalextensions.html">SignalExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extension methods for working with Signals from C# using a LINQ inspired API</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Wpf Namespace</h2>
+    <div>
+      <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-wpf-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"><p>WPF Specific implementation of the Application Framework</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-wpf-platform.html">Platform</a>
+          </td>
+          <td class="xmldoc"><p>Platform installation</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.XamarinForms Namespace</h2>
+    <div>
+      <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-xamarinforms-framework.html">Framework</a>
+          </td>
+          <td class="xmldoc"><p>Xamarin Forms implementation of the basic application framework</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-xamarinforms-platform.html">Platform</a>
+          </td>
+          <td class="xmldoc"><p>Platform installation</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

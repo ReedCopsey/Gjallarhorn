@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Validation in Gjallarhorn
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Framework for managing mutable data with change notification and live views"/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1><a name="Validation-in-Gjallarhorn" class="anchor" href="#Validation-in-Gjallarhorn">Validation in Gjallarhorn</a></h1>
+<p>Mutables in Gjallarhorn also provide a mechanism to filter based on validation rules.</p>
+<p>The validation engine in Gjallarhorn can be used to validate any value.  It is based on using function composition
+with built-in functions defining rules.</p>
+<p>For example, we can validate a string:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Gjallarhorn.dll&quot;</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span>
+<span class="k">open</span> <span class="i">Gjallarhorn</span><span class="o">.</span><span class="i">Validation</span><span class="o">.</span><span class="i">Validators</span>
+
+<span class="k">let</span> <span class="i">input</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span>
+
+<span class="c">// Define a validation using function composition</span>
+<span class="k">let</span> <span class="i">isValid</span> <span class="i">v</span> <span class="o">=</span> 
+    <span class="i">validate</span> <span class="i">v</span> 
+    <span class="o">|&gt;</span> (<span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">noSpaces</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">hasLengthAtLeast</span> <span class="n">3</span>) 
+    <span class="o">|&gt;</span> <span class="i">result</span>
+
+<span class="k">let</span> <span class="i">testInput</span> <span class="o">=</span> <span class="i">isValid</span> <span class="i">input</span>
+
+<span class="c">// Prints: &quot;Foo&quot; validation result: Valid</span>
+<span class="i">printfn</span> <span class="s">&quot;%A validation result: %A&quot;</span> <span class="i">input</span> <span class="i">testInput</span>
+
+<span class="k">let</span> <span class="i">badinput</span> <span class="o">=</span> <span class="s">&quot; a&quot;</span>
+<span class="k">let</span> <span class="i">testBad</span> <span class="o">=</span> <span class="i">isValid</span> <span class="i">badinput</span>
+
+<span class="c">// Prints: &quot;Ba&quot; validation result: Invalid [&quot;Value cannot contain a space.&quot;; &quot;Value must be at least 3 characters long.&quot;]</span>
+<span class="i">printfn</span> <span class="s">&quot;%A validation result: %A&quot;</span> <span class="i">badinput</span> <span class="i">testBad</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Note that our validation result, with <code>"Foo"</code> as input, was Valid - all of our rules were met.</p>
+<p>However, when passing <code>" a"</code>, we violated two of our input rules, and the resulting <code>ValidationResult</code> contains a list of all bad messages.</p>
+<p>If you want to restrict the number of messages, you can use <code>fixErrors</code> (to stop collecting errors if we're already in an error state), or
+<code>fixErrorsWithMessage</code> to stop collecting further errors as well as provide a custom error message.</p>
+<p>This can be useful, for example, if validating a name as input.  When the user hasn't entered anything (it's null or whitespace), we likely
+don't want to continue collecting errors, and instead want to report a custom error message:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">validateName</span> <span class="o">=</span> <span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">fixErrorsWithMessage</span> <span class="s">&quot;Please enter your name&quot;</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">hasLengthAtLeast</span> <span class="n">2</span>
+
+<span class="k">let</span> <span class="i">isValidName</span> <span class="i">n</span> <span class="o">=</span> 
+    <span class="i">validate</span> <span class="i">n</span> 
+    <span class="o">|&gt;</span> <span class="i">validateName</span>
+    <span class="o">|&gt;</span> <span class="i">Validation</span><span class="o">.</span><span class="i">result</span>
+
+<span class="c">// Prints: Reed is valid?: Valid</span>
+<span class="i">printfn</span> <span class="s">&quot;Reed is valid: %A&quot;</span> (<span class="i">isValidName</span> <span class="s">&quot;Reed&quot;</span>)
+
+<span class="c">// Prints: An empty string is valid?: Invalid [&quot;Please enter your name&quot;]</span>
+<span class="i">printfn</span> <span class="s">&quot;An empty string is valid?: %A&quot;</span> (<span class="i">isValidName</span> <span class="s">&quot;&quot;</span>)
+
+<span class="c">// Prints: R is valid: Invalid [&quot;Value must be at least 2 characters long.&quot;]</span>
+<span class="i">printfn</span> <span class="s">&quot;R is valid: %A&quot;</span> (<span class="i">isValidName</span> <span class="s">&quot;R&quot;</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Again, using <code>fixErrors</code> or <code>fixErrorsWithMessage</code> stops collecting more errors, as demonstrated above.  Even though an empty
+string would fail the <code>hasLengthAtLeast</code> rule, that error is not added to the list of invalid reasons.</p>
+<p>We can also do custom validation rules via the <code>validateWith</code> function.  This accepts a function which takes the value, and returns a <code>string option</code>. When <code>None</code>,
+the rule succeeds, when <code>Some</code>, the error is added to the invalid message list:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">customRule</span> <span class="i">name</span> <span class="o">=</span>
+    <span class="k">match</span> <span class="i">name</span> <span class="k">with</span>
+    | <span class="s">&quot;Reed&quot;</span> <span class="k">-&gt;</span> <span class="i">Some</span> <span class="s">&quot;Reed is a poor choice of names!&quot;</span>
+    | _ <span class="k">-&gt;</span> <span class="i">None</span>
+
+<span class="k">let</span> <span class="i">customValidation</span> <span class="i">n</span> <span class="o">=</span> 
+    <span class="i">validate</span> <span class="i">n</span> 
+    <span class="o">|&gt;</span> (<span class="i">notNullOrWhitespace</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span class="i">validateWith</span> <span class="i">customRule</span>)
+    <span class="o">|&gt;</span> <span class="i">Validation</span><span class="o">.</span><span class="i">result</span>
+
+<span class="c">// Prints: Reed is valid: Invalid [&quot;Reed is a poor choice of names!&quot;]</span>
+<span class="i">printfn</span> <span class="s">&quot;Reed is valid: %A&quot;</span> (<span class="i">customValidation</span> <span class="s">&quot;Reed&quot;</span>)
+
+<span class="c">// Prints: James is valid: Valid</span>
+<span class="i">printfn</span> <span class="s">&quot;James is valid: %A&quot;</span> (<span class="i">customValidation</span> <span class="s">&quot;James&quot;</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Now that we've seen how to do basic validation, we'll extend this into <a href="validate_types.html">Validating Signals</a></p>
+
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
