@@ -5,7 +5,7 @@ group Build
   
   redirects: on
 
-  framework: net45 profile259
+  framework: net461, net45, portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1
 
   nuget SourceLink.Fake
   nuget FAKE
