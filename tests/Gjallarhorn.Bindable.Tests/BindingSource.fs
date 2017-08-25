@@ -290,6 +290,26 @@ type BindingSourceTest() =
         Assert.IsFalse dynamicVm.IsValid 
 
     [<Test>]
+    member __.``Binding\mutateToFromViewValidated assigns from source`` () =
+        let value = Mutable.create ""
+
+        use dynamicVm = Binding.createSource ()
+        let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
+        Binding.mutateToFromViewValidated dynamicVm "Value" validator value
+    
+        Assert.IsFalse dynamicVm.IsValid
+
+        setProperty dynamicVm "Value" "Valid"
+        Assert.AreEqual ("Valid", value.Value)
+
+        Assert.IsTrue dynamicVm.IsValid 
+
+        setProperty dynamicVm "Value" "Valid 2"
+        Assert.AreEqual ("Valid 2", value.Value)
+
+        Assert.IsTrue dynamicVm.IsValid 
+
+    [<Test>]
     member __.``Binding\mutateToFromViewValidated assigns back properly`` () =
         let value = Mutable.create ""
 

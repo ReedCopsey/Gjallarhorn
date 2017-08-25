@@ -89,9 +89,9 @@ type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, valid
     inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
 
     let subscription = 
-        self.Output.ValidationResult
-        |> Signal.Subscription.create(fun v ->
-            if v.IsValidResult then
+        self.UpdateStream
+        |> Signal.Subscription.create(fun _ ->
+            if self.Output.IsValid then
                 input.Value <- Option.get self.Output.Value)
 
     interface IDisposable with
