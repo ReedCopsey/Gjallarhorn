@@ -27,8 +27,9 @@ module Framework =
     let application model init update binding = { Model = model ; Init = init ; Update = update ; Binding = binding }
     /// Build a basic application which manages state internally, given a initial model state, update function, and binding function
     let basicApplication model update binding = 
-        let m = Mutable.create model
-        let upd msg = m.Value <- update msg m.Value
+        let m = Mutable.createAsync model
+        
+        let upd msg = m.Update (update msg) |> ignore
             
         { Model = (fun _ -> m :> ISignal<_>) ; Init = ignore ; Update = upd ; Binding = binding }
 

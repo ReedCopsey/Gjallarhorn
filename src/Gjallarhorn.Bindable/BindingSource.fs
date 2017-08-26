@@ -191,7 +191,7 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() =
 
     /// Outputs values by subscribing to changes on an observable
     member this.OutputObservable<'Message> (obs : IObservable<'Message>) =
-        let sub = obs.Subscribe output.Trigger
+        let sub = obs.Subscribe (fun msg -> System.Threading.Tasks.Task.Run(fun () -> output.Trigger msg) |> ignore)
         this.AddDisposable sub
 
     /// Outputs values by subscribing to changes on a list of observables
