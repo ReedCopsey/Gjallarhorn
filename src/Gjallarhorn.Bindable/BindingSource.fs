@@ -185,14 +185,23 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() =
     
     // Use event as simple observable source
     let output = Event<'Message>()
+    let mbp = 
+        MailboxProcessor<'Message>.Start(fun inbox -> 
+            let rec loop () = 
+                async {
+                    let! msg = inbox.Receive()
+                    output.Trigger msg
+                    return! loop ()
+                    }
+            loop ())
 
     /// Outputs a value through it's observable implementation
     member __.OutputValue value = output.Trigger value
 
     /// Outputs values by subscribing to changes on an observable
     member this.OutputObservable<'Message> (obs : IObservable<'Message>) =
-        let sub = obs.Subscribe (fun msg -> System.Threading.Tasks.Task.Run(fun () -> output.Trigger msg) |> ignore)
-        this.AddDisposable sub
+        obs.Subscribe mbp.Post
+        |> this.AddDisposable 
 
     /// Outputs values by subscribing to changes on a list of observables
     member this.OutputObservables<'Message> (obs : IObservable<'Message> list) : unit =        
