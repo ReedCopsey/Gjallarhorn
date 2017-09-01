@@ -1,6 +1,5 @@
 ﻿namespace Gjallarhorn.Bindable.Framework
 
-open System
 open Gjallarhorn
 open Gjallarhorn.Bindable
 
@@ -42,7 +41,7 @@ type ApplicationSpecification<'Model,'Message> =
 
 /// A platform neutral application framework
 [<AbstractClass;Sealed>]
-type Framework () =
+type Framework =
         
     /// Build an application given a model generator, initialization function, update function, and binding function
     static member application model init update binding = ApplicationCore(model, init, update, binding)

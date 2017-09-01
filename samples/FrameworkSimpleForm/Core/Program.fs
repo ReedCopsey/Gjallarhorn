@@ -33,28 +33,30 @@ module Program =
         | FirstName f -> { model with FirstName = f }
         | LastName l -> { model with LastName = l }
 
+    // Our "ViewModel". This is optional, but allows you to avoid using "magic strings", as well as enables design time XAML in C# projects
+    [<CLIMutable>] // CLIMutable is required by XAML tooling if we have 2-way bindings
+    type ViewModel = 
+        {
+            FirstName   : string
+            LastName    : string
+            FullName    : string
+        }    
+
+    // This is our design/compile time ViewModel used for XAML and binding for naming
+    let d = { FirstName = "Reed" ; LastName="Copsey" ; FullName = "Reed Copsey" }
+
     // ----------------------------------    Binding    ---------------------------------- 
     // Create a function that binds a model to a source, and outputs messages
-    let bindToSource source (model : ISignal<Model>) =    
-        // Bind our properties, with validation, to the view        
-        let first = 
-            model 
-            |> Binding.memberToFromView source <@ model.Value.FirstName @> notNullOrWhitespace
-            // These are IObservable<string option> - so map valid changes to our message type
-            |> Observable.toMessage FirstName
+    let bindToSource =    
+        // Composable validation - Can be written inline as well
+        let validLast = notNullOrWhitespace >> notEqual "Copsey" 
+        let validFull = notNullOrWhitespace >> fixErrorsWithMessage "Please enter a valid name"
 
-        let last = 
-            model 
-            |> Binding.memberToFromView source <@ model.Value.LastName @> (notNullOrWhitespace >> notEqual "Copsey") // Composable validation
-            |> Observable.toMessage LastName
-
-        // Allow the display our (validated) full name
-        model
-        |> Signal.map (fun m -> m.FirstName + " " + m.LastName)
-        |> Binding.toViewValidated source "FullName" (notNullOrWhitespace >> fixErrorsWithMessage "Please enter a valid name")
-
-        // Return our output streams
-        [ first ; last ]
+        [
+            <@ d.FirstName @>  |> Bind.twoWayValidated (fun (m : Model) -> m.FirstName) notNullOrWhitespace FirstName
+            <@ d.LastName @>   |> Bind.twoWayValidated (fun m -> m.LastName) validLast LastName
+            <@ d.FullName @>   |> Bind.oneWayValidated (fun m -> m.FirstName + " " + m.LastName) validFull
+        ]   
 
     // ----------------------------------   Framework  -----------------------------------     
-    let applicationCore = Framework.basicApplication2 Model.Default update bindToSource
+    let applicationCore = Framework.basicApplication Model.Default update bindToSource
