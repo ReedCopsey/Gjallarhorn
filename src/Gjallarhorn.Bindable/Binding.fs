@@ -220,6 +220,17 @@ module Bind =
             |> Some
 
     /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    let cmd<'Model,'Msg> (name : Expr<Cmd<'Msg>>) : BindingSource -> ISignal<'Model> -> IObservable<'Msg> option =
+        fun (source : BindingSource) (signal : ISignal<'Model>) ->
+            let o, pi = getPropertyFromExpression name
+            match o.Value with
+            | PropertyGet(_,v,_) ->
+                let msg = pi.GetValue(v.GetValue(null)) :?> Cmd<'Msg>
+                Binding.createMessage pi.Name msg.Value source
+            | _ -> failwith "Bad expression"        
+            |> Some
+
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
     let cmdIf<'Model,'Msg> canExecute (name : Expr<Cmd<'Msg>>) : BindingSource -> ISignal<'Model> -> IObservable<'Msg> option =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let o, pi = getPropertyFromExpression name
