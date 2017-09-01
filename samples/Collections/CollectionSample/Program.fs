@@ -55,18 +55,27 @@ module Program =
     // Create a function that binds a model to a source, and outputs messages
     // This essentially acts as our "view" in Elm terminology, though it doesn't actually display 
     // the view as much as map from our type to bindings
+
+    // We start with a "ViewModel" for cleaner bindings and XAML support
+    type RequestViewModel =
+        {
+            Id : Guid
+            Hours : float
+            Status : Status
+            Accept : Cmd<Operations.RequestUpdate>
+            Reject : Cmd<Operations.RequestUpdate>
+        }
+    let reqd = { Id = Guid.NewGuid() ; Hours = 45.32 ; Status = Status.Accepted ; Accept = Cmd.ofMsg Operations.AcceptRequest ; Reject = Cmd.ofMsg Operations.RejectRequest }
     
     // Create a component for a single request
-    let requestComponent source (model : ISignal<Request>) =         
-        // Bind the properties we want to display
-        model |> Signal.map (fun v -> v.Id)            |> Binding.toView source "Id"
-        model |> Signal.map (fun v -> v.ExpectedHours) |> Binding.toView source "Hours"
-        model |> Signal.map (fun v -> v.Status)        |> Binding.toView source "Status"
-            
+    let requestComponent =
         [
-            source |> Binding.createMessage "Accept" Operations.AcceptRequest
-            source |> Binding.createMessage "Reject" Operations.RejectRequest
-        ]
+            <@ reqd.Id @>       |> Bind.oneWay (fun (r : Request) -> r.Id)
+            <@ reqd.Hours @>    |> Bind.oneWay (fun r -> r.ExpectedHours)
+            <@ reqd.Status @>   |> Bind.oneWay (fun r -> r.Status)
+            <@ reqd.Accept @>   |> Bind.cmd 
+            <@ reqd.Reject @>   |> Bind.cmd 
+        ] |> Component.FromBindings
 
     // Create the component for the Requests as a whole.
     // Note that this uses BindingCollection to map the collection to individual request -> messages,
@@ -78,7 +87,7 @@ module Program =
 
         // Create a property to display our current value    
         [
-            BindingCollection.toView source "Requests" sorted (Component.FromObservables requestComponent)
+            BindingCollection.toView source "Requests" sorted requestComponent
             |> Observable.map Operations.requestUpdateToUpdate 
         ]
 
