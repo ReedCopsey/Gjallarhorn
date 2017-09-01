@@ -221,9 +221,9 @@ and Component<'Model,'Message> private (bindingFunction) =
         let fn (source : BindingSource) (model : ISignal<'Model>) =
             bindings
             |> List.choose (fun v -> v source model)
-        Component(fn)
+        Component<'Model,'Message>(fn)
 
     static member FromObservables (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
-        Component(bindings)
+        Component<'Model,'Message>(bindings)
 
     member __.Setup (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
