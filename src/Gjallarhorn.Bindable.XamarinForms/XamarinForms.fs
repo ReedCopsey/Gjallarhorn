@@ -42,7 +42,7 @@ module Framework =
                            
                 Platform.install ()
                 this.Core.Init ()
-                Gjallarhorn.Bindable.Framework.runApplication (this.ToApplicationSpecification render) |> ignore
+                Gjallarhorn.Bindable.Framework.Framework.runApplication (this.ToApplicationSpecification render) |> ignore
                 App(this.View)                
 
     [<CompiledName("CreateApplicationInfo")>]

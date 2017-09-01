@@ -3,6 +3,7 @@
 open System
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.Framework
 open Gjallarhorn.Validation
 open Gjallarhorn.Validation.Validators
 

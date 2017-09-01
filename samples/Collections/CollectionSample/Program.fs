@@ -2,6 +2,7 @@
 
 open Gjallarhorn
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.Framework
 open CollectionSample.RequestModel
 open CollectionSample.External
 open System

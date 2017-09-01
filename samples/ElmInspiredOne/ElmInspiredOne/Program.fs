@@ -1,6 +1,7 @@
 ﻿namespace ElmInspiredOne
 
 open Gjallarhorn.Bindable
+open Gjallarhorn.Bindable.Framework
 
 // Note that this program is defined in a PCL, and is completely platform neutral.
 // It will work unchanged on WPF, Xamarin Forms, etc
@@ -44,7 +45,6 @@ module Program =
             <@ d.Increment  @> |> Bind.cmdIf (fun v -> v < 10)
             <@ d.Decrement  @> |> Bind.cmdIf (fun v -> v > 0)
         ]         
-    // let appComponent = Component bindToSource
 
     // ----------------------------------   Framework  -----------------------------------     
     let applicationCore = Framework.basicApplication (initModel 5) update bindToSource

@@ -59,7 +59,7 @@ type Framework =
 
         Platform.install true |> ignore
         applicationInfo.Init ()
-        Gjallarhorn.Bindable.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 
+        Gjallarhorn.Bindable.Framework.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 
     
     /// Run an application using Application.Current and a function to construct the main window
     static member RunApplication<'Model,'Message,'Window when 'Window :> Window> (windowCreation : System.Func<'Window>, applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
@@ -86,4 +86,4 @@ type Framework =
 
         Platform.install true |> ignore
         applicationInfo.Init ()
-        Gjallarhorn.Bindable.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 
+        Gjallarhorn.Bindable.Framework.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 
