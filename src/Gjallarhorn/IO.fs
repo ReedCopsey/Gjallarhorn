@@ -1,12 +1,9 @@
 ﻿namespace Gjallarhorn.Interaction
 
 open Gjallarhorn
-open Gjallarhorn.Helpers
-open Gjallarhorn.Internal
 open Gjallarhorn.Validation
 
 open System
-open System.Collections.Generic
 
 /// A single step in a validation chain
 type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)

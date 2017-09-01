@@ -8,15 +8,41 @@ open Gjallarhorn.Validation
 
 open Gjallarhorn.Bindable
 
+open System
 open System.ComponentModel
 open System.Windows.Input
 
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
+type Cmd<'a>(msg: 'a) =
+    member __.Value = msg
+    interface ICommand with
+        member __.CanExecute _ = false
+        member __.Execute _ = ()
+        member __.add_CanExecuteChanged _ = ()
+        member __.remove_CanExecuteChanged _ = ()
+
+module Cmd =
+    let ofMsg msg = Cmd msg
+
+[<AutoOpen>]
+module internal RefHelpers =
+    let getPropertyFromExpression(expr : Expr) = 
+        match expr with 
+        | PropertyGet(o, pi, _) ->
+            o, pi
+        | _ -> failwith "Only quotations representing a lambda of a property getter can be used as an expression"
+
+    let getPropertyNameFromExpression(expr : Expr) = 
+        let _, pi = getPropertyFromExpression expr
+        pi.Name
+
+
 /// Functions to work with binding sources     
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module Binding =
+module Binding =    
+
     /// Internal module used to manage the actual construction of binding sources
     module Implementation =
         let mutable private createBindingSourceFunction : unit -> obj = (fun _ -> failwith "Platform targets not installed")
@@ -81,12 +107,7 @@ module Binding =
 
     /// Add a binding to a source for a signal for editing with a given property expression and validation, and returns a signal of the user edits
     let memberToFromView<'a,'b> (source : BindingSource) (expr : Expr) (validation : Validation<'a,'a>) (signal : ISignal<'b>) =
-        let pi = 
-            match expr with 
-            | PropertyGet(_, pi, _) ->
-                pi
-            | _ -> failwith "Only quotations representing a lambda of a property getter can be used as an expression for EditMember"
-
+        let _, pi = getPropertyFromExpression expr
         let mapped =
             signal
             |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
@@ -143,12 +164,21 @@ module Binding =
         source.ConstantToView (command, name)
         command |> Observable.map (fun _ -> message)
 
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    let createMessageNamed<'a> (name : Expr<Cmd<'a>>) (source : BindingSource) =
+        let o, pi = getPropertyFromExpression name
+        match o.Value with
+        | PropertyGet(_,v,_) ->
+            let msg = pi.GetValue(v.GetValue(null)) :?> Cmd<'a>
+            createMessage pi.Name msg.Value source
+        | _ -> failwith "Bad expression"
+
     /// Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message
     let createMessageChecked name canExecute message (source : BindingSource) =
         let command = Command.create canExecute
         source.AddDisposable command
         source.ConstantToView (command, name)
-        command |> Observable.map (fun _ -> message)
+        command |> Observable.map (fun _ -> message) 
 
     /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
     let createMessageParam name message (source : BindingSource) =
@@ -164,3 +194,25 @@ module Binding =
         source.ConstantToView (command, name)
         command |> Observable.map (fun p -> message p)
 
+module Bind =
+    /// Add a watched signal (one way property) to a binding source by name
+    let oneWay<'a,'b, 'c> (getter : 'a -> 'b) (name : Expr<'b>) : BindingSource -> ISignal<'a> -> IObservable<'c> option =
+        fun (source : BindingSource) (signal : ISignal<'a>) ->
+            source.TrackInput (getPropertyNameFromExpression name, IO.Report.create signal)
+            None
+
+    /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
+    let cmdIf<'a,'b> canExecute (name : Expr<Cmd<'b>>) : BindingSource -> ISignal<'a> -> IObservable<'b> option =
+        fun (source : BindingSource) (signal : ISignal<'a>) ->
+            let o, pi = getPropertyFromExpression name
+            match o.Value with
+            | PropertyGet(_,v,_) ->
+                let msg = pi.GetValue(v.GetValue(null)) :?> Cmd<'b>
+                let canExecuteSignal = signal |> Signal.map canExecute
+                Binding.createMessageChecked pi.Name canExecuteSignal msg.Value source
+            | _ -> failwith "Bad expression"        
+            |> Some
+
+    let route<'a,'b> (source : BindingSource) (model : ISignal<'a>) (list : (BindingSource -> ISignal<'a> -> IObservable<'b> option) list) : IObservable<'b> list =
+        list
+        |> List.choose (fun v -> v source model)

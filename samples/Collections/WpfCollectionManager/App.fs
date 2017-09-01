@@ -29,4 +29,5 @@ let main _ =
         printfn "Rejected Request: %A" req.Id
 
     // Run using the WPF wrappers around the basic application framework    
-    Framework.runApplication App MainWin (Program.applicationCore fnAccepted fnRejected)
+    Framework.RunApplication (App, MainWin, Program.applicationCore fnAccepted fnRejected)
+    1

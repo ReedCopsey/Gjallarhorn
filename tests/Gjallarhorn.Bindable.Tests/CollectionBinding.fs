@@ -31,11 +31,15 @@ type CollectionChangedObserver(o : INotifyCollectionChanged) =
 
 [<TestFixture>]
 type CollectionBindingTest() =
-    let intComponent subscription (source : BindingSource) (model : ISignal<int>) =
-        model 
-        |> Signal.Subscription.create subscription 
-        |> source.AddDisposable
-        [ ]
+    let intComponent subscription =
+        let fn (source : BindingSource) (model : ISignal<int>)  =
+            model 
+            |> Signal.Subscription.create subscription 
+            |> source.AddDisposable
+            [ ]
+        Gjallarhorn.Bindable.Component.FromObservables fn
+
+    let ignoreComp = intComponent ignore
 
     [<TestFixtureSetUp>]
     member __.Initialize() =
@@ -45,7 +49,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises collection changed`` () =
         let l = Mutable.create [ 1 ; 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -57,7 +61,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises collection changed with remove for single element missing in center`` () =
         let l = Mutable.create [ 1 ; 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -70,7 +74,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises add on cons`` () =
         let l = Mutable.create [ 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -85,7 +89,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises add with correct index on cons`` () =
         let l = Mutable.create [ 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -102,7 +106,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises add with correct indices on cons x 2`` () =
         let l = Mutable.create [ 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -122,7 +126,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises add on append`` () =
         let l = Mutable.create [ 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -138,7 +142,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises adds on multiple appends`` () =
         let l = Mutable.create [ 2 ; 3 ; 4 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
 
@@ -154,7 +158,7 @@ type CollectionBindingTest() =
     member __.``BoundCollection raises adds on multiple inserts`` () =
         let l = Mutable.create [ 1 ; 4 ; 5 ]
 
-        use bc = new BoundCollection<int, unit, int list>(l, intComponent ignore)
+        use bc = new BoundCollection<int, unit, int list>(l, ignoreComp)
 
         let obs = CollectionChangedObserver(bc)    
         

@@ -77,7 +77,7 @@ module Program =
 
         // Create a property to display our current value    
         [
-            BindingCollection.toView source "Requests" sorted requestComponent 
+            BindingCollection.toView source "Requests" sorted (Component.FromObservables requestComponent)
             |> Observable.map Operations.requestUpdateToUpdate 
         ]
 
@@ -101,10 +101,10 @@ module Program =
         let requestUpdates =            
             model 
             |> Signal.map (fun m -> m.Requests)
-            |> Binding.componentToView source "Requests" requestsComponent 
+            |> Binding.componentToView source "Requests" (Component.FromObservables requestsComponent)
         let externalUpdates =
             model             
-            |> Binding.componentToView source "Updates" externalComponent
+            |> Binding.componentToView source "Updates" (Component.FromObservables externalComponent)
 
         [
             requestUpdates |> Observable.map Msg.Update
@@ -131,4 +131,4 @@ module Program =
         |> Observable.add (fun msg -> Update msg |> state.Update)
 
         // Start and run our application
-        Framework.application state.ToSignal state.Initialize state.Update appComponent
+        Framework.application state.ToSignal state.Initialize state.Update (Component.FromObservables appComponent)

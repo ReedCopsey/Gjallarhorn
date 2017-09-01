@@ -1,7 +1,11 @@
 ﻿namespace Gjallarhorn.Wpf
 
+open System
 open System.Threading
+open System.Windows
 open System.Windows.Threading
+open Gjallarhorn
+open Gjallarhorn.Bindable
 
 /// Platform installation
 module Platform =
@@ -29,32 +33,56 @@ module Platform =
         | true -> installAndGetSynchronizationContext ()
         | false -> SynchronizationContext.Current
 
-/// WPF Specific implementation of the Application Framework
-module Framework =
-    open Gjallarhorn
-    open Gjallarhorn.Bindable
-    open System
-    open System.Windows
+module App =                    
+    let toApplicationSpecification render (appCore : Framework.ApplicationCore<'Model, 'Message>) : Framework.ApplicationSpecification<'Model,'Message> = 
+            { 
+                Core = appCore
+                Render = render 
+            }                
 
-    module App =                    
-       let toApplicationSpecification render (appCore : Framework.ApplicationCore<'Model, 'Message>) : Framework.ApplicationSpecification<'Model,'Message> = 
-                { 
-                    Core = appCore
-                    Render = render 
-                }                
+/// WPF Specific implementation of the Application Framework
+[<AbstractClass;Sealed>]
+type Framework =
     /// Run an application given an Application generator, Window generator, and other required information
-    let runApplication<'Model,'Message,'Application,'Window when 'Application :> Application and 'Window :> Window> (application : unit -> 'Application) (window : unit -> 'Window) (applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
+    static member RunApplication<'Model,'Message,'Application,'Window when 'Application :> Application and 'Window :> Window> (applicationCreation : unit -> 'Application, windowCreation : unit -> 'Window, applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
         let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
             let dataContext = createCtx SynchronizationContext.Current
 
             // Construct application first, which guarantees application resources are available
-            let app = application()
+            let app = applicationCreation()
             // Construct main window and set data context
-            let win = window()
+            let win = windowCreation()
             win.DataContext <- dataContext               
             
             // Use standdard WPF message pump
-            app.Run win
+            app.Run win |> ignore
+
+        Platform.install true |> ignore
+        applicationInfo.Init ()
+        Gjallarhorn.Bindable.Framework.runApplication (App.toApplicationSpecification render applicationInfo) 
+    
+    /// Run an application using Application.Current and a function to construct the main window
+    static member RunApplication<'Model,'Message,'Window when 'Window :> Window> (windowCreation : System.Func<'Window>, applicationInfo : Framework.ApplicationCore<'Model,'Message>) =
+        let render (createCtx : SynchronizationContext -> ObservableBindingSource<'Message>) = 
+            let dataContext = createCtx SynchronizationContext.Current
+
+            // Get or create the application first, which guarantees application resources are available
+            // If we create the application, we assume we need to run it explicitly
+            let app, run = 
+                match Application.Current with
+                | null -> Application(), true
+                | a -> a, false
+
+            // Use the main Window as our entry window
+            let win = windowCreation.Invoke ()
+            app.MainWindow <- win
+            win.DataContext <- dataContext               
+
+            // Use standdard WPF message pump
+            if run then
+                app.Run win |> ignore
+            else                
+                win.Show()                
 
         Platform.install true |> ignore
         applicationInfo.Init ()

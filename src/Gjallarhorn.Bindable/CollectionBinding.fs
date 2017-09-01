@@ -54,7 +54,7 @@ type internal BoundCollection<'Model,'Message,'Coll when 'Model : equality and '
     let createEntry (m : 'Model) =
         let bs = Binding.createObservableSource<'Message> ()
         let mm = Mutable.create m
-        comp bs mm
+        comp.Setup bs mm
         |> bs.OutputObservables
         let s = bs |> Observable.subscribe (fun msg -> outputMessage msg mm.Value)
         (mm, bs, s)

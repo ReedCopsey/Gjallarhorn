@@ -7,7 +7,7 @@ open Gjallarhorn.Internal
 open System
 open System.Windows.Input
    
-/// An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.
+/// An ICommand which acts as an observable over changes to the value.  This is frequently the current timestamp of the command.
 type ITrackingCommand<'a> =
     inherit ICommand 
     inherit System.IDisposable
@@ -52,12 +52,12 @@ type internal ParameterCommand<'a> (allowExecute : ISignal<bool>) as self =
         member __.CanExecute (_ : obj) = allowExecute.Value
         member this.Execute(param : obj) = this.HandleExecute(param)
 
-/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<CommandState>, where each execute passes DateTime.UtcNow on execution
+/// Command type which uses an ISignal<bool> to track whether it can execute, and implements ISignal<DateTime>, where each execute passes DateTime.UtcNow on execution
 type internal SignalCommand (allowExecute : ISignal<bool>) =
     inherit ParameterCommand<DateTime>(allowExecute)
 
     override __.HandleExecute _ =
-        base.HandleExecute (DateTime.Now)
+        base.HandleExecute (DateTime.UtcNow)
 
 /// Core module for creating and using ICommand implementations
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]

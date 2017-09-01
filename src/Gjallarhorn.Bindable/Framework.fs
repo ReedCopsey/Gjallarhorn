@@ -8,30 +8,41 @@ open Gjallarhorn.Bindable
 module Framework =
         
     /// The core information required for an application
-    type ApplicationCore<'Model,'Message> = 
-        {
-            /// The function which generates the model
-            Model : unit -> ISignal<'Model> 
-            /// Initialization function which runs once after platforms are installed
-            Init : unit -> unit 
-            /// The update function
-            Update : 'Message -> unit
-            /// The function which binds the model to the view
-            Binding : Component<'Model,'Message>
-        }
+    type ApplicationCore<'Model,'Message> (model, init, update, binding) =         
+
+        // new (model, update, binding) = ApplicationCore(model, ignore, update, binding)
+        
+        //new (model, update, binding : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) = 
+        //    ApplicationCore(model, ignore, update, Component binding)
+
+        /// The function which generates the model
+        member __.Model : unit -> ISignal<'Model> = model
+        /// Initialization function which runs once after platforms are installed
+        member __.Init : unit -> unit = init
+        /// The update function
+        member __.Update : 'Message -> unit = update
+        /// The function which binds the model to the view
+        member __.Binding : Component<'Model,'Message> = binding
 
     /// Alias for a function to create a data context
     type CreateDataContext<'Message> = System.Threading.SynchronizationContext -> ObservableBindingSource<'Message>
 
     /// Build an application given a model generator, initialization function, update function, and binding function
-    let application model init update binding = { Model = model ; Init = init ; Update = update ; Binding = binding }
+    let application model init update binding = ApplicationCore(model, init, update, binding)
     /// Build a basic application which manages state internally, given a initial model state, update function, and binding function
-    let basicApplication model update binding = 
+    let basicApplication<'Model,'Message> (model : 'Model) (update : 'Message -> 'Model -> 'Model) binding = 
         let m = Mutable.createAsync model
         
         let upd msg = m.Update (update msg) |> ignore
             
-        { Model = (fun _ -> m :> ISignal<_>) ; Init = ignore ; Update = upd ; Binding = binding }
+        ApplicationCore((fun () -> m :> ISignal<_>), ignore, upd, Component.FromBindings binding)
+
+    let basicApplication2<'Model,'Message> (model : 'Model) (update : 'Message -> 'Model -> 'Model) binding = 
+        let m = Mutable.createAsync model
+        
+        let upd msg = m.Update (update msg) |> ignore
+            
+        ApplicationCore((fun () -> m :> ISignal<_>), ignore, upd, Component.FromObservables binding)
 
     /// Full specification required to run an application
     type ApplicationSpecification<'Model,'Message> = 
@@ -39,7 +50,7 @@ module Framework =
             /// The application core
             Core : ApplicationCore<'Model,'Message>
             /// The platform specific render function
-            Render : CreateDataContext<'Message> -> int
+            Render : CreateDataContext<'Message> -> unit
         }
         with 
             /// The model generator function from the core application
@@ -58,7 +69,7 @@ module Framework =
                 applicationInfo.Model () 
                 |> Signal.observeOn ctx
 
-            applicationInfo.Binding (source :> _) model
+            applicationInfo.Binding.Setup (source :> BindingSource) model
             |> source.OutputObservables
 
             // Permanently subscribe to the observables, and call our update function

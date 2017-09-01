@@ -18,4 +18,5 @@ type MainWin = XAML<"MainWindow.xaml">
 [<EntryPoint>]
 let main _ =         
     // Run using the WPF wrappers around the basic application framework        
-    Framework.runApplication System.Windows.Application MainWin Program.applicationCore
+    Framework.RunApplication (Func<_>(MainWin), Program.applicationCore)
+    1

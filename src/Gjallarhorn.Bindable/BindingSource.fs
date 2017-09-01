@@ -136,7 +136,7 @@ type BindingSource() as self =
         this.TrackObservable (name, model)
         this.AddReadOnlyProperty(name, fun _ -> source)
         
-        let obs = comp (source :> BindingSource) model
+        let obs = comp.Setup (source :> BindingSource) model
         source.OutputObservables(obs)
 
         source :> IObservable<_>
@@ -214,4 +214,16 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() as self =
         member __.Subscribe obs = output.Publish.Subscribe obs
 
 /// A component takes a BindingSource and a Signal for a model and returns a list of observable messages
-and Component<'Model,'Message> = BindingSource -> ISignal<'Model> -> IObservable<'Message> list
+and Component<'Model,'Message> private (bindingFunction) =
+    
+
+    static member FromBindings (bindings : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) =
+        let fn (source : BindingSource) (model : ISignal<'Model>) =
+            bindings
+            |> List.choose (fun v -> v source model)
+        Component(fn)
+
+    static member FromObservables (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
+        Component(bindings)
+
+    member __.Setup (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
