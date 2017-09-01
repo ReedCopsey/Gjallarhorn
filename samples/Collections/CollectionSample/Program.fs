@@ -91,20 +91,14 @@ module Program =
             |> Observable.map Operations.requestUpdateToUpdate 
         ]
 
-    let externalComponent source (model : ISignal<Model>) =
-        let updating = 
-            model
-            |> Signal.map (fun m -> Option.isSome m.AddingRequests.Operating)
-            |> Binding.toFromView source "AddingRequests"
-        let processing = 
-            model
-            |> Signal.map (fun m -> Option.isSome m.Processing.Operating)
-            |> Binding.toFromView source "Processing"
-
-        [ 
-            updating |> Observable.map (Executing >> AddRequests)
-            processing |> Observable.map (Executing >> ProcessRequests)
-        ]
+    type extVM = { AddingRequests : bool ; Processing : bool }
+    let  extD = { AddingRequests = false ; Processing = false }
+    let externalComponent =                
+        [
+            <@ extD.AddingRequests @> |> Bind.twoWay (fun (m : Model) -> Option.isSome m.AddingRequests.Operating) (Executing >> AddRequests)
+            <@ extD.Processing     @> |> Bind.twoWay (fun m -> Option.isSome m.Processing.Operating)               (Executing >> ProcessRequests)
+        ] 
+        |> Component.FromBindings
 
     /// Compose our components above into one application level component
     let appComponent source (model : ISignal<Model>) =        
@@ -114,7 +108,7 @@ module Program =
             |> Binding.componentToView source "Requests" (Component.FromObservables requestsComponent)
         let externalUpdates =
             model             
-            |> Binding.componentToView source "Updates" (Component.FromObservables externalComponent)
+            |> Binding.componentToView source "Updates" externalComponent
 
         [
             requestUpdates |> Observable.map Msg.Update

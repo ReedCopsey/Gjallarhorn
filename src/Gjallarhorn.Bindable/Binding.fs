@@ -210,6 +210,16 @@ module Bind =
             None
 
     /// Add a two way property to a binding source by name
+    let twoWay<'Model, 'Prop, 'Msg> (getter : 'Model -> 'Prop) (setter : 'Prop -> 'Msg) (name : Expr<'Prop>) : BindingSource -> ISignal<'Model> -> IObservable<'Msg> option =
+        fun (source : BindingSource) (signal : ISignal<'Model>) ->
+            let name = getPropertyNameFromExpression name
+            let mapped = signal |> Signal.map getter
+            let output = Binding.toFromView<'Prop> source name mapped
+            output
+            |> Observable.map (setter)
+            |> Some
+
+    /// Add a two way property to a binding source by name
     let twoWayValidated<'Model, 'Prop, 'Msg> (getter : 'Model -> 'Prop) (validation : Validation<'Prop,'Prop>) (setter : 'Prop -> 'Msg) (name : Expr<'Prop>) : BindingSource -> ISignal<'Model> -> IObservable<'Msg> option =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let name = getPropertyNameFromExpression name
@@ -221,7 +231,7 @@ module Bind =
 
     /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
     let cmd<'Model,'Msg> (name : Expr<Cmd<'Msg>>) : BindingSource -> ISignal<'Model> -> IObservable<'Msg> option =
-        fun (source : BindingSource) (signal : ISignal<'Model>) ->
+        fun (source : BindingSource) (_signal : ISignal<'Model>) ->
             let o, pi = getPropertyFromExpression name
             match o.Value with
             | PropertyGet(_,v,_) ->
