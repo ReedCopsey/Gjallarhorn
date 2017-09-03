@@ -77,19 +77,21 @@ module Program =
             <@ reqd.Reject @>   |> Bind.cmd 
         ] |> Component.FromBindings
 
+    type RequestsViewModel =
+        {
+            Requests : Request seq 
+        }
+    let reqsd = { Requests = [] }
+    
     // Create the component for the Requests as a whole.
     // Note that this uses BindingCollection to map the collection to individual request -> messages,
     // using the component defined previously, then maps this to the model-wide update message.
-    let requestsComponent source (model : ISignal<Requests>) =    
-        let sorted = 
-            model
-            |> Signal.map (Seq.sortBy (fun req -> req.Created))
-
-        // Create a property to display our current value    
+    let requestsComponent = //source (model : ISignal<Requests>) =
+        let sorted (requests : Requests) = requests |> Seq.sortBy (fun r -> r.Created)
         [
-            BindingCollection.toView source "Requests" sorted requestComponent
-            |> Observable.map Operations.requestUpdateToUpdate 
-        ]
+            <@ reqsd.Requests @> |> Bind.collection sorted requestComponent Operations.requestUpdateToUpdate
+        ] 
+        |> Component.FromBindings
 
     type extVM = { AddingRequests : bool ; Processing : bool }
     let  extD = { AddingRequests = false ; Processing = false }
@@ -100,20 +102,20 @@ module Program =
         ] 
         |> Component.FromBindings
 
-    /// Compose our components above into one application level component
-    let appComponent source (model : ISignal<Model>) =        
-        let requestUpdates =            
-            model 
-            |> Signal.map (fun m -> m.Requests)
-            |> Binding.componentToView source "Requests" (Component.FromObservables requestsComponent)
-        let externalUpdates =
-            model             
-            |> Binding.componentToView source "Updates" externalComponent
+    type AppViewModel =
+        {
+            Requests : Requests
+            Updates : Model
+        }
+    let appd = { Requests = [] ; Updates = { Requests = [] ; AddingRequests = {Operating = None} ; Processing = { Operating = None } } }
 
+    /// Compose our components above into one application level component
+    let appComponent =
         [
-            requestUpdates |> Observable.map Msg.Update
-            externalUpdates 
-        ]
+            <@ appd.Requests @> |> Bind.comp (fun (m : Model) -> m.Requests) requestsComponent (fst >> Msg.Update)
+            <@ appd.Updates @>  |> Bind.comp id externalComponent fst
+        ] 
+        |> Component.FromBindings
 
     // ----------------------------------   Framework  -----------------------------------     
     
@@ -135,4 +137,4 @@ module Program =
         |> Observable.add (fun msg -> Update msg |> state.Update)
 
         // Start and run our application
-        Framework.application state.ToSignal state.Initialize state.Update (Component.FromObservables appComponent)
+        Framework.application state.ToSignal state.Initialize state.Update appComponent

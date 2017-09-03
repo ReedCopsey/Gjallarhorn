@@ -93,6 +93,9 @@
     <Compile Include="..\Gjallarhorn.Bindable\CollectionBinding.fs">
       <Link>CollectionBinding.fs</Link>
     </Compile>
+    <Compile Include="..\Gjallarhorn.Bindable\Bind.fs">
+      <Link>Bind.fs</Link>
+    </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\Framework.fs">
       <Link>Framework.fs</Link>
     </Compile>

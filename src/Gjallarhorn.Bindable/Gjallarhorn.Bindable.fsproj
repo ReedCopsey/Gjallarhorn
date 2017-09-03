@@ -45,6 +45,7 @@
       <ExcludeFromSourceAnalysis>True</ExcludeFromSourceAnalysis>
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="Bind.fs" />
     <Compile Include="BindingSourceUtilities.fs" />
     <Compile Include="BindingSourceFactory.fs" />
     <Compile Include="Framework.fs" />
