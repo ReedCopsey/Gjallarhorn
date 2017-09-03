@@ -9,9 +9,10 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Gjallarhorn.ReferenceDocumentation</RootNamespace>
     <AssemblyName>Gjallarhorn.ReferenceDocumentation</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <Name>Gjallarhorn.ReferenceDocumentation</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
