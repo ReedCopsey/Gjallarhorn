@@ -46,19 +46,12 @@ type Framework =
     /// Build an application given a model generator, initialization function, update function, and binding function
     static member application model init update binding = ApplicationCore(model, init, update, binding)
     /// Build a basic application which manages state internally, given a initial model state, update function, and binding function
-    static member basicApplication<'Model,'Message> (model : 'Model) (update : 'Message -> 'Model -> 'Model) binding = 
+    static member basicApplication<'Model,'Message> (model : 'Model) (update : 'Message -> 'Model -> 'Model) (binding : Component<'Model, 'Message>) = 
         let m = Mutable.createAsync model
         
         let upd msg = m.Update (update msg) |> ignore
             
-        ApplicationCore((fun () -> m :> ISignal<_>), ignore, upd, Component.FromBindings binding)
-
-    static member basicApplication2<'Model,'Message> (model : 'Model) (update : 'Message -> 'Model -> 'Model) binding = 
-        let m = Mutable.createAsync model
-        
-        let upd msg = m.Update (update msg) |> ignore
-            
-        ApplicationCore((fun () -> m :> ISignal<_>), ignore, upd, Component.FromObservables binding)
+        ApplicationCore((fun () -> m :> ISignal<_>), ignore, upd, binding)
     
     /// Run an application given the full ApplicationSpecification            
     static member runApplication<'Model,'Message> (applicationInfo : ApplicationSpecification<'Model,'Message>) =        

@@ -52,8 +52,8 @@ module Program =
         let validLast = notNullOrWhitespace >> notEqual "Copsey" 
         let validFull = notNullOrWhitespace >> fixErrorsWithMessage "Please enter a valid name"
 
-        [
-            <@ d.FirstName @>  |> Bind.twoWayValidated (fun (m : Model) -> m.FirstName) notNullOrWhitespace FirstName
+        Component.fromBindings<Model,Msg> [
+            <@ d.FirstName @>  |> Bind.twoWayValidated (fun m -> m.FirstName) notNullOrWhitespace FirstName
             <@ d.LastName @>   |> Bind.twoWayValidated (fun m -> m.LastName) validLast LastName
             <@ d.FullName @>   |> Bind.oneWayValidated (fun m -> m.FirstName + " " + m.LastName) validFull
         ]   

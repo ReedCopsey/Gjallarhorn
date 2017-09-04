@@ -69,13 +69,13 @@ module Program =
     
     // Create a component for a single request
     let requestComponent =
-        [
-            <@ reqd.Id @>       |> Bind.oneWay (fun (r : Request) -> r.Id)
+        Component.fromBindings<Request,_> [
+            <@ reqd.Id @>       |> Bind.oneWay (fun r -> r.Id)
             <@ reqd.Hours @>    |> Bind.oneWay (fun r -> r.ExpectedHours)
             <@ reqd.Status @>   |> Bind.oneWay (fun r -> r.Status)
             <@ reqd.Accept @>   |> Bind.cmd 
             <@ reqd.Reject @>   |> Bind.cmd 
-        ] |> Component.FromBindings
+        ] 
 
     type RequestsViewModel =
         {
@@ -88,19 +88,17 @@ module Program =
     // using the component defined previously, then maps this to the model-wide update message.
     let requestsComponent = //source (model : ISignal<Requests>) =
         let sorted (requests : Requests) = requests |> Seq.sortBy (fun r -> r.Created)
-        [
+        Component.fromBindings [
             <@ reqsd.Requests @> |> Bind.collection sorted requestComponent Operations.requestUpdateToUpdate
-        ] 
-        |> Component.FromBindings
+        ]         
 
     type extVM = { AddingRequests : bool ; Processing : bool }
     let  extD = { AddingRequests = false ; Processing = false }
     let externalComponent =                
-        [
+        Component.fromBindings [
             <@ extD.AddingRequests @> |> Bind.twoWay (fun (m : Model) -> Option.isSome m.AddingRequests.Operating) (Executing >> AddRequests)
             <@ extD.Processing     @> |> Bind.twoWay (fun m -> Option.isSome m.Processing.Operating)               (Executing >> ProcessRequests)
-        ] 
-        |> Component.FromBindings
+        ]         
 
     type AppViewModel =
         {
@@ -111,11 +109,10 @@ module Program =
 
     /// Compose our components above into one application level component
     let appComponent =
-        [
+        Component.fromBindings [
             <@ appd.Requests @> |> Bind.comp (fun (m : Model) -> m.Requests) requestsComponent (fst >> Msg.Update)
             <@ appd.Updates @>  |> Bind.comp id externalComponent fst
         ] 
-        |> Component.FromBindings
 
     // ----------------------------------   Framework  -----------------------------------     
     

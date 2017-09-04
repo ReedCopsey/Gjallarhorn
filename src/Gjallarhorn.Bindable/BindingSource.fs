@@ -214,16 +214,15 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() as self =
         member __.Subscribe obs = output.Publish.Subscribe obs
 
 /// A component takes a BindingSource and a Signal for a model and returns a list of observable messages
-and Component<'Model,'Message> private (bindingFunction) =
-    
+and Component<'Model,'Message> internal (bindingFunction) =        
+    member __.Setup (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
 
-    static member FromBindings (bindings : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) =
+module Component =
+    let fromBindings<'Model,'Message> (bindings : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) =
         let fn (source : BindingSource) (model : ISignal<'Model>) =
             bindings
             |> List.choose (fun v -> v source model)
         Component<'Model,'Message>(fn)
 
-    static member FromObservables (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
+    let fromObservables (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
         Component<'Model,'Message>(bindings)
-
-    member __.Setup (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
