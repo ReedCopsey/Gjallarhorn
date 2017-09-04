@@ -136,7 +136,7 @@ type BindingSource() as self =
         this.TrackObservable (name, model)
         this.AddReadOnlyProperty(name, fun _ -> source)
         
-        let obs = comp.Setup (source :> BindingSource) model
+        let obs = comp.Install (source :> BindingSource) model
         source.OutputObservables(obs)
 
         source :> IObservable<_>
@@ -215,14 +215,18 @@ and [<AbstractClass>] ObservableBindingSource<'Message>() as self =
 
 /// A component takes a BindingSource and a Signal for a model and returns a list of observable messages
 and Component<'Model,'Message> internal (bindingFunction) =        
-    member __.Setup (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
+    /// The actual function which performs the operation of installing the component to a binding source
+    member __.Install (source : BindingSource) (model : ISignal<'Model>) : IObservable<'Message> list = bindingFunction source model
 
+/// Routines for constructing and working with Components
 module Component =
+    /// Create a component from a "new API" style of binding list
     let fromBindings<'Model,'Message> (bindings : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) =
         let fn (source : BindingSource) (model : ISignal<'Model>) =
             bindings
             |> List.choose (fun v -> v source model)
         Component<'Model,'Message>(fn)
 
-    let fromObservables (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
+    /// Create a component from explicit binding generators
+    let fromExplicit (bindings : BindingSource -> ISignal<'Model> -> IObservable<'Message> list) =
         Component<'Model,'Message>(bindings)

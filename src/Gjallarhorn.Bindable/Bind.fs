@@ -112,7 +112,7 @@ module Bind =
             twoWayValidated<'a,'a> source pi.Name validation mapped
 
         /// Add a watched signal (one way property) to a binding source by name
-        let toView (source : BindingSource) name signal =
+        let oneWay (source : BindingSource) name signal =
             source.TrackInput (name, IO.Report.create signal)
         
         /// Add a watched signal (one way property) to a binding source by name with validation
@@ -120,11 +120,11 @@ module Bind =
             source.TrackInput (name, IO.Report.validated validation signal)        
 
         /// Add a constant value (one way property) to a binding source by name
-        let constantToView name value (source : BindingSource) =
+        let constant name value (source : BindingSource) =
             source.ConstantToView (value, name)
 
         /// Bind a component to the given name
-        let componentToView<'TModel, 'TMessage> (source : BindingSource) name (comp : Component<'TModel,'TMessage>) (signal : ISignal<'TModel>) =
+        let componentOneWay<'TModel, 'TMessage> (source : BindingSource) name (comp : Component<'TModel,'TMessage>) (signal : ISignal<'TModel>) =
             source.TrackComponent(name, comp, signal)
 
         /// Creates an ICommand (one way property) to a binding source by name
@@ -156,14 +156,14 @@ module Bind =
             command
 
         /// Creates an ICommand (one way property) to a binding source by name which outputs a specific message
-        let createMessage name message (source : BindingSource) =
+        let createMessageCommand name message (source : BindingSource) =
             let command = Command.createEnabled()
             source.AddDisposable command
             source.ConstantToView (command, name)
             command |> Observable.map (fun _ -> message)         
 
         /// Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message
-        let createMessageChecked name canExecute message (source : BindingSource) =
+        let createMessageCommandChecked name canExecute message (source : BindingSource) =
             let command = Command.create canExecute
             source.AddDisposable command
             source.ConstantToView (command, name)
@@ -230,7 +230,7 @@ module Bind =
             let createEntry (m : 'Model) =
                 let bs = createObservableSource<'Message> ()
                 let mm = Mutable.create m
-                comp.Setup bs mm
+                comp.Install bs mm
                 |> bs.OutputObservables
                 let s = bs |> Observable.subscribe (fun msg -> outputMessage msg mm.Value)
                 (mm, bs, s)
@@ -445,7 +445,7 @@ module Bind =
                     sub.Dispose()
 
         /// Add a collection bound to the view
-        let toView (source : BindingSource) name (signal : ISignal<'Coll>) (comp : Component<'Model,'Message>) =
+        let oneWay (source : BindingSource) name (signal : ISignal<'Coll>) (comp : Component<'Model,'Message>) =
             let cb = new BoundCollection<_,_,_>(signal, comp)
             source.ConstantToView (cb, name)
             source.AddDisposable cb
@@ -495,7 +495,7 @@ module Bind =
             match o.Value with
             | PropertyGet(_,v,_) ->
                 let msg = pi.GetValue(v.GetValue(null)) :?> VmCmd<'Msg>
-                Explicit.createMessage pi.Name msg.Value source
+                Explicit.createMessageCommand pi.Name msg.Value source
             | _ -> failwith "Bad expression"        
             |> Some
 
@@ -507,30 +507,32 @@ module Bind =
             | PropertyGet(_,v,_) ->
                 let msg = pi.GetValue(v.GetValue(null)) :?> VmCmd<'Msg>
                 let canExecuteSignal = signal |> Signal.map canExecute
-                Explicit.createMessageChecked pi.Name canExecuteSignal msg.Value source
+                Explicit.createMessageCommandChecked pi.Name canExecuteSignal msg.Value source
             | _ -> failwith "Bad expression"        
             |> Some
 
-    /// Explicit a component as a two-way property, acting as a reducer for messages from the component
+    /// Bind a component as a two-way property, acting as a reducer for messages from the component
     let comp<'Model,'Msg,'Submodel,'Submsg> (getter : 'Model -> 'Submodel) (componentVm : Component<'Submodel, 'Submsg>) (mapper : 'Submsg * 'Submodel -> 'Msg) (name : Expr<'Submodel>) =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let name = getPropertyNameFromExpression name
             let mapped = signal |> Signal.map getter
-            let output = Explicit.componentToView source name componentVm mapped 
+            let output = Explicit.componentOneWay source name componentVm mapped 
             output
             |> Observable.map (fun subMsg -> mapper(subMsg, mapped.Value))
             |> Some  
        
+    /// Bind a collection as a one-way property, acting as a reducer for messages from the individual components of the collection
     let collection<'Model,'Msg,'Submodel,'Submsg when 'Submodel : equality> (getter : 'Model -> 'Submodel seq) (collectionVm : Component<'Submodel, 'Submsg>) (mapper : 'Submsg * 'Submodel -> 'Msg) (name : Expr<'Submodel seq>) =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let name = getPropertyNameFromExpression name
             let mapped = signal |> Signal.map getter
-            let output = Collections.toView source name mapped collectionVm
+            let output = Collections.oneWay source name mapped collectionVm
             output
             |> Observable.map mapper
             |> Some
 
-    let route<'Model,'Msg> (source : BindingSource) (model : ISignal<'Model>) (list : (BindingSource -> ISignal<'Model> -> IObservable<'Msg> option) list) : IObservable<'Msg> list =
+    /// Convert from new API to explicit form
+    let toExplicit<'Model,'Msg> (source : BindingSource) (model : ISignal<'Model>) (list : (BindingSource -> ISignal<'Model> -> IObservable<'Msg> option) list) : IObservable<'Msg> list =
         list
         |> List.choose (fun v -> v source model)
 

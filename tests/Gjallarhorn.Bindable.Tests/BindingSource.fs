@@ -131,14 +131,14 @@ type BindingSourceTest() =
         Assert.AreEqual(3, obs.["Test"])
 
     [<Test>]
-    member __.``Bind\Explicit\toView tracks values properly`` () =
+    member __.``Bind\Explicit\oneWay tracks values properly`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = Bind.createSource ()
         
-        Bind.Explicit.toView dynamicVm "Full" full        
+        Bind.Explicit.oneWay dynamicVm "Full" full        
     
         let fullValue() = getProperty dynamicVm "Full"
 
@@ -151,16 +151,16 @@ type BindingSourceTest() =
         Assert.AreEqual("Foo Bar", fullValue())
 
     [<Test>]
-    member __.``Bind\Explicit\toView raises property changed appropriately`` () =
+    member __.``Bind\Explicit\oneWay raises property changed appropriately`` () =
         let first = Mutable.create ""
         let last = Mutable.create ""
         let full = Signal.map2 (fun f l -> f + " " + l) first last
 
         use dynamicVm = Bind.createSource ()
 
-        Bind.Explicit.toView dynamicVm "First" first 
-        Bind.Explicit.toView dynamicVm "Last" last
-        Bind.Explicit.toView dynamicVm "Full" full
+        Bind.Explicit.oneWay dynamicVm "First" first 
+        Bind.Explicit.oneWay dynamicVm "Last" last
+        Bind.Explicit.oneWay dynamicVm "Full" full
 
         let obs = PropertyChangedObserver(dynamicVm)    
 
@@ -183,7 +183,7 @@ type BindingSourceTest() =
 
         use dynamicVm = Bind.createSource ()
 
-        Bind.Explicit.toView dynamicVm "Full" full
+        Bind.Explicit.oneWay dynamicVm "Full" full
 
         let first' = 
             first
@@ -212,8 +212,8 @@ type BindingSourceTest() =
 
         use dynamicVm = Bind.createSource ()
 
-        Bind.Explicit.toView dynamicVm "First" first
-        Bind.Explicit.toView dynamicVm "Last" last
+        Bind.Explicit.oneWay dynamicVm "First" first
+        Bind.Explicit.oneWay dynamicVm "Last" last
         Bind.Explicit.toViewValidated dynamicVm "Full" (notNullOrWhitespace >> validateWith fullNameValidation) full
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -239,8 +239,8 @@ type BindingSourceTest() =
 
         use dynamicVm = Bind.createSource ()
 
-        Bind.Explicit.toView dynamicVm "First" first
-        Bind.Explicit.toView dynamicVm "Last" last
+        Bind.Explicit.oneWay dynamicVm "First" first
+        Bind.Explicit.oneWay dynamicVm "Last" last
         Bind.Explicit.toViewValidated dynamicVm "Full" (notNullOrWhitespace >> fixErrors >> validateWith fullNameValidation) full
         dynamicVm.AddDisposable sub1
         dynamicVm.AddDisposable sub2

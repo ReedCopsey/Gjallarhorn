@@ -37,7 +37,7 @@ type CollectionBindingTest() =
             |> Signal.Subscription.create subscription 
             |> source.AddDisposable
             [ ]
-        Gjallarhorn.Bindable.Component.fromObservables fn
+        Gjallarhorn.Bindable.Component.fromExplicit fn
 
     let ignoreComp = intComponent ignore
 

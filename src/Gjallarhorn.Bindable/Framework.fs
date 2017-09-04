@@ -4,13 +4,7 @@ open Gjallarhorn
 open Gjallarhorn.Bindable
 
 /// The core information required for an application
-type ApplicationCore<'Model,'Message> (model, init, update, binding) =         
-
-    // new (model, update, binding) = ApplicationCore(model, ignore, update, binding)
-        
-    //new (model, update, binding : (BindingSource -> ISignal<'Model> -> IObservable<'Message> option) list) = 
-    //    ApplicationCore(model, ignore, update, Component binding)
-
+type ApplicationCore<'Model,'Message> (model, init, update, binding) =             
     /// The function which generates the model
     member __.Model : unit -> ISignal<'Model> = model
     /// Initialization function which runs once after platforms are installed
@@ -62,7 +56,7 @@ type Framework =
                 applicationInfo.Model () 
                 |> Signal.observeOn ctx
 
-            applicationInfo.Binding.Setup (source :> BindingSource) model
+            applicationInfo.Binding.Install (source :> BindingSource) model
             |> source.OutputObservables
 
             // Permanently subscribe to the observables, and call our update function
