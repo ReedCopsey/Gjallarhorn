@@ -43,7 +43,7 @@ module Program =
         }    
 
     // This is our design/compile time ViewModel used for XAML and binding for naming
-    let d = { FirstName = "Reed" ; LastName="Copsey" ; FullName = "Reed Copsey" }
+    let d = { FirstName = "Reed" ; LastName = "Copsey" ; FullName = "Reed Copsey" }
 
     // ----------------------------------    Binding    ---------------------------------- 
     // Create a function that binds a model to a source, and outputs messages
