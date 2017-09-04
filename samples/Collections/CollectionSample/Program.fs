@@ -62,10 +62,10 @@ module Program =
             Id : Guid
             Hours : float
             Status : Status
-            Accept : Cmd<Operations.RequestUpdate>
-            Reject : Cmd<Operations.RequestUpdate>
+            Accept : VmCmd<Operations.RequestUpdate>
+            Reject : VmCmd<Operations.RequestUpdate>
         }
-    let reqd = { Id = Guid.NewGuid() ; Hours = 45.32 ; Status = Status.Accepted ; Accept = Cmd.ofMsg Operations.AcceptRequest ; Reject = Cmd.ofMsg Operations.RejectRequest }
+    let reqd = { Id = Guid.NewGuid() ; Hours = 45.32 ; Status = Status.Accepted ; Accept = Vm.cmd Operations.AcceptRequest ; Reject = Vm.cmd Operations.RejectRequest }
     
     // Create a component for a single request
     let requestComponent =
@@ -105,7 +105,7 @@ module Program =
             Requests : Requests
             Updates : Model
         }
-    let appd = { Requests = [] ; Updates = { Requests = [] ; AddingRequests = {Operating = None} ; Processing = { Operating = None } } }
+    let appd = { Requests = [] ; Updates = Unchecked.defaultof<_> }
 
     /// Compose our components above into one application level component
     let appComponent =

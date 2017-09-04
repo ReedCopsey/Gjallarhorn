@@ -40,11 +40,7 @@
     <Compile Include="Commands.fs" />
     <Compile Include="BoundSignal.fs" />
     <Compile Include="BindingSource.fs" />
-    <Compile Include="Binding.fs" />
-    <Compile Include="CollectionBinding.fs">
-      <ExcludeFromSourceAnalysis>True</ExcludeFromSourceAnalysis>
-      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
-    </Compile>
+    <Compile Include="ViewModel.fs" />
     <Compile Include="Bind.fs" />
     <Compile Include="BindingSourceUtilities.fs" />
     <Compile Include="BindingSourceFactory.fs" />

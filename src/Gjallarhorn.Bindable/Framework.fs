@@ -57,7 +57,7 @@ type Framework =
     static member runApplication<'Model,'Message> (applicationInfo : ApplicationSpecification<'Model,'Message>) =        
         // Map our state directly into the view context - this gives us something that can be data bound
         let viewContext (ctx : System.Threading.SynchronizationContext) = 
-            let source = Binding.createObservableSource<'Message>()                    
+            let source = Bind.createObservableSource<'Message>()                    
             let model = 
                 applicationInfo.Model () 
                 |> Signal.observeOn ctx

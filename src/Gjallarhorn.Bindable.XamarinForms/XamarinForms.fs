@@ -12,7 +12,7 @@ module Platform =
     /// Installs Xamarin Forms targets for binding into Gjallarhorn
     [<CompiledName("Install")>]
     let install () =        
-        Gjallarhorn.Bindable.Binding.Implementation.installCreationFunction (fun _ -> creation typeof<obj>) creation
+        Gjallarhorn.Bindable.Bind.Implementation.installCreationFunction (fun _ -> creation typeof<obj>) creation
 
 /// Xamarin Forms implementation of the basic application framework
 module Framework =

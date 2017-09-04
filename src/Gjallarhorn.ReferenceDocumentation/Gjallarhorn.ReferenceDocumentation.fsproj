@@ -88,11 +88,8 @@
     <Compile Include="..\Gjallarhorn.Bindable\BindingSource.fs">
       <Link>BindingSource.fs</Link>
     </Compile>
-    <Compile Include="..\Gjallarhorn.Bindable\Binding.fs">
-      <Link>Binding.fs</Link>
-    </Compile>
-    <Compile Include="..\Gjallarhorn.Bindable\CollectionBinding.fs">
-      <Link>CollectionBinding.fs</Link>
+    <Compile Include="..\Gjallarhorn.Bindable\ViewModel.fs">
+      <Link>ViewModel.fs</Link>
     </Compile>
     <Compile Include="..\Gjallarhorn.Bindable\Bind.fs">
       <Link>Bind.fs</Link>

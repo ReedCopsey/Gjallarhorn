@@ -27,12 +27,12 @@ module Program =
     type ViewModel = 
         {
             Current : Model 
-            Increment : Cmd<Msg>
-            Decrement : Cmd<Msg>
+            Increment : VmCmd<Msg>
+            Decrement : VmCmd<Msg>
         }    
 
     // This is our design/compile time ViewModel used for XAML and binding for naming
-    let d = { Current = 5 ; Increment = Cmd Increment; Decrement = Cmd Decrement }
+    let d = { Current = 5 ; Increment = Vm.cmd Increment; Decrement = Vm.cmd Decrement }
          
     // ----------------------------------    Binding    ---------------------------------- 
     // Create a function that binds a model to a source, and outputs messages
