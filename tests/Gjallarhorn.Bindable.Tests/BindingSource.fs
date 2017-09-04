@@ -110,11 +110,11 @@ type BindingSourceTest() =
         Assert.AreEqual(2, obs.["Test"])
 
     [<Test>]
-    member __.``BindingSource\ToFromView raises property changed`` () =
+    member __.``BindingSource\twoWay raises property changed`` () =
         let v1 = Mutable.create 1
         let v2 = Signal.map (fun i -> i+1) v1
         use dynamicVm = new DesktopBindingSource<obj>() :> BindingSource
-        Bind.Explicit.toFromView dynamicVm "Test" v2 |> ignore
+        Bind.Explicit.twoWay dynamicVm "Test" v2 |> ignore
 
         let obs = PropertyChangedObserver(dynamicVm)    
     
@@ -175,7 +175,7 @@ type BindingSourceTest() =
         Assert.AreEqual(2, obs.["Full"])
 
     [<Test>]
-    member __.``Bind\Explicit\toFromViewValidated sets error state`` () =
+    member __.``Bind\Explicit\twoWayValidated sets error state`` () =
         let first = Mutable.create ""
            
         let last = Mutable.create ""
@@ -187,10 +187,10 @@ type BindingSourceTest() =
 
         let first' = 
             first
-            |> Bind.Explicit.toFromViewValidated dynamicVm "First" notNullOrWhitespace 
+            |> Bind.Explicit.twoWayValidated dynamicVm "First" notNullOrWhitespace 
         let last' = 
             last
-            |> Bind.Explicit.toFromViewValidated dynamicVm "Last" notNullOrWhitespace
+            |> Bind.Explicit.twoWayValidated dynamicVm "Last" notNullOrWhitespace
             
 
         let obs = PropertyChangedObserver(dynamicVm)    
@@ -273,12 +273,12 @@ type BindingSourceTest() =
         Assert.AreEqual("Foo Bar", cur)
 
     [<Test>]
-    member __.``Bind\Explicit\mutateToFromViewValidated tracks valid state properly`` () =
+    member __.``Bind\Explicit\twoWayMutableValidated tracks valid state properly`` () =
         let value = Mutable.create ""
 
         use dynamicVm = Bind.createSource ()
         let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
-        Bind.Explicit.mutateToFromViewValidated dynamicVm "Value" validator value
+        Bind.Explicit.twoWayMutableValidated dynamicVm "Value" validator value
     
         Assert.IsFalse dynamicVm.IsValid
         value.Value <- "Valid"
@@ -289,12 +289,12 @@ type BindingSourceTest() =
         Assert.IsFalse dynamicVm.IsValid 
 
     [<Test>]
-    member __.``Bind\Explicit\mutateToFromViewValidated assigns from source`` () =
+    member __.``Bind\Explicit\twoWayMutableValidated assigns from source`` () =
         let value = Mutable.create ""
 
         use dynamicVm = Bind.createSource ()
         let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
-        Bind.Explicit.mutateToFromViewValidated dynamicVm "Value" validator value
+        Bind.Explicit.twoWayMutableValidated dynamicVm "Value" validator value
     
         Assert.IsFalse dynamicVm.IsValid
 
@@ -309,12 +309,12 @@ type BindingSourceTest() =
         Assert.IsTrue dynamicVm.IsValid 
 
     [<Test>]
-    member __.``Bind\Explicit\mutateToFromViewValidated assigns back properly`` () =
+    member __.``Bind\Explicit\twoWayMutableValidated assigns back properly`` () =
         let value = Mutable.create ""
 
         use dynamicVm = Bind.createSource ()
         let validator = (notNullOrWhitespace >> hasLengthAtLeast 3)
-        Bind.Explicit.mutateToFromViewValidated dynamicVm "Value" validator value
+        Bind.Explicit.twoWayMutableValidated dynamicVm "Value" validator value
     
         Assert.IsFalse dynamicVm.IsValid
 

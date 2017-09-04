@@ -64,40 +64,40 @@ module Bind =
     /// Submodule providing API for explicit binding generation from names and signals instead of model/viewmodel
     module Explicit =
         /// Bind a signal to the binding source using the specified name
-        let toFromView<'a> (source : BindingSource) name (signal : ISignal<'a>) =
+        let twoWay<'a> (source : BindingSource) name (signal : ISignal<'a>) =
             let edit = IO.InOut.create signal
             edit |> source.AddDisposable
             source.TrackInOut<'a,'a,'a>(name, edit)
             edit.UpdateStream
 
         /// Add a signal as an editor with validation, bound to a specific name
-        let toFromViewValidated<'a,'b> (source : BindingSource) name (validator : Validation<'a,'b>) signal =
+        let twoWayValidated<'a,'b> (source : BindingSource) name (validator : Validation<'a,'b>) signal =
             let edit = IO.InOut.validated validator signal
             edit |> source.AddDisposable
             source.TrackInOut<'a,'a,'b> (name, edit)
             edit.Output
 
         /// Add a signal as an editor with validation, bound to a specific name
-        let toFromViewConvertedValidated<'a,'b,'c> (source : BindingSource) name (converter : 'a -> 'b) (validator : Validation<'b,'c>) signal =
+        let twoWayConvertedValidated<'a,'b,'c> (source : BindingSource) name (converter : 'a -> 'b) (validator : Validation<'b,'c>) signal =
             let edit = IO.InOut.convertedValidated converter validator signal
             edit |> source.AddDisposable
             source.TrackInOut<'a,'b,'c> (name, edit)
             edit.Output
 
         /// Add a mutable as an editor, bound to a specific name
-        let mutateToFromView<'a> (source : BindingSource) name (mutatable : IMutatable<'a>) =
+        let twoWayMutable<'a> (source : BindingSource) name (mutatable : IMutatable<'a>) =
             source.TrackObservable (name, mutatable)
             source.AddReadWriteProperty (name, (fun _ -> mutatable.Value), fun v -> mutatable.Value <- v)
 
         /// Add a mutable as an editor with validation, bound to a specific name
-        let mutateToFromViewValidated<'a> (source : BindingSource) name validator mutatable =
+        let twoWayMutableValidated<'a> (source : BindingSource) name validator mutatable =
             let edit = IO.MutableInOut.validated validator mutatable
             source.TrackInOut<'a,'a,'a> (name, edit)
             edit |> source.AddDisposable
             ()
 
         /// Add a mutable as an editor with validation, bound to a specific name
-        let mutateToFromViewConverted<'a,'b> (source : BindingSource) name (converter : 'a -> 'b) (validator: Validation<'b,'a>) mutatable =
+        let twoWayMutableConvertedValidated<'a,'b> (source : BindingSource) name (converter : 'a -> 'b) (validator: Validation<'b,'a>) mutatable =
             let edit = IO.MutableInOut.convertedValidated converter validator mutatable
             source.TrackInOut<'a,'b,'a> (name, edit)
             edit |> source.AddDisposable
@@ -109,7 +109,7 @@ module Bind =
             let mapped =
                 signal
                 |> Signal.map (fun b -> pi.GetValue(b) :?> 'a)
-            toFromViewValidated<'a,'a> source pi.Name validation mapped
+            twoWayValidated<'a,'a> source pi.Name validation mapped
 
         /// Add a watched signal (one way property) to a binding source by name
         let toView (source : BindingSource) name signal =
@@ -473,7 +473,7 @@ module Bind =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let name = getPropertyNameFromExpression name
             let mapped = signal |> Signal.map getter
-            let output = Explicit.toFromView<'Prop> source name mapped
+            let output = Explicit.twoWay<'Prop> source name mapped
             output
             |> Observable.map (setter)
             |> Some
@@ -483,7 +483,7 @@ module Bind =
         fun (source : BindingSource) (signal : ISignal<'Model>) ->
             let name = getPropertyNameFromExpression name
             let mapped = signal |> Signal.map getter
-            let validated = Explicit.toFromViewValidated<'Prop,'Prop> source name validation mapped
+            let validated = Explicit.twoWayValidated<'Prop,'Prop> source name validation mapped
             validated
             |> Observable.toMessage (setter)
             |> Some
