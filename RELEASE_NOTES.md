@@ -1,3 +1,7 @@
+#### 1.0.0 - Sept 5th 2017
+* Official 1.0 release of Gjallarhorn
+* Split Bindable into separate repository
+
 #### 1.0.0-beta1 - Sept 4th 2017
 * **Significant** breaking changes introduced to Bindable API
 * Created new, default API which is type safe and eliminates magic strings
