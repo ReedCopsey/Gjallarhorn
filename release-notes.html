@@ -32,39 +32,26 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h4><a name="0-0-1-beta-May-1th-2016" class="anchor" href="#0-0-1-beta-May-1th-2016">0.0.1-beta - May 1th 2016</a></h4>
+<h4><a name="1-0-0-beta1-Sept-4th-2017" class="anchor" href="#1-0-0-beta1-Sept-4th-2017">1.0.0-beta1 - Sept 4th 2017</a></h4>
 <ul>
-<li>Initial publish</li>
-<li>API will still change</li>
+<li><strong>Significant</strong> breaking changes introduced to Bindable API</li>
+<li>Created new, default API which is type safe and eliminates magic strings</li>
+<li>Preferred, new API for binding in Bind module</li>
+<li>Moved Binding to Bind.Explicit module</li>
+<li>Moved CollectionBinding to Bind.Collection module</li>
 </ul>
-<h4><a name="0-0-2-beta-May-18th-2016" class="anchor" href="#0-0-2-beta-May-18th-2016">0.0.2-beta - May 18th 2016</a></h4>
+<h4><a name="0-11-0-August-25th-2017" class="anchor" href="#0-11-0-August-25th-2017">0.11.0 - August 25th 2017</a></h4>
 <ul>
-<li>Corrected potential blocking condition in SignalManager with Mutable.create</li>
-<li>Converted commands to be IObservable<'a> but not ISignal<'a>.  This fits better with the conceptual notion of a command.</li>
+<li>Addressed issue with bi-directional mutable bindings</li>
+<li>Got build working propertly in VS 2017</li>
 </ul>
-<h4><a name="0-0-3-beta-June-1st-2016" class="anchor" href="#0-0-3-beta-June-1st-2016">0.0.3-beta - June 1st 2016</a></h4>
+<h4><a name="0-0-10-beta-June-9th-2017" class="anchor" href="#0-0-10-beta-June-9th-2017">0.0.10-beta - June 9th 2017</a></h4>
 <ul>
-<li>Corrected issue where edit bindings were being created as typed ISignal<obj>, not ISignal<'a></li>
+<li>Fixed issue with missing assembly level attribute for extension methods</li>
 </ul>
-<h4><a name="0-0-4-beta-June-13th-2016" class="anchor" href="#0-0-4-beta-June-13th-2016">0.0.4-beta - June 13th 2016</a></h4>
+<h4><a name="0-0-9-beta-February-3rd-2017" class="anchor" href="#0-0-9-beta-February-3rd-2017">0.0.9-beta - February 3rd 2017</a></h4>
 <ul>
-<li>Overhauled binding API to make things more clear.</li>
-</ul>
-<h4><a name="0-0-5-beta-December-2nd-2016" class="anchor" href="#0-0-5-beta-December-2nd-2016">0.0.5-beta - December 2nd 2016</a></h4>
-<ul>
-<li>Reworked notification plumbing to be less surprising</li>
-<li>Added initial framework for building applications directly</li>
-<li>Added component model to framework</li>
-</ul>
-<h4><a name="0-0-6-beta-December-8th-2016" class="anchor" href="#0-0-6-beta-December-8th-2016">0.0.6-beta - December 8th 2016</a></h4>
-<ul>
-<li>Improved collection handling performance via internal optimizations</li>
-</ul>
-<h4><a name="0-0-7-beta-December-12th-2016" class="anchor" href="#0-0-7-beta-December-12th-2016">0.0.7-beta - December 12th 2016</a></h4>
-<ul>
-<li>Added new Signal.toFunction and Signal.mapFunction members</li>
-<li>Added ObservableSource<'a> to ease working with observables</li>
-<li>Improved samples</li>
+<li>Fixed issue with dependency tracking of IObservable<'a></li>
 </ul>
 <h4><a name="0-0-8-beta-December-14th-2016" class="anchor" href="#0-0-8-beta-December-14th-2016">0.0.8-beta - December 14th 2016</a></h4>
 <ul>
@@ -72,18 +59,39 @@
 <li>Added generator functions in Mutable module for async and threadsafe mutables</li>
 <li>Renamed State to AsyncMutable, cleaned up API</li>
 </ul>
-<h4><a name="0-0-9-beta-February-3rd-2017" class="anchor" href="#0-0-9-beta-February-3rd-2017">0.0.9-beta - February 3rd 2017</a></h4>
+<h4><a name="0-0-7-beta-December-12th-2016" class="anchor" href="#0-0-7-beta-December-12th-2016">0.0.7-beta - December 12th 2016</a></h4>
 <ul>
-<li>Fixed issue with dependency tracking of IObservable<'a></li>
+<li>Added new Signal.toFunction and Signal.mapFunction members</li>
+<li>Added ObservableSource<'a> to ease working with observables</li>
+<li>Improved samples</li>
 </ul>
-<h4><a name="0-0-10-beta-June-9th-2017" class="anchor" href="#0-0-10-beta-June-9th-2017">0.0.10-beta - June 9th 2017</a></h4>
+<h4><a name="0-0-6-beta-December-8th-2016" class="anchor" href="#0-0-6-beta-December-8th-2016">0.0.6-beta - December 8th 2016</a></h4>
 <ul>
-<li>Fixed issue with missing assembly level attribute for extension methods</li>
+<li>Improved collection handling performance via internal optimizations</li>
 </ul>
-<h4><a name="0-11-0-August-25th-2017" class="anchor" href="#0-11-0-August-25th-2017">0.11.0 - August 25th 2017</a></h4>
+<h4><a name="0-0-5-beta-December-2nd-2016" class="anchor" href="#0-0-5-beta-December-2nd-2016">0.0.5-beta - December 2nd 2016</a></h4>
 <ul>
-<li>Addressed issue with bi-directional mutable bindings</li>
-<li>Got build working propertly in VS 2017</li>
+<li>Reworked notification plumbing to be less surprising</li>
+<li>Added initial framework for building applications directly</li>
+<li>Added component model to framework</li>
+</ul>
+<h4><a name="0-0-4-beta-June-13th-2016" class="anchor" href="#0-0-4-beta-June-13th-2016">0.0.4-beta - June 13th 2016</a></h4>
+<ul>
+<li>Overhauled binding API to make things more clear.</li>
+</ul>
+<h4><a name="0-0-3-beta-June-1st-2016" class="anchor" href="#0-0-3-beta-June-1st-2016">0.0.3-beta - June 1st 2016</a></h4>
+<ul>
+<li>Corrected issue where edit bindings were being created as typed ISignal<obj>, not ISignal<'a></li>
+</ul>
+<h4><a name="0-0-2-beta-May-18th-2016" class="anchor" href="#0-0-2-beta-May-18th-2016">0.0.2-beta - May 18th 2016</a></h4>
+<ul>
+<li>Corrected potential blocking condition in SignalManager with Mutable.create</li>
+<li>Converted commands to be IObservable<'a> but not ISignal<'a>.  This fits better with the conceptual notion of a command.</li>
+</ul>
+<h4><a name="0-0-1-beta-May-1th-2016" class="anchor" href="#0-0-1-beta-May-1th-2016">0.0.1-beta - May 1th 2016</a></h4>
+<ul>
+<li>Initial publish</li>
+<li>API will still change</li>
 </ul>
 
 

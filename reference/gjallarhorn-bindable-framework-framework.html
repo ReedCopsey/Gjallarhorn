@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Command - Gjallarhorn</title>
+    <title>Framework - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,39 +35,36 @@
 
 
 
-<h1>Command</h1>
+<h1>Framework</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Namespace: Gjallarhorn.Bindable.Framework</span><br />
 </p>
 <div class="xmldoc">
-<p>Core module for creating and using ICommand implementations</p>
+<p>A platform neutral application framework</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Static members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Static member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
-            create enabledSource
+          <code onmouseout="hideTip(event, '214', 214)" onmouseover="showTip(event, '214', 214)">
+            application(model init update binding)
           </code>
-          <div class="tip" id="123">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="214">
+            <strong>Signature:</strong> (model:(unit -&gt; ISignal&lt;&#39;?7450&gt;)) -&gt; (init:(unit -&gt; unit)) -&gt; (update:(&#39;?7451 -&gt; unit)) -&gt; binding:Component&lt;&#39;?7450,&#39;?7451&gt; -&gt; ApplicationCore&lt;&#39;?7450,&#39;?7451&gt;<br />
+                          <strong>Type parameters:</strong> '?7450, '?7451          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L66-66" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L41-41" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+          <p>Build an application given a model generator, initialization function, update function, and binding function</p>
 
 
         </td>
@@ -75,19 +72,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
-            createEnabled ()
+          <code onmouseout="hideTip(event, '215', 215)" onmouseover="showTip(event, '215', 215)">
+            basicApplication(model update binding)
           </code>
-          <div class="tip" id="124">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="215">
+            <strong>Signature:</strong> model:&#39;Model -&gt; (update:(&#39;Message -&gt; &#39;Model -&gt; &#39;Model)) -&gt; binding:Component&lt;&#39;Model,&#39;Message&gt; -&gt; ApplicationCore&lt;&#39;Model,&#39;Message&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L74-74" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L43-43" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command which is always enabled</p>
+          <p>Build a basic application which manages state internally, given a initial model state, update function, and binding function</p>
 
 
         </td>
@@ -95,39 +92,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            createParam enabledSource
+          <code onmouseout="hideTip(event, '216', 216)" onmouseover="showTip(event, '216', 216)">
+            runApplication(applicationInfo)
           </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="216">
+            <strong>Signature:</strong> applicationInfo:ApplicationSpecification&lt;&#39;Model,&#39;Message&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L70-70" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Framework.fs#L51-51" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a parameterized command with an optional enabling source, provided as an ISignal<bool></p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            createParamEnabled ()
-          </code>
-          <div class="tip" id="126">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L78-78" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a parameterized command which is always enabled</p>
+          <p>Run an application given the full ApplicationSpecification</p>
 
 
         </td>

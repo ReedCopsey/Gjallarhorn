@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Command - Gjallarhorn</title>
+    <title>Component - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,12 +35,12 @@
 
 
 
-<h1>Command</h1>
+<h1>Component</h1>
 <p>
   <span>Namespace: Gjallarhorn.Bindable</span><br />
 </p>
 <div class="xmldoc">
-<p>Core module for creating and using ICommand implementations</p>
+<p>Routines for constructing and working with Components</p>
 
 </div>
 
@@ -55,19 +55,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
-            create enabledSource
+          <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
+            fromBindings bindings
           </code>
-          <div class="tip" id="123">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="127">
+            <strong>Signature:</strong> bindings:(BindingSource -&gt; ISignal&lt;&#39;Model&gt; -&gt; IObservable&lt;&#39;Message&gt; option) list -&gt; Component&lt;&#39;Model,&#39;Message&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L66-66" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L224-224" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+          <p>Create a component from a "new API" style of binding list</p>
 
 
         </td>
@@ -75,59 +75,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
-            createEnabled ()
+          <code onmouseout="hideTip(event, '128', 128)" onmouseover="showTip(event, '128', 128)">
+            fromExplicit bindings
           </code>
-          <div class="tip" id="124">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="128">
+            <strong>Signature:</strong> bindings:(BindingSource -&gt; ISignal&lt;&#39;Model&gt; -&gt; IObservable&lt;&#39;Message&gt; list) -&gt; Component&lt;&#39;Model,&#39;Message&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L74-74" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/BindingSource.fs#L231-231" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command which is always enabled</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            createParam enabledSource
-          </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L70-70" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a parameterized command with an optional enabling source, provided as an ISignal<bool></p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            createParamEnabled ()
-          </code>
-          <div class="tip" id="126">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L78-78" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a parameterized command which is always enabled</p>
+          <p>Create a component from explicit binding generators</p>
 
 
         </td>

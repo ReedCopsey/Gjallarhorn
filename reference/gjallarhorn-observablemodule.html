@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Command - Gjallarhorn</title>
+    <title>Observable - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,16 +35,33 @@
 
 
 
-<h1>Command</h1>
+<h1>Observable</h1>
 <p>
-  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Namespace: Gjallarhorn</span><br />
 </p>
 <div class="xmldoc">
-<p>Core module for creating and using ICommand implementations</p>
+<p>Additional functions related to Observable for use with Gjallarhorn</p>
 
 </div>
 
 <!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-observablemodule-subscription.html">Subscription</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
 
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
@@ -55,19 +72,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
-            create enabledSource
+          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+            filterBy condition input
           </code>
-          <div class="tip" id="123">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
+          <div class="tip" id="7">
+            <strong>Signature:</strong> condition:ISignal&lt;bool&gt; -&gt; input:IObservable&lt;&#39;?8231&gt; -&gt; IObservable&lt;&#39;?8231&gt;<br />
+                          <strong>Type parameters:</strong> '?8231          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L66-66" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Observable.fs#L20-20" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a command with an optional enabling source, provided as an ISignal<bool></p>
+          <p>Filters the input observable by using a separate bool signal. The value of the signal is used as the filtering predicate</p>
 
 
         </td>
@@ -75,39 +92,20 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
-            createEnabled ()
+          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+            filterSome provider
           </code>
-          <div class="tip" id="124">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;DateTime&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L74-74" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Create a command which is always enabled</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            createParam enabledSource
-          </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> enabledSource:ISignal&lt;bool&gt; -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
+          <div class="tip" id="8">
+            <strong>Signature:</strong> provider:IObservable&lt;&#39;a option&gt; -&gt; IObservable&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L70-70" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Observable.fs#L26-26" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a parameterized command with an optional enabling source, provided as an ISignal<bool></p>
+          <p>Filters out observables of options to only pass through
+"Some" values</p>
 
 
         </td>
@@ -115,19 +113,59 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            createParamEnabled ()
+          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+            mapAsync mapping provider
           </code>
-          <div class="tip" id="126">
-            <strong>Signature:</strong> unit -&gt; ITrackingCommand&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'b          </div>
+          <div class="tip" id="9">
+            <strong>Signature:</strong> mapping:(&#39;a -&gt; Async&lt;&#39;b&gt;) -&gt; provider:IObservable&lt;&#39;a&gt; -&gt; IObservable&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Commands.fs#L78-78" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Observable.fs#L36-36" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a parameterized command which is always enabled</p>
+          <p>Maps the input observable through an async workflow.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+            mapAsyncTracked mapping tracker provider
+          </code>
+          <div class="tip" id="10">
+            <strong>Signature:</strong> mapping:(&#39;a -&gt; Async&lt;&#39;b&gt;) -&gt; tracker:IdleTracker -&gt; provider:IObservable&lt;&#39;a&gt; -&gt; IObservable&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Observable.fs#L56-56" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Maps the input observable through an async workflow. Execution status is reported through the specified IdleTracker.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            toMessage mapping provider
+          </code>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b) -&gt; provider:IObservable&lt;&#39;a option&gt; -&gt; IObservable&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Observable.fs#L31-31" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Converts an observable stream of options into a message type when valid</p>
 
 
         </td>

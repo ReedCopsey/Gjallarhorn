@@ -104,6 +104,12 @@ All signals must also inherit Internal.IDependent and Internal.ITracksDependents
         </tr>
         <tr>
           <td class="type-name">
+            <a href="gjallarhorn-observablesource-1.html">ObservableSource<'a></a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="gjallarhorn-validationresult.html">ValidationResult</a>
           </td>
           <td class="xmldoc"><p>Defines a validation result</p>
@@ -122,6 +128,14 @@ All signals must also inherit Internal.IDependent and Internal.ITracksDependents
             <a href="gjallarhorn-mutablemodule.html">Mutable</a>
           </td>
           <td class="xmldoc"><p>Manages creation of mutable variables</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-observablemodule.html">Observable</a>
+          </td>
+          <td class="xmldoc"><p>Additional functions related to Observable for use with Gjallarhorn</p>
 
 </td>
         </tr>
@@ -181,7 +195,7 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
           <td class="type-name">
             <a href="gjallarhorn-bindable-itrackingcommand-1.html">ITrackingCommand<'a></a>
           </td>
-          <td class="xmldoc"><p>An ICommand which acts as a Signal over changes to the value.  This is frequently the current timestamp of the command.</p>
+          <td class="xmldoc"><p>An ICommand which acts as an observable over changes to the value.  This is frequently the current timestamp of the command.</p>
 
 </td>
         </tr>
@@ -190,6 +204,14 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
             <a href="gjallarhorn-bindable-observablebindingsource-1.html">ObservableBindingSource<'Message></a>
           </td>
           <td class="xmldoc"><p>Base class for binding sources, used by platform specific libraries to share implementation details</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-vmcmd-1.html">VmCmd<'a></a>
+          </td>
+          <td class="xmldoc"><p>Design time command implementation for ViewModel specifications</p>
 
 </td>
         </tr>
@@ -202,17 +224,9 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
     <tbody>
         <tr>
           <td class="module-name">
-            <a href="gjallarhorn-bindable-bindingmodule.html">Binding</a>
+            <a href="gjallarhorn-bindable-bindmodule.html">Bind</a>
           </td>
           <td class="xmldoc"><p>Functions to work with binding sources</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="gjallarhorn-bindable-bindingcollectionmodule.html">BindingCollection</a>
-          </td>
-          <td class="xmldoc"><p>Functions to work with binding collections to binding sources</p>
 
 </td>
         </tr>
@@ -226,7 +240,58 @@ This uses reflection, and INotifyPropertyChanged to update the signal as needed.
         </tr>
         <tr>
           <td class="module-name">
-            <a href="gjallarhorn-bindable-framework.html">Framework</a>
+            <a href="gjallarhorn-bindable-component.html">Component</a>
+          </td>
+          <td class="xmldoc"><p>Routines for constructing and working with Components</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="module-name">
+            <a href="gjallarhorn-bindable-vm.html">Vm</a>
+          </td>
+          <td class="xmldoc"><p>Utilities for generation of ViewModel types and instances</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+    </div>
+  <h2>Gjallarhorn.Bindable.Framework Namespace</h2>
+    <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-framework-applicationcore-2.html">ApplicationCore<'Model, 'Message></a>
+          </td>
+          <td class="xmldoc"><p>The core information required for an application</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-framework-applicationspecification-2.html">ApplicationSpecification<'Model, 'Message></a>
+          </td>
+          <td class="xmldoc"><p>Full specification required to run an application</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-framework-createdatacontext-1.html">CreateDataContext<'Message></a>
+          </td>
+          <td class="xmldoc"><p>Alias for a function to create a data context</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="gjallarhorn-bindable-framework-framework.html">Framework</a>
           </td>
           <td class="xmldoc"><p>A platform neutral application framework</p>
 
@@ -481,19 +546,26 @@ Acts as a ISignal&amp;lt;bool&amp;gt; with value of true when idle, false when e
     </div>
   <h2>Gjallarhorn.Wpf Namespace</h2>
     <div>
-      <table class="table table-bordered module-list">
+      <table class="table table-bordered type-list">
     <thead>
-      <tr><td>Module</td><td>Description</td></tr>
+      <tr><td>Type</td><td>Description</td></tr>
     </thead>
     <tbody>
         <tr>
-          <td class="module-name">
+          <td class="type-name">
             <a href="gjallarhorn-wpf-framework.html">Framework</a>
           </td>
           <td class="xmldoc"><p>WPF Specific implementation of the Application Framework</p>
 
 </td>
         </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
+    <thead>
+      <tr><td>Module</td><td>Description</td></tr>
+    </thead>
+    <tbody>
         <tr>
           <td class="module-name">
             <a href="gjallarhorn-wpf-platform.html">Platform</a>

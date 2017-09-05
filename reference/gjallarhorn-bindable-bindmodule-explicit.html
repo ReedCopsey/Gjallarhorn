@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Explicit - Gjallarhorn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Reed Copsey, Jr."/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Gjallarhorn/content/style.css" />
+    <script type="text/javascript" src="/Gjallarhorn/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ReedCopsey/Gjallarhorn">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Gjallarhorn/index.html">Gjallarhorn</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Explicit</h1>
+<p>
+  <span>Namespace: Gjallarhorn.Bindable</span><br />
+  <span>Parent Module: <a href="gjallarhorn-bindable-bindmodule.html">Bind</a></span>
+</p>
+<div class="xmldoc">
+<p>Submodule providing API for explicit binding generation from names and signals instead of model/viewmodel</p>
+
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
+            componentOneWay source name comp signal
+          </code>
+          <div class="tip" id="101">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; comp:Component&lt;&#39;TModel,&#39;TMessage&gt; -&gt; signal:ISignal&lt;&#39;TModel&gt; -&gt; IObservable&lt;&#39;TMessage&gt;<br />
+                          <strong>Type parameters:</strong> 'TModel, 'TMessage          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L127-127" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Bind a component to the given name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
+            constant name value source
+          </code>
+          <div class="tip" id="102">
+            <strong>Signature:</strong> name:string -&gt; value:&#39;?7562 -&gt; source:BindingSource -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7562          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L123-123" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a constant value (one way property) to a binding source by name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
+            createCommand name source
+          </code>
+          <div class="tip" id="103">
+            <strong>Signature:</strong> name:string -&gt; source:BindingSource -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L131-131" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
+            createCommandChecked (...)
+          </code>
+          <div class="tip" id="104">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; source:BindingSource -&gt; ITrackingCommand&lt;DateTime&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L138-138" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
+            createCommandParam name source
+          </code>
+          <div class="tip" id="105">
+            <strong>Signature:</strong> name:string -&gt; source:BindingSource -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L145-145" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '106', 106)" onmouseover="showTip(event, '106', 106)">
+            createCommandParamChecked (...)
+          </code>
+          <div class="tip" id="106">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; source:BindingSource -&gt; ITrackingCommand&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L152-152" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '107', 107)" onmouseover="showTip(event, '107', 107)">
+            createMessageCommand name message source
+          </code>
+          <div class="tip" id="107">
+            <strong>Signature:</strong> name:string -&gt; message:&#39;?7573 -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?7573&gt;<br />
+                          <strong>Type parameters:</strong> '?7573          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L159-159" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '108', 108)" onmouseover="showTip(event, '108', 108)">
+            createMessageCommandChecked (...)
+          </code>
+          <div class="tip" id="108">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; message:&#39;?7575 -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?7575&gt;<br />
+                          <strong>Type parameters:</strong> '?7575          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L166-166" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
+            createMessageParam name message source
+          </code>
+          <div class="tip" id="109">
+            <strong>Signature:</strong> name:string -&gt; message:(&#39;?7577 -&gt; &#39;?7578) -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?7578&gt;<br />
+                          <strong>Type parameters:</strong> '?7577, '?7578          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L173-173" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates an ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
+            createMessageParamChecked (...)
+          </code>
+          <div class="tip" id="110">
+            <strong>Signature:</strong> name:string -&gt; canExecute:ISignal&lt;bool&gt; -&gt; message:(&#39;?7580 -&gt; &#39;?7581) -&gt; source:BindingSource -&gt; IObservable&lt;&#39;?7581&gt;<br />
+                          <strong>Type parameters:</strong> '?7580, '?7581          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L180-180" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Creates a checked ICommand (one way property) to a binding source by name which outputs a specific message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+            memberToFromView (...)
+          </code>
+          <div class="tip" id="111">
+            <strong>Signature:</strong> source:BindingSource -&gt; expr:Expr -&gt; validation:Validation&lt;&#39;a,&#39;a&gt; -&gt; signal:ISignal&lt;&#39;b&gt; -&gt; IValidatedSignal&lt;&#39;a,&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L107-107" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a binding to a source for a signal for editing with a given property expression and validation, and returns a signal of the user edits</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
+            oneWay source name signal
+          </code>
+          <div class="tip" id="112">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; signal:ISignal&lt;&#39;?7558&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7558          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L115-115" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a watched signal (one way property) to a binding source by name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+            toViewValidated (...)
+          </code>
+          <div class="tip" id="113">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validation:Validation&lt;&#39;?7560,&#39;?7560&gt; -&gt; signal:ISignal&lt;&#39;?7560&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7560          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L119-119" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a watched signal (one way property) to a binding source by name with validation</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+            twoWay source name signal
+          </code>
+          <div class="tip" id="114">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L67-67" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Bind a signal to the binding source using the specified name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+            twoWayConvertedValidated (...)
+          </code>
+          <div class="tip" id="115">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; converter:(&#39;a -&gt; &#39;b) -&gt; validator:Validation&lt;&#39;b,&#39;c&gt; -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; IValidatedSignal&lt;&#39;b,&#39;c&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L81-81" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a signal as an editor with validation, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+            twoWayMutable source name mutatable
+          </code>
+          <div class="tip" id="116">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L88-88" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a mutable as an editor, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
+            twoWayMutableConvertedValidated (...)
+          </code>
+          <div class="tip" id="117">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; converter:(&#39;a -&gt; &#39;b) -&gt; validator:Validation&lt;&#39;b,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L100-100" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a mutable as an editor with validation, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
+            twoWayMutableValidated (...)
+          </code>
+          <div class="tip" id="118">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validator:Validation&lt;&#39;a,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L93-93" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a mutable as an editor with validation, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '119', 119)" onmouseover="showTip(event, '119', 119)">
+            twoWayValidated (...)
+          </code>
+          <div class="tip" id="119">
+            <strong>Signature:</strong> source:BindingSource -&gt; name:string -&gt; validator:Validation&lt;&#39;a,&#39;b&gt; -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable/Bind.fs#L74-74" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a signal as an editor with validation, bound to a specific name</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/Gjallarhorn/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Gjallarhorn</li>
+            <li><a href="/Gjallarhorn/index.html">Home page</a></li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+            <li><a href="/Gjallarhorn/signals.html">Signals</a></li>
+            <li><a href="/Gjallarhorn/mutables.html">Mutables</a></li>
+            <li><a href="/Gjallarhorn/validation.html">Validation</a></li>
+            <li><a href="/Gjallarhorn/validate_types.html">Validating Signals</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Gjallarhorn">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ReedCopsey/Gjallarhorn">Source Code on GitHub</a></li>
+            <li><a href="/Gjallarhorn/license.html">License</a></li>
+            <li><a href="/Gjallarhorn/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Gjallarhorn/intro.html">Introduction</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Gjallarhorn/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ReedCopsey/Gjallarhorn"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

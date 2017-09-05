@@ -43,27 +43,44 @@
 <p>WPF Specific implementation of the Application Framework</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Static members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Static member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '130', 130)" onmouseover="showTip(event, '130', 130)">
-            runApplication (...)
+          <code onmouseout="hideTip(event, '302', 302)" onmouseover="showTip(event, '302', 302)">
+            RunApplication(...)
           </code>
-          <div class="tip" id="130">
-            <strong>Signature:</strong> application:(unit -&gt; &#39;Application) -&gt; window:(unit -&gt; &#39;Window) -&gt; applicationInfo:ApplicationCore&lt;&#39;Model,&#39;Message&gt; -&gt; int<br />
+          <div class="tip" id="302">
+            <strong>Signature:</strong> (windowCreation:Func&lt;&#39;Window&gt; * applicationInfo:ApplicationCore&lt;&#39;Model,&#39;Message&gt;) -&gt; unit<br />
+                          <strong>Type parameters:</strong> 'Model, 'Message, 'Window          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable.Wpf/Wpf.fs#L65-65" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Run an application using Application.Current and a function to construct the main window</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '303', 303)" onmouseover="showTip(event, '303', 303)">
+            RunApplication(...)
+          </code>
+          <div class="tip" id="303">
+            <strong>Signature:</strong> (applicationCreation:(unit -&gt; &#39;Application) * windowCreation:(unit -&gt; &#39;Window) * applicationInfo:ApplicationCore&lt;&#39;Model,&#39;Message&gt;) -&gt; unit<br />
                           <strong>Type parameters:</strong> 'Model, 'Message, 'Application, 'Window          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable.Wpf/Wpf.fs#L46-46" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn.Bindable.Wpf/Wpf.fs#L47-47" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

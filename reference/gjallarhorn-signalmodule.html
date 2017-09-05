@@ -72,10 +72,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
             both a b
           </code>
-          <div class="tip" id="7">
+          <div class="tip" id="13">
             <strong>Signature:</strong> a:ISignal&lt;bool&gt; -&gt; b:ISignal&lt;bool&gt; -&gt; ISignal&lt;bool&gt;<br />
                       </div>
         </td>
@@ -92,10 +92,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
             cache provider
           </code>
-          <div class="tip" id="8">
+          <div class="tip" id="14">
             <strong>Signature:</strong> provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -112,10 +112,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
             choose fn defaultValue provider
           </code>
-          <div class="tip" id="9">
+          <div class="tip" id="15">
             <strong>Signature:</strong> fn:(&#39;a -&gt; &#39;b option) -&gt; defaultValue:&#39;b -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -133,10 +133,10 @@ get mapped into the new value.  The defaultValue is used if the input signal's v
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
             constant value
           </code>
-          <div class="tip" id="10">
+          <div class="tip" id="16">
             <strong>Signature:</strong> value:&#39;a -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -153,10 +153,10 @@ get mapped into the new value.  The defaultValue is used if the input signal's v
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
             either a b
           </code>
-          <div class="tip" id="11">
+          <div class="tip" id="17">
             <strong>Signature:</strong> a:ISignal&lt;bool&gt; -&gt; b:ISignal&lt;bool&gt; -&gt; ISignal&lt;bool&gt;<br />
                       </div>
         </td>
@@ -173,10 +173,10 @@ get mapped into the new value.  The defaultValue is used if the input signal's v
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
             equal a b
           </code>
-          <div class="tip" id="12">
+          <div class="tip" id="18">
             <strong>Signature:</strong> a:ISignal&lt;&#39;b&gt; -&gt; b:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;bool&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -193,10 +193,10 @@ get mapped into the new value.  The defaultValue is used if the input signal's v
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
             filter predicate defaultValue provider
           </code>
-          <div class="tip" id="13">
+          <div class="tip" id="19">
             <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; defaultValue:&#39;a -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -214,10 +214,10 @@ If the provider's value doesn't match the predicate, the resulting signal begins
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
             filterBy condition defaultValue input
           </code>
-          <div class="tip" id="14">
+          <div class="tip" id="20">
             <strong>Signature:</strong> condition:ISignal&lt;bool&gt; -&gt; defaultValue:&#39;b -&gt; input:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -235,10 +235,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
             fromObservable initialValue observable
           </code>
-          <div class="tip" id="15">
+          <div class="tip" id="21">
             <strong>Signature:</strong> initialValue:&#39;a -&gt; observable:IObservable&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -255,10 +255,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
             get signal
           </code>
-          <div class="tip" id="16">
+          <div class="tip" id="22">
             <strong>Signature:</strong> signal:ISignal&lt;&#39;a&gt; -&gt; &#39;a<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -275,10 +275,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
             iter f signal
           </code>
-          <div class="tip" id="17">
+          <div class="tip" id="23">
             <strong>Signature:</strong> f:(&#39;a -&gt; unit) -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; unit<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -295,10 +295,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
             map mapping provider
           </code>
-          <div class="tip" id="18">
+          <div class="tip" id="24">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b) -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -315,10 +315,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
             map10 f v1 v2 v3 v4 v5 v6 v7 v8 v9 v10
           </code>
-          <div class="tip" id="19">
+          <div class="tip" id="25">
             <strong>Signature:</strong> f:(&#39;l -&gt; &#39;m -&gt; &#39;n -&gt; &#39;o -&gt; &#39;p -&gt; &#39;q -&gt; &#39;r -&gt; &#39;s -&gt; &#39;t -&gt; &#39;a1 -&gt; &#39;a2) -&gt; v1:ISignal&lt;&#39;l&gt; -&gt; v2:ISignal&lt;&#39;m&gt; -&gt; v3:ISignal&lt;&#39;n&gt; -&gt; v4:ISignal&lt;&#39;o&gt; -&gt; v5:ISignal&lt;&#39;p&gt; -&gt; v6:ISignal&lt;&#39;q&gt; -&gt; v7:ISignal&lt;&#39;r&gt; -&gt; v8:ISignal&lt;&#39;s&gt; -&gt; v9:ISignal&lt;&#39;t&gt; -&gt; v10:ISignal&lt;&#39;a1&gt; -&gt; ISignal&lt;&#39;a2&gt;<br />
                           <strong>Type parameters:</strong> 'l, 'm, 'n, 'o, 'p, 'q, 'r, 's, 't, 'a1, 'a2          </div>
         </td>
@@ -335,10 +335,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
             map2 mapping provider1 provider2
           </code>
-          <div class="tip" id="20">
+          <div class="tip" id="26">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:ISignal&lt;&#39;a&gt; -&gt; provider2:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
         </td>
@@ -355,10 +355,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
             map3 f v1 v2 v3
           </code>
-          <div class="tip" id="21">
+          <div class="tip" id="27">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; ISignal&lt;&#39;d&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd          </div>
         </td>
@@ -375,10 +375,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
             map4 f v1 v2 v3 v4
           </code>
-          <div class="tip" id="22">
+          <div class="tip" id="28">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; ISignal&lt;&#39;e&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e          </div>
         </td>
@@ -395,10 +395,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
             map5 f v1 v2 v3 v4 v5
           </code>
-          <div class="tip" id="23">
+          <div class="tip" id="29">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e -&gt; &#39;f) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; v5:ISignal&lt;&#39;e&gt; -&gt; ISignal&lt;&#39;f&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e, 'f          </div>
         </td>
@@ -415,10 +415,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
             map6 f v1 v2 v3 v4 v5 v6
           </code>
-          <div class="tip" id="24">
+          <div class="tip" id="30">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e -&gt; &#39;f -&gt; &#39;g) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; v5:ISignal&lt;&#39;e&gt; -&gt; v6:ISignal&lt;&#39;f&gt; -&gt; ISignal&lt;&#39;g&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e, 'f, 'g          </div>
         </td>
@@ -435,10 +435,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
             map7 f v1 v2 v3 v4 v5 v6 v7
           </code>
-          <div class="tip" id="25">
+          <div class="tip" id="31">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e -&gt; &#39;f -&gt; &#39;g -&gt; &#39;h) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; v5:ISignal&lt;&#39;e&gt; -&gt; v6:ISignal&lt;&#39;f&gt; -&gt; v7:ISignal&lt;&#39;g&gt; -&gt; ISignal&lt;&#39;h&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h          </div>
         </td>
@@ -455,10 +455,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
             map8 f v1 v2 v3 v4 v5 v6 v7 v8
           </code>
-          <div class="tip" id="26">
+          <div class="tip" id="32">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e -&gt; &#39;f -&gt; &#39;g -&gt; &#39;h -&gt; &#39;i) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; v5:ISignal&lt;&#39;e&gt; -&gt; v6:ISignal&lt;&#39;f&gt; -&gt; v7:ISignal&lt;&#39;g&gt; -&gt; v8:ISignal&lt;&#39;h&gt; -&gt; ISignal&lt;&#39;i&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i          </div>
         </td>
@@ -475,10 +475,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
             map9 f v1 v2 v3 v4 v5 v6 v7 v8 v9
           </code>
-          <div class="tip" id="27">
+          <div class="tip" id="33">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d -&gt; &#39;e -&gt; &#39;f -&gt; &#39;g -&gt; &#39;h -&gt; &#39;i -&gt; &#39;j) -&gt; v1:ISignal&lt;&#39;a&gt; -&gt; v2:ISignal&lt;&#39;b&gt; -&gt; v3:ISignal&lt;&#39;c&gt; -&gt; v4:ISignal&lt;&#39;d&gt; -&gt; v5:ISignal&lt;&#39;e&gt; -&gt; v6:ISignal&lt;&#39;f&gt; -&gt; v7:ISignal&lt;&#39;g&gt; -&gt; v8:ISignal&lt;&#39;h&gt; -&gt; v9:ISignal&lt;&#39;i&gt; -&gt; ISignal&lt;&#39;j&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j          </div>
         </td>
@@ -495,10 +495,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
             mapAsync mapping initialValue provider
           </code>
-          <div class="tip" id="28">
+          <div class="tip" id="34">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; Async&lt;&#39;b&gt;) -&gt; initialValue:&#39;b -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -515,10 +515,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
             mapAsyncTracked (...)
           </code>
-          <div class="tip" id="29">
+          <div class="tip" id="35">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; Async&lt;&#39;b&gt;) -&gt; initialValue:&#39;b -&gt; tracker:IdleTracker -&gt; provider:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -535,10 +535,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
             mapFunction f v
           </code>
-          <div class="tip" id="30">
+          <div class="tip" id="36">
             <strong>Signature:</strong> f:(&#39;c -&gt; &#39;a -&gt; &#39;b) -&gt; v:ISignal&lt;&#39;c&gt; -&gt; &#39;a -&gt; &#39;b<br />
                           <strong>Type parameters:</strong> 'c, 'a, 'b          </div>
         </td>
@@ -555,12 +555,12 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
             mapOption10 (...)
           </code>
-          <div class="tip" id="31">
-            <strong>Signature:</strong> f:(&#39;?8306 -&gt; &#39;?8307 -&gt; &#39;?8308 -&gt; &#39;?8309 -&gt; &#39;?8310 -&gt; &#39;?8311 -&gt; &#39;?8312 -&gt; &#39;?8313 -&gt; &#39;?8314 -&gt; &#39;?8315 -&gt; &#39;?8316) -&gt; v1:ISignal&lt;&#39;?8306 option&gt; -&gt; v2:ISignal&lt;&#39;?8307 option&gt; -&gt; v3:ISignal&lt;&#39;?8308 option&gt; -&gt; v4:ISignal&lt;&#39;?8309 option&gt; -&gt; v5:ISignal&lt;&#39;?8310 option&gt; -&gt; v6:ISignal&lt;&#39;?8311 option&gt; -&gt; v7:ISignal&lt;&#39;?8312 option&gt; -&gt; v8:ISignal&lt;&#39;?8313 option&gt; -&gt; v9:ISignal&lt;&#39;?8314 option&gt; -&gt; v10:ISignal&lt;&#39;?8315 option&gt; -&gt; ISignal&lt;&#39;?8316 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8306, '?8307, '?8308, '?8309, '?8310, '?8311, '?8312, '?8313, '?8314, '?8315, '?8316          </div>
+          <div class="tip" id="37">
+            <strong>Signature:</strong> f:(&#39;?8449 -&gt; &#39;?8450 -&gt; &#39;?8451 -&gt; &#39;?8452 -&gt; &#39;?8453 -&gt; &#39;?8454 -&gt; &#39;?8455 -&gt; &#39;?8456 -&gt; &#39;?8457 -&gt; &#39;?8458 -&gt; &#39;?8459) -&gt; v1:ISignal&lt;&#39;?8449 option&gt; -&gt; v2:ISignal&lt;&#39;?8450 option&gt; -&gt; v3:ISignal&lt;&#39;?8451 option&gt; -&gt; v4:ISignal&lt;&#39;?8452 option&gt; -&gt; v5:ISignal&lt;&#39;?8453 option&gt; -&gt; v6:ISignal&lt;&#39;?8454 option&gt; -&gt; v7:ISignal&lt;&#39;?8455 option&gt; -&gt; v8:ISignal&lt;&#39;?8456 option&gt; -&gt; v9:ISignal&lt;&#39;?8457 option&gt; -&gt; v10:ISignal&lt;&#39;?8458 option&gt; -&gt; ISignal&lt;&#39;?8459 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8449, '?8450, '?8451, '?8452, '?8453, '?8454, '?8455, '?8456, '?8457, '?8458, '?8459          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L211-211" class="github-link">
@@ -575,10 +575,10 @@ If the condition's Value is initially false, the resulting signal begins with th
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
             mapOption2 mapping provider1 provider2
           </code>
-          <div class="tip" id="32">
+          <div class="tip" id="38">
             <strong>Signature:</strong> mapping:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; provider1:ISignal&lt;&#39;a option&gt; -&gt; provider2:ISignal&lt;&#39;b option&gt; -&gt; ISignal&lt;&#39;c option&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b, 'c          </div>
         </td>
@@ -597,12 +597,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             mapOption3 f v1 v2 v3
           </code>
-          <div class="tip" id="33">
-            <strong>Signature:</strong> f:(&#39;?8250 -&gt; &#39;?8251 -&gt; &#39;?8252 -&gt; &#39;?8253) -&gt; v1:ISignal&lt;&#39;?8250 option&gt; -&gt; v2:ISignal&lt;&#39;?8251 option&gt; -&gt; v3:ISignal&lt;&#39;?8252 option&gt; -&gt; ISignal&lt;&#39;?8253 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8250, '?8251, '?8252, '?8253          </div>
+          <div class="tip" id="39">
+            <strong>Signature:</strong> f:(&#39;?8393 -&gt; &#39;?8394 -&gt; &#39;?8395 -&gt; &#39;?8396) -&gt; v1:ISignal&lt;&#39;?8393 option&gt; -&gt; v2:ISignal&lt;&#39;?8394 option&gt; -&gt; v3:ISignal&lt;&#39;?8395 option&gt; -&gt; ISignal&lt;&#39;?8396 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8393, '?8394, '?8395, '?8396          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L176-176" class="github-link">
@@ -617,12 +617,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
             mapOption4 f v1 v2 v3 v4
           </code>
-          <div class="tip" id="34">
-            <strong>Signature:</strong> f:(&#39;?8255 -&gt; &#39;?8256 -&gt; &#39;?8257 -&gt; &#39;?8258 -&gt; &#39;?8259) -&gt; v1:ISignal&lt;&#39;?8255 option&gt; -&gt; v2:ISignal&lt;&#39;?8256 option&gt; -&gt; v3:ISignal&lt;&#39;?8257 option&gt; -&gt; v4:ISignal&lt;&#39;?8258 option&gt; -&gt; ISignal&lt;&#39;?8259 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8255, '?8256, '?8257, '?8258, '?8259          </div>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> f:(&#39;?8398 -&gt; &#39;?8399 -&gt; &#39;?8400 -&gt; &#39;?8401 -&gt; &#39;?8402) -&gt; v1:ISignal&lt;&#39;?8398 option&gt; -&gt; v2:ISignal&lt;&#39;?8399 option&gt; -&gt; v3:ISignal&lt;&#39;?8400 option&gt; -&gt; v4:ISignal&lt;&#39;?8401 option&gt; -&gt; ISignal&lt;&#39;?8402 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8398, '?8399, '?8400, '?8401, '?8402          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L181-181" class="github-link">
@@ -637,12 +637,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
             mapOption5 f v1 v2 v3 v4 v5
           </code>
-          <div class="tip" id="35">
-            <strong>Signature:</strong> f:(&#39;?8261 -&gt; &#39;?8262 -&gt; &#39;?8263 -&gt; &#39;?8264 -&gt; &#39;?8265 -&gt; &#39;?8266) -&gt; v1:ISignal&lt;&#39;?8261 option&gt; -&gt; v2:ISignal&lt;&#39;?8262 option&gt; -&gt; v3:ISignal&lt;&#39;?8263 option&gt; -&gt; v4:ISignal&lt;&#39;?8264 option&gt; -&gt; v5:ISignal&lt;&#39;?8265 option&gt; -&gt; ISignal&lt;&#39;?8266 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8261, '?8262, '?8263, '?8264, '?8265, '?8266          </div>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> f:(&#39;?8404 -&gt; &#39;?8405 -&gt; &#39;?8406 -&gt; &#39;?8407 -&gt; &#39;?8408 -&gt; &#39;?8409) -&gt; v1:ISignal&lt;&#39;?8404 option&gt; -&gt; v2:ISignal&lt;&#39;?8405 option&gt; -&gt; v3:ISignal&lt;&#39;?8406 option&gt; -&gt; v4:ISignal&lt;&#39;?8407 option&gt; -&gt; v5:ISignal&lt;&#39;?8408 option&gt; -&gt; ISignal&lt;&#39;?8409 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8404, '?8405, '?8406, '?8407, '?8408, '?8409          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L186-186" class="github-link">
@@ -657,12 +657,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             mapOption6 f v1 v2 v3 v4 v5 v6
           </code>
-          <div class="tip" id="36">
-            <strong>Signature:</strong> f:(&#39;?8268 -&gt; &#39;?8269 -&gt; &#39;?8270 -&gt; &#39;?8271 -&gt; &#39;?8272 -&gt; &#39;?8273 -&gt; &#39;?8274) -&gt; v1:ISignal&lt;&#39;?8268 option&gt; -&gt; v2:ISignal&lt;&#39;?8269 option&gt; -&gt; v3:ISignal&lt;&#39;?8270 option&gt; -&gt; v4:ISignal&lt;&#39;?8271 option&gt; -&gt; v5:ISignal&lt;&#39;?8272 option&gt; -&gt; v6:ISignal&lt;&#39;?8273 option&gt; -&gt; ISignal&lt;&#39;?8274 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8268, '?8269, '?8270, '?8271, '?8272, '?8273, '?8274          </div>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> f:(&#39;?8411 -&gt; &#39;?8412 -&gt; &#39;?8413 -&gt; &#39;?8414 -&gt; &#39;?8415 -&gt; &#39;?8416 -&gt; &#39;?8417) -&gt; v1:ISignal&lt;&#39;?8411 option&gt; -&gt; v2:ISignal&lt;&#39;?8412 option&gt; -&gt; v3:ISignal&lt;&#39;?8413 option&gt; -&gt; v4:ISignal&lt;&#39;?8414 option&gt; -&gt; v5:ISignal&lt;&#39;?8415 option&gt; -&gt; v6:ISignal&lt;&#39;?8416 option&gt; -&gt; ISignal&lt;&#39;?8417 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8411, '?8412, '?8413, '?8414, '?8415, '?8416, '?8417          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L191-191" class="github-link">
@@ -677,12 +677,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
             mapOption7 f v1 v2 v3 v4 v5 v6 v7
           </code>
-          <div class="tip" id="37">
-            <strong>Signature:</strong> f:(&#39;?8276 -&gt; &#39;?8277 -&gt; &#39;?8278 -&gt; &#39;?8279 -&gt; &#39;?8280 -&gt; &#39;?8281 -&gt; &#39;?8282 -&gt; &#39;?8283) -&gt; v1:ISignal&lt;&#39;?8276 option&gt; -&gt; v2:ISignal&lt;&#39;?8277 option&gt; -&gt; v3:ISignal&lt;&#39;?8278 option&gt; -&gt; v4:ISignal&lt;&#39;?8279 option&gt; -&gt; v5:ISignal&lt;&#39;?8280 option&gt; -&gt; v6:ISignal&lt;&#39;?8281 option&gt; -&gt; v7:ISignal&lt;&#39;?8282 option&gt; -&gt; ISignal&lt;&#39;?8283 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8276, '?8277, '?8278, '?8279, '?8280, '?8281, '?8282, '?8283          </div>
+          <div class="tip" id="43">
+            <strong>Signature:</strong> f:(&#39;?8419 -&gt; &#39;?8420 -&gt; &#39;?8421 -&gt; &#39;?8422 -&gt; &#39;?8423 -&gt; &#39;?8424 -&gt; &#39;?8425 -&gt; &#39;?8426) -&gt; v1:ISignal&lt;&#39;?8419 option&gt; -&gt; v2:ISignal&lt;&#39;?8420 option&gt; -&gt; v3:ISignal&lt;&#39;?8421 option&gt; -&gt; v4:ISignal&lt;&#39;?8422 option&gt; -&gt; v5:ISignal&lt;&#39;?8423 option&gt; -&gt; v6:ISignal&lt;&#39;?8424 option&gt; -&gt; v7:ISignal&lt;&#39;?8425 option&gt; -&gt; ISignal&lt;&#39;?8426 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8419, '?8420, '?8421, '?8422, '?8423, '?8424, '?8425, '?8426          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L196-196" class="github-link">
@@ -697,12 +697,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
             mapOption8 f v1 v2 v3 v4 v5 v6 v7 v8
           </code>
-          <div class="tip" id="38">
-            <strong>Signature:</strong> f:(&#39;?8285 -&gt; &#39;?8286 -&gt; &#39;?8287 -&gt; &#39;?8288 -&gt; &#39;?8289 -&gt; &#39;?8290 -&gt; &#39;?8291 -&gt; &#39;?8292 -&gt; &#39;?8293) -&gt; v1:ISignal&lt;&#39;?8285 option&gt; -&gt; v2:ISignal&lt;&#39;?8286 option&gt; -&gt; v3:ISignal&lt;&#39;?8287 option&gt; -&gt; v4:ISignal&lt;&#39;?8288 option&gt; -&gt; v5:ISignal&lt;&#39;?8289 option&gt; -&gt; v6:ISignal&lt;&#39;?8290 option&gt; -&gt; v7:ISignal&lt;&#39;?8291 option&gt; -&gt; v8:ISignal&lt;&#39;?8292 option&gt; -&gt; ISignal&lt;&#39;?8293 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8285, '?8286, '?8287, '?8288, '?8289, '?8290, '?8291, '?8292, '?8293          </div>
+          <div class="tip" id="44">
+            <strong>Signature:</strong> f:(&#39;?8428 -&gt; &#39;?8429 -&gt; &#39;?8430 -&gt; &#39;?8431 -&gt; &#39;?8432 -&gt; &#39;?8433 -&gt; &#39;?8434 -&gt; &#39;?8435 -&gt; &#39;?8436) -&gt; v1:ISignal&lt;&#39;?8428 option&gt; -&gt; v2:ISignal&lt;&#39;?8429 option&gt; -&gt; v3:ISignal&lt;&#39;?8430 option&gt; -&gt; v4:ISignal&lt;&#39;?8431 option&gt; -&gt; v5:ISignal&lt;&#39;?8432 option&gt; -&gt; v6:ISignal&lt;&#39;?8433 option&gt; -&gt; v7:ISignal&lt;&#39;?8434 option&gt; -&gt; v8:ISignal&lt;&#39;?8435 option&gt; -&gt; ISignal&lt;&#39;?8436 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8428, '?8429, '?8430, '?8431, '?8432, '?8433, '?8434, '?8435, '?8436          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L201-201" class="github-link">
@@ -717,12 +717,12 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
             mapOption9 f v1 v2 v3 v4 v5 v6 v7 v8 v9
           </code>
-          <div class="tip" id="39">
-            <strong>Signature:</strong> f:(&#39;?8295 -&gt; &#39;?8296 -&gt; &#39;?8297 -&gt; &#39;?8298 -&gt; &#39;?8299 -&gt; &#39;?8300 -&gt; &#39;?8301 -&gt; &#39;?8302 -&gt; &#39;?8303 -&gt; &#39;?8304) -&gt; v1:ISignal&lt;&#39;?8295 option&gt; -&gt; v2:ISignal&lt;&#39;?8296 option&gt; -&gt; v3:ISignal&lt;&#39;?8297 option&gt; -&gt; v4:ISignal&lt;&#39;?8298 option&gt; -&gt; v5:ISignal&lt;&#39;?8299 option&gt; -&gt; v6:ISignal&lt;&#39;?8300 option&gt; -&gt; v7:ISignal&lt;&#39;?8301 option&gt; -&gt; v8:ISignal&lt;&#39;?8302 option&gt; -&gt; v9:ISignal&lt;&#39;?8303 option&gt; -&gt; ISignal&lt;&#39;?8304 option&gt;<br />
-                          <strong>Type parameters:</strong> '?8295, '?8296, '?8297, '?8298, '?8299, '?8300, '?8301, '?8302, '?8303, '?8304          </div>
+          <div class="tip" id="45">
+            <strong>Signature:</strong> f:(&#39;?8438 -&gt; &#39;?8439 -&gt; &#39;?8440 -&gt; &#39;?8441 -&gt; &#39;?8442 -&gt; &#39;?8443 -&gt; &#39;?8444 -&gt; &#39;?8445 -&gt; &#39;?8446 -&gt; &#39;?8447) -&gt; v1:ISignal&lt;&#39;?8438 option&gt; -&gt; v2:ISignal&lt;&#39;?8439 option&gt; -&gt; v3:ISignal&lt;&#39;?8440 option&gt; -&gt; v4:ISignal&lt;&#39;?8441 option&gt; -&gt; v5:ISignal&lt;&#39;?8442 option&gt; -&gt; v6:ISignal&lt;&#39;?8443 option&gt; -&gt; v7:ISignal&lt;&#39;?8444 option&gt; -&gt; v8:ISignal&lt;&#39;?8445 option&gt; -&gt; v9:ISignal&lt;&#39;?8446 option&gt; -&gt; ISignal&lt;&#39;?8447 option&gt;<br />
+                          <strong>Type parameters:</strong> '?8438, '?8439, '?8440, '?8441, '?8442, '?8443, '?8444, '?8445, '?8446, '?8447          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/Signal.fs#L206-206" class="github-link">
@@ -737,10 +737,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
             merge a b
           </code>
-          <div class="tip" id="40">
+          <div class="tip" id="46">
             <strong>Signature:</strong> a:ISignal&lt;&#39;b&gt; -&gt; b:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -757,10 +757,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
             not a
           </code>
-          <div class="tip" id="41">
+          <div class="tip" id="47">
             <strong>Signature:</strong> a:ISignal&lt;bool&gt; -&gt; ISignal&lt;bool&gt;<br />
                       </div>
         </td>
@@ -777,10 +777,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
             notEqual a b
           </code>
-          <div class="tip" id="42">
+          <div class="tip" id="48">
             <strong>Signature:</strong> a:ISignal&lt;&#39;b&gt; -&gt; b:ISignal&lt;&#39;b&gt; -&gt; ISignal&lt;bool&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -797,10 +797,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
             observeOn ctx signal
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="49">
             <strong>Signature:</strong> ctx:SynchronizationContext -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; ISignal&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -817,10 +817,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
             toFunction fs
           </code>
-          <div class="tip" id="44">
+          <div class="tip" id="50">
             <strong>Signature:</strong> fs:ISignal&lt;(&#39;a -&gt; &#39;b)&gt; -&gt; &#39;a -&gt; &#39;b<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -837,10 +837,10 @@ If either is None, the result is None</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             validate validator signal
           </code>
-          <div class="tip" id="45">
+          <div class="tip" id="51">
             <strong>Signature:</strong> validator:(ValidationCollector&lt;&#39;a&gt; -&gt; ValidationCollector&lt;&#39;b&gt;) -&gt; signal:ISignal&lt;&#39;a&gt; -&gt; IValidatedSignal&lt;&#39;a,&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
