@@ -183,6 +183,7 @@ module Bind =
             source.ConstantToView (command, name)
             command |> Observable.map (fun p -> message p)
 
+    /// Submodule providing API for explicit binding generation of collections
     module Collections =
         type internal ChangeType<'Message> =    
             | NoChanges
