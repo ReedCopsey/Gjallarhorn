@@ -11,8 +11,6 @@
 // (This is the original behaviour of ProjectScaffold prior to multi project support)
 let referenceBinaries = [ 
         "Gjallarhorn.ReferenceDocumentation/Gjallarhorn.ReferenceDocumentation.dll" 
-        "Gjallarhorn.Bindable.Wpf/Gjallarhorn.Bindable.Wpf.dll" 
-        "Gjallarhorn.Bindable.XamarinForms/Gjallarhorn.Bindable.XamarinForms.dll" 
     ]
 
 // Web site location for the generated documentation

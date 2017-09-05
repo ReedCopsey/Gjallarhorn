@@ -33,7 +33,6 @@ var2.Value <- 22
 
 
 (**
-For more information, see the detailed documentation.
 
 Core Types and Usage
 -----------------------
@@ -50,6 +49,12 @@ API Reference
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules
    and functions in the library. This includes additional brief samples on using most of the
    functions.
+
+Gjallarhorn.Bindable
+-----------------------
+
+ * [Gjallarhorn.Bindable](/Gjallarhorn.Bindable) builds on top of this project to provide a unidirectional
+   architecture for XAML platforms, including WPF and Xamarin Forms.
  
 Contributing and copyright
 --------------------------
@@ -57,7 +62,7 @@ Contributing and copyright
 The project is hosted on [GitHub](https://github.com/ReedCopsey/Gjallarhorn) where you can [report issues](https://github.com/ReedCopsey/Gjallarhorn/issues), fork 
 the project and submit pull requests. 
 
-The library is available under the Apache 2.0 License, which allows modification and 
+The library is available under the MIT License, which allows modification and 
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file](https://github.com/ReedCopsey/Gjallarhorn/blob/master/LICENSE.txt) in the GitHub repository. 
 
