@@ -8,8 +8,6 @@ group Build
   nuget SourceLink.Fake
   nuget FAKE
   nuget FSharp.Formatting
-  nuget FsXaml.WPF
-  nuget Xamarin.Forms
   nuget FSharp.Core 4.0.0.1
 
   github fsharp/FAKE modules/Octokit/Octokit.fsx

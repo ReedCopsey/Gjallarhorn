@@ -46,8 +46,7 @@ let tags = "fsharp mutable reactive observable inotifypropertychanged"
 
 // File system information
 let solutionFile =
-    match getBuildParamOrDefault "Solution" "Full" with
-    | "NoAndroid" -> "GjallarhornNoAndroid.sln"
+    match getBuildParamOrDefault "Solution" "Full" with   
     | _ -> "Gjallarhorn.sln" 
 
 // Pattern specifying assemblies to be tested using NUnit
