@@ -1,3 +1,6 @@
+#### 1.0.1 - Sept 7th 2017
+* Removed explicit FSharp.Core version dependency to allow 4.1 to be used in clients
+
 #### 1.0.0 - Sept 5th 2017
 * Official 1.0 release of Gjallarhorn
 * Split Bindable into separate repository

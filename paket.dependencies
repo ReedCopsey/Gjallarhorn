@@ -8,7 +8,7 @@ group Build
   nuget SourceLink.Fake
   nuget FAKE
   nuget FSharp.Formatting
-  nuget FSharp.Core 4.0.0.1
+  nuget FSharp.Core >= 4.0.0.1
 
   github fsharp/FAKE modules/Octokit/Octokit.fsx
 
@@ -21,4 +21,4 @@ group Test
   
   nuget NUnit ~> 2
   nuget NUnit.Runners ~> 2
-  nuget FSharp.Core 4.0.0.1
+  nuget FSharp.Core >= 4.0.0.1
