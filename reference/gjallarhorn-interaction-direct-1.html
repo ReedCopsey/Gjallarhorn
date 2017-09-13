@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>MutableInOut - Gjallarhorn</title>
+    <title>Direct<'a> - Gjallarhorn</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Reed Copsey, Jr."/>
@@ -35,60 +35,63 @@
 
 
 
-<h1>MutableInOut</h1>
+<h1>Direct<'a></h1>
 <p>
   <span>Namespace: Gjallarhorn.Interaction</span><br />
-  <span>Parent Module: <a href="gjallarhorn-interaction-iomodule.html">IO</a></span>
 </p>
 <div class="xmldoc">
-<p>Creates input/output handles that directly mutate an input IMutatable</p>
+<p>Used to directly map a signal to a user. No notification exists in this case.</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
-            convertedValidated (...)
+          <code onmouseout="hideTip(event, '143', 143)" onmouseover="showTip(event, '143', 143)">
+            new(input)
           </code>
-          <div class="tip" id="93">
-            <strong>Signature:</strong> conversion:(&#39;?8570 -&gt; &#39;?8571) -&gt; validation:Validation&lt;&#39;?8571,&#39;?8570&gt; -&gt; mutatable:IMutatable&lt;&#39;?8570&gt; -&gt; MutatableInOut&lt;&#39;?8570,&#39;?8571&gt;<br />
-                          <strong>Type parameters:</strong> '?8570, '?8571          </div>
+          <div class="tip" id="143">
+            <strong>Signature:</strong> input:ISignal&lt;&#39;a&gt; -&gt; Direct&lt;&#39;a&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L140-140" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L12-12" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a simple input handle which pipes from the signal to conversion, user, validates to output, writes back to mutable</p>
-
-
+          
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
-            validated validation mutatable
+          <code onmouseout="hideTip(event, '144', 144)" onmouseover="showTip(event, '144', 144)">
+            GetValue()
           </code>
-          <div class="tip" id="94">
-            <strong>Signature:</strong> validation:Validation&lt;&#39;a,&#39;a&gt; -&gt; mutatable:IMutatable&lt;&#39;a&gt; -&gt; MutatableInOut&lt;&#39;a,&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="144">
+            <strong>Signature:</strong> unit -&gt; ISignal&lt;&#39;a&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L137-137" class="github-link">
+            <a href="http://github.com/ReedCopsey/Gjallarhorn/tree/master/src/Gjallarhorn/IO.fs#L14-14" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Create a simple input handle which pipes from the signal to user, validates to output, writes back to mutable</p>
+          <p>Gets the signal</p>
 
 
         </td>
