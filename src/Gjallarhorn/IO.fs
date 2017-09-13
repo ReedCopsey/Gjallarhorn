@@ -8,6 +8,11 @@ open System
 /// A single step in a validation chain
 type Validation<'a,'b> = (Validation.ValidationCollector<'a> -> Validation.ValidationCollector<'b>)
 
+/// Used to directly map a signal to a user. No notification exists in this case.
+type Direct<'a> (input : ISignal<'a>) =
+    /// Gets the signal
+    member __.GetValue () = input
+
 /// Used to report data to a user
 type Report<'a,'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
     let source = Signal.map conversion input
