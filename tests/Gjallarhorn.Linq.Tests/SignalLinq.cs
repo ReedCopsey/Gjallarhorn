@@ -1,15 +1,11 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-
-using Gjallarhorn;
 using Gjallarhorn.Linq;
 using Gjallarhorn.Helpers;
+using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gjallarhorn.Linq.Tests
 {
