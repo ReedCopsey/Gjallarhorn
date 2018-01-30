@@ -19,6 +19,7 @@ type Report<'a,'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
 
     /// Signal used as a notification mechanism. 
     member __.UpdateStream  = source
+
     /// Gets the current value
     member __.GetValue () = source.Value
 
@@ -43,8 +44,10 @@ type InOut<'a, 'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
 
     /// Signal used as a notification mechanism for reporting
     member __.UpdateStream = editSource :> ISignal<_>
+
     /// Gets the current value
     member __.GetValue () = editSource.Value
+
     /// Updates the value to the output stream
     member __.SetValue v = editSource.Value <- v
     
@@ -69,8 +72,10 @@ type Out<'a> (initialValue : 'a) =
     
     /// Signal used as a notification mechanism for reporting
     member __.UpdateStream = editSource :> ISignal<_>
+
     /// Gets the current value
     member __.GetValue () = editSource.Value
+
     /// Updates the value to the output stream
     member __.SetValue v = editSource.Value <- v
 
@@ -103,39 +108,52 @@ type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, valid
 /// Creates IO handles for use with Gjallarhorn adapters, like Gjallarhorn.Bindable
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module IO =
+
     /// Creates reporting handles
     module Report =
+
         /// Create a simple report which updates when the signal updates
         let create signal =
             Report(signal, id)
+
         /// Create a report which updates when the signal updates and uses a mapping function
         let converted conversion signal =
             Report(signal, conversion)
+
         /// Create a report which validates and updates when the signal updates
         let validated validation signal=
             ValidatedReport(signal, id, validation)
+
         /// Create a report which validates and updates when the signal updates and uses a mapping function
         let convertedValidated conversion validation signal =
             ValidatedReport(signal, conversion, validation)
+
     /// Creates input/output handles
     module InOut =
+
         /// Create a simple input handle which pipes from the signal to user, to output
         let create<'a> signal =
             new InOut<'a,'a>(signal, id)
+
         /// Create a simple input handle which pipes from the signal to conversion, to user, to output
         let converted conversion signal =
             new InOut<'a,'b>(signal, conversion)
+
         /// Create a simple input handle which pipes from the signal to user, validates to output
         let validated validation signal =
             new ValidatedInOut<_,_,_>(signal, id, validation)
+
         /// Create a simple input handle which pipes from the signal to conversion, to user, validates to output
         let convertedValidated conversion validation signal =
             new ValidatedInOut<_,_,_>(signal, conversion, validation)
+
     /// Creates input/output handles that directly mutate an input IMutatable
     module MutableInOut =
+
         /// Create a simple input handle which pipes from the signal to user, validates to output, writes back to mutable
         let validated<'a> validation mutatable = 
             new MutatableInOut<'a,'a>(mutatable, id, validation)
+
         /// Create a simple input handle which pipes from the signal to conversion, user, validates to output, writes back to mutable
         let convertedValidated conversion validation mutatable =
             new MutatableInOut<_,_>(mutatable, conversion, validation)
