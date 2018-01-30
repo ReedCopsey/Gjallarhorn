@@ -7,6 +7,7 @@ open System.Runtime.CompilerServices
 
 /// Helper module for dealing with weak references
 module WeakRef =
+
     /// Convert the WeakReference to an option
     let toOption (wr : WeakReference<_>) =
         match wr.TryGetTarget() with
@@ -43,6 +44,7 @@ module WeakRef =
 
 /// Type used to track dependencies
 type [<AllowNullLiteral>] IDependencyManager<'a> =
+
     /// Add a dependent to the source signal explicitly
     abstract member Add : IDependent * ISignal<'a> -> unit
 
@@ -64,6 +66,7 @@ type [<AllowNullLiteral>] IDependencyManager<'a> =
 [<AbstractClass;AllowNullLiteral>]
 type internal DependencyTrackerBase() =
     do ()
+
 /// <summary>Used to track dependencies</summary>
 /// <remarks>This class is fully thread safe, and will not hold references to dependent targets</remarks>
 [<AllowNullLiteral>]
@@ -73,14 +76,16 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
     // We want this as lightweight as possible,
     // so we do our own management as needed
     let mutable depIDeps : WeakReference<IDependent> array = [| |]
+
     // Note that observers can't be weak referenced, as Observable.add needs to persist
     let mutable depObservers : IObserver<'a> array = [| |]
-        
+
     // These are ugly, as it purposefully creates side effects
     // It returns true if we signaled and the object is alive,
     // otherwise false
     let signalIfAliveDep (wr: WeakReference<IDependent>) =
         wr |> WeakRef.execute (fun dep -> dep.UpdateDirtyFlag dep)
+
     let signalObserver (v : Lazy<'a>) (obs : IObserver<'a>) =
         obs.OnNext(v.Force())
 
@@ -98,6 +103,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         | false, _ -> false
         | true, true -> false
         | true, false -> true
+
     let removeAndFilterObs (obs : IObserver<'a>) (wr : IObserver<'a>) =        
         match obj.ReferenceEquals(obs,wr) with
         | false -> true
@@ -121,6 +127,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
                 |> Array.exists (fun wr -> WeakRef.contains dep wr)
             if (not depExists) then
                 depIDeps <- depIDeps |> Array.append [| WeakReference<_>(dep) |])
+
     member this.AddObserver (obs,source) =
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.append [| obs |])
@@ -130,6 +137,7 @@ type internal DependencyTracker<'a>(dependsOn : WeakReference<ITracksDependents>
         lock this.LockObj (fun _ ->
             depIDeps <- depIDeps |> Array.filter (removeAndFilterDep dep)
             this.HasDependencies)
+
     member this.RemoveObserver (obs, source) = 
         lock this.LockObj (fun _ ->
             depObservers <- depObservers |> Array.filter (removeAndFilterObs obs)
@@ -194,6 +202,7 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
             dep.Add(target, source))
+
     static member internal Subscribe (source : ISignal<'a>, target : IObserver<'a>) =
         lock dependencies (fun _ -> 
             let dep = dependencies.GetValue(source, createValueCallbackFor source) :?> DependencyTracker<'a>
@@ -223,19 +232,23 @@ type internal SignalManager() = // Note: Internal to allow for testing in memory
 
 /// Module used to create and manage dependencies
 module Dependencies =
+
     /// Create a dependency manager
     let create (dependsOn : ITracksDependents array) source = 
         let deps =
             dependsOn
             |> Array.map (fun t -> WeakReference<_>(t))
         DependencyTracker<_>(deps) :> IDependencyManager<_>
+
     /// Create a dependency manager for a source object which stores dependency information outside of the object's memory space.  
     let createRemote source =
         { new IDependencyManager<'a> with
             member __.Add (dep: IDependent, source: ISignal<'a>) : unit = SignalManager.AddDependency(source, dep)
+
             member __.Subscribe (obs: IObserver<'a> , source: ISignal<'a>) : IDisposable = SignalManager.Subscribe(source, obs)
 
             member __.Remove (dep: IDependent, source: ISignal<'a>) = SignalManager.RemoveDependency(source, dep)
+
             member __.RemoveAll (source: ISignal<'a>) = SignalManager.RemoveAllDependencies source
 
             member __.HasDependencies with get() = SignalManager.IsTracked source
