@@ -21,6 +21,7 @@ module WeakRef =
             f(t)
             true
         | _ -> false
+
     /// Return true if a weak reference is still alive
     let test (f : 'a -> bool) (wr : WeakReference<'a>) =
         match wr.TryGetTarget() with
@@ -28,6 +29,7 @@ module WeakRef =
             true, f(t)
         | _ -> 
             false, false
+
     /// See if a specific target is contained by a weak reference
     let internal contains (target : 'a) (wr : WeakReference<'a>) =
         match wr.TryGetTarget() with
