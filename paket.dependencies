@@ -1,24 +1,22 @@
 group Build
-  source https://nuget.org/api/v2
-  
+  source https://api.nuget.org/v3/index.json
+  framework:netstandard2
   redirects: on
-
-  framework: net461, net45, portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1
-
+	
   nuget SourceLink.Fake
   nuget FAKE
   nuget FSharp.Formatting
-  nuget FSharp.Core >= 4.0.0.1
-
+	nuget FSharp.Core >= 4.3.2
   github fsharp/FAKE modules/Octokit/Octokit.fsx
 
 group Test
-  source https://nuget.org/api/v2
-
+  source https://api.nuget.org/v3/index.json
   redirects: on
-
-  framework: net461, net45, portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1
-  
-  nuget NUnit ~> 2
-  nuget NUnit.Runners ~> 2
-  nuget FSharp.Core >= 4.0.0.1
+  framework:net461
+  nuget System.Globalization
+  nuget Microsoft.NET.Test.Sdk >= 15.5
+  nuget NUnit ~> 3
+  nuget NUnit.Console ~> 3
+  nuget NUnit.ConsoleRunner ~> 3
+  nuget NUnit3TestAdapter ~> 3
+  nuget FSharp.Core >= 4.3.2
