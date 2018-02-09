@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RepositoryUrl>https://github.com/mtnrbq/Gjallarhorn</RepositoryUrl>
+    <Description>Pre-release NetStandard 2.0 fork of https://github.com/ReedCopsey/Gjallarhorn for testing</Description>
+    <PackageId>Gjallarhorn_mtnrbq</PackageId>
+    <Version>2.0.0-alpha</Version>
+    <Authors>mtnrbq</Authors>
+    <Company>mtnrbq</Company>
+    <Product>mtnrbqGjallarhorn</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>..\..\bin\Gjallarhorn.XML</DocumentationFile>
