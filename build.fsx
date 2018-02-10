@@ -132,6 +132,13 @@ Target "CleanDocs" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
+// Restore dotnet core packages
+
+Target "Restore" (fun _ ->
+    DotNetCli.Restore id      
+)
+
+// --------------------------------------------------------------------------------------
 // Build library & test project
 
 Target "Build" (fun _ ->
@@ -378,6 +385,7 @@ Target "All" DoNothing
 
 "Clean"
   ==> "AssemblyInfo"
+  ==> "Restore"
   ==> "Build"
   ==> "CopyBinaries"
   ==> "RunTests"
