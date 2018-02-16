@@ -1,3 +1,6 @@
+#### 1.2.0-beta1 - Feb 10th 2018
+* Add .NetStandard2.0 Build and Package (Pre-release)
+
 #### 1.1.0 - Sept 13th 2017
 * Added IO.Direct for direct mapping of a signal into IO channels
 
