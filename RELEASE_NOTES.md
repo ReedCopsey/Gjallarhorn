@@ -1,15 +1,5 @@
-#### 1.2.0-beta1 - Feb 10th 2018
-* Add .NetStandard2.0 Build and Package (Pre-release)
-
-#### 1.1.0 - Sept 13th 2017
-* Added IO.Direct for direct mapping of a signal into IO channels
-
-#### 1.0.1 - Sept 7th 2017
-* Removed explicit FSharp.Core version dependency to allow 4.1 to be used in clients
-
-#### 1.0.0 - Sept 5th 2017
-* Official 1.0 release of Gjallarhorn
-* Split Bindable into separate repository
+#### 1.2.0 - March 7th 2018
+* Convert to .NET Standard 2.0
 
 #### 1.0.0-beta1 - Sept 4th 2017
 * **Significant** breaking changes introduced to Bindable API
