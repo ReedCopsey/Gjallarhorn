@@ -1,3 +1,7 @@
+#### 1.2.1 - March 7th 2018
+* Using .NET Standard 2.0
+* Fixed Issue 52 - Subscriptions now only fire on value changes
+
 #### 1.2.0 - March 7th 2018
 * Convert to .NET Standard 2.0
 
