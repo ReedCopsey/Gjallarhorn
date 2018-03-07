@@ -410,23 +410,38 @@ let ``Signal\map with subscription triggers proper number of updates`` () =
     let changes = ref 0
     let x = Mutable.create 0
     let f i = 
-        incr changes
         i*i
     let y = Signal.map f x // "processing" 
-    use disp = Signal.Subscription.create ignore y 
-    Assert.AreEqual(1, !changes)
+    use disp = Signal.Subscription.create (fun _v -> incr changes) y 
+    Assert.AreEqual(0, !changes)
     printfn "x = %d" x.Value // nothing 
-    Assert.AreEqual(1, !changes)
+    Assert.AreEqual(0, !changes)
     printfn "y = %d" y.Value // nothing 
-    Assert.AreEqual(1, !changes)
+    Assert.AreEqual(0, !changes)
     printfn "y = %d" y.Value // nothing
-    Assert.AreEqual(1, !changes)
+    Assert.AreEqual(0, !changes)
     x.Value <- 2 // triggers    
-    Assert.AreEqual(2, !changes)
+    Assert.AreEqual(1, !changes)
     printfn "y = %d" y.Value // nothing
-    Assert.AreEqual(2, !changes)
+    Assert.AreEqual(1, !changes)
+    x.Value <- 2 // doesn't trigger    
+    printfn "y = %d" y.Value // nothing    
+    Assert.AreEqual(1, !changes)
+    x.Value <- 0 // doesn't trigger    
     printfn "y = %d" y.Value // nothing    
     Assert.AreEqual(2, !changes)
+
+[<Test>]
+let ``Issue #52 - Signal.map evaluations - With subscription`` () =
+    let sb = System.Text.StringBuilder()
+    let x = Mutable.create 0.
+    let y = x |> Signal.map (fun (f:float) -> int f)
+    use _sub = Signal.Subscription.create (fun (i:int) -> sb.Append i |> ignore) y 
+
+    for f in [0. .. 0.1 .. 1.] do
+        x.Value <- f
+    Assert.AreEqual("1", sb.ToString() )
+
 
 [<Test>]
 let ``Issue #16 - Signal.map evaluations - Without Subscription`` () =

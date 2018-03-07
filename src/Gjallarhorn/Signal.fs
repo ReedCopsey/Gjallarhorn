@@ -46,6 +46,15 @@ module Signal =
         /// Create a subscription to the changes of a signal which calls the provided function upon each change
         let create (f : 'a -> unit) (provider : ISignal<'a>) = 
             let tracker = provider
+
+            let mutable lastValue = provider.Value
+
+            let conditionallyUpdate () =
+                let v = provider.Value
+                if not <| EqualityComparer<'a>.Default.Equals(lastValue, v) then
+                    lastValue <- v
+                    f(v)
+
             let rec dependent =
                 {
                     new obj() with
@@ -54,7 +63,7 @@ module Signal =
                     interface IDependent with
                         member __.UpdateDirtyFlag _ =
                             // Subscriptions force a recompute when dirty
-                            f(provider.Value)
+                            conditionallyUpdate () 
                         member __.HasDependencies with get() = true
                     
                     interface IDisposable with
