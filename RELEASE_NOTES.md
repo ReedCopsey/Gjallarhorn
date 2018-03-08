@@ -1,3 +1,7 @@
+#### 1.2.2 - March 8th 2018
+* Using .NET Standard 2.0
+* Improved behavior around mapping. Laziness preserved while still not evaluating more than necessary
+
 #### 1.2.1 - March 7th 2018
 * Using .NET Standard 2.0
 * Fixed Issue 52 - Subscriptions now only fire on value changes

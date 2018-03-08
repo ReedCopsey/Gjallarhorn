@@ -305,17 +305,19 @@ type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 
     // This avoids an invalid operation exception in the finalizer
     // if the mapping throws at construction time.
     let mutable lastValue = Unchecked.defaultof<'b>
-    
+    let mutable lastInput = Unchecked.defaultof<'a>
     do
-        lastValue <- mapping valueProvider.Value.Value
+        lastInput <- valueProvider.Value.Value
+        lastValue <- mapping lastInput
 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
-            let value = 
-                DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
-                |> mapping
-            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
-                lastValue <- value     
+            let input = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
+            if not <| EqualityComparer<_>.Default.Equals(lastInput, input) then
+                lastInput <- input
+                let value = lastInput |> mapping
+                if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                    lastValue <- value     
         lastValue      
    
     override this.OnDisposing () =
@@ -331,21 +333,29 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
     inherit SignalBase<'c>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = Unchecked.defaultof<'c> 
+    let mutable lastInput1 = Unchecked.defaultof<'a>
+    let mutable lastInput2 = Unchecked.defaultof<'b>
     let mutable valueProvider1 = Some(valueProvider1)
     let mutable valueProvider2 = Some(valueProvider2)
 
     do 
-        lastValue <- mapping valueProvider1.Value.Value valueProvider2.Value.Value
+        lastInput1 <- valueProvider1.Value.Value
+        lastInput2 <- valueProvider2.Value.Value
+        lastValue <- mapping lastInput1 lastInput2
 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
-            let value = 
-                let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
-                let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
-                mapping v1 v2
-            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
-                lastValue <- value
-                this.MarkDirtyGuarded this
+            let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
+            let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
+            if not <| EqualityComparer<_>.Default.Equals(lastInput1, v1) 
+                || not <| EqualityComparer<_>.Default.Equals(lastInput2, v2) then
+                lastInput1 <- v1
+                lastInput2 <- v2
+                let value = 
+                    mapping v1 v2
+                if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                    lastValue <- value
+                    this.MarkDirtyGuarded this
         lastValue    
 
     override this.OnDisposing () =

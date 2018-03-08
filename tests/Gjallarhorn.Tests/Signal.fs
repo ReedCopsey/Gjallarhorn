@@ -442,6 +442,16 @@ let ``Issue #52 - Signal.map evaluations - With subscription`` () =
         x.Value <- f
     Assert.AreEqual("1", sb.ToString() )
 
+[<Test>]
+let ``Issue #52 - Signal.map evaluations - side effects in map`` () =
+    let mutable calcs = 0
+    let x = Mutable.create 0
+    let y = x |> Signal.map ignore // y is always ()
+    let z = y |> Signal.map (fun x -> calcs <- calcs + 1) // so there is never a need to update z after initialization
+    z |> Signal.Subscription.create ignore |> ignore // this is to remove laziness
+    do 
+        x.Value <- 1
+    Assert.AreEqual(1, calcs )
 
 [<Test>]
 let ``Issue #16 - Signal.map evaluations - Without Subscription`` () =

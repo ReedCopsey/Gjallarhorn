@@ -5,8 +5,8 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("Gjallarhorn")>]
 [<assembly: AssemblyProductAttribute("Gjallarhorn")>]
 [<assembly: AssemblyDescriptionAttribute("Framework for managing mutable data with change notification and live views")>]
-[<assembly: AssemblyVersionAttribute("1.2.1")>]
-[<assembly: AssemblyFileVersionAttribute("1.2.1")>]
+[<assembly: AssemblyVersionAttribute("1.2.2")>]
+[<assembly: AssemblyFileVersionAttribute("1.2.2")>]
 [<assembly: AssemblyCopyrightAttribute("Copyright 2017 Reed Copsey, Jr.")>]
 [<assembly: AssemblyCompanyAttribute("Reed Copsey, Jr.")>]
 do ()
@@ -15,7 +15,7 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Gjallarhorn"
     let [<Literal>] AssemblyProduct = "Gjallarhorn"
     let [<Literal>] AssemblyDescription = "Framework for managing mutable data with change notification and live views"
-    let [<Literal>] AssemblyVersion = "1.2.1"
-    let [<Literal>] AssemblyFileVersion = "1.2.1"
+    let [<Literal>] AssemblyVersion = "1.2.2"
+    let [<Literal>] AssemblyFileVersion = "1.2.2"
     let [<Literal>] AssemblyCopyright = "Copyright 2017 Reed Copsey, Jr."
     let [<Literal>] AssemblyCompany = "Reed Copsey, Jr."
