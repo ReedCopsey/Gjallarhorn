@@ -170,7 +170,7 @@ namespace Gjallarhorn.Linq.Tests
                     return v + 2;
                 });
 
-            Expect.isTrue(tracker.Value, "tracker value is true");
+            Expect.isTrue(tracker.Value, "tracker value should be true");
             value.Value = 2;
 
             Expect.equal(value.Value, 2, "should be equal");
@@ -178,11 +178,11 @@ namespace Gjallarhorn.Linq.Tests
             Expect.equal(mapped.Value, 2, "should be equal");
             // Give us a chance to start...
             await Task.Delay(10);
-            Expect.isFalse(tracker.Value, "tracker value is false");
+            Expect.isFalse(tracker.Value, "tracker value should be false");
             // And now let us finish
             await Task.Delay(100);
 
-            Expect.isTrue(tracker.Value, "tracker value is true");
+            Expect.isTrue(tracker.Value, "tracker value should be true");
             Expect.equal(value.Value, 2, "should be equal");
             Expect.equal(mapped.Value, 4, "should be equal");
         }
