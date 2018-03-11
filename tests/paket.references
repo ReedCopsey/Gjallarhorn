@@ -1,8 +1,4 @@
 group Test
     FSharp.Core
-    System.Globalization
-    NUnit
-    NUnit.ConsoleRunner
-    NUnit.Console
-    NUnit3TestAdapter
-    Microsoft.NET.Test.Sdk
+    Expecto
+    Expecto.FsCheck
