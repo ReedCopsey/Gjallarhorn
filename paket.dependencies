@@ -16,4 +16,5 @@ group Test
   nuget Expecto
   nuget Expecto.FsCheck
   nuget FSharp.Core >= 4.3.2
-  nuget Argu 3.7
+  nuget YoloDev.Expecto.TestSdk
+  nuget Microsoft.NET.Test.Sdk

@@ -161,7 +161,18 @@ Target "Build" (fun _ ->
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-    test !! "tests/**/bin/Release/netcoreapp2.0/*Gjallarhorn*Tests.dll*"
+   // test !! "tests/**/bin/Release/netcoreapp2.0/*Gjallarhorn*Tests.dll*"
+    let projects = !! "./tests/**/Gjallarhorn.Linq.Tests.csproj"
+                   ++ "./tests/**/Gjallarhorn.Tests.fsproj"
+    let runSingleProject project =
+        DotNetCli.Test
+            (fun p -> 
+                { p with 
+                    Configuration = "Release"
+                    Project = project
+                    TimeOut = TimeSpan.FromMinutes 20.
+                })
+    projects |> Seq.iter runSingleProject
 )
 
 #if MONO
