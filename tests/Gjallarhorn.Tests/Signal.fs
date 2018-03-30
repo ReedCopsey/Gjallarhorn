@@ -551,106 +551,6 @@ let ``Async mutables propogates changes properly`` () =
     Assert.AreEqual(50, value)
 
 [<Test>]
-let ``Signal\toFunction allows closing over a mutable`` () =
-    let mutable result = ""
-    let count = ref 0
-
-    let myService config : unit -> string =
-      fun () -> 
-        incr count
-        sprintf "config=%s" config       
-
-    let myConfig = Mutable.create "A"
-
-    let myService' =
-        myConfig
-        |> Signal.map myService
-        |> Signal.toFunction
-
-    Assert.AreEqual(0, !count)
-    result <- myService' () 
-
-    Assert.AreEqual(1, !count)
-    Assert.AreEqual("config=A", result)
-
-    // Setting the value 
-    myConfig.Value <- "B"
-    Assert.AreEqual(1, !count)
-    
-    // But calling it now that the original is set does
-    result <- myService' () 
-    Assert.AreEqual("config=B", result)
-    Assert.AreEqual(2, !count)
-
-
-[<Test>]
-let ``Signal\toFunction allows closing over a mapped signal`` () =
-    let mutable result = ""
-    let count = ref 0
-
-    let myService (config:string) : unit -> string =
-      fun () -> 
-        incr count
-        sprintf "config=%s" config
-        
-
-    let myConfig = Mutable.create 1
-
-    let myService' =
-        myConfig
-        |> Signal.map string
-        |> Signal.map myService
-        |> Signal.toFunction
-
-    Assert.AreEqual(0, !count)
-    result <- myService' () 
-
-    Assert.AreEqual(1, !count)
-    Assert.AreEqual("config=1", result)
-
-    // Setting the value doesn't trigger execution
-    myConfig.Value <- 2
-    Assert.AreEqual(1, !count)
-    
-    // But calling it now that the original is set does
-    result <- myService' () 
-    Assert.AreEqual("config=2", result)
-    Assert.AreEqual(2, !count)
-
-[<Test>]
-let ``Signal\mapFunction allows closing over a mapped signal`` () =
-    let mutable result = ""
-    let count = ref 0
-
-    let myService (config:string) : unit -> string =
-      fun () -> 
-        incr count
-        sprintf "config=%s" config
-        
-
-    let myConfig = Mutable.create 1
-
-    let myService' =
-        myConfig
-        |> Signal.map string
-        |> Signal.mapFunction myService        
-
-    Assert.AreEqual(0, !count)
-    result <- myService' () 
-
-    Assert.AreEqual(1, !count)
-    Assert.AreEqual("config=1", result)
-
-    // Setting the value doesn't trigger execution
-    myConfig.Value <- 2
-    Assert.AreEqual(1, !count)
-    
-    // But calling it now that the original is set does
-    result <- myService' () 
-    Assert.AreEqual("config=2", result)
-    Assert.AreEqual(2, !count)
-
-[<Test>]
 let ``Signal\map which throws is able to be handled`` () =
     try
         let value = Mutable.create 1
@@ -703,16 +603,16 @@ let ``Signal\mapAsync pushes onto proper context`` () =
             do! Async.Sleep 10
             printfn "Running..."
             do! Async.SwitchToContext ctx
-            return [ input + 1 ]
+            return [| input + 1 |]
         }
 
     let result =
         input
-        |> Signal.mapAsync op [ -1 ]
+        |> Signal.mapAsync op [| -1 |]
 
     let subCnt = ref 0
     use _sub = result |> Signal.Subscription.create (fun v -> 
-                            printfn "Sub %d" (List.head v)
+                            printfn "Sub %A" v
                             incr subCnt
                             )
 

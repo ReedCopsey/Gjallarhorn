@@ -12,7 +12,7 @@ type private PostMessage<'a> =
     | Update of ('a -> 'a) * AsyncReplyChannel<'a>
 
 /// Type which manages state internally using a mailbox
-type AsyncMutable<'a> (initialState : 'a) =
+type AsyncMutable<'a when 'a : equality> (initialState : 'a) =
     // Provide a mechanism to publish changes to our state as an observable
     // Note that we could have used a mutable here, but that would effectively
     // "duplicate state"

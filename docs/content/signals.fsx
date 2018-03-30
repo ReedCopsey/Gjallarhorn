@@ -154,35 +154,6 @@ obs
 e.Trigger 54
 
 (**
-
-It is also possible to use signals by closing over them with functions.  This provides a clean mechanism for working with configuration.
-
-For example:
-
-*)
-
-type Configuration = { Author : string ; AutoPublish : bool }
-let config = Mutable.create { Author = "Foo" ; AutoPublish = false }
-
-let workWithConfig (author: string) op =
-    printfn "%s Author = %s" op author
-
-let operation = 
-    config
-    |> Signal.map (fun c -> c.Author)
-    |> Signal.mapFunction workWithConfig
-
-operation "One"
-// prints "One Author = Foo"
-
-// Change our configuration
-config.Value <- { Author = "Reed" ; AutoPublish = true }
-
-operation "One"
-// prints "One Author = Reed"
-
-
-(**
  
 Now, let's move on to [Mutables in Gjallarhorn](mutables.html).    
 *)

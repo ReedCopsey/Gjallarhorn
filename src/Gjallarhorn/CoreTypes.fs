@@ -2,10 +2,8 @@
 
 open Gjallarhorn
 open Gjallarhorn.Internal
-open Gjallarhorn.Validation
 
 open System
-open System.Collections.Generic
 open System.Runtime.CompilerServices
 
 [<Extension>]
@@ -97,14 +95,13 @@ module internal DisposeHelpers =
 
 namespace Gjallarhorn.Internal
 
-open System
-open System.Collections.Generic
-
 open Gjallarhorn
 open Gjallarhorn.Helpers
 
+open System
+
 /// A lightweight wrapper for a mutable value which provides a mechanism for change notification as needed
-type Mutable<'a>(value : 'a) =
+type Mutable<'a when 'a : equality>(value : 'a) =
 
     let mutable v = value
 
@@ -115,7 +112,7 @@ type Mutable<'a>(value : 'a) =
     member this.Value 
         with get() = v
         and set(value) =
-            if not(EqualityComparer<'a>.Default.Equals(v, value)) then            
+            if v <> value then            
                 v <- value
                 this.Dependencies.MarkDirty(this)
 
@@ -220,7 +217,7 @@ type SignalBase<'a>(dependencies) as self =
             GC.SuppressFinalize this
 
 /// Type to wrap in observable into a signal.
-type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialValue) as self =
+type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObservable<'a>, initialValue) as self =
     let dependencies = Dependencies.create [| |] self
     let mutable lastValue = initialValue
 
@@ -256,7 +253,7 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
             signalGuard <- false
     
     member private this.UpdateValue v = 
-        if not <| EqualityComparer<'a>.Default.Equals(lastValue, v) then
+        if lastValue <> v then
             lastValue <- v
             this.Signal()
 
@@ -296,7 +293,7 @@ type internal ObservableToSignal<'a>(valueProvider : IObservable<'a>, initialVal
             valueProvider <- None
             GC.SuppressFinalize this
 
-type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
+type internal MappingSignal<'a,'b when 'a : equality and 'b : equality>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
     inherit SignalBase<'b>([| valueProvider |])    
     
     let mutable valueProvider = Some(valueProvider)
@@ -313,23 +310,23 @@ type internal MappingSignal<'a,'b>(valueProvider : ISignal<'a>, mapping : 'a -> 
     override this.UpdateAndGetCurrentValue updateRequired =
         if updateRequired then
             let input = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
-            if not <| EqualityComparer<_>.Default.Equals(lastInput, input) then
+            if lastInput <> input then
                 lastInput <- input
                 let value = lastInput |> mapping
-                if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                if lastValue <> value then
                     lastValue <- value     
         lastValue      
    
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose 
 
-type internal ObserveOnSignal<'a>(valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
+type internal ObserveOnSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
     inherit MappingSignal<'a,'a>(valueProvider, id, false)
 
     member private __.MarkDirtyBase source = base.MarkDirtyGuarded source
     override this.MarkDirtyGuarded source = ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.MarkDirtyBase source), null)
 
-type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
+type internal Mapping2Signal<'a,'b,'c when 'a : equality and 'b : equality and 'c : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
     inherit SignalBase<'c>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = Unchecked.defaultof<'c> 
@@ -347,13 +344,12 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         if updateRequired then
             let v1 = DisposeHelpers.getValue valueProvider1 (fun _ -> this.GetType().FullName)
             let v2 = DisposeHelpers.getValue valueProvider2 (fun _ -> this.GetType().FullName)
-            if not <| EqualityComparer<_>.Default.Equals(lastInput1, v1) 
-                || not <| EqualityComparer<_>.Default.Equals(lastInput2, v2) then
+            if lastInput1 <> v1 || lastInput2 <> v2 then
                 lastInput1 <- v1
                 lastInput2 <- v2
                 let value = 
                     mapping v1 v2
-                if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+                if lastValue <> value then
                     lastValue <- value
                     this.MarkDirtyGuarded this
         lastValue    
@@ -362,7 +358,7 @@ type internal Mapping2Signal<'a,'b,'c>(valueProvider1 : ISignal<'a>, valueProvid
         this |> DisposeHelpers.cleanup &valueProvider1 false
         this |> DisposeHelpers.cleanup &valueProvider2 false 
 
-type internal MergeSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
+type internal MergeSignal<'a when 'a : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
     inherit SignalBase<'a>([| valueProvider1 ; valueProvider2 |])
 
     let mutable lastValue = valueProvider2.Value
@@ -379,7 +375,7 @@ type internal MergeSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISi
         this.Dirty <- false
         if (valueProvider1.IsSome) then
             let value = value()
-            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            if lastValue <> value then
                 lastValue <- value
                 base.MarkDirtyGuarded this
     
@@ -392,7 +388,7 @@ type internal MergeSignal<'a>(valueProvider1 : ISignal<'a>, valueProvider2 : ISi
         this |> DisposeHelpers.cleanup &valueProvider1 false 
         this |> DisposeHelpers.cleanup &valueProvider2 false 
 
-type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) =
+type internal IfSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) =
     inherit SignalBase<'a>([| valueProvider ; conditionProvider |])
 
     let mutable lastValue = if conditionProvider.Value then valueProvider.Value else initialValue
@@ -409,7 +405,7 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionP
                 else
                     lastValue
 
-            if not <| EqualityComparer<_>.Default.Equals(lastValue, value) then
+            if lastValue <> value then
                 lastValue <- value
         lastValue
     
@@ -418,7 +414,7 @@ type internal IfSignal<'a>(valueProvider : ISignal<'a>, initialValue, conditionP
         this |> DisposeHelpers.cleanup &valueProvider false 
         this |> DisposeHelpers.cleanup &conditionProvider false
 
-type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
+type internal FilteredSignal<'a when 'a : equality> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
     inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = Unchecked.defaultof<'a> 
@@ -435,14 +431,14 @@ type internal FilteredSignal<'a> (valueProvider : ISignal<'a>, initialValue : 'a
             | Some provider ->
                 let value = provider.Value                
                 if (filter(value)) then
-                    if not <| EqualityComparer<'a>.Default.Equals(lastValue, value) then
+                    if lastValue <> value then
                         lastValue <- value
         lastValue
 
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose 
                         
-type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
+type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
     inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = Unchecked.defaultof<'b>
@@ -463,7 +459,7 @@ type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b
             let value = provider.Value                
             match (filter(value)) with
             | Some newValue ->
-                if not <| EqualityComparer<'b>.Default.Equals(lastValue, newValue) then
+                if lastValue <> newValue then
                     lastValue <- newValue
             | None -> ()
         lastValue
@@ -471,7 +467,7 @@ type internal ChooseSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider false
 
-type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
+type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>) as self =
     inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = valueProvider.Value
@@ -489,7 +485,7 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
         handle
         |> WeakRef.execute (fun provider ->
             let value = provider.Value
-            if not <| EqualityComparer<'a>.Default.Equals(lastValue, value) then
+            if lastValue <> value then
                 lastValue <- value
                 this.MarkDirty this)
         |> ignore
@@ -552,8 +548,6 @@ namespace Gjallarhorn.Internal
 
 open Gjallarhorn
 open Gjallarhorn.Helpers
-open System
-open System.Collections.Generic
 
 type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as self =
     inherit SignalBase<'b>([| valueProvider |])

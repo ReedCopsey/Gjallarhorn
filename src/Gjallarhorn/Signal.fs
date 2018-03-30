@@ -51,7 +51,7 @@ module Signal =
 
             let conditionallyUpdate () =
                 let v = provider.Value
-                if not <| EqualityComparer<'a>.Default.Equals(lastValue, v) then
+                if lastValue <> v then
                     lastValue <- v
                     f(v)
 
@@ -221,17 +221,6 @@ module Signal =
         let f1, bc = liftO f v1 v2 v3
         mapOption9 f1 v1 bc v4 v5 v6 v7 v8 v9 v10
 
-    /// Creates a function from a signal containing a function, where the value is fetched on execution
-    let toFunction (fs:ISignal<'a -> 'b>) : 'a -> 'b =
-        let execute v = fs.Value(v)
-        execute
-
-    /// Maps a function from a signal containing a function, where the value is fetched on execution
-    let mapFunction (f:'c -> 'a -> 'b) (v : ISignal<'c>) : 'a -> 'b =
-        v 
-        |> map f
-        |> toFunction
-
     /// Filters the signal, so only values matching the predicate are cached and propogated onwards. 
     /// If the provider's value doesn't match the predicate, the resulting signal begins with the provided defaultValue.
     let filter (predicate : 'a -> bool) defaultValue (provider : ISignal<'a>) =
@@ -281,7 +270,7 @@ module Signal =
     let observeOn ctx (signal : ISignal<'a>) =
         new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
                 
-    type internal ValidatorMappingSignal<'a,'b>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
+    type internal ValidatorMappingSignal<'a,'b when 'a : equality>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
         inherit SignalBase<'b option>([| valueProvider |])
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
@@ -320,7 +309,7 @@ module Signal =
         member private this.Update source =            
             let value = DisposeHelpers.getValue valueProvider (fun _ -> this.GetType().FullName)
             let signalValue, signalValidation =
-                if Operators.not <| EqualityComparer<_>.Default.Equals(lastInputValue, value) then
+                if lastInputValue <> value then
                     lastInputValue <- value
                     let valid = validateCurrent value
                     lastValue <- if (snd valid).IsValidResult then Some (fst valid) else None
@@ -367,6 +356,6 @@ module Signal =
                     isValid (snd lastValidation)
 
     /// Validates a signal with a validation chain
-    let validate<'a,'b> (validator : ValidationCollector<'a> -> ValidationCollector<'b>) (signal : ISignal<'a>) =
+    let validate<'a,'b when 'a : equality> (validator : ValidationCollector<'a> -> ValidationCollector<'b>) (signal : ISignal<'a>) =
         // TODO: Should we pass through defaults?
         new ValidatorMappingSignal<'a,'b>(validator, signal) :> IValidatedSignal<'a, 'b>    
