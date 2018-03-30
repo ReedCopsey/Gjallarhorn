@@ -1,3 +1,7 @@
+#### 1.2.3 - March 30th 2018
+* Fixed bug related to subscriptions on cached signals
+* Fixed bug related to subscriptions on async mapped signals
+
 #### 1.2.2 - March 8th 2018
 * Using .NET Standard 2.0
 * Improved behavior around mapping. Laziness preserved while still not evaluating more than necessary
