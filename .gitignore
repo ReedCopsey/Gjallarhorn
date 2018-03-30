@@ -189,4 +189,3 @@ docs/content/release-notes.md
 docs/tools/FSharp.Formatting.svclog
 Settings.FSharpLint
 .paket/Paket.Restore.targets
-.paket/Paket.Restore.targets

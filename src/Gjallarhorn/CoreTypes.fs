@@ -555,7 +555,7 @@ open Gjallarhorn.Helpers
 open System
 open System.Collections.Generic
 
-type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as self =
+type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as self =
     inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = initialValue
@@ -582,7 +582,7 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
                     
                 let! result = mapFn(inputValue)
 
-                if not <| EqualityComparer<_>.Default.Equals(lastValue, result) then    
+                if lastValue <> result then    
                     if (ctx <> null) then
                         do! Async.SwitchToContext ctx
                     releaseHandle()

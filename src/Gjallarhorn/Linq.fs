@@ -102,7 +102,7 @@ type SignalExtensions() =
 
     [<Extension>]
     /// Perform an asynchronous mapping from one signal to another
-    static member SelectAsync<'a,'b> (this:ISignal<'a>, initialValue:'b, mapper:Func<'a,Task<'b>>) =
+    static member SelectAsync<'a,'b when 'b : equality> (this:ISignal<'a>, initialValue:'b, mapper:Func<'a,Task<'b>>) =
         let mapping a = 
             async {
                 let! result = Async.AwaitTask (mapper.Invoke a)
@@ -113,7 +113,7 @@ type SignalExtensions() =
 
     [<Extension>]
     /// Perform an asynchronous mapping from one signal to another, tracking execution via an IdleTracker
-    static member SelectAsync<'a,'b> (this:ISignal<'a>, initialValue:'b, tracker, mapper:Func<'a,Task<'b>>) =
+    static member SelectAsync<'a,'b when 'b : equality> (this:ISignal<'a>, initialValue:'b, tracker, mapper:Func<'a,Task<'b>>) =
         let mapping a = 
             async {
                 let! result = Async.AwaitTask (mapper.Invoke a)

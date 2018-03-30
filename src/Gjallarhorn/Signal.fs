@@ -103,7 +103,7 @@ module Signal =
         signal :> ISignal<'b>
 
     /// Transforms a signal value asynchronously by using a specified mapping function.
-    let mapAsync (mapping : 'a -> Async<'b>) initialValue (provider : ISignal<'a>) =
+    let mapAsync<'a,'b when 'b : equality> (mapping : 'a -> Async<'b>) initialValue (provider : ISignal<'a>) =
         let signal = new AsyncMappingSignal<'a,'b>(provider,initialValue, None, mapping)
         signal :> ISignal<'b>
 
