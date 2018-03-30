@@ -491,12 +491,14 @@ type internal CachedSignal<'a> (valueProvider : ISignal<'a>) as self =
             let value = provider.Value
             if not <| EqualityComparer<'a>.Default.Equals(lastValue, value) then
                 lastValue <- value
-                this.MarkDirtyGuarded this)
+                this.MarkDirty this)
         |> ignore
 
     override __.UpdateAndGetCurrentValue _ = lastValue
 
-    override this.MarkDirty _ = this.Update ()
+    override this.MarkDirty v = 
+                this.Update ()
+                base.MarkDirty v
 
     override this.OnDisposing () =
         handle
@@ -585,7 +587,7 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
                         do! Async.SwitchToContext ctx
                     releaseHandle()
                     lastValue <- result
-                    this.MarkDirty ()    
+                    this.MarkDirty this
                 else
                     releaseHandle()
             }
@@ -594,7 +596,9 @@ type internal AsyncMappingSignal<'a,'b>(valueProvider : ISignal<'a>, initialValu
 
     override __.UpdateAndGetCurrentValue _ = lastValue    
 
-    override this.MarkDirty _ = this.Update ()
+    override this.MarkDirty v = 
+        this.Update ()
+        base.MarkDirty v
 
     override this.OnDisposing () =
         this |> DisposeHelpers.cleanup &valueProvider false

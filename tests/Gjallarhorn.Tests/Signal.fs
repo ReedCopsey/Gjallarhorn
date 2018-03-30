@@ -659,3 +659,67 @@ let ``Signal\map which throws is able to be handled`` () =
         printfn "%A" final.Value
     with
     | _ as exp -> printfn "%A" exp.Message
+
+
+type TestSyncContext () =
+    inherit System.Threading.SynchronizationContext()
+
+    let runs = ref 0
+
+    override this.Post (cb, state) =
+        incr runs
+        cb.Invoke(state)
+
+    override this.Send (cb, state) =
+        incr runs
+        cb.Invoke(state)
+
+    member __.Runs = !runs
+
+[<Test>]
+let ``Signal\cache pushes through subscriptions properly`` () =
+    let input = Mutable.create 0
+
+    let result = input |> Signal.cache
+
+    let subCnt = ref 0
+    use _sub = result |> Signal.Subscription.create (fun v -> 
+                            printfn "Sub %d" v
+                            incr subCnt
+                            )
+
+    input.Value <- 42
+
+    Assert.AreEqual(42, result.Value)
+    Assert.AreEqual(2, !subCnt, "Subscription Count wrong")
+
+[<Test>]
+let ``Signal\mapAsync pushes onto proper context`` () =
+    let input = Mutable.create 0
+
+    let ctx = TestSyncContext()
+
+    let op input = async {            
+            printfn "Running..."
+            do! Async.SwitchToContext ctx
+            return [ input + 1 ]
+        }
+
+    let result =
+        input
+        |> Signal.mapAsync op [ -1 ]
+
+    let subCnt = ref 0
+    use _sub = result |> Signal.Subscription.create (fun v -> 
+                            printfn "Sub %d" (List.head v)
+                            incr subCnt
+                            )
+
+    input.Value <- 41
+
+    System.Threading.Thread.Sleep 250
+
+    Assert.AreEqual([ 42 ], result.Value)
+    Assert.AreEqual(2, ctx.Runs)
+    Assert.AreEqual(2, !subCnt) // One when setup, one when changed
+            
