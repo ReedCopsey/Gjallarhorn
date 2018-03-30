@@ -691,7 +691,7 @@ let ``Signal\cache pushes through subscriptions properly`` () =
     input.Value <- 42
 
     Assert.AreEqual(42, result.Value)
-    Assert.AreEqual(2, !subCnt, "Subscription Count wrong")
+    Assert.AreEqual(1, !subCnt)
 
 [<Test>]
 let ``Signal\mapAsync pushes onto proper context`` () =
@@ -700,6 +700,7 @@ let ``Signal\mapAsync pushes onto proper context`` () =
     let ctx = TestSyncContext()
 
     let op input = async {            
+            do! Async.Sleep 10
             printfn "Running..."
             do! Async.SwitchToContext ctx
             return [ input + 1 ]
@@ -721,5 +722,5 @@ let ``Signal\mapAsync pushes onto proper context`` () =
 
     Assert.AreEqual([ 42 ], result.Value)
     Assert.AreEqual(2, ctx.Runs)
-    Assert.AreEqual(2, !subCnt) // One when setup, one when changed
+    Assert.AreEqual(1, !subCnt)
             

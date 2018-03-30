@@ -5,9 +5,9 @@ REDIRECTS: ON
 RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FAKE (4.64.4)
+    FAKE (4.64.11)
     FSharp.Compiler.Service (2.0.0.6)
-    FSharp.Core (4.3.3)
+    FSharp.Core (4.3.4)
     FSharp.Formatting (2.14.4)
       FSharp.Compiler.Service (2.0.0.6)
       FSharpVSPowerTools.Core (>= 2.3 < 2.4)
@@ -16,25 +16,23 @@ NUGET
     Microsoft.NETCore.Platforms (2.0.1)
     NETStandard.Library (2.0.1)
       Microsoft.NETCore.Platforms (>= 1.1)
-    Octokit (0.28)
-      NETStandard.Library (>= 1.6.1)
+    Octokit (0.29)
+      NETStandard.Library (>= 1.6)
     SourceLink.Fake (1.1)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (df5735a1002c4b2326f419fbf97b0b11cb459fd3)
+    modules/Octokit/Octokit.fsx (3a396e5ba4a5a00103be6b8393f37ece2f840eb7)
       Octokit (>= 0.20)
 GROUP Test
 REDIRECTS: ON
 RESTRICTION: == net461
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Core (4.3.3)
+    FSharp.Core (4.3.4)
     Microsoft.CodeCoverage (1.0.3)
-    Microsoft.NET.Test.Sdk (15.5)
+    Microsoft.NET.Test.Sdk (15.6.2)
       Microsoft.CodeCoverage (>= 1.0.3)
-      Microsoft.TestPlatform.TestHost (>= 15.5)
-    Microsoft.TestPlatform.TestHost (15.5)
-    NUnit (3.9)
+    NUnit (3.10.1)
     NUnit.Console (3.8)
       NUnit.ConsoleRunner (>= 3.8)
       NUnit.Extension.NUnitProjectLoader (>= 3.5)
@@ -48,5 +46,5 @@ NUGET
     NUnit.Extension.NUnitV2ResultWriter (3.6)
     NUnit.Extension.TeamCityEventListener (1.0.3)
     NUnit.Extension.VSProjectLoader (3.7)
-    NUnit3TestAdapter (3.9)
+    NUnit3TestAdapter (3.10)
     System.Globalization (4.3)
