@@ -318,7 +318,7 @@ type internal MappingSignal<'a,'b when 'a : equality and 'b : equality>(valuePro
         lastValue      
    
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose 
+        DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose this
 
 type internal ObserveOnSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
     inherit MappingSignal<'a,'a>(valueProvider, id, false)
@@ -355,8 +355,8 @@ type internal Mapping2Signal<'a,'b,'c when 'a : equality and 'b : equality and '
         lastValue    
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider1 false
-        this |> DisposeHelpers.cleanup &valueProvider2 false 
+         DisposeHelpers.cleanup &valueProvider1 false this
+         DisposeHelpers.cleanup &valueProvider2 false this
 
 type internal MergeSignal<'a when 'a : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
     inherit SignalBase<'a>([| valueProvider1 ; valueProvider2 |])
@@ -385,8 +385,8 @@ type internal MergeSignal<'a when 'a : equality>(valueProvider1 : ISignal<'a>, v
     override this.MarkDirty obj = this.Update obj
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider1 false 
-        this |> DisposeHelpers.cleanup &valueProvider2 false 
+        DisposeHelpers.cleanup &valueProvider1 false this
+        DisposeHelpers.cleanup &valueProvider2 false this
 
 type internal IfSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) =
     inherit SignalBase<'a>([| valueProvider ; conditionProvider |])
@@ -411,8 +411,8 @@ type internal IfSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, initi
     
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider false 
-        this |> DisposeHelpers.cleanup &conditionProvider false
+        DisposeHelpers.cleanup &valueProvider false this
+        DisposeHelpers.cleanup &conditionProvider false this
 
 type internal FilteredSignal<'a when 'a : equality> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
     inherit SignalBase<'a>([| valueProvider |])
@@ -436,7 +436,7 @@ type internal FilteredSignal<'a when 'a : equality> (valueProvider : ISignal<'a>
         lastValue
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose 
+        DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose this
                         
 type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
     inherit SignalBase<'b>([| valueProvider |])
@@ -465,7 +465,7 @@ type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>
         lastValue
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider false
+        DisposeHelpers.cleanup &valueProvider false this
 
 type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>) as self =
     inherit SignalBase<'a>([| valueProvider |])
@@ -595,4 +595,4 @@ type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISign
         base.MarkDirty v
 
     override this.OnDisposing () =
-        this |> DisposeHelpers.cleanup &valueProvider false
+        DisposeHelpers.cleanup &valueProvider false this
