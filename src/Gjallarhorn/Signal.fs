@@ -325,7 +325,7 @@ module Signal =
         override this.MarkDirty source = this.Update source
 
         override this.OnDisposing () =
-            this |> DisposeHelpers.cleanup &valueProvider false 
+            DisposeHelpers.cleanup &valueProvider false this
             validationDeps.RemoveAll (this :> IValidatedSignal<'a,'b>).ValidationResult
 
         interface IValidatedSignal<'a, 'b> with
