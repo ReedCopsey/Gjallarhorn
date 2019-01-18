@@ -4,7 +4,6 @@
 
 #r @"packages/build/FAKE/tools/FakeLib.dll"
 open Fake
-open Fake.Testing.NUnit3
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
@@ -138,30 +137,39 @@ Target "Restore" (fun _ ->
     DotNetCli.Restore id      
 )
 
+Target "Build" (fun _ ->
+    DotNetCli.Build id
+)
+
 // --------------------------------------------------------------------------------------
 // Build library & test project
 
-Target "Build" (fun _ ->
-    !! solutionFile
-#if MONO
-    |> MSBuildReleaseExt "" [ ("DefineConstants","MONO") ] "Rebuild"
-#else
-    |> MSBuildRelease "" "Rebuild"
-#endif
-    |> ignore
-)
+//Target "Build" (fun _ ->
+//    !! solutionFile
+//#if MONO
+//    |> MSBuildReleaseExt "" [ ("DefineConstants","MONO") ] "Rebuild"
+//#else
+//    |> MSBuildRelease "" "Rebuild"
+//#endif
+//    |> ignore
+//)
 
 // --------------------------------------------------------------------------------------
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-    !! testAssemblies
-    |> NUnit3 (fun p ->
-        { p with
-            ToolPath = @".\packages\test\NUnit.ConsoleRunner\tools\nunit3-console.exe"
-            TimeOut = TimeSpan.FromMinutes 20. })
+    let projects = !! "./tests/**/Gjallarhorn.Linq.Tests.csproj"
+                   ++ "./tests/**/Gjallarhorn.Tests.fsproj"
+    let runSingleProject project =
+        DotNetCli.Test
+            (fun p -> 
+                { p with 
+                    Configuration = "Release"
+                    Project = project
+                    TimeOut = TimeSpan.FromMinutes 20.
+                })
+    projects |> Seq.iter runSingleProject
 )
-
 #if MONO
 #else
 // --------------------------------------------------------------------------------------

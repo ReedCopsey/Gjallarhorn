@@ -1,65 +1,72 @@
-﻿using NUnit.Framework;
+﻿using Expecto;
+using Expecto.CSharp;
 using System;
 using System.Threading.Tasks;
-using Gjallarhorn.Linq;
-using Gjallarhorn.Helpers;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using Gjallarhorn.Helpers;
 
 namespace Gjallarhorn.Linq.Tests
 {
     public class SignalLinq
     {
-        System.Globalization.CultureInfo culture = null;
-
-        [SetUp]
-        public void Setup()
+        private static Test ActionTestCase(string name, Action action)
         {
-            culture = System.Threading.Thread.CurrentThread.CurrentCulture;
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+            return Runner.TestCase(name, action);
         }
 
-        [TearDown]
-        public void Teardown()
-        {
-            System.Threading.Thread.CurrentThread.CurrentCulture = culture;
-        }
+        [Tests]
+        public static Test SiqnalLinq =
+            Runner.TestList("SiqnalLinq", new Test[] {
+                ActionTestCase("CanConstructMutables", CanConstructMutables),
+                ActionTestCase("MutableUpdateWorks",  MutableUpdateWorks),
+                ActionTestCase("MutableUpdateWorksWithCollection", MutableUpdateWorksWithCollection),
+                ActionTestCase("CanSubscribeToSignalChanges",CanSubscribeToSignalChanges),
+                ActionTestCase("CopyToTracksSignalChanges",CopyToTracksSignalChanges),
+                ActionTestCase("SubscribeAndUpdateTracksSignalChanges",SubscribeAndUpdateTracksSignalChanges),
+                ActionTestCase("SelectWorksOffSignal",SelectWorksOffSignal),
+                Runner.TestCase("SelectAsyncWorksOffSignal", SelectAsyncWorksOffSignal()),
+                Runner.TestCase("SelectAsyncTracksProperly", SelectAsyncTracksProperly()),
+                ActionTestCase("SelectWorksWithQuerySyntax",SelectWorksWithQuerySyntax),
+                ActionTestCase("SelectPropogatesChangesWithQuerySyntax",SelectPropogatesChangesWithQuerySyntax),
+                ActionTestCase("SelectManyWorksWithQuerySyntax",SelectManyWorksWithQuerySyntax),
+                ActionTestCase("SelectManyWithFiveValuesWorksWithQuerySyntax",SelectManyWithFiveValuesWorksWithQuerySyntax),
+                ActionTestCase("SelectManyPropogatesChangesWithQuerySyntax",SelectManyPropogatesChangesWithQuerySyntax),
+                ActionTestCase("ObservableToSignalPropogatesChanges",ObservableToSignalPropogatesChanges),
+                ActionTestCase("SignalCombinePropogatesSuccessfully",SignalCombinePropogatesSuccessfully),
+                ActionTestCase("SignalWherePropogatesCorrectly",SignalWherePropogatesCorrectly),
+                ActionTestCase("SignalWhenFiltersProperly",SignalWhenFiltersProperly)
+            });
 
-        [Test]
-        public void CanConstructMutables()
+        public static void CanConstructMutables()
         {
             var value = Mutable.Create(42);
             var value2 = Mutable.Create("Foo");
-                        
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("Foo", value2.Value);
+
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(value2.Value, "Foo", "should be equal");
         }
 
-        [Test]
-        public void MutableUpdateWorks()
+        public static void MutableUpdateWorks()
         {
             var value = Mutable.Create(0);
 
             Mutable.Update(value, o => o + 1);
             Mutable.Update(value, o => o - 3);
 
-            Assert.AreEqual(-2, value.Value);
+            Expect.equal(value.Value, -2, "should be equal");
         }
 
-        [Test]
-        public void MutableUpdateWorksWithCollection()
+        public static void MutableUpdateWorksWithCollection()
         {
             var value = Mutable.Create(new List<int> { 42, 54 });
 
-            Mutable.Update(value, (o => o.Concat(new[] {21, 15}).ToList()));
+            Mutable.Update(value, (o => o.Concat(new[] { 21, 15 }).ToList()));
 
-            CollectionAssert.AreEqual(new[] {42,54,21,15}, value.Value);
+            Expect.sequenceEqual(value.Value, new[] { 42, 54, 21, 15 }, "should be equal");
         }
 
-        [Test]
-        public void CanSubscribeToSignalChanges()
+        public static void CanSubscribeToSignalChanges()
         {
             int sum = 0;
 
@@ -68,91 +75,87 @@ namespace Gjallarhorn.Linq.Tests
             using (var _ = value.Subscribe(v => sum += v))
             {
                 value.Value = 10;
-                Assert.AreEqual(10, sum);
+                Expect.equal(sum, 10, "should be equal");
                 value.Value = 5;
-                Assert.AreEqual(15, sum);
+                Expect.equal(sum, 15, "should be equal");
             }
-            
+
             // Shouldn't impact value
             value.Value = 20;
-            Assert.AreEqual(15, sum);            
+            Expect.equal(sum, 15, "should be equal");
         }
 
-        [Test]
-        public void CopyToTracksSignalChanges()
+        public static void CopyToTracksSignalChanges()
         {
             var current = Mutable.Create(0);
 
             var value = Mutable.Create(0);
-            
+
             using (var _ = value.CopyTo(current))
-            {                
+            {
                 value.Value = 10;
-                Assert.AreEqual(10, current.Value);
+                Expect.equal(current.Value, 10, "should be equal");
                 value.Value = 15;
-                Assert.AreEqual(15, current.Value);
+                Expect.equal(current.Value, 15, "should be equal");
             }
 
             // Shouldn't impact value
             value.Value = 20;
-            Assert.AreEqual(15, current.Value);
+            Expect.equal(current.Value, 15, "should be equal");
         }
 
-        [Test]
-        public void SubscribeAndUpdateTracksSignalChanges()
+        public static void SubscribeAndUpdateTracksSignalChanges()
         {
             var sum = Mutable.Create(0);
 
             var value = Mutable.Create(0);
 
-            using (var _ = value.SubscribeAndUpdate(sum, (o,v) => o + v))
+            using (var _ = value.SubscribeAndUpdate(sum, (o, v) => o + v))
             {
                 value.Value = 10;
-                Assert.AreEqual(10, sum.Value);
+                Expect.equal(sum.Value, 10, "should be equal");
                 value.Value = 5;
-                Assert.AreEqual(15, sum.Value);
+                Expect.equal(sum.Value, 15, "should be equal");
             }
 
             // Shouldn't impact value
             value.Value = 20;
-            Assert.AreEqual(15, sum.Value);
+            Expect.equal(sum.Value, 15, "should be equal");
         }
 
-        [Test]
-        public void SelectWorksOffSignal()
+        public static void SelectWorksOffSignal()
         {
             var value = Mutable.Create(42);
             var mapped = value.Select(v => (v + 2).ToString());
 
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("44", mapped.Value);
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(mapped.Value, "44", "should be equal");
         }
-        
-        [Test]
-        public async Task SelectAsyncWorksOffSignal()
+
+        public static async Task SelectAsyncWorksOffSignal()
         {
             var value = Mutable.Create(0);
 
             var mapped = value.SelectAsync(
-                2, 
-                async v => {
+                2,
+                async v =>
+                {
                     await Task.Delay(20);
                     return v + 2;
                 });
 
             value.Value = 2;
-            Assert.AreEqual(2, value.Value);
+            Expect.equal(value.Value, 2, "should be equal");
             // Mapped should be 2 immediately after setting
-            Assert.AreEqual(2, mapped.Value);
+            Expect.equal(mapped.Value, 2, "should be equal");
 
             // Mapped should get updated async while this blocks
             await Task.Delay(50);
-            Assert.AreEqual(2, value.Value);
-            Assert.AreEqual(4, mapped.Value);
+            Expect.equal(value.Value, 2, "should be equal");
+            Expect.equal(mapped.Value, 4, "should be equal");
         }
 
-        [Test]
-        public async Task SelectAsyncTracksProperly()
+        public static async Task SelectAsyncTracksProperly()
         {
             var tracker = new IdleTracker(System.Threading.SynchronizationContext.Current);
 
@@ -161,60 +164,56 @@ namespace Gjallarhorn.Linq.Tests
             var mapped = value.SelectAsync(
                 2,
                 tracker,
-                async v => {
+                async v =>
+                {
                     await Task.Delay(20);
                     return v + 2;
                 });
 
-            Assert.IsTrue(tracker.Value);
+            Expect.isTrue(tracker.Value, "tracker value should be true");
             value.Value = 2;
 
-            Assert.AreEqual(2, value.Value);
+            Expect.equal(value.Value, 2, "should be equal");
             // Mapped should be 2 immediately after setting
-            Assert.AreEqual(2, mapped.Value);
-
+            Expect.equal(mapped.Value, 2, "should be equal");
             // Give us a chance to start...
             await Task.Delay(10);
-            Assert.IsFalse(tracker.Value);
-
+            Expect.isFalse(tracker.Value, "tracker value should be false");
             // And now let us finish
             await Task.Delay(100);
 
-            Assert.IsTrue(tracker.Value);
-            Assert.AreEqual(2, value.Value);
-            Assert.AreEqual(4, mapped.Value);
+            Expect.isTrue(tracker.Value, "tracker value should be true");
+            Expect.equal(value.Value, 2, "should be equal");
+            Expect.equal(mapped.Value, 4, "should be equal");
         }
 
-        [Test]
-        public void SelectWorksWithQuerySyntax()
+        public static void SelectWorksWithQuerySyntax()
         {
             var value = Mutable.Create(42);
             var mapped = from v in value
                          let newV = v + 2
                          select newV.ToString();
 
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("44", mapped.Value);
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(mapped.Value, "44", "should be equal");
         }
 
-        [Test]
-        public void SelectPropogatesChangesWithQuerySyntax()
+        public static void SelectPropogatesChangesWithQuerySyntax()
         {
             var value = Mutable.Create(42);
             var mapped = from v in value
                          let newV = v + 2
                          select newV.ToString();
 
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("44", mapped.Value);
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(mapped.Value, "44", "should be equal");
             value.Value = 55;
 
-            Assert.AreEqual(55, value.Value);
-            Assert.AreEqual("57", mapped.Value);
+            Expect.equal(value.Value, 55, "should be equal");
+            Expect.equal(mapped.Value, "57", "should be equal");
         }
 
-        [Test]
-        public void SelectManyWorksWithQuerySyntax()
+        public static void SelectManyWorksWithQuerySyntax()
         {
             var value = Mutable.Create(42);
             var sv = Mutable.Create("Foo");
@@ -224,12 +223,11 @@ namespace Gjallarhorn.Linq.Tests
                          let newV = s + v.ToString()
                          select newV;
 
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("Foo42", mapped.Value);
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(mapped.Value, "Foo42", "should be equal");
         }
 
-        [Test]
-        public void SelectManyWithFiveValuesWorksWithQuerySyntax()
+        public static void SelectManyWithFiveValuesWorksWithQuerySyntax()
         {
             var value1 = Mutable.Create(1);
             var value2 = Mutable.Create("2");
@@ -244,16 +242,15 @@ namespace Gjallarhorn.Linq.Tests
                          from e in value5
                          select $"{a}{b}{c}{d}{e}";
 
-            Assert.AreEqual("12345", mapped.Value);
+            Expect.equal(mapped.Value, "12345", "should be equal");
             value3.Value = 0;
-            Assert.AreEqual("12045", mapped.Value);
+            Expect.equal(mapped.Value, "12045", "should be equal");
             value2.Value = "Foo";
             value5.Value = "Bar";
-            Assert.AreEqual("1Foo04Bar", mapped.Value);
+            Expect.equal(mapped.Value, "1Foo04Bar", "should be equal");
         }
 
-        [Test]
-        public void SelectManyPropogatesChangesWithQuerySyntax()
+        public static void SelectManyPropogatesChangesWithQuerySyntax()
         {
             var value = Mutable.Create(42);
             var sv = Mutable.Create("Foo");
@@ -263,76 +260,69 @@ namespace Gjallarhorn.Linq.Tests
                          let newV = s + v.ToString()
                          select newV;
 
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual("Foo42", mapped.Value);
-
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(mapped.Value, "Foo42", "should be equal");
             value.Value = 55;
             sv.Value = "Bar";
 
-            Assert.AreEqual(55, value.Value);
-            Assert.AreEqual("Bar55", mapped.Value);
+            Expect.equal(value.Value, 55, "should be equal");
+            Expect.equal(mapped.Value, "Bar55", "should be equal");
         }
 
-        [Test]
-        public void ObservableToSignalPropogatesChanges()
+        public static void ObservableToSignalPropogatesChanges()
         {
             var value = Mutable.Create(42);
             IObservable<int> obs = value;
 
             var signal = obs.ToSignal(0);
-            Assert.AreEqual(42, value.Value);
-            Assert.AreEqual(0, signal.Value);
-
+            Expect.equal(value.Value, 42, "should be equal");
+            Expect.equal(signal.Value, 0, "should be equal");
             value.Value = 24;
-            Assert.AreEqual(24, value.Value);
-            Assert.AreEqual(24, signal.Value);
+            Expect.equal(value.Value, 24, "should be equal");
+            Expect.equal(signal.Value, 24, "should be equal");
         }
 
-        [Test]
-        public void SignalCombinePropogatesSuccessfully()
+        public static void SignalCombinePropogatesSuccessfully()
         {
             var v1 = Mutable.Create(1);
             var v2 = Mutable.Create(2L);
             var v3 = Mutable.Create(3.0);
             var v4 = Mutable.Create("4");
             var v5 = Mutable.Create(5);
-            
-            var signal = Signal.Combine(
-                            v1, 
-                            v2, 
-                            v3, 
-                            v4, 
-                            v5, 
-                            (a, b, c, d, e) => $"{a},{b},{c:N6},{d},{e}" );
 
-            Assert.AreEqual("1,2,3.000000,4,5", signal.Value);
+            var signal = Signal.Combine(
+                            v1,
+                            v2,
+                            v3,
+                            v4,
+                            v5,
+                            (a, b, c, d, e) => $"{a},{b},{c.ToString("N6", System.Globalization.CultureInfo.InvariantCulture)},{d},{e}");
+
+            Expect.equal(signal.Value, "1,2,3.000000,4,5", "should be equal");
             v3.Value = 8;
-            Assert.AreEqual("1,2,8.000000,4,5", signal.Value);
+            Expect.equal(signal.Value, "1,2,8.000000,4,5", "should be equal");
         }
 
-        [Test]
-
-        public void SignalWherePropogatesCorrectly()
+        public static void SignalWherePropogatesCorrectly()
         {
             var m = Mutable.Create(1);
             var s = m.Select(v => 10 * v).Where(v => v < 100);
             var s2 = m.Select(v => 10 * v).Where(v => v > 50, 55);
 
-            Assert.AreEqual(10, s.Value);
-            Assert.AreEqual(55, s2.Value);
+            Expect.equal(s.Value, 10, "should be equal");
+            Expect.equal(s2.Value, 55, "should be equal");
             m.Value = 5;
-            Assert.AreEqual(50, s.Value);
-            Assert.AreEqual(55, s2.Value);
+            Expect.equal(s.Value, 50, "should be equal");
+            Expect.equal(s2.Value, 55, "should be equal");
             m.Value = 25;
-            Assert.AreEqual(50, s.Value);
-            Assert.AreEqual(250, s2.Value);
+            Expect.equal(s.Value, 50, "should be equal");
+            Expect.equal(s2.Value, 250, "should be equal");
             m.Value = 7;
-            Assert.AreEqual(70, s.Value);
-            Assert.AreEqual(70, s2.Value);
+            Expect.equal(s.Value, 70, "should be equal");
+            Expect.equal(s2.Value, 70, "should be equal");
         }
 
-        [Test]
-        public void SignalWhenFiltersProperly()
+        public static void SignalWhenFiltersProperly()
         {
             var guard = Mutable.Create(true);
 
@@ -340,19 +330,18 @@ namespace Gjallarhorn.Linq.Tests
 
             var output = input.When(guard);
 
-            Assert.AreEqual(0, output.Value);
+            Expect.equal(output.Value, 0, "should be equal");
 
             input.Value = 1;
-            Assert.AreEqual(1, output.Value);
-
+            Expect.equal(output.Value, 1, "should be equal");
             // Set guard to false will prevent updates
             guard.Value = false;
             input.Value = 2;
-            Assert.AreEqual(1, output.Value);
+            Expect.equal(output.Value, 1, "should be equal");
 
             // Set guard to true will update
             guard.Value = true;
-            Assert.AreEqual(2, output.Value);
+            Expect.equal(output.Value, 2, "should be equal");
         }
     }
 }

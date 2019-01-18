@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Gjallarhorn.Linq.Tests": {
+      "commandName": "Project",
+      "commandLineArgs": "--summary"
+    }
+  }
+}
