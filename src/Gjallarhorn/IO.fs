@@ -14,7 +14,7 @@ type Direct<'a> (input : ISignal<'a>) =
     member __.GetValue () = input
 
 /// Used to report data to a user
-type Report<'a,'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
+type Report<'a,'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) =
     let source = Signal.map conversion input
 
     /// Signal used as a notification mechanism. 
@@ -24,7 +24,7 @@ type Report<'a,'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
     member __.GetValue () = source.Value
 
 /// Used to report data to a user with validation
-type ValidatedReport<'a, 'b> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as self =
+type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as self =
     inherit Report<'a, 'b>(input, conversion)
 
     let validation = 
@@ -35,7 +35,7 @@ type ValidatedReport<'a, 'b> (input : ISignal<'a>, conversion : 'a -> 'b, valida
     member __.Validation = validation
 
 /// Used as an input and output mapping to report and fetch data from a user
-type InOut<'a, 'b> (input : ISignal<'a>, conversion : 'a -> 'b) =    
+type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) =    
     let converted = Signal.map conversion input
     
     let editSource = Mutable.create converted.Value
@@ -56,7 +56,7 @@ type InOut<'a, 'b> (input : ISignal<'a>, conversion : 'a -> 'b) =
             subscription.Dispose()
 
 /// Used as an input and output mapping with validation to report and fetch data from a user
-type ValidatedInOut<'a, 'b, 'c> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) as self =
+type ValidatedInOut<'a, 'b, 'c when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) as self =
     inherit InOut<'a, 'b>(input, conversion)
 
     let validation = 
@@ -67,7 +67,7 @@ type ValidatedInOut<'a, 'b, 'c> (input : ISignal<'a>, conversion : 'a -> 'b, val
     member this.Output = validation
 
 /// Used as an output mapping to fetch data from a user
-type Out<'a> (initialValue : 'a) =    
+type Out<'a when 'a : equality> (initialValue : 'a) =    
     let editSource = Mutable.create initialValue
     
     /// Signal used as a notification mechanism for reporting
@@ -80,7 +80,7 @@ type Out<'a> (initialValue : 'a) =
     member __.SetValue v = editSource.Value <- v
 
 /// Used as an output mapping with validation to fetch data from a user
-type ValidatedOut<'a, 'b> (initialValue : 'a, validation : Validation<'a, 'b>) as self =
+type ValidatedOut<'a, 'b when 'a : equality> (initialValue : 'a, validation : Validation<'a, 'b>) as self =
     inherit Out<'a>(initialValue)    
 
     let validation = 
@@ -92,7 +92,7 @@ type ValidatedOut<'a, 'b> (initialValue : 'a, validation : Validation<'a, 'b>) a
     
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
-type MutatableInOut<'a,'b> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
+type MutatableInOut<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
     inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
 
     let subscription = 
@@ -132,7 +132,7 @@ module IO =
     module InOut =
 
         /// Create a simple input handle which pipes from the signal to user, to output
-        let create<'a> signal =
+        let create<'a when 'a : equality> signal =
             new InOut<'a,'a>(signal, id)
 
         /// Create a simple input handle which pipes from the signal to conversion, to user, to output
@@ -151,7 +151,7 @@ module IO =
     module MutableInOut =
 
         /// Create a simple input handle which pipes from the signal to user, validates to output, writes back to mutable
-        let validated<'a> validation mutatable = 
+        let validated<'a when 'a : equality> validation mutatable = 
             new MutatableInOut<'a,'a>(mutatable, id, validation)
 
         /// Create a simple input handle which pipes from the signal to conversion, user, validates to output, writes back to mutable

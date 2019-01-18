@@ -14,7 +14,6 @@ open System.IO
 #else
 #load "packages/build/SourceLink.Fake/tools/Fake.fsx"
 open SourceLink
-
 #endif
 
 // --------------------------------------------------------------------------------------
@@ -51,13 +50,7 @@ let solutionFile =
     | _ -> "Gjallarhorn.sln" 
 
 // Pattern specifying assemblies to be tested using NUnit
-let test target =
-    target
-    |> Seq.iter (fun t ->
-        let command = "dotnet"
-        let arg = t + " " + "--summary"
-        let result = ExecProcess (fun info -> info.FileName <- command; info.Arguments <- arg) (TimeSpan.FromMinutes 5.0)
-        if result <> 0 then failwithf "Tests failed: %s" t)
+let testAssemblies = "tests/**/bin/Release/*Tests*.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -144,24 +137,27 @@ Target "Restore" (fun _ ->
     DotNetCli.Restore id      
 )
 
+Target "Build" (fun _ ->
+    DotNetCli.Build id
+)
+
 // --------------------------------------------------------------------------------------
 // Build library & test project
 
-Target "Build" (fun _ ->
-    !! solutionFile
-#if MONO
-    |> MSBuildReleaseExt "" [ ("DefineConstants","MONO") ] "Rebuild"
-#else
-    |> MSBuildRelease "" "Rebuild"
-#endif
-    |> ignore
-)
+//Target "Build" (fun _ ->
+//    !! solutionFile
+//#if MONO
+//    |> MSBuildReleaseExt "" [ ("DefineConstants","MONO") ] "Rebuild"
+//#else
+//    |> MSBuildRelease "" "Rebuild"
+//#endif
+//    |> ignore
+//)
 
 // --------------------------------------------------------------------------------------
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-   // test !! "tests/**/bin/Release/netcoreapp2.0/*Gjallarhorn*Tests.dll*"
     let projects = !! "./tests/**/Gjallarhorn.Linq.Tests.csproj"
                    ++ "./tests/**/Gjallarhorn.Tests.fsproj"
     let runSingleProject project =
@@ -174,7 +170,6 @@ Target "RunTests" (fun _ ->
                 })
     projects |> Seq.iter runSingleProject
 )
-
 #if MONO
 #else
 // --------------------------------------------------------------------------------------

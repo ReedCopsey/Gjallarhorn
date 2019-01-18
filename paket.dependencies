@@ -4,15 +4,15 @@ group Build
   redirects: on
 	
   nuget SourceLink.Fake
-  nuget FAKE
+  nuget FAKE ~> 4
   nuget FSharp.Formatting
-	nuget FSharp.Core >= 4.3.2
+  nuget FSharp.Core >= 4.3.2
   github fsharp/FAKE modules/Octokit/Octokit.fsx
 
 group Test
   source https://api.nuget.org/v3/index.json
   redirects: on
-  framework:netcore2.0
+  framework:netcoreapp2.1
   nuget Expecto
   nuget Expecto.FsCheck
   nuget FSharp.Core >= 4.3.2
