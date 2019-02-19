@@ -45,16 +45,31 @@ let ``Signal\validate works on string`` () =
     validate.IsValid |> Assert.IsTrue
 
 type SomeRecord = { A : int }
+
 [<Test>]
 let ``Signal\validators: containedWithin`` () =
     let validValues = [ 4; 8; 15; 16; 23; 42 ] |> List.map (fun p -> { A = p })
-    let value = Mutable.create <| List.last validValues
+    let value = List.last validValues |> Mutable.create
+    
     let validated = 
         value 
         |> Signal.validate (Validation.Validators.containedWithin validValues)
     value.Value <- { A = -1 }
     validated.IsValid |> Assert.IsFalse
     value.Value <- { A = 4 }
+    validated.IsValid |> Assert.IsTrue
+
+[<Test>]
+let ``Signal\validators: notContainedWithin`` () =
+    let values = [ 4; 8; 15; 16; 23; 42 ] |> List.map (fun p -> { A = p })
+    let value = { A = -1 } |> Mutable.create
+    let validated = 
+        value 
+        |> Signal.validate (Validation.Validators.notContainedWithin values)
+    value.Value <- values |> List.last
+    validated.IsValid |> Assert.IsFalse
+    
+    value.Value <- { A = 0 }
     validated.IsValid |> Assert.IsTrue
 
 [<Test>]
