@@ -74,7 +74,7 @@ module Validation =
     /// Also supplies a custom error message to replace the existing
     let fixErrorsWithMessage errorMessage (step : ValidationCollector<'a>) =
         match step with
-        | ValidationCollector.Invalid(value, errors, InvalidValidationStatus.CollectingMessages) -> 
+        | ValidationCollector.Invalid(value, _, InvalidValidationStatus.CollectingMessages) -> 
             // Switch us from invalid to invalid with errors fixed
             ValidationCollector.Invalid(value, [errorMessage], InvalidValidationStatus.Completed)
         | _ -> step
@@ -90,8 +90,8 @@ module Validation =
         | _, ValidationCollector.Invalid(_, _, InvalidValidationStatus.Completed) -> step // If our errors are fixed coming in, just pass through
         | None, ValidationCollector.Valid(value) -> ValidationCollector.Valid(value)
         | None,  ValidationCollector.Invalid(value, err, status) -> ValidationCollector.Invalid(value, err, status)
-        | Some error, ValidationCollector.Valid(value) -> ValidationCollector.Invalid(value, [String.Format(error, value)], InvalidValidationStatus.CollectingMessages)
-        | Some error, ValidationCollector.Invalid(value, err, status) -> ValidationCollector.Invalid(value, err @ [String.Format(error, value)], status)
+        | Some error, ValidationCollector.Valid(value) -> ValidationCollector.Invalid(value, [error], InvalidValidationStatus.CollectingMessages)
+        | Some error, ValidationCollector.Invalid(value, err, status) -> ValidationCollector.Invalid(value, err @ [error], status)
 
     /// Create a custom converter validator using a function ('a -> Choice<'b,string>) and default value on conversion failure. Choice2of2 indicates a failure error message. The error message can use {0} for a placeholder for the property name.  Conversions always stop collecting on failure.
     let customConverter (validator : 'a -> Choice<'b,string>) (defaultOnFailure: 'b) (step : ValidationCollector<'a>) =        
@@ -239,11 +239,11 @@ module Validation =
             validateWith validation step
     
         let containedWithin collection step =
-            let validation value = if Option.isSome (Seq.tryFind ((=) value) collection) then None else Some ("{0} must be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection))
+            let validation value = if Seq.contains value collection then None else Some ("Value must be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection))
             validateWith validation step
 
         let notContainedWithin collection step =
-            let validation value = if Option.isNone (Seq.tryFind ((=) value) collection) then None else Some ("{0} cannot be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection))
+            let validation value = if Seq.contains value collection then Some ("Value cannot be one of: " + String.Join(", ", Seq.map (fun i -> i.ToString()) collection)) else None
             validateWith validation step
 
 
