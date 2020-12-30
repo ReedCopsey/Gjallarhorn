@@ -24,19 +24,19 @@ type Report<'a,'b when 'a : equality and 'b : equality> (input : ISignal<'a>, co
     member __.GetValue () = source.Value
 
 /// Used to report data to a user with validation
-type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) as self =
+type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> private (input : ISignal<'a>, conversion : 'a -> 'b) =
     inherit Report<'a, 'b>(input, conversion)
     
     /// The validation results as a signal
     member val private ValidationInternal = (ValueNone:IValidatedSignal<'b,'b> voption) with get, set
     member this.Validation = this.ValidationInternal
-        new(input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as this =
-            ValidatedReport<'a,'b>(input, conversion)
-            then
-                this.ValidationInternal <-
-                    this.UpdateStream
-                    |> Signal.validate validation
-                    |> ValueSome
+    new(input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as this =
+        ValidatedReport<'a,'b>(input, conversion)
+        then
+            this.ValidationInternal <-
+                this.UpdateStream
+                |> Signal.validate validation
+                |> ValueSome
 
 /// Used as an input and output mapping to report and fetch data from a user
 type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) =    
@@ -106,7 +106,7 @@ type ValidatedOut<'a, 'b when 'a : equality> private (initialValue : 'a) =
                 |> ValueSome
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
-type MutatableInOut<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>, dummy:unit) =
+type MutatableInOut<'a,'b when 'a : equality and 'b : equality> private (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>, dummy:unit) =
     inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
 
     member val private Subscription:IDisposable voption = ValueNone with get, set

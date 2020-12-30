@@ -217,7 +217,7 @@ type SignalBase<'a> private (dependencies:IDependencyManager<'a>) =
             GC.SuppressFinalize this
 
 /// Type to wrap in observable into a signal.
-type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObservable<'a>, initialValue:'a, dummy:unit) =
+type internal ObservableToSignal<'a when 'a : equality> private (valueProvider : IObservable<'a>, initialValue:'a, dummy:unit) =
     let mutable lastValue = initialValue
 
     // Wrap this in an option so we can stop referencing it on disposal
@@ -477,7 +477,7 @@ type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider false this
 
-type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>, dummy:unit) =
+type internal CachedSignal<'a when 'a : equality> private (valueProvider : ISignal<'a>, dummy:unit) =
     inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = valueProvider.Value
