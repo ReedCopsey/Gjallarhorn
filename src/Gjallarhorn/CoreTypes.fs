@@ -266,8 +266,10 @@ type internal ObservableToSignal<'a when 'a : equality> private (valueProvider :
 
     /// Default implementations work off single set of dependenices
     member __.HasDependencies with get() = dependencies.HasDependencies
-    member private _.SetDependencies(deps:IDependencyManager<'a>) = dependencies <- deps
-    member private _.SetWeakSubscription(subs:IDisposable)= weakSubscription <- subs
+
+    member private _.Init(deps:IDependencyManager<'a>, subs:IDisposable) =
+        dependencies <- deps
+        weakSubscription <- subs
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()        
@@ -298,8 +300,7 @@ type internal ObservableToSignal<'a when 'a : equality> private (valueProvider :
             GC.SuppressFinalize this
     static member Create<'a when 'a : equality>(valueProvider : IObservable<'a>, initialValue) =
         let ots = new ObservableToSignal<'a>(valueProvider, initialValue)
-        ots.SetDependencies(Dependencies.create [| |] ots)
-        ots.SetWeakSubscription(subscribeWeak ots valueProvider)
+        ots.Init(Dependencies.create [| |] ots, subscribeWeak ots valueProvider)
         ots
 
 /// Construct using the Create method
