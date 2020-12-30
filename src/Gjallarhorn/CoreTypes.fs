@@ -135,13 +135,7 @@ type Mutable<'a when 'a : equality>(value : 'a) =
 
 [<AbstractClass>]       
 /// Base class which simplifies implementation of standard signals
-type SignalBase<'a>(dependencies) as self =
-    let mutable disposed = false
-    do
-        dependencies
-        |> Array.iter (fun (d : ITracksDependents) -> d.Track self)
-
-    let dependencies = Dependencies.create dependencies self
+type SignalBase<'a> private (dependencies:IDependencyManager<'a>) =
     let mutable dirty = false
 
     // We have a signal guard in place to prevent stackoverflows.
@@ -154,6 +148,12 @@ type SignalBase<'a>(dependencies) as self =
     // triggers from occurring
     let mutable signalGuard = false
 
+    new(dependencies:ITracksDependents[]) as this =
+        new SignalBase<'a>(Dependencies.create dependencies this)
+        then
+            dependencies
+            |> Array.iter (fun d -> d.Track this)
+ 
     /// Signals to dependencies that we have updated
     abstract member MarkDirtyGuarded : obj -> unit
     default this.MarkDirtyGuarded _ = 
@@ -217,8 +217,7 @@ type SignalBase<'a>(dependencies) as self =
             GC.SuppressFinalize this
 
 /// Type to wrap in observable into a signal.
-type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObservable<'a>, initialValue) as self =
-    let dependencies = Dependencies.create [| |] self
+type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObservable<'a>, initialValue:'a, dummy:unit) =
     let mutable lastValue = initialValue
 
     // Wrap this in an option so we can stop referencing it on disposal
@@ -239,17 +238,19 @@ type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObserva
                     ObservableToSignal.SubscriptionOnNext (unbox t) v )
         sub    
 
-    let mutable weakSubscription = subscribeWeak self valueProvider.Value    
     let mutable signalGuard = false
 
     static member SubscriptionOnNext (target : ObservableToSignal<'a>) value =
         target.UpdateValue value
 
+    member val private Depencencies = ValueNone: IDependencyManager<'a> voption with get, set
+    member val private WeakSubscription:IDisposable voption = ValueNone with get, set
+
     /// Signals to dependencies that we have updated
     member this.Signal () = 
         if not signalGuard then
             signalGuard <- true
-            dependencies.MarkDirty this |> ignore
+            this.Depencencies |> ValueOption.iter (fun deps -> deps.MarkDirty this |> ignore)
             signalGuard <- false
     
     member private this.UpdateValue v = 
@@ -264,7 +265,8 @@ type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObserva
     member __.RequestRefresh _ = ()
 
     /// Default implementations work off single set of dependenices
-    member __.HasDependencies with get() = dependencies.HasDependencies
+    member this.HasDependencies
+        with get() = match this.Depencencies with ValueSome deps -> deps.HasDependencies | ValueNone -> false
 
     override this.Finalize() =
         (this :> IDisposable).Dispose()        
@@ -277,21 +279,29 @@ type internal ObservableToSignal<'a when 'a : equality>(valueProvider : IObserva
         member this.HasDependencies with get() = this.HasDependencies
 
     interface IObservable<'a> with
-        member this.Subscribe obs = dependencies.Subscribe (obs,this)
+        member this.Subscribe obs =
+            match this.Depencencies with
+            | ValueSome deps -> deps.Subscribe (obs,this)
+            | ValueNone -> new CompositeDisposable() :>IDisposable
 
     interface ITracksDependents with
-        member this.Track dep = 
-            dependencies.Add (dep,this)            
-        member this.Untrack dep = 
-            dependencies.Remove (dep,this)            
+        member this.Track dep =
+            this.Depencencies |> ValueOption.iter (fun deps -> deps.Add (dep, this))
+        member this.Untrack dep =
+            this.Depencencies |> ValueOption.iter (fun deps -> deps.Remove (dep, this))
 
     interface IDisposable with
         member this.Dispose () =            
-            dependencies.RemoveAll this
-            weakSubscription.Dispose()            
-            weakSubscription <- null
+            this.Depencencies |> ValueOption.iter (fun deps -> deps.RemoveAll this)
+            this.WeakSubscription |> ValueOption.iter (fun ws -> ws.Dispose())
+            this.WeakSubscription <- ValueNone
             valueProvider <- None
             GC.SuppressFinalize this
+    new(valueProvider : IObservable<'a>, initialValue:'a) as this =
+        new ObservableToSignal<'a>(valueProvider, initialValue, ())
+        then
+            this.Depencencies <- Dependencies.create [| |] this |> ValueSome
+            this.WeakSubscription <- subscribeWeak this valueProvider |> ValueSome
 
 type internal MappingSignal<'a,'b when 'a : equality and 'b : equality>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
     inherit SignalBase<'b>([| valueProvider |])    
@@ -467,16 +477,10 @@ type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider false this
 
-type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>) as self =
+type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>, dummy:unit) =
     inherit SignalBase<'a>([| valueProvider |])
 
     let mutable lastValue = valueProvider.Value
-
-    // Caching acts like a subscription, since it has to update in case the
-    // target is GCed
-    // Note: Tracking does not hold a strong reference, so disposal is not necessary still
-    do 
-        valueProvider.Track self
 
     // Only store a weak reference to our provider
     let handle = WeakReference<_>(valueProvider)
@@ -501,7 +505,16 @@ type internal CachedSignal<'a when 'a : equality> (valueProvider : ISignal<'a>) 
         |> WeakRef.execute (fun v ->
             v.Untrack this                    
             handle.SetTarget(Unchecked.defaultof<ISignal<'a>>))
-        |> ignore   
+        |> ignore
+
+    new(valueProvider : ISignal<'a>) as this =
+        new CachedSignal<'a>(valueProvider, ())
+        then
+            // Caching acts like a subscription, since it has to update in case the
+            // target is GCed
+            // Note: Tracking does not hold a strong reference, so disposal is not necessary still
+            do 
+                valueProvider.Track this
 
 namespace Gjallarhorn.Helpers
 
@@ -549,17 +562,12 @@ namespace Gjallarhorn.Internal
 open Gjallarhorn
 open Gjallarhorn.Helpers
 
-type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as self =
+type internal AsyncMappingSignal<'a,'b when 'b : equality> private (valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, cancellationToken : System.Threading.CancellationToken, dummy:unit) =
     inherit SignalBase<'b>([| valueProvider |])
 
     let mutable lastValue = initialValue
 
-    do
-        // We need to subscribe to changes immediately here,
-        // Since this acts like a cache
-        (valueProvider :> Internal.ITracksDependents).Track self
-
-    let mutable valueProvider = Some(valueProvider)    
+    let mutable valueProvider = Some(valueProvider)
     let ctx = System.Threading.SynchronizationContext.Current
 
     member private this.Update () =
@@ -576,7 +584,7 @@ type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISign
                     
                 let! result = mapFn(inputValue)
 
-                if lastValue <> result then    
+                if lastValue <> result then
                     if (ctx <> null) then
                         do! Async.SwitchToContext ctx
                     releaseHandle()
@@ -586,7 +594,7 @@ type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISign
                     releaseHandle()
             }
         
-        Async.Start(exec, defaultArg cancellationToken System.Threading.CancellationToken.None )
+        Async.Start(exec, cancellationToken)
 
     override __.UpdateAndGetCurrentValue _ = lastValue    
 
@@ -596,3 +604,10 @@ type internal AsyncMappingSignal<'a,'b when 'b : equality>(valueProvider : ISign
 
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider false this
+
+    new(valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, ?cancellationToken : System.Threading.CancellationToken) as this =
+        new AsyncMappingSignal<'a,'b>(valueProvider, initialValue, tracker, mapFn, defaultArg cancellationToken System.Threading.CancellationToken.None, ())
+        then
+            // We need to subscribe to changes immediately here,
+            // Since this acts like a cache
+            (valueProvider :> Internal.ITracksDependents).Track this

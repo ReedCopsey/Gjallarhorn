@@ -24,15 +24,19 @@ type Report<'a,'b when 'a : equality and 'b : equality> (input : ISignal<'a>, co
     member __.GetValue () = source.Value
 
 /// Used to report data to a user with validation
-type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as self =
+type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) as self =
     inherit Report<'a, 'b>(input, conversion)
-
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
     
     /// The validation results as a signal
-    member __.Validation = validation
+    member val private ValidationInternal = (ValueNone:IValidatedSignal<'b,'b> voption) with get, set
+    member this.Validation = this.ValidationInternal
+        new(input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as this =
+            ValidatedReport<'a,'b>(input, conversion)
+            then
+                this.ValidationInternal <-
+                    this.UpdateStream
+                    |> Signal.validate validation
+                    |> ValueSome
 
 /// Used as an input and output mapping to report and fetch data from a user
 type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) =    
@@ -56,15 +60,20 @@ type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, co
             subscription.Dispose()
 
 /// Used as an input and output mapping with validation to report and fetch data from a user
-type ValidatedInOut<'a, 'b, 'c when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) as self =
+type ValidatedInOut<'a, 'b, 'c when 'a : equality and 'b : equality> private (input : ISignal<'a>, conversion : 'a -> 'b) =
     inherit InOut<'a, 'b>(input, conversion)
 
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
+    member val private Validation = ValueNone: IValidatedSignal<'b,'c> voption with get, set
 
     /// The validated output data from the user interaction
-    member this.Output = validation
+    member this.Output = this.Validation
+    new(input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) as this =
+        new ValidatedInOut<'a,'b,'c>(input, conversion)
+        then
+            this.Validation <-
+                this.UpdateStream
+                |> Signal.validate validation
+                |> ValueSome
 
 /// Used as an output mapping to fetch data from a user
 type Out<'a when 'a : equality> (initialValue : 'a) =    
@@ -80,30 +89,41 @@ type Out<'a when 'a : equality> (initialValue : 'a) =
     member __.SetValue v = editSource.Value <- v
 
 /// Used as an output mapping with validation to fetch data from a user
-type ValidatedOut<'a, 'b when 'a : equality> (initialValue : 'a, validation : Validation<'a, 'b>) as self =
+type ValidatedOut<'a, 'b when 'a : equality> private (initialValue : 'a) =
     inherit Out<'a>(initialValue)    
 
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
+    member val private Validation = ValueNone:IValidatedSignal<'a,'b> voption with get, set
 
     /// The validated output data from the user interaction
-    member this.Output = validation
-    
+    member this.Output = this.Validation
+
+    new(initialValue : 'a, validation : Validation<'a, 'b>) as this =
+        ValidatedOut<'a,'b>(initialValue)
+        then
+            this.Validation <-
+                this.UpdateStream
+                |> Signal.validate validation
+                |> ValueSome
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
-type MutatableInOut<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
+type MutatableInOut<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>, dummy:unit) =
     inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
 
-    let subscription = 
-        self.UpdateStream
-        |> Signal.Subscription.create(fun _ ->
-            if self.Output.IsValid then
-                input.Value <- Option.get self.Output.Value)
+    member val private Subscription:IDisposable voption = ValueNone with get, set
 
     interface IDisposable with
-        member __.Dispose() =
-            subscription.Dispose()
+        member this.Dispose() =
+            this.Subscription |> ValueOption.iter (fun disp -> disp.Dispose())
+    new(input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as this =
+        new MutatableInOut<'a,'b>(input, conversion, validation, ())
+        then
+            this.Subscription <-
+                this.Output |> ValueOption.map (fun output ->
+                    this.UpdateStream
+                    |> Signal.Subscription.create(fun _ ->
+                        if output.IsValid then
+                            input.Value <- Option.get output.Value)
+                )
 
 /// Creates IO handles for use with Gjallarhorn adapters, like Gjallarhorn.Bindable
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
