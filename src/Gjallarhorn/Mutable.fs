@@ -11,7 +11,7 @@ module Mutable =
 
     /// Create a threadsafe mutable variable wrapping an initial value
     let createThreadsafe<'a when 'a : not struct> (value : 'a) = 
-        new AtomicMutable<'a>(value) :> IAtomicMutatable<'a>
+        AtomicMutable.Create<'a>(value) :> IAtomicMutatable<'a>
 
     /// Create an asynchronous mutable variable wrapping an initial value
     let createAsync (value : 'a) = 

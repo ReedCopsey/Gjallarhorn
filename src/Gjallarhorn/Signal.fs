@@ -40,7 +40,7 @@ module Signal =
     /// As such, it caches the "last valid" state of the signal locally.
     /// </remarks>
     let cache (provider : ISignal<'a>) = 
-        new CachedSignal<'a>(provider) :> ISignal<'a>
+        CachedSignal.Create<'a>(provider) :> ISignal<'a>
 
     module Subscription =
         /// Create a subscription to the changes of a signal which calls the provided function upon each change
@@ -87,7 +87,7 @@ module Signal =
 
     /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.    
     let fromObservable initialValue (observable : IObservable<'a>) =
-        new ObservableToSignal<'a>(observable, initialValue) :> ISignal<'a> 
+        ObservableToSignal.Create<'a>(observable, initialValue) :> ISignal<'a> 
         
     /// Gets the current value associated with the signal
     let get (signal : ISignal<'a>) = 
@@ -104,12 +104,12 @@ module Signal =
 
     /// Transforms a signal value asynchronously by using a specified mapping function.
     let mapAsync<'a,'b when 'b : equality> (mapping : 'a -> Async<'b>) initialValue (provider : ISignal<'a>) =
-        let signal = new AsyncMappingSignal<'a,'b>(provider,initialValue, None, mapping)
+        let signal = AsyncMappingSignal.Create<'a,'b>(provider,initialValue, None, mapping)
         signal :> ISignal<'b>
 
     /// Transforms a signal value asynchronously by using a specified mapping function. Execution status is reported through the specified IdleTracker
     let mapAsyncTracked (mapping : 'a -> Async<'b>) initialValue tracker (provider : ISignal<'a>) =
-        let signal = new AsyncMappingSignal<'a,'b>(provider, initialValue, Some(tracker), mapping)
+        let signal = AsyncMappingSignal.Create<'a,'b>(provider, initialValue, Some(tracker), mapping)
         signal :> ISignal<'b>
         
     /// Combines two signals using a specified mapping function
