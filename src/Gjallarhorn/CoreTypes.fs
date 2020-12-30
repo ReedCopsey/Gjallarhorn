@@ -133,14 +133,12 @@ type Mutable<'a when 'a : equality>(value : 'a) =
     interface IMutatable<'a> with
         member this.Value with get() = v and set(v) = this.Value <- v
 
-[<AbstractClass>]       
+[<AbstractClass>]
 /// Base class which simplifies implementation of standard signals
-type SignalBase<'a>(dependencies:ITracksDependents[]) as self =
-    do
-        dependencies
-        |> Array.iter (fun d -> d.Track self)
+/// Needs to be initialized by calling .InitDependencies
+type SignalBase<'a>() =
 
-    let dependencies = Dependencies.create dependencies self
+    let mutable dependencies:IDependencyManager<'a> = null
     let mutable dirty = false
 
     // We have a signal guard in place to prevent stackoverflows.
@@ -152,6 +150,10 @@ type SignalBase<'a>(dependencies:ITracksDependents[]) as self =
     // any signal change, effectively trampolining the notification to prevent multiple
     // triggers from occurring
     let mutable signalGuard = false
+
+    member this.Init(deps:ITracksDependents[]) =
+        deps |> Array.iter (fun d -> d.Track this)
+        dependencies <- Dependencies.create deps this
 
     /// Signals to dependencies that we have updated
     abstract member MarkDirtyGuarded : obj -> unit
@@ -214,7 +216,6 @@ type SignalBase<'a>(dependencies:ITracksDependents[]) as self =
             this.OnDisposing ()
             dependencies.RemoveAll this
             GC.SuppressFinalize this
-    static member Create<'a>() = ()
 
 /// Type to wrap in observable into a signal.
 type internal ObservableToSignal<'a when 'a : equality> private (valueProvider : IObservable<'a>, initialValue) =
@@ -301,8 +302,9 @@ type internal ObservableToSignal<'a when 'a : equality> private (valueProvider :
         ots.SetWeakSubscription(subscribeWeak ots valueProvider)
         ots
 
+/// Construct using the Create method
 type internal MappingSignal<'a,'b when 'a : equality and 'b : equality>(valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
-    inherit SignalBase<'b>([| valueProvider |])    
+    inherit SignalBase<'b>()    
     
     let mutable valueProvider = Some(valueProvider)
     
@@ -327,15 +329,26 @@ type internal MappingSignal<'a,'b when 'a : equality and 'b : equality>(valuePro
    
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose this
+    static member Create<'a,'b when 'a : equality and 'b : equality>
+            (valueProvider : ISignal<'a>, mapping : 'a -> 'b, disposeProviderOnDispose : bool) =
+        let ms = new MappingSignal<'a,'b>(valueProvider, mapping, disposeProviderOnDispose)
+        ms.Init([| valueProvider |])
+        ms
 
-type internal ObserveOnSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
+type internal ObserveOnSignal<'a when 'a : equality> private (valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
     inherit MappingSignal<'a,'a>(valueProvider, id, false)
 
     member private __.MarkDirtyBase source = base.MarkDirtyGuarded source
     override this.MarkDirtyGuarded source = ctx.Post (System.Threading.SendOrPostCallback(fun _ -> this.MarkDirtyBase source), null)
 
-type internal Mapping2Signal<'a,'b,'c when 'a : equality and 'b : equality and 'c : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
-    inherit SignalBase<'c>([| valueProvider1 ; valueProvider2 |])
+    static member Create<'a when 'a : equality>(valueProvider : ISignal<'a>, ctx : System.Threading.SynchronizationContext) =
+        let ms = new ObserveOnSignal<'a>(valueProvider, ctx)
+        ms.Init [| valueProvider |]
+        ms
+
+type internal Mapping2Signal<'a,'b,'c when 'a : equality and 'b : equality and 'c : equality>
+        private (valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
+    inherit SignalBase<'c>()
 
     let mutable lastValue = Unchecked.defaultof<'c> 
     let mutable lastInput1 = Unchecked.defaultof<'a>
@@ -365,9 +378,14 @@ type internal Mapping2Signal<'a,'b,'c when 'a : equality and 'b : equality and '
     override this.OnDisposing () =
          DisposeHelpers.cleanup &valueProvider1 false this
          DisposeHelpers.cleanup &valueProvider2 false this
+    static member Create<'a,'b,'c when 'a : equality and 'b : equality and 'c : equality>
+            (valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'b>, mapping : 'a -> 'b -> 'c) =
+        let m2s = new Mapping2Signal<'a,'b,'c>(valueProvider1, valueProvider2, mapping)
+        m2s.Init [| valueProvider1 ; valueProvider2 |]
+        m2s
 
-type internal MergeSignal<'a when 'a : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
-    inherit SignalBase<'a>([| valueProvider1 ; valueProvider2 |])
+type internal MergeSignal<'a when 'a : equality> private (valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
+    inherit SignalBase<'a>()
 
     let mutable lastValue = valueProvider2.Value
     let mutable valueProvider1 = Some(valueProvider1)
@@ -395,9 +413,14 @@ type internal MergeSignal<'a when 'a : equality>(valueProvider1 : ISignal<'a>, v
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider1 false this
         DisposeHelpers.cleanup &valueProvider2 false this
+    
+    static member Create<'a when 'a : equality>(valueProvider1 : ISignal<'a>, valueProvider2 : ISignal<'a>) =
+        let ms = new MergeSignal<'a>(valueProvider1, valueProvider2)
+        ms.Init [| valueProvider1 ; valueProvider2 |]
+        ms
 
-type internal IfSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, initialValue, conditionProvider : ISignal<bool>) =
-    inherit SignalBase<'a>([| valueProvider ; conditionProvider |])
+type internal IfSignal<'a when 'a : equality> private (valueProvider : ISignal<'a>, initialValue:'a, conditionProvider : ISignal<bool>) =
+    inherit SignalBase<'a>()
 
     let mutable lastValue = if conditionProvider.Value then valueProvider.Value else initialValue
 
@@ -421,9 +444,13 @@ type internal IfSignal<'a when 'a : equality>(valueProvider : ISignal<'a>, initi
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider false this
         DisposeHelpers.cleanup &conditionProvider false this
+    static member Create<'a when 'a : equality>(valueProvider : ISignal<'a>, initialValue:'a, conditionProvider : ISignal<bool>) =
+        let iSig = new IfSignal<'a>(valueProvider, initialValue, conditionProvider)
+        iSig.Init [| valueProvider ; conditionProvider |]
+        iSig
 
-type internal FilteredSignal<'a when 'a : equality> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
-    inherit SignalBase<'a>([| valueProvider |])
+type internal FilteredSignal<'a when 'a : equality> private (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
+    inherit SignalBase<'a>()
 
     let mutable lastValue = Unchecked.defaultof<'a> 
 
@@ -445,9 +472,15 @@ type internal FilteredSignal<'a when 'a : equality> (valueProvider : ISignal<'a>
 
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider disposeProviderOnDispose this
+
+    static member Create<'a when 'a : equality> (valueProvider : ISignal<'a>, initialValue : 'a, filter : 'a -> bool, disposeProviderOnDispose : bool) =
+        let fs = new FilteredSignal<'a>(valueProvider, initialValue, filter, disposeProviderOnDispose)
+        fs.Init [| valueProvider |]
+        fs
                         
-type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
-    inherit SignalBase<'b>([| valueProvider |])
+type internal ChooseSignal<'a,'b when 'b : equality>
+        private (valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
+    inherit SignalBase<'b>()
 
     let mutable lastValue = Unchecked.defaultof<'b>
 
@@ -474,9 +507,14 @@ type internal ChooseSignal<'a,'b when 'b : equality>(valueProvider : ISignal<'a>
 
     override this.OnDisposing () =
         DisposeHelpers.cleanup &valueProvider false this
+    
+    static member Create<'a,'b when 'b : equality> (valueProvider : ISignal<'a>, initialValue : 'b, filter : 'a -> 'b option) =
+        let cs = new ChooseSignal<'a, 'b>(valueProvider, initialValue, filter)
+        cs.Init [| valueProvider |]
+        cs
 
 type internal CachedSignal<'a when 'a : equality> private (valueProvider : ISignal<'a>) =
-    inherit SignalBase<'a>([| valueProvider |])
+    inherit SignalBase<'a>()
 
     let mutable lastValue = valueProvider.Value
 
@@ -510,6 +548,7 @@ type internal CachedSignal<'a when 'a : equality> private (valueProvider : ISign
         // target is GCed
         // Note: Tracking does not hold a strong reference, so disposal is not necessary still
         valueProvider.Track cs
+        cs.Init [| valueProvider |] // TODO: consider that this duplicates the previous line
         cs
 
 namespace Gjallarhorn.Helpers
@@ -518,8 +557,8 @@ open Gjallarhorn.Internal
 
 /// Type which tracks execution, used for tracked async operations
 /// Acts as a ISignal&lt;bool&gt; with value of true when idle, false when executing
-type IdleTracker(ctx : System.Threading.SynchronizationContext) =
-    inherit SignalBase<bool>([| |])
+type IdleTracker private (ctx : System.Threading.SynchronizationContext) =
+    inherit SignalBase<bool>()
 
     let handles = ResizeArray<_>()
         
@@ -552,6 +591,10 @@ type IdleTracker(ctx : System.Threading.SynchronizationContext) =
     
     override __.UpdateAndGetCurrentValue _ = lock handles (fun _ -> handles.Count = 0)    
     override __.OnDisposing () = ()
+    static member Create(ctx: System.Threading.SynchronizationContext) =
+        let it = new IdleTracker(ctx)
+        it.Init [||]
+        it
 
 namespace Gjallarhorn.Internal
 
@@ -560,7 +603,7 @@ open Gjallarhorn.Helpers
 
 type internal AsyncMappingSignal<'a,'b when 'b : equality>
         private (valueProvider : ISignal<'a>, initialValue : 'b, tracker: IdleTracker option, mapFn : 'a -> Async<'b>, cancellationToken : System.Threading.CancellationToken) =
-    inherit SignalBase<'b>([| valueProvider |])
+    inherit SignalBase<'b>()
 
     let mutable lastValue = initialValue
 
@@ -607,4 +650,5 @@ type internal AsyncMappingSignal<'a,'b when 'b : equality>
         // We need to subscribe to changes immediately here,
         // Since this acts like a cache
         (valueProvider :> Internal.ITracksDependents).Track ams
+        ams.Init [| valueProvider |] // TODO: Consider - may duplicate previous line
         ams
