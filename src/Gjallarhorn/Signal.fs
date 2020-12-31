@@ -99,7 +99,7 @@ module Signal =
 
     /// Transforms a signal value by using a specified mapping function.
     let map (mapping : 'a -> 'b)  (provider : ISignal<'a>) = 
-        let signal = new MappingSignal<'a, 'b>(provider, mapping, false)
+        let signal = MappingSignal.Create<'a, 'b>(provider, mapping, false)
         signal :> ISignal<'b>
 
     /// Transforms a signal value asynchronously by using a specified mapping function.
@@ -270,7 +270,7 @@ module Signal =
     let observeOn ctx (signal : ISignal<'a>) =
         ObserveOnSignal.Create<'a>(signal, ctx) :> ISignal<'a>
                 
-    type internal ValidatorMappingSignal<'a,'b when 'a : equality>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
+    type internal ValidatorMappingSignal<'a,'b when 'a : equality> private (validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
         inherit SignalBase<'b option>()
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
@@ -362,4 +362,4 @@ module Signal =
     /// Validates a signal with a validation chain
     let validate<'a,'b when 'a : equality> (validator : ValidationCollector<'a> -> ValidationCollector<'b>) (signal : ISignal<'a>) =
         // TODO: Should we pass through defaults?
-        new ValidatorMappingSignal<'a,'b>(validator, signal) :> IValidatedSignal<'a, 'b>    
+        ValidatorMappingSignal.Create<'a,'b>(validator, signal) :> IValidatedSignal<'a, 'b>    
