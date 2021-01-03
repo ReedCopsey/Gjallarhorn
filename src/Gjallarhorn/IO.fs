@@ -24,15 +24,21 @@ type Report<'a,'b when 'a : equality and 'b : equality> (input : ISignal<'a>, co
     member __.GetValue () = source.Value
 
 /// Used to report data to a user with validation
-type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) as self =
+type ValidatedReport<'a, 'b when 'a : equality and 'b : equality> private (input : ISignal<'a>, conversion : 'a -> 'b) =
     inherit Report<'a, 'b>(input, conversion)
 
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
+    let mutable validatedSignal = Unchecked.defaultof<IValidatedSignal<'b,'b>>
     
     /// The validation results as a signal
-    member __.Validation = validation
+    member __.Validation = validatedSignal
+    member private this.Init(validation: Validation<'b, 'b>) =
+        validatedSignal <-
+            this.UpdateStream
+            |> Signal.validate validation
+    static member Create<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'b>) =
+        let vr = ValidatedReport<'a,'b>(input, conversion)
+        vr.Init(validation)
+        vr
 
 /// Used as an input and output mapping to report and fetch data from a user
 type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b) =    
@@ -56,15 +62,21 @@ type InOut<'a, 'b when 'a : equality and 'b : equality> (input : ISignal<'a>, co
             subscription.Dispose()
 
 /// Used as an input and output mapping with validation to report and fetch data from a user
-type ValidatedInOut<'a, 'b, 'c when 'a : equality and 'b : equality> (input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) as self =
+type ValidatedInOut<'a, 'b, 'c when 'a : equality and 'b : equality> private (input : ISignal<'a>, conversion : 'a -> 'b) =
     inherit InOut<'a, 'b>(input, conversion)
 
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
+    let mutable validatedSignal = Unchecked.defaultof<IValidatedSignal<'b,'c>>
 
     /// The validated output data from the user interaction
-    member this.Output = validation
+    member this.Output = validatedSignal
+    member private this.Init(validation : Validation<'b, 'c>) =
+        validatedSignal <-
+            this.UpdateStream
+            |> Signal.validate validation
+    static member Create<'a, 'b, 'c when 'a : equality and 'b : equality>(input : ISignal<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'c>) =
+        let vio = new ValidatedInOut<'a,'b,'c>(input, conversion)
+        vio.Init validation
+        vio
 
 /// Used as an output mapping to fetch data from a user
 type Out<'a when 'a : equality> (initialValue : 'a) =    
@@ -80,30 +92,50 @@ type Out<'a when 'a : equality> (initialValue : 'a) =
     member __.SetValue v = editSource.Value <- v
 
 /// Used as an output mapping with validation to fetch data from a user
-type ValidatedOut<'a, 'b when 'a : equality> (initialValue : 'a, validation : Validation<'a, 'b>) as self =
+type ValidatedOut<'a, 'b when 'a : equality> (initialValue : 'a) =
     inherit Out<'a>(initialValue)    
 
-    let validation = 
-        self.UpdateStream
-        |> Signal.validate validation
+    let mutable validatedSignal = Unchecked.defaultof<IValidatedSignal<'a,'b>>
 
     /// The validated output data from the user interaction
-    member this.Output = validation
-    
+    member this.Output = validatedSignal
+    member private this.Init(validation: Validation<'a, 'b>) =
+        validatedSignal <-
+            this.UpdateStream
+            |> Signal.validate validation
+    static member Create<'a, 'b when 'a : equality> (initialValue : 'a, validation : Validation<'a, 'b>) =
+        let vo = ValidatedOut<'a,'b>(initialValue)
+        vo.Init validation
+        vo
     
 /// Used as an input and output mapping which mutates an input IMutatable, with validation to report and fetch data from a user
-type MutatableInOut<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) as self =
-    inherit ValidatedInOut<'a,'b, 'a>(input, conversion, validation)
+type MutatableInOut<'a,'b when 'a : equality and 'b : equality> private (input : IMutatable<'a>, conversion : 'a -> 'b) =
+    inherit InOut<'a, 'b>(input, conversion)
 
-    let subscription = 
-        self.UpdateStream
-        |> Signal.Subscription.create(fun _ ->
-            if self.Output.IsValid then
-                input.Value <- Option.get self.Output.Value)
-
+    let mutable subscription:IDisposable = null
+    let mutable validatedSignal = Unchecked.defaultof<IValidatedSignal<'b,'a>>
+    
+    member this.Output = validatedSignal
+    
     interface IDisposable with
         member __.Dispose() =
             subscription.Dispose()
+    
+    member private this.Init(validation : Validation<'b, 'a>, subDisp:IDisposable) =
+        subscription <- subDisp
+        validatedSignal <-
+            this.UpdateStream
+            |> Signal.validate validation
+
+    static member Create<'a,'b when 'a : equality and 'b : equality> (input : IMutatable<'a>, conversion : 'a -> 'b, validation : Validation<'b, 'a>) =
+        let vio = new MutatableInOut<'a,'b>(input, conversion)
+        let subDisp =
+            vio.UpdateStream
+            |> Signal.Subscription.create(fun _ ->
+                if vio.Output.IsValid then
+                    input.Value <- Option.get vio.Output.Value)
+        vio.Init(validation, subDisp)
+        vio
 
 /// Creates IO handles for use with Gjallarhorn adapters, like Gjallarhorn.Bindable
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
@@ -122,11 +154,11 @@ module IO =
 
         /// Create a report which validates and updates when the signal updates
         let validated validation signal=
-            ValidatedReport(signal, id, validation)
+            ValidatedReport.Create(signal, id, validation)
 
         /// Create a report which validates and updates when the signal updates and uses a mapping function
         let convertedValidated conversion validation signal =
-            ValidatedReport(signal, conversion, validation)
+            ValidatedReport.Create(signal, conversion, validation)
 
     /// Creates input/output handles
     module InOut =
@@ -141,19 +173,19 @@ module IO =
 
         /// Create a simple input handle which pipes from the signal to user, validates to output
         let validated validation signal =
-            new ValidatedInOut<_,_,_>(signal, id, validation)
+            ValidatedInOut.Create(signal, id, validation)
 
         /// Create a simple input handle which pipes from the signal to conversion, to user, validates to output
         let convertedValidated conversion validation signal =
-            new ValidatedInOut<_,_,_>(signal, conversion, validation)
+            ValidatedInOut.Create(signal, conversion, validation)
 
     /// Creates input/output handles that directly mutate an input IMutatable
     module MutableInOut =
 
         /// Create a simple input handle which pipes from the signal to user, validates to output, writes back to mutable
         let validated<'a when 'a : equality> validation mutatable = 
-            new MutatableInOut<'a,'a>(mutatable, id, validation)
+            MutatableInOut.Create<'a,'a>(mutatable, id, validation)
 
         /// Create a simple input handle which pipes from the signal to conversion, user, validates to output, writes back to mutable
         let convertedValidated conversion validation mutatable =
-            new MutatableInOut<_,_>(mutatable, conversion, validation)
+            MutatableInOut.Create(mutatable, conversion, validation)

@@ -270,8 +270,11 @@ module Signal =
     let observeOn ctx (signal : ISignal<'a>) =
         ObserveOnSignal.Create<'a>(signal, ctx) :> ISignal<'a>
                 
-    type internal ValidatorMappingSignal<'a,'b when 'a : equality> private (validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
+    type internal ValidatorMappingSignal<'a,'b when 'a : equality> private (validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) =
         inherit SignalBase<'b option>()
+        
+        let mutable updateSelf:unit -> unit = id
+        
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
         let rawInput = valueProvider
@@ -337,7 +340,7 @@ module Signal =
                             new ISignal<ValidationResult> with
                                 member __.Value 
                                     with get() = 
-                                        self.Update()
+                                        updateSelf()
                                         snd lastValidation
                             interface IObservable<ValidationResult> with
                                 member __.Subscribe obs = validationDeps.Subscribe (obs,result)
@@ -354,8 +357,11 @@ module Signal =
                 with get() = 
                     this.Update()
                     isValid (snd lastValidation)
+        member this.InitVMS() =
+            updateSelf <- this.Update
         static member Create<'a,'b when 'a : equality>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) =
             let vms = new ValidatorMappingSignal<'a,'b>(validator, valueProvider)
+            vms.InitVMS()
             vms.Init [| valueProvider |]
             vms
 
