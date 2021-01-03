@@ -137,7 +137,7 @@ type Mutable<'a when 'a : equality>(value : 'a) =
 /// Base class which simplifies implementation of standard signals
 /// Needs to be initialized by calling .InitDependencies
 type SignalBase<'a>() =
-
+    // A SignalBase should be initialized via .Init before any properties are called.
     let mutable dependencies:IDependencyManager<'a> = null
     let mutable dirty = false
 
@@ -219,6 +219,8 @@ type SignalBase<'a>() =
 
 /// Type to wrap in observable into a signal.
 type internal ObservableToSignal<'a when 'a : equality> private (valueProvider : IObservable<'a>, initialValue) =
+    // This will not be null when accessed, since an ObservableToSignal can only be created
+    // via Create, which initializes dependencies.
     let mutable dependencies:IDependencyManager<'a> = null
     let mutable lastValue = initialValue
 
