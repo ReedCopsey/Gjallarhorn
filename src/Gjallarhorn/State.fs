@@ -94,32 +94,37 @@ type AsyncMutable<'a when 'a : equality> (initialState : 'a) =
             GC.SuppressFinalize this
 
 /// A thread-safe wrapper using interlock for a mutable value with change notification
-type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
+type AtomicMutable<'a when 'a : not struct> private (value : 'a) =
     let mutable v = value
-    let deps = Dependencies.create [||] self
-    let swap (f : 'a -> 'a) =
-        let sw = SpinWait()        
-        let mutable current = v
-        while not ( obj.ReferenceEquals(Interlocked.CompareExchange<'a>(&v, f current, current), current) ) do
-            sw.SpinOnce()            
-            current <- v
-        deps.MarkDirty self
-        v
-
-    let setValue value =
+    let mutable deps:IDependencyManager<'a> = null
+    
+    member private this.SetValue value =
         Interlocked.Exchange<'a>(&v, value) |> ignore
-        deps.MarkDirty self
+        deps.MarkDirty this
 
     /// Gets and sets the Value contained within this mutable
-    member __.Value 
+    member this.Value
         with get() = v
-        and set(value) = setValue value
+        and set(value) = this.SetValue value
 
     /// Updates the current value in a manner that guarantees proper execution, 
     /// given a function that takes the current value and generates a new value,
     /// and then returns the new value
     /// <remarks>The function may be executed multiple times, depending on the implementation.</remarks>
-    member __.Update f = swap f
+    member this.Update(f : 'a -> 'a) =
+        let sw = SpinWait()
+        let mutable current = v
+        while not ( obj.ReferenceEquals(Interlocked.CompareExchange<'a>(&v, f current, current), current) ) do
+            sw.SpinOnce()
+            current <- v
+        deps.MarkDirty this
+        v
+
+    member private _.SetDeps v = deps <- v
+    static member Create<'a>(value : 'a) =
+        let am = new AtomicMutable<'a>(value)
+        am.SetDeps(Dependencies.create [||] am)
+        am
 
     interface IAtomicMutatable<'a> with
         member this.Update f = this.Update f
@@ -139,5 +144,4 @@ type AtomicMutable<'a when 'a : not struct>(value : 'a) as self =
     interface ISignal<'a> with
         member __.Value with get() = v
     interface IMutatable<'a> with
-        member __.Value with get() = v and set(v) = setValue v
-
+        member this.Value with get() = v and set(v) = this.SetValue v

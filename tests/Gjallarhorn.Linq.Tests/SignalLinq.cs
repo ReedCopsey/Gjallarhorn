@@ -154,7 +154,7 @@ namespace Gjallarhorn.Linq.Tests
         [Test]
         public async Task SelectAsyncTracksProperly()
         {
-            var tracker = new IdleTracker(System.Threading.SynchronizationContext.Current);
+            var tracker = IdleTracker.Create(SynchronizationContext.Current);
 
             var value = Mutable.Create(0);
 

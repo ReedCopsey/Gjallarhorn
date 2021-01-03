@@ -40,7 +40,7 @@ module Signal =
     /// As such, it caches the "last valid" state of the signal locally.
     /// </remarks>
     let cache (provider : ISignal<'a>) = 
-        new CachedSignal<'a>(provider) :> ISignal<'a>
+        CachedSignal.Create<'a>(provider) :> ISignal<'a>
 
     module Subscription =
         /// Create a subscription to the changes of a signal which calls the provided function upon each change
@@ -87,7 +87,7 @@ module Signal =
 
     /// Create a signal from an observable.  As an ISignal always provides a value, the initial value to use upon creation is required.    
     let fromObservable initialValue (observable : IObservable<'a>) =
-        new ObservableToSignal<'a>(observable, initialValue) :> ISignal<'a> 
+        ObservableToSignal.Create<'a>(observable, initialValue) :> ISignal<'a> 
         
     /// Gets the current value associated with the signal
     let get (signal : ISignal<'a>) = 
@@ -99,22 +99,22 @@ module Signal =
 
     /// Transforms a signal value by using a specified mapping function.
     let map (mapping : 'a -> 'b)  (provider : ISignal<'a>) = 
-        let signal = new MappingSignal<'a, 'b>(provider, mapping, false)
+        let signal = MappingSignal.Create<'a, 'b>(provider, mapping, false)
         signal :> ISignal<'b>
 
     /// Transforms a signal value asynchronously by using a specified mapping function.
     let mapAsync<'a,'b when 'b : equality> (mapping : 'a -> Async<'b>) initialValue (provider : ISignal<'a>) =
-        let signal = new AsyncMappingSignal<'a,'b>(provider,initialValue, None, mapping)
+        let signal = AsyncMappingSignal.Create<'a,'b>(provider,initialValue, None, mapping)
         signal :> ISignal<'b>
 
     /// Transforms a signal value asynchronously by using a specified mapping function. Execution status is reported through the specified IdleTracker
     let mapAsyncTracked (mapping : 'a -> Async<'b>) initialValue tracker (provider : ISignal<'a>) =
-        let signal = new AsyncMappingSignal<'a,'b>(provider, initialValue, Some(tracker), mapping)
+        let signal = AsyncMappingSignal.Create<'a,'b>(provider, initialValue, Some(tracker), mapping)
         signal :> ISignal<'b>
         
     /// Combines two signals using a specified mapping function
     let map2 (mapping : 'a -> 'b -> 'c) (provider1 : ISignal<'a>) (provider2 : ISignal<'b>) = 
-        let signal = new Mapping2Signal<'a, 'b, 'c>(provider1, provider2, mapping)
+        let signal = Mapping2Signal.Create<'a, 'b, 'c>(provider1, provider2, mapping)
         signal :> ISignal<'c>
 
     // Used to do mapN by lifting then mapping
@@ -226,7 +226,7 @@ module Signal =
     let filter (predicate : 'a -> bool) defaultValue (provider : ISignal<'a>) =
         match predicate(defaultValue) with
         | true ->
-            let signal = new FilteredSignal<'a>(provider, defaultValue, predicate, false)
+            let signal = FilteredSignal.Create<'a>(provider, defaultValue, predicate, false)
             signal :> ISignal<'a>
         | false ->
             let exMsg = sprintf "predicate(%A) returns false. The provided defaultValue must return true with the provided predicate." defaultValue
@@ -235,16 +235,16 @@ module Signal =
     /// Filters the signal by using a separate bool signal
     /// If the condition's Value is initially false, the resulting signal begins with the provided defaultValue.
     let filterBy condition defaultValue input =
-        new IfSignal<_>(input, defaultValue, condition) :> ISignal<_>
+        IfSignal.Create<_>(input, defaultValue, condition) :> ISignal<_>
 
     /// Returns a signal which is the projection of the input signal using the given function. All observations which return Some
     /// get mapped into the new value.  The defaultValue is used if the input signal's value returns None in the projection
     let choose (fn : 'a -> 'b option) (defaultValue : 'b) (provider : ISignal<'a>) =        
-        new ChooseSignal<'a,'b>(provider, defaultValue, fn) :> ISignal<'b>        
+        ChooseSignal.Create<'a,'b>(provider, defaultValue, fn) :> ISignal<'b>        
 
     /// Merges two signals into a single signal.  The value from the second signal is used as the initial value of the result
     let merge a b =
-        new MergeSignal<_>(a, b) :> ISignal<_>
+        MergeSignal.Create<_>(a, b) :> ISignal<_>
 
     /// Creates a signal on two values that is true if both inputs are equal
     let equal a b =
@@ -268,10 +268,13 @@ module Signal =
 
     /// Creates a signal that schedules on a synchronization context
     let observeOn ctx (signal : ISignal<'a>) =
-        new ObserveOnSignal<'a>(signal, ctx) :> ISignal<'a>
+        ObserveOnSignal.Create<'a>(signal, ctx) :> ISignal<'a>
                 
-    type internal ValidatorMappingSignal<'a,'b when 'a : equality>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) as self =
-        inherit SignalBase<'b option>([| valueProvider |])
+    type internal ValidatorMappingSignal<'a,'b when 'a : equality> private (validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) =
+        inherit SignalBase<'b option>()
+        
+        let mutable updateSelf:unit -> unit = id
+        
         let validationDeps = Dependencies.create [| valueProvider |] (constant ValidationResult.Valid)
 
         let rawInput = valueProvider
@@ -337,7 +340,7 @@ module Signal =
                             new ISignal<ValidationResult> with
                                 member __.Value 
                                     with get() = 
-                                        self.Update()
+                                        updateSelf()
                                         snd lastValidation
                             interface IObservable<ValidationResult> with
                                 member __.Subscribe obs = validationDeps.Subscribe (obs,result)
@@ -354,8 +357,15 @@ module Signal =
                 with get() = 
                     this.Update()
                     isValid (snd lastValidation)
+        member this.InitVMS() =
+            updateSelf <- this.Update
+        static member Create<'a,'b when 'a : equality>(validator : ValidationCollector<'a> -> ValidationCollector<'b>, valueProvider : ISignal<'a>) =
+            let vms = new ValidatorMappingSignal<'a,'b>(validator, valueProvider)
+            vms.InitVMS()
+            vms.Init [| valueProvider |]
+            vms
 
     /// Validates a signal with a validation chain
     let validate<'a,'b when 'a : equality> (validator : ValidationCollector<'a> -> ValidationCollector<'b>) (signal : ISignal<'a>) =
         // TODO: Should we pass through defaults?
-        new ValidatorMappingSignal<'a,'b>(validator, signal) :> IValidatedSignal<'a, 'b>    
+        ValidatorMappingSignal.Create<'a,'b>(validator, signal) :> IValidatedSignal<'a, 'b>    
